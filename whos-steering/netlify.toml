@@ -4,7 +4,7 @@
   status = 200
 
 [build]
-  base = "frontend"
+  base = "whos-steering/frontend"
   command = "npm run build"
   publish = "build"
 
