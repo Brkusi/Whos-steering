@@ -13,7 +13,12 @@ app.use(helmet());
 
 // ── CORS ─────────────────────────────────────────────────────
 app.use(cors({
-  origin: process.env.FRONTEND_URL || '*',
+  origin: [
+    'https://whossteering.com',
+    'https://www.whossteering.com',
+    'https://whos-steering.netlify.app',
+    process.env.FRONTEND_URL,
+  ].filter(Boolean),
   credentials: true,
 }));
 
