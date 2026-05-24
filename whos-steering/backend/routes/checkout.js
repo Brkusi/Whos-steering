@@ -1,7 +1,6 @@
 const router = require('express').Router();
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const pool = require('../db/pool');
-const { authRequired } = require('../middleware/auth');
 
 // ── Helper: server-side price calculation ──────────────────────────────────
 async function calcServerPrice(config) {
@@ -19,12 +18,11 @@ async function calcServerPrice(config) {
 }
 
 // POST /api/checkout/create-intent
-// Saves configuration + order, returns a Stripe PaymentIntent client secret
 router.post('/create-intent', async (req, res) => {
   const { config, customer, shippingAddress, cartItems } = req.body;
 
-  // Validate required fields
-  if (!config || !customer?.email) {
+  // Only require email
+  if (!customer?.email) {
     return res.status(400).json({ error: 'Missing required checkout data' });
   }
 
@@ -32,7 +30,7 @@ router.post('/create-intent', async (req, res) => {
   try {
     await client.query('BEGIN');
 
-    // 1. Upsert guest/logged-in customer
+    // 1. Get logged-in customer if available
     let customerId = null;
     if (req.headers.authorization) {
       try {
@@ -50,8 +48,13 @@ router.post('/create-intent', async (req, res) => {
     const savedConfigs = [];
 
     for (const item of cartItems) {
-      const cfg = item.config || config;
-      const amountCents = await calcServerPrice(cfg);
+      const cfg = item.config || config || {};
+      
+      // Use item price directly if no config brand available
+      const amountCents = cfg.brand 
+        ? await calcServerPrice(cfg)
+        : Math.round((item.price || 0) * 100);
+      
       totalCents += amountCents * (item.quantity || 1);
 
       const { rows: cfgRows } = await client.query(
@@ -64,15 +67,35 @@ router.post('/create-intent', async (req, res) => {
          VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20)
          RETURNING id`,
         [
-          cfg.brand, cfg.vehicleYear, cfg.vehicleModel, cfg.wheelStyle, cfg.paddleShifters,
-          cfg.topBottomMat, cfg.topBottomCol || null, cfg.sideMat, cfg.sideCol || null,
-          cfg.stripeMode, cfg.stripeColor || null, cfg.triKey || null,
-          cfg.airbagCompat !== false, cfg.heated !== false, cfg.laneAssist !== false,
-          cfg.audiBadge || null, cfg.outerTrimCol || null, cfg.innerTrimCol || null,
-          cfg.photoUrl || null, (amountCents / 100).toFixed(2),
+          cfg.brand || 'BMW',
+          cfg.vehicleYear || '',
+          cfg.vehicleModel || '',
+          cfg.wheelStyle || 'Standard',
+          cfg.paddleShifters || 'Standard',
+          cfg.topBottomMat || 'Alcantara',
+          cfg.topBottomCol || null,
+          cfg.sideMat || 'Alcantara',
+          cfg.sideCol || null,
+          cfg.stripeMode || 'none',
+          cfg.stripeColor || null,
+          cfg.triKey || null,
+          cfg.airbagCompat !== false,
+          cfg.heated !== false,
+          cfg.laneAssist !== false,
+          cfg.audiBadge || null,
+          cfg.outerTrimCol || null,
+          cfg.innerTrimCol || null,
+          cfg.photoUrl || null,
+          (amountCents / 100).toFixed(2),
         ]
       );
-      savedConfigs.push({ configId: cfgRows[0].id, amountCents, quantity: item.quantity || 1, name: item.name, detail: item.detail });
+      savedConfigs.push({
+        configId: cfgRows[0].id,
+        amountCents,
+        quantity: item.quantity || 1,
+        name: item.name,
+        detail: item.detail,
+      });
     }
 
     const totalDollars = (totalCents / 100).toFixed(2);
@@ -85,7 +108,8 @@ router.post('/create-intent', async (req, res) => {
        VALUES ($1,$2,'pending',$3,$3,$4,$5,$6,$7,$8,$9)
        RETURNING id`,
       [
-        customerId, customer.email,
+        customerId,
+        customer.email,
         totalDollars,
         shippingAddress?.name || customer.name || '',
         shippingAddress?.address1 || '',
@@ -102,9 +126,15 @@ router.post('/create-intent', async (req, res) => {
       await client.query(
         `INSERT INTO order_items (order_id, wheel_config_id, item_name, item_detail, unit_price, quantity, line_total)
          VALUES ($1,$2,$3,$4,$5,$6,$7)`,
-        [orderId, sc.configId, sc.name, sc.detail,
-         (sc.amountCents / 100).toFixed(2), sc.quantity,
-         ((sc.amountCents * sc.quantity) / 100).toFixed(2)]
+        [
+          orderId,
+          sc.configId,
+          sc.name,
+          sc.detail,
+          (sc.amountCents / 100).toFixed(2),
+          sc.quantity,
+          ((sc.amountCents * sc.quantity) / 100).toFixed(2),
+        ]
       );
     }
 
@@ -126,7 +156,8 @@ router.post('/create-intent', async (req, res) => {
 
     // 7. Log status history
     await client.query(
-      `INSERT INTO order_status_history (order_id, to_status, note) VALUES ($1,'pending','Order created at checkout')`,
+      `INSERT INTO order_status_history (order_id, to_status, note)
+       VALUES ($1,'pending','Order created at checkout')`,
       [orderId]
     );
 
@@ -145,6 +176,5 @@ router.post('/create-intent', async (req, res) => {
     client.release();
   }
 });
-
 
 module.exports = router;
