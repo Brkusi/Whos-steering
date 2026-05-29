@@ -2,43 +2,59 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { apiFetch } from '../lib/api';
 import { useCart } from '../context';
+import { AUDI_PRESETS } from '../lib/data';
 
-function WheelCard({ product, onView, onConfigure, onAddCart }) {
-  const badge = product.brand === 'AUDI' ? 'RS' : 'BMW';
-  const stripe = product.stripe_color || '#2A2A2A';
-
+function WheelSVG({ brand, stripeColor }) {
+  const badge = brand === 'AUDI' ? 'RS' : 'BMW';
+  const stripe = stripeColor || '#2A2A2A';
   return (
-    <div className="ccard" style={{ background: 'var(--p)', display: 'flex', flexDirection: 'column', cursor: 'pointer', position: 'relative', overflow: 'hidden', transition: 'background .2s' }}
+    <svg viewBox="0 0 300 300" style={{ width: '70%', height: '70%' }}>
+      <circle cx="150" cy="150" r="143" fill="#1A1A1A" />
+      <rect x="132" y="7" width="36" height="28" rx="3" fill={stripe} />
+      <path d="M150 10 A140 140 0 1 1 149.99 10" fill="none" stroke="#2A2A2A" strokeWidth="26" />
+      <line x1="150" y1="88" x2="150" y2="10" stroke="#333" strokeWidth="7" strokeLinecap="round" />
+      <line x1="150" y1="212" x2="150" y2="290" stroke="#333" strokeWidth="7" strokeLinecap="round" />
+      <line x1="88" y1="150" x2="10" y2="150" stroke="#333" strokeWidth="7" strokeLinecap="round" />
+      <line x1="212" y1="150" x2="290" y2="150" stroke="#333" strokeWidth="7" strokeLinecap="round" />
+      <circle cx="150" cy="150" r="37" fill="#111" stroke="#2E2E2E" strokeWidth="2" />
+      <text x="150" y="157" textAnchor="middle" fill="#E8B800" fontFamily="Orbitron,monospace" fontSize="20" letterSpacing="2">{badge}</text>
+      <rect x="5" y="118" width="20" height="64" rx="3" fill="#2A2A2A" />
+      <rect x="275" y="118" width="20" height="64" rx="3" fill="#2A2A2A" />
+    </svg>
+  );
+}
+
+function WheelCard({ product, onView, onConfigure }) {
+  return (
+    <div style={{ background: 'var(--p)', display: 'flex', flexDirection: 'column', cursor: 'pointer', position: 'relative', overflow: 'hidden', transition: 'background .2s' }}
       onMouseEnter={e => e.currentTarget.style.background = '#242424'}
       onMouseLeave={e => e.currentTarget.style.background = 'var(--p)'}
-      onClick={() => onView(product.id)}>
-      {/* Image */}
+      onClick={() => !product.isPreset && onView(product.id)}>
       <div style={{ width: '100%', aspectRatio: 1, background: 'var(--m)', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
-        <svg viewBox="0 0 300 300" style={{ width: '70%', height: '70%' }}>
-          <circle cx="150" cy="150" r="143" fill="#1A1A1A" />
-          <rect x="132" y="7" width="36" height="28" rx="3" fill={stripe} />
-          <path d="M150 10 A140 140 0 1 1 149.99 10" fill="none" stroke="#2A2A2A" strokeWidth="26" />
-          <line x1="150" y1="88" x2="150" y2="10" stroke="#333" strokeWidth="7" strokeLinecap="round" />
-          <line x1="150" y1="212" x2="150" y2="290" stroke="#333" strokeWidth="7" strokeLinecap="round" />
-          <line x1="88" y1="150" x2="10" y2="150" stroke="#333" strokeWidth="7" strokeLinecap="round" />
-          <line x1="212" y1="150" x2="290" y2="150" stroke="#333" strokeWidth="7" strokeLinecap="round" />
-          <circle cx="150" cy="150" r="37" fill="#111" stroke="#2E2E2E" strokeWidth="2" />
-          <text x="150" y="157" textAnchor="middle" fill="#E8B800" fontFamily="Orbitron,monospace" fontSize="20" letterSpacing="2">{badge}</text>
-          <rect x="5" y="118" width="20" height="64" rx="3" fill="#2A2A2A" />
-          <rect x="275" y="118" width="20" height="64" rx="3" fill="#2A2A2A" />
-        </svg>
+        <WheelSVG brand={product.brand} stripeColor={product.stripe_color} />
         <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg,transparent 60%,rgba(0,0,0,.5) 100%)' }} />
         <div style={{ position: 'absolute', top: 12, left: 12, background: 'var(--y)', color: '#000', fontFamily: 'Orbitron, monospace', fontSize: 9, fontWeight: 700, padding: '3px 8px', letterSpacing: 1 }}>{product.brand}</div>
+        {product.isPreset && <div style={{ position: 'absolute', top: 12, right: 12, background: '#1A5C2A', color: '#fff', fontFamily: 'Orbitron, monospace', fontSize: 8, fontWeight: 700, padding: '3px 8px', letterSpacing: 1 }}>PRESET</div>}
       </div>
-      {/* Body */}
       <div style={{ padding: '18px 20px 20px', flex: 1, display: 'flex', flexDirection: 'column' }}>
         <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 800, fontStyle: 'italic', fontSize: 22, marginBottom: 4 }}>{product.name}</div>
         <div style={{ fontSize: 12, color: 'var(--t)', lineHeight: 1.5, marginBottom: 14, flex: 1 }}>{product.description}</div>
+        {Array.isArray(product.features) && product.features.length > 0 && (
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, marginBottom: 12 }}>
+            {(Array.isArray(product.features) ? product.features : JSON.parse(product.features || '[]')).slice(0,4).map(f => (
+              <span key={f} style={{ fontSize: 9, padding: '2px 7px', background: 'rgba(232,184,0,.08)', border: '1px solid rgba(232,184,0,.2)', color: 'var(--y)', letterSpacing: 1 }}>{f}</span>
+            ))}
+          </div>
+        )}
         <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontSize: 28, color: 'var(--y)' }}>${parseFloat(product.base_price).toLocaleString('en-US', { minimumFractionDigits: 2 })}</div>
         <div style={{ fontSize: 10, color: 'var(--t)', marginBottom: 12 }}>Starting price · Fully configurable</div>
         <div style={{ display: 'flex', gap: 8, marginBottom: 10 }}>
-          <button className="btn btn-sm" style={{ clipPath: 'none', flex: 1 }} onClick={e => { e.stopPropagation(); onView(product.id); }}>VIEW DETAILS</button>
-          <button className="btn-outline sm" onClick={e => { e.stopPropagation(); onConfigure(product.brand); }}>CONFIGURE</button>
+          {!product.isPreset && (
+            <button className="btn btn-sm" style={{ clipPath: 'none', flex: 1 }} onClick={e => { e.stopPropagation(); onView(product.id); }}>VIEW DETAILS</button>
+          )}
+          <button className="btn-outline sm" style={{ flex: product.isPreset ? 1 : undefined }} onClick={e => { e.stopPropagation(); onConfigure(product.brand); }}>
+            {product.isPreset ? 'CONFIGURE THIS STYLE' : 'CONFIGURE'}
+          </button>
         </div>
         <div style={{ fontSize: 10, color: 'var(--t)', paddingTop: 10, borderTop: '1px solid var(--b)' }}>🛡 6 Month Warranty · ⏱ 3–5 Week Build</div>
       </div>
@@ -46,24 +62,54 @@ function WheelCard({ product, onView, onConfigure, onAddCart }) {
   );
 }
 
+function ConfigureCard({ brand, nav }) {
+  return (
+    <div onClick={() => nav(`/configure?brand=${brand}`)}
+      style={{ background: 'linear-gradient(135deg, rgba(232,184,0,.08) 0%, var(--p) 100%)', display: 'flex', flexDirection: 'column', cursor: 'pointer', border: '1px dashed rgba(232,184,0,.3)', transition: 'all .2s', position: 'relative', overflow: 'hidden' }}
+      onMouseEnter={e => { e.currentTarget.style.background = 'linear-gradient(135deg, rgba(232,184,0,.14) 0%, #242424 100%)'; e.currentTarget.style.borderColor = 'rgba(232,184,0,.6)'; }}
+      onMouseLeave={e => { e.currentTarget.style.background = 'linear-gradient(135deg, rgba(232,184,0,.08) 0%, var(--p) 100%)'; e.currentTarget.style.borderColor = 'rgba(232,184,0,.3)'; }}>
+      <div style={{ width: '100%', aspectRatio: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: 16, padding: 32 }}>
+        <div style={{ fontSize: 56, opacity: .3 }}>⚙</div>
+        <div style={{ fontFamily: 'Orbitron, monospace', fontSize: 10, letterSpacing: 4, color: 'var(--y)', textAlign: 'center', textTransform: 'uppercase' }}>Build Your Own</div>
+      </div>
+      <div style={{ padding: '18px 20px 28px', flex: 1, display: 'flex', flexDirection: 'column' }}>
+        <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 28, marginBottom: 8, color: 'var(--y)' }}>CUSTOM CONFIGURE</div>
+        <div style={{ fontSize: 12, color: 'var(--t)', lineHeight: 1.6, marginBottom: 20, flex: 1 }}>
+          Choose every material, color, stripe, stitch and option. Fully tailored to your exact specification.
+        </div>
+        <button className="btn" style={{ clipPath: 'none', width: '100%' }}>
+          START CONFIGURING →
+        </button>
+      </div>
+    </div>
+  );
+}
+
 export default function Catalog() {
-  const [products, setProducts] = useState([]);
+  const [dbProducts, setDbProducts] = useState([]);
   const [filter, setFilter] = useState('ALL');
   const [loading, setLoading] = useState(true);
   const nav = useNavigate();
   const [params] = useSearchParams();
-  const { addItem } = useCart();
 
   useEffect(() => {
     const brand = params.get('brand');
     if (brand) setFilter(brand);
     apiFetch('/api/products')
-      .then(setProducts)
+      .then(data => setDbProducts(data))
       .catch(console.error)
       .finally(() => setLoading(false));
   }, []); // eslint-disable-line
 
-  const filtered = filter === 'ALL' ? products : products.filter(p => p.brand === filter);
+  // Combine DB products with Audi presets, deduplicated
+  const allProducts = [
+    ...dbProducts,
+    ...AUDI_PRESETS,
+  ];
+
+  const filtered = filter === 'ALL'
+    ? allProducts
+    : allProducts.filter(p => p.brand === filter);
 
   return (
     <div style={{ paddingTop: 88, minHeight: '100vh' }}>
@@ -84,18 +130,16 @@ export default function Catalog() {
       {loading ? (
         <div style={{ padding: 60, textAlign: 'center', color: 'var(--t)', fontFamily: 'Orbitron, monospace', letterSpacing: 3 }}>LOADING...</div>
       ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 1, background: 'var(--b)' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 1, background: 'var(--b)' }}>
           {filtered.map(p => (
             <WheelCard key={p.id} product={p}
               onView={id => nav(`/catalog/${id}`)}
-              onConfigure={brand => nav(`/configure?brand=${brand}`)}
-              onAddCart={p => addItem({ name: p.brand + ' ' + p.name, detail: (p.features || []).slice(0,3).join(' · '), price: parseFloat(p.base_price), config: { brand: p.brand } })} />
+              onConfigure={brand => nav(`/configure?brand=${brand}`)} />
           ))}
+          {/* Configure card — always show last */}
+          {(filter === 'ALL' || filter === 'BMW') && <ConfigureCard brand="BMW" nav={nav} />}
+          {(filter === 'ALL' || filter === 'AUDI') && <ConfigureCard brand="AUDI" nav={nav} />}
         </div>
-      )}
-
-      {!loading && filtered.length === 0 && (
-        <div style={{ padding: 60, textAlign: 'center', color: 'var(--t)' }}>No products found.</div>
       )}
 
       {/* Info strip */}
