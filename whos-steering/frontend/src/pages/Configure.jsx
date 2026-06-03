@@ -9,8 +9,6 @@ import {
 import { calcPrice, apiFetch } from '../lib/api';
 import { useCart } from '../context';
 
-// ── Sub-components ────────────────────────────────────────────────────────────
-
 function Sect({ label, value, children, badge }) {
   return (
     <div style={{ padding: '20px 28px', borderBottom: '1px solid var(--b)' }}>
@@ -60,11 +58,11 @@ function CustomColorInput({ label, value, onChange }) {
 function Toggle({ label, sub, value, onChange }) {
   return (
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 0', borderBottom: '1px solid #1A1A1A', flexWrap: 'wrap', gap: 8 }}>
-      <div>
+      <div style={{ flex: 1, paddingRight: 12 }}>
         <div style={{ fontFamily: 'Rajdhani, sans-serif', fontWeight: 700, fontSize: 14, letterSpacing: 1, textTransform: 'uppercase' }}>{label}</div>
         {sub && <div style={{ fontSize: 10, color: 'var(--y)', letterSpacing: .5 }}>{sub}</div>}
       </div>
-      <div style={{ display: 'flex' }}>
+      <div style={{ display: 'flex', flexShrink: 0 }}>
         {['YES','NO'].map((v, i) => (
           <button key={v} onClick={() => onChange(v === 'YES')}
             style={{ padding: '6px 16px', border: '1px solid var(--b)', background: value === (v === 'YES') ? 'var(--y)' : 'transparent', color: value === (v === 'YES') ? '#000' : 'var(--t)', cursor: 'pointer', fontFamily: 'Rajdhani, sans-serif', fontSize: 11, fontWeight: 700, letterSpacing: 1, transition: 'all .2s', borderRight: i === 0 ? 'none' : undefined }}>
@@ -77,13 +75,10 @@ function Toggle({ label, sub, value, onChange }) {
 }
 
 function StripeConcept({ concept, selected, onSelect }) {
-  const { id, label, stripes, tri } = concept;
+  const { id, stripes, tri } = concept;
   return (
-    <div onClick={() => onSelect(id)}
-      style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6, cursor: 'pointer' }}>
-      {/* Visual preview of stripe on carbon-like surface */}
+    <div onClick={() => onSelect(id)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6, cursor: 'pointer' }}>
       <div style={{ width: 64, height: 40, background: '#111', border: `2px solid ${selected === id ? 'var(--y)' : '#2A2A2A'}`, borderRadius: 4, overflow: 'hidden', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: selected === id ? '0 0 0 1px var(--y)' : 'none' }}>
-        {/* Carbon weave pattern lines */}
         {[...Array(8)].map((_, i) => (
           <div key={i} style={{ position: 'absolute', left: i * 9, top: 0, width: 5, height: '100%', background: 'rgba(255,255,255,.03)', transform: 'skewX(-10deg)' }} />
         ))}
@@ -111,7 +106,6 @@ function CarbonColorGrid({ colors, selected, onSelect }) {
         <div key={c.h} onClick={() => onSelect(c.h)}
           style={{ cursor: 'pointer', border: `2px solid ${selected === c.h ? 'var(--y)' : '#2A2A2A'}`, borderRadius: 4, overflow: 'hidden', boxShadow: selected === c.h ? '0 0 0 1px var(--y)' : 'none', transition: 'border-color .15s' }}>
           <div style={{ background: c.h, height: 44, position: 'relative', overflow: 'hidden' }}>
-            {/* Carbon weave pattern */}
             {[...Array(6)].map((_, i) => (
               <div key={i} style={{ position: 'absolute', left: i * 12, top: 0, width: 7, height: '100%', background: 'rgba(255,255,255,.04)', transform: 'skewX(-12deg)' }} />
             ))}
@@ -140,7 +134,6 @@ function MatSection({ label, matKey, colKey, carbonColKey, customColKey, cfg, se
           </button>
         ))}
       </div>
-
       {isCarbon ? (
         <>
           <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 4, color: 'var(--t)' }}>
@@ -162,7 +155,6 @@ function MatSection({ label, matKey, colKey, carbonColKey, customColKey, cfg, se
   );
 }
 
-// ── Main Configure component ──────────────────────────────────────────────────
 export default function Configure() {
   const [params] = useSearchParams();
   const nav = useNavigate();
@@ -226,24 +218,22 @@ export default function Configure() {
   const selectedStripeConcept = STRIPE_CONCEPTS.find(s => s.id === cfg.stripeConceptId) || STRIPE_CONCEPTS[0];
 
   const buildSummary = () => {
-    const topMat = MATS.find(m => m.n === cfg.topBottomMat);
-    const sideMat = MATS.find(m => m.n === cfg.sideMat);
     return [
-      ['Brand',           cfg.brand],
-      ['Vehicle',         `${cfg.vehicleYear} ${cfg.brand} ${cfg.vehicleModel}`],
-      ['Wheel Style',     cfg.wheelStyle === 'Standard' ? 'Comfort' : 'Sport'],
-      ['Paddle Shifters', cfg.paddleShifters],
-      ['Top/Bottom',      cfg.topBottomMat + (topMat?.carbon ? (cfg.topBottomCarbonCol ? ' · ' + (CLASSIC_CARBON_COLORS.concat(FORGED_CARBON_COLORS, HONEYCOMB_CARBON_COLORS).find(c => c.h === cfg.topBottomCarbonCol)?.n || '') : '') : (cfg.topBottomCol ? ' · ' + colorName(cfg.topBottomCol) : '')) + (cfg.topBottomCustomColor ? ' · ' + cfg.topBottomCustomColor : '')],
-      ['Side Grip',       cfg.sideMat + (cfg.sideCol ? ' · ' + colorName(cfg.sideCol) : '') + (cfg.sideCustomColor ? ' · ' + cfg.sideCustomColor : '')],
-      ['Stripe',          selectedStripeConcept.label],
-      ['Stitch Color',    cfg.stitchColor ? colorName(cfg.stitchColor) : cfg.stitchCustomColor || 'None'],
-      ['Airbag Compat',   cfg.airbagCompat ? 'Yes' : 'No'],
-      ['Airbag Upgrade',  cfg.airbagUpgrade ? 'Yes (Cover & Airbag)' : 'No'],
-      ['Heated',          cfg.heated ? 'Yes' : 'No'],
-      ['Lane Assist',     cfg.laneAssist ? 'Yes' : 'No'],
-      cfg.brand === 'AUDI' && ['Audi Badge', cfg.audiBadge],
-      ['Notes',           cfg.customNotes || 'None'],
-      ['Est. Price',      `$${price.toFixed(2)}`],
+      ['Brand',            cfg.brand],
+      ['Vehicle',          `${cfg.vehicleYear} ${cfg.brand} ${cfg.vehicleModel}`],
+      ['Wheel Style',      cfg.wheelStyle === 'Standard' ? 'Comfort' : 'Sport'],
+      ['Paddle Shifters',  cfg.paddleShifters],
+      ['Top/Bottom',       cfg.topBottomMat + (cfg.topBottomCol ? ' · ' + colorName(cfg.topBottomCol) : '') + (cfg.topBottomCustomColor ? ' · ' + cfg.topBottomCustomColor : '')],
+      ['Side Grip',        cfg.sideMat + (cfg.sideCol ? ' · ' + colorName(cfg.sideCol) : '') + (cfg.sideCustomColor ? ' · ' + cfg.sideCustomColor : '')],
+      ['Stripe',           selectedStripeConcept.label],
+      ['Stitch Color',     cfg.stitchColor ? colorName(cfg.stitchColor) : cfg.stitchCustomColor || 'None'],
+      ['Airbag Cover',     cfg.airbagCompat ? 'Yes (+$50)' : 'No'],
+      ['Full Airbag Upgrade', cfg.airbagUpgrade ? 'Yes (+$25)' : 'No'],
+      ['Heated',           cfg.heated ? 'Yes' : 'No'],
+      ['Lane Assist',      cfg.laneAssist ? 'Yes' : 'No'],
+      cfg.brand === 'AUDI' ? ['Audi Badge', cfg.audiBadge] : null,
+      ['Notes',            cfg.customNotes || 'None'],
+      ['Est. Price',       `$${price.toFixed(2)}`],
     ].filter(Boolean);
   };
 
@@ -251,13 +241,9 @@ export default function Configure() {
 
   return (
     <div style={{ paddingTop: 88, minHeight: '100vh', background: 'var(--d)' }}>
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: window.innerWidth < 768 ? '1fr' : '1fr 1fr',
-        minHeight: 'calc(100vh - 88px)'
-      }}>
+      <div style={{ display: 'grid', gridTemplateColumns: window.innerWidth < 768 ? '1fr' : '1fr 1fr', minHeight: 'calc(100vh - 88px)' }}>
 
-        {/* LEFT: Preview — sticky on desktop, normal flow on mobile */}
+        {/* LEFT: Preview */}
         <div style={{
           position: window.innerWidth < 768 ? 'relative' : 'sticky',
           top: 88,
@@ -291,20 +277,18 @@ export default function Configure() {
             )}
           </div>
 
-          {/* ── Brand & Vehicle ── */}
+          {/* Vehicle */}
           <Sect label="Vehicle" value={cfg.vehicleYear && cfg.vehicleModel ? `${cfg.vehicleYear} ${cfg.brand} ${cfg.vehicleModel}` : '—'}>
             <div style={{ display: 'flex', gap: 6, marginBottom: 14 }}>
               {['BMW','AUDI'].map(b => (
                 <button key={b} className={`ob${cfg.brand === b ? ' on' : ''}`} style={{ fontSize: 10, padding: '5px 20px' }} onClick={() => setBrand(b)}>{b}</button>
               ))}
             </div>
-
             {isAudi && (
               <div style={{ padding: '8px 12px', background: 'rgba(232,184,0,.05)', border: '1px solid rgba(232,184,0,.2)', marginBottom: 12, fontSize: 11, color: 'var(--t)', letterSpacing: 1 }}>
                 ✓ Fits 2011+ AUDI All Models
               </div>
             )}
-
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 12 }}>
               <div>
                 <label className="fl">Year <span className="req">*</span></label>
@@ -321,8 +305,6 @@ export default function Configure() {
                 {errors.model && <div className="err-msg">Required</div>}
               </div>
             </div>
-
-            {/* Photo upload */}
             <label className="fl">Current Wheel Photo <span className="req">*</span></label>
             <label style={{ display: 'block', border: `2px dashed ${errors.photo ? '#CC3300' : photo ? '#3DB85A' : 'var(--b)'}`, padding: 16, textAlign: 'center', cursor: 'pointer', transition: 'all .2s', marginTop: 6, background: photo ? 'rgba(61,184,90,.04)' : 'transparent' }}>
               <input type="file" accept="image/*" style={{ display: 'none' }} onChange={handlePhoto} />
@@ -334,7 +316,7 @@ export default function Configure() {
             {errors.photo && <div className="err-msg">A photo of your current wheel is required</div>}
           </Sect>
 
-          {/* ── Stripe Concept ── */}
+          {/* Stripe */}
           <Sect label="Top Stripe" value={selectedStripeConcept.label}>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(72px,1fr))', gap: 10, marginBottom: 14 }}>
               {STRIPE_CONCEPTS.map(sc => (
@@ -344,35 +326,35 @@ export default function Configure() {
             <CustomColorInput label="Type Any Stripe Color:" value={cfg.stripeCustomColor} onChange={v => set('stripeCustomColor', v)} />
           </Sect>
 
-          {/* ── Stitch Color ── */}
+          {/* Stitch */}
           <Sect label="Stitch Color" value={cfg.stitchColor ? colorName(cfg.stitchColor) : cfg.stitchCustomColor || 'None'}>
             <ColorGrid colors={STITCH_COLORS} selected={cfg.stitchColor} onSelect={v => { set('stitchColor', v); set('stitchCustomColor', ''); }} />
             <CustomColorInput label="Type Any Stitch Color:" value={cfg.stitchCustomColor} onChange={v => { set('stitchCustomColor', v); set('stitchColor', null); }} />
           </Sect>
 
-          {/* ── Wheel Style ── */}
+          {/* Wheel Style */}
           <Sect label="Wheel Style" value={cfg.wheelStyle}>
             <OptionRow options={['Standard', 'Sport']} selected={cfg.wheelStyle} onSelect={v => set('wheelStyle', v)} />
           </Sect>
 
-          {/* ── Paddle Shifters ── */}
+          {/* Paddles */}
           <Sect label="Paddle Shifters" value={cfg.paddleShifters}>
             <OptionRow options={['Standard', 'Magnetic']} selected={cfg.paddleShifters} onSelect={v => set('paddleShifters', v)} />
           </Sect>
 
-          {/* ── Top / Bottom Material ── */}
+          {/* Top/Bottom Mat */}
           <MatSection label="Top & Bottom Grip Material"
             matKey="topBottomMat" colKey="topBottomCol"
             carbonColKey="topBottomCarbonCol" customColKey="topBottomCustomColor"
             cfg={cfg} set={set} />
 
-          {/* ── Side Material ── */}
+          {/* Side Mat */}
           <MatSection label="Side Grip Material"
             matKey="sideMat" colKey="sideCol"
             carbonColKey="sideCarbonCol" customColKey="sideCustomColor"
             cfg={cfg} set={set} />
 
-          {/* ── AUDI-only: Badge & Trim ── */}
+          {/* AUDI-only */}
           {isAudi && (
             <>
               <Sect label="Lower Badge" value={cfg.audiBadge}>
@@ -395,16 +377,35 @@ export default function Configure() {
             </>
           )}
 
-          {/* ── Options ── */}
+          {/* ── OPTIONS — updated labels and pricing ── */}
           <div style={{ padding: '20px 28px', borderBottom: '1px solid var(--b)' }}>
             <div style={{ fontFamily: 'Rajdhani, sans-serif', fontWeight: 700, fontSize: 15, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 8 }}>Options</div>
-            <Toggle label="Airbag Compatible" sub="+$75.00" value={cfg.airbagCompat} onChange={v => set('airbagCompat', v)} />
-            <Toggle label="Will you require an upgraded airbag unit (cover & airbag)?" value={cfg.airbagUpgrade} onChange={v => set('airbagUpgrade', v)} />
-            <Toggle label="Heated Steering" sub={isAudi ? '+$25.00' : ''} value={cfg.heated} onChange={v => set('heated', v)} />
-            <Toggle label="Lane Assist Compatible" value={cfg.laneAssist} onChange={v => set('laneAssist', v)} />
+            <Toggle
+              label="Airbag Cover"
+              sub="+$50.00"
+              value={cfg.airbagCompat}
+              onChange={v => set('airbagCompat', v)}
+            />
+            <Toggle
+              label="Will you require a full upgraded airbag unit (full airbag not just cover)?"
+              sub="+$25.00"
+              value={cfg.airbagUpgrade}
+              onChange={v => set('airbagUpgrade', v)}
+            />
+            <Toggle
+              label="Heated Steering"
+              sub={isAudi ? '+$25.00' : ''}
+              value={cfg.heated}
+              onChange={v => set('heated', v)}
+            />
+            <Toggle
+              label="Lane Assist Compatible"
+              value={cfg.laneAssist}
+              onChange={v => set('laneAssist', v)}
+            />
           </div>
 
-          {/* ── Custom Notes ── */}
+          {/* Custom Notes */}
           <div style={{ padding: '20px 28px', borderBottom: '1px solid var(--b)' }}>
             <label className="fl" style={{ marginBottom: 8 }}>Let us know if there are any other configurations you would like that have not been listed</label>
             <textarea className="fi" value={cfg.customNotes} onChange={e => set('customNotes', e.target.value)}
@@ -414,7 +415,7 @@ export default function Configure() {
         </div>
       </div>
 
-      {/* ── Review overlay ── */}
+      {/* Review overlay */}
       {showReview && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,.88)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2000, padding: 20, overflowY: 'auto' }}>
           <div style={{ background: 'var(--p)', border: '1px solid var(--b)', padding: 32, width: 520, maxWidth: '100%', maxHeight: '90vh', overflowY: 'auto' }}>

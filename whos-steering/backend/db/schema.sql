@@ -163,6 +163,8 @@ CREATE TABLE IF NOT EXISTS pricing_rules (
   amount       NUMERIC(10,2) NOT NULL,
   is_active    BOOLEAN NOT NULL DEFAULT TRUE,
   updated_at   TIMESTAMPTZ NOT NULL DEFAULT NOW()
+  UPDATE pricing_rules SET amount = 50.00, description = 'Airbag cover' WHERE rule_key = 'airbag_compat';
+  INSERT INTO pricing_rules (rule_key, description, amount) VALUES ('airbag_upgrade', 'Full airbag upgrade', 25.00) ON CONFLICT (rule_key) DO NOTHING;
 );
 
 -- ────────────────────────────────────────────
