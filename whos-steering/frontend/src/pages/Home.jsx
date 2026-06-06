@@ -34,7 +34,7 @@ export default function Home() {
             <img
               src="/ws-logo.png"
               alt="Who's Steering"
-              style={{ height: 'clamp(100px, 18vw, 180px)', width: 'auto', objectFit: 'contain' }}
+              style={{ height: 'clamp(250px, 30vw, 400px)', width: 'auto', objectFit: 'contain' }}
             />
           </div>
           <div className="fade-up" style={{ fontFamily: 'Orbitron, monospace', fontSize: 10, letterSpacing: 6, color: 'var(--y)', textTransform: 'uppercase', marginBottom: 12, animationDelay: '.55s' }}>
