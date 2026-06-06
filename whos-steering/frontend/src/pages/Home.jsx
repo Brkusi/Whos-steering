@@ -20,6 +20,7 @@ export default function Home() {
         <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse at 20% 50%, rgba(232,184,0,.09) 0%, transparent 60%), #080808' }} />
         <div style={{ position: 'absolute', inset: 0, backgroundImage: 'linear-gradient(rgba(232,184,0,.03) 1px, transparent 1px), linear-gradient(90deg, rgba(232,184,0,.03) 1px, transparent 1px)', backgroundSize: '60px 60px', maskImage: 'radial-gradient(ellipse at center, black 30%, transparent 80%)' }} />
 
+        {/* Spinning wheel bg */}
         <svg viewBox="0 0 300 300" style={{ position: 'absolute', right: -60, top: '50%', transform: 'translateY(-50%)', opacity: .04, width: 500, animation: 'spin 30s linear infinite' }}>
           <circle cx="150" cy="150" r="143" fill="none" stroke="#E8B800" strokeWidth="4" />
           <line x1="150" y1="10" x2="150" y2="290" stroke="#E8B800" strokeWidth="6" />
@@ -28,9 +29,13 @@ export default function Home() {
         </svg>
 
         <div style={{ position: 'relative', zIndex: 2, textAlign: 'center', padding: '0 20px' }}>
-          <div className="ws-logo hero-logo fade-up" style={{ marginBottom: 18, animationDelay: '.2s' }}>
-            <span className="ws-logo-top" style={{ fontSize: 'clamp(56px,12vw,120px)', letterSpacing: -2 }}>WHO'S</span>
-            <span className="ws-logo-bot" style={{ fontSize: 'clamp(20px,4vw,42px)', letterSpacing: 6, marginTop: -4 }}>STEERING</span>
+          {/* Real logo image */}
+          <div className="fade-up" style={{ marginBottom: 24, animationDelay: '.2s' }}>
+            <img
+              src="/ws-logo.png"
+              alt="Who's Steering"
+              style={{ height: 'clamp(60px, 12vw, 110px)', width: 'auto', objectFit: 'contain' }}
+            />
           </div>
           <div className="fade-up" style={{ fontFamily: 'Orbitron, monospace', fontSize: 10, letterSpacing: 6, color: 'var(--y)', textTransform: 'uppercase', marginBottom: 12, animationDelay: '.55s' }}>
             Custom Steering Wheels
@@ -70,7 +75,7 @@ export default function Home() {
         </div>
       </div>
 
-      {/* ── Materials & Craftsmanship section ── */}
+      {/* ── Materials & Craftsmanship ── */}
       <div style={{ background: 'var(--m)', borderBottom: '1px solid var(--b)' }}>
         <div style={{ maxWidth: 1100, margin: '0 auto', padding: '64px 40px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 60, alignItems: 'center' }}>
           <div>

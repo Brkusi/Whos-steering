@@ -2,7 +2,7 @@ const router = require('express').Router();
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const pool = require('../db/pool');
 
-// ── Helper: server-side price calculation ──────────────────────────────────
+// ── Server-side price calculation — mirrors frontend calcPrice ────────────────
 async function calcServerPrice(config) {
   const { rows } = await pool.query(
     'SELECT rule_key, amount FROM pricing_rules WHERE is_active = TRUE'
@@ -10,10 +10,19 @@ async function calcServerPrice(config) {
   const rules = {};
   rows.forEach(r => { rules[r.rule_key] = parseFloat(r.amount); });
 
-  let price = config.brand === 'AUDI' ? (rules.base_audi || 750) : (rules.base_bmw || 849.99);
-  if (config.airbag_compat) price += (rules.airbag_compat || 75);
-  if (config.brand === 'AUDI' && config.heated) price += (rules.heated_audi || 25);
-  if (config.paddle_shifters === 'Magnetic') price += (rules.paddle_magnetic || 0);
+  let price = config.brand === 'AUDI'
+    ? (rules.base_audi || 750)
+    : (rules.base_bmw || 849.99);
+
+  // Airbag cover (+$50)
+  if (config.airbagCompat !== false) price += (rules.airbag_compat || 50);
+  // Full airbag upgrade (+$25)
+  if (config.airbagUpgrade === true) price += (rules.airbag_upgrade || 25);
+  // Heated steering Audi (+$25)
+  if (config.brand === 'AUDI' && config.heated !== false) price += (rules.heated_audi || 25);
+  // Magnetic paddles
+  if (config.paddleShifters === 'Magnetic' || config.paddle_shifters === 'Magnetic') price += (rules.paddle_magnetic || 0);
+
   return Math.round(price * 100); // cents
 }
 
@@ -21,7 +30,6 @@ async function calcServerPrice(config) {
 router.post('/create-intent', async (req, res) => {
   const { config, customer, shippingAddress, cartItems } = req.body;
 
-  // Only require email
   if (!customer?.email) {
     return res.status(400).json({ error: 'Missing required checkout data' });
   }
@@ -30,7 +38,6 @@ router.post('/create-intent', async (req, res) => {
   try {
     await client.query('BEGIN');
 
-    // 1. Get logged-in customer if available
     let customerId = null;
     if (req.headers.authorization) {
       try {
@@ -43,18 +50,22 @@ router.post('/create-intent', async (req, res) => {
       } catch {}
     }
 
-    // 2. Save wheel configurations + compute authoritative price
     let totalCents = 0;
     const savedConfigs = [];
 
     for (const item of cartItems) {
       const cfg = item.config || config || {};
-      
-      // Use item price directly if no config brand available
-      const amountCents = cfg.brand 
-        ? await calcServerPrice(cfg)
-        : Math.round((item.price || 0) * 100);
-      
+
+      // Use server-side calculated price if config has brand info,
+      // otherwise fall back to the price the frontend sent
+      let amountCents;
+      if (cfg.brand) {
+        amountCents = await calcServerPrice(cfg);
+      } else {
+        // Preset items — use the price from the cart item directly
+        amountCents = Math.round((item.price || 0) * 100);
+      }
+
       totalCents += amountCents * (item.quantity || 1);
 
       const { rows: cfgRows } = await client.query(
@@ -71,24 +82,25 @@ router.post('/create-intent', async (req, res) => {
           cfg.vehicleYear || '',
           cfg.vehicleModel || '',
           cfg.wheelStyle || 'Standard',
-          cfg.paddleShifters || 'Standard',
-          cfg.topBottomMat || 'Alcantara',
-          cfg.topBottomCol || null,
-          cfg.sideMat || 'Alcantara',
-          cfg.sideCol || null,
-          cfg.stripeMode || 'none',
-          cfg.stripeColor || null,
-          cfg.triKey || null,
+          cfg.paddleShifters || cfg.paddle_shifters || 'Standard',
+          cfg.topBottomMat || cfg.top_bottom_mat || 'Alcantara',
+          cfg.topBottomCol || cfg.top_bottom_col || null,
+          cfg.sideMat || cfg.side_mat || 'Alcantara',
+          cfg.sideCol || cfg.side_col || null,
+          cfg.stripeConceptId || cfg.stripe_mode || 'none',
+          cfg.stripeColor || cfg.stripe_color || null,
+          cfg.triKey || cfg.tri_key || null,
           cfg.airbagCompat !== false,
           cfg.heated !== false,
           cfg.laneAssist !== false,
-          cfg.audiBadge || null,
-          cfg.outerTrimCol || null,
-          cfg.innerTrimCol || null,
-          cfg.photoUrl || null,
+          cfg.audiBadge || cfg.audi_badge || null,
+          cfg.outerTrimCol || cfg.outer_trim_col || null,
+          cfg.innerTrimCol || cfg.inner_trim_col || null,
+          cfg.photoUrl || cfg.photo_url || null,
           (amountCents / 100).toFixed(2),
         ]
       );
+
       savedConfigs.push({
         configId: cfgRows[0].id,
         amountCents,
@@ -100,7 +112,6 @@ router.post('/create-intent', async (req, res) => {
 
     const totalDollars = (totalCents / 100).toFixed(2);
 
-    // 3. Create order record
     const { rows: orderRows } = await client.query(
       `INSERT INTO orders
         (customer_id, guest_email, status, subtotal, total,
@@ -121,24 +132,18 @@ router.post('/create-intent', async (req, res) => {
     );
     const orderId = orderRows[0].id;
 
-    // 4. Create order items
     for (const sc of savedConfigs) {
       await client.query(
         `INSERT INTO order_items (order_id, wheel_config_id, item_name, item_detail, unit_price, quantity, line_total)
          VALUES ($1,$2,$3,$4,$5,$6,$7)`,
         [
-          orderId,
-          sc.configId,
-          sc.name,
-          sc.detail,
-          (sc.amountCents / 100).toFixed(2),
-          sc.quantity,
+          orderId, sc.configId, sc.name, sc.detail,
+          (sc.amountCents / 100).toFixed(2), sc.quantity,
           ((sc.amountCents * sc.quantity) / 100).toFixed(2),
         ]
       );
     }
 
-    // 5. Create Stripe PaymentIntent
     const paymentIntent = await stripe.paymentIntents.create({
       amount: totalCents,
       currency: 'usd',
@@ -147,14 +152,12 @@ router.post('/create-intent', async (req, res) => {
       automatic_payment_methods: { enabled: true },
     });
 
-    // 6. Save payment record
     await client.query(
       `INSERT INTO payments (order_id, stripe_payment_intent, amount, status)
        VALUES ($1,$2,$3,$4)`,
       [orderId, paymentIntent.id, totalDollars, paymentIntent.status]
     );
 
-    // 7. Log status history
     await client.query(
       `INSERT INTO order_status_history (order_id, to_status, note)
        VALUES ($1,'pending','Order created at checkout')`,
