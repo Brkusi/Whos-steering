@@ -30,7 +30,7 @@ export default function Home() {
 
         <div style={{ position: 'relative', zIndex: 2, textAlign: 'center', padding: '0 20px' }}>
           {/* Real logo image */}
-          <div className="fade-up" style={{ marginBottom: 24, animationDelay: '.2s' }}>
+          <div className="fade-up" style={{ marginBottom: 10, animationDelay: '.2s' }}>
             <img
               src="/ws-logo.png"
               alt="Who's Steering"
