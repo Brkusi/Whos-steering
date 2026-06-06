@@ -28,13 +28,13 @@ export default function Home() {
           <circle cx="150" cy="150" r="37" fill="none" stroke="#E8B800" strokeWidth="4" />
         </svg>
 
-        <div style={{ position: 'relative', zIndex: 2, textAlign: 'center', padding: '0 40px' }}>
+        <div style={{ position: 'relative', zIndex: 2, textAlign: 'center', padding: '0 20px' }}>
           {/* Real logo image */}
           <div className="fade-up" style={{ marginBottom: 24, animationDelay: '.2s' }}>
             <img
               src="/ws-logo.png"
               alt="Who's Steering"
-              style={{ height: 'clamp(60px, 12vw, 110px)', width: 'auto', objectFit: 'contain' }}
+              style={{ height: 'clamp(100px, 18vw, 180px)', width: 'auto', objectFit: 'contain' }}
             />
           </div>
           <div className="fade-up" style={{ fontFamily: 'Orbitron, monospace', fontSize: 10, letterSpacing: 6, color: 'var(--y)', textTransform: 'uppercase', marginBottom: 12, animationDelay: '.55s' }}>
