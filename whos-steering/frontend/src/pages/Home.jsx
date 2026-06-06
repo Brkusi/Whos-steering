@@ -28,7 +28,7 @@ export default function Home() {
           <circle cx="150" cy="150" r="37" fill="none" stroke="#E8B800" strokeWidth="4" />
         </svg>
 
-        <div style={{ position: 'relative', zIndex: 2, textAlign: 'center', padding: '0 20px' }}>
+        <div style={{ position: 'relative', zIndex: 2, textAlign: 'center', padding: '0 40px' }}>
           {/* Real logo image */}
           <div className="fade-up" style={{ marginBottom: 24, animationDelay: '.2s' }}>
             <img
