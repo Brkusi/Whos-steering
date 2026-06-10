@@ -37,12 +37,12 @@ export default function Nav() {
         </div>
 
         {/* Center — real logo image */}
-        <div style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)', cursor: 'pointer' }}
+        <div style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)', cursor: 'pointer', zIndex: 10 }}
           onClick={() => nav('/')}>
           <img
             src="/ws-logo.png"
             alt="Who's Steering"
-            style={{ height: 52, width: 'auto', objectFit: 'contain' }}
+            style={{ height: 78, width: 'auto', objectFit: 'contain', display: 'block' }}
           />
         </div>
 

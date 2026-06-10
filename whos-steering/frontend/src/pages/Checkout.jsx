@@ -6,7 +6,7 @@ import { useCart } from '../context';
 import { useAuth } from '../context';
 import { apiFetch } from '../lib/api';
 
-const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PK);
+const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY);
 
 // ── Payment form (lives inside <Elements>) ────────────────────────────────────
 function PaymentForm({ total, orderId, email }) {
@@ -247,7 +247,7 @@ export default function Checkout() {
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16 }}>
               <span style={{ fontSize: 12, color: 'var(--t)' }}>Shipping</span>
-              <span style={{ fontSize: 12, color: '#3DB85A', fontWeight: 700 }}>Confirmed after order</span>
+              <span style={{ fontSize: 12, color: '#3DB85A', fontWeight: 700 }}>FREE</span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
               <span style={{ fontFamily: 'Orbitron, monospace', fontSize: 10, letterSpacing: 2, color: 'var(--t)' }}>TOTAL</span>
