@@ -16,7 +16,7 @@ export default function Home() {
   return (
     <div>
       {/* ── Hero ── */}
-      <div id="hero" style={{ height: '100vh', position: 'relative', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', paddingBottom: 72 }}>
+      <div id="hero" style={{ height: '100vh', position: 'relative', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', }}>
         <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse at 20% 50%, rgba(232,184,0,.09) 0%, transparent 60%), #080808' }} />
         <div style={{ position: 'absolute', inset: 0, backgroundImage: 'linear-gradient(rgba(232,184,0,.03) 1px, transparent 1px), linear-gradient(90deg, rgba(232,184,0,.03) 1px, transparent 1px)', backgroundSize: '60px 60px', maskImage: 'radial-gradient(ellipse at center, black 30%, transparent 80%)' }} />
 
@@ -30,11 +30,11 @@ export default function Home() {
 
         <div style={{ position: 'relative', zIndex: 2, textAlign: 'center', padding: '0 20px' }}>
           {/* Real logo image */}
-          <div className="fade-up" style={{ marginBottom: 24, animationDelay: '.2s' }}>
+          <div className="fade-up" style={{ marginBottom: 8, animationDelay: '.2s' }}>
             <img
               src="/ws-logo.png"
               alt="Who's Steering"
-              style={{ height: 'clamp(250px, 30vw, 400px)', width: 'auto', objectFit: 'contain' }}
+              style={{ height: 'clamp(280px, 38vw, 480px)', width: 'auto', objectFit: 'contain', display: 'block' }}
             />
           </div>
           <div className="fade-up" style={{ fontFamily: 'Orbitron, monospace', fontSize: 10, letterSpacing: 6, color: 'var(--y)', textTransform: 'uppercase', marginBottom: 12, animationDelay: '.55s' }}>

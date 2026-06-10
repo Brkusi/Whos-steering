@@ -12,20 +12,24 @@ const STATUS_COLORS = {
 
 const ALL_STATUSES = ['pending','payment_processing','paid','in_build','quality_check','shipped','delivered','cancelled','refunded'];
 
-function ConfigDetail({ config }) {
-  if (!config) return <div style={{ color: 'var(--t)', fontSize: 12 }}>No config data</div>;
+function ConfigDetail({ config, itemName }) {
+  if (!config) return <div style={{ color: 'var(--t)', fontSize: 12, padding: '8px 0' }}>No configuration data saved.</div>;
 
-  // Preset build — show simplified spec
-  if (config.isPreset || config.preset_id || config.presetId) {
+  const colorName = (hex) => hex || '—';
+
+  // Detect preset: vehicle_year is empty or missing
+  const isPreset = !config.vehicle_year || config.vehicle_year === '';
+
+  if (isPreset) {
     const rows = [
-      ['Type',            'Preset Build'],
-      config.brand       ? ['Brand',       config.brand] : null,
-      config.audiBadge || config.audi_badge ? ['Badge', config.audiBadge || config.audi_badge] : null,
-      ['Airbag Cover',    config.airbagCompat !== false && config.airbag_compat !== false ? '✓ Yes' : '✗ No'],
-      ['Full Airbag Upgrade', (config.airbagUpgrade || config.airbag_upgrade) ? '✓ Yes' : '✗ No'],
-      ['Heated',          config.heated !== false ? '✓ Yes' : '✗ No'],
-      ['Lane Assist',     config.laneAssist !== false && config.lane_assist !== false ? '✓ Yes' : '✗ No'],
-      (config.customNotes || config.custom_notes) ? ['Notes', config.customNotes || config.custom_notes] : null,
+      ['Type',          'Preset Build'],
+      itemName         ? ['Preset Name',  itemName] : null,
+      config.brand     ? ['Brand',        config.brand] : null,
+      config.audi_badge ? ['Badge',       config.audi_badge] : null,
+      ['Airbag Cover',   config.airbag_compat  ? '✓ Yes' : '✗ No'],
+      ['Heated Steering', config.heated        ? '✓ Yes' : '✗ No'],
+      ['Lane Assist',    config.lane_assist    ? '✓ Yes' : '✗ No'],
+      config.custom_notes ? ['Notes',     config.custom_notes] : null,
     ].filter(Boolean);
     return (
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2px 24px' }}>
@@ -49,10 +53,9 @@ function ConfigDetail({ config }) {
     ['Side Material',    config.side_mat],
     ['Side Color',       colorName(config.side_col)],
     ['Stripe',           config.stripe_mode === 'none' ? 'None' : config.stripe_mode === 'tri' ? `Tri-Color (${config.tri_key})` : colorName(config.stripe_color)],
-    ['Airbag Cover',     config.airbag_compat ? '✓ Yes' : '✗ No'],
-    ['Full Airbag Upgrade', config.airbag_upgrade ? '✓ Yes' : '✗ No'],
-    ['Heated',           config.heated ? '✓ Yes' : '✗ No'],
-    ['Lane Assist',      config.lane_assist ? '✓ Yes' : '✗ No'],
+    ['Airbag Cover',     config.airbag_compat   ? '✓ Yes' : '✗ No'],
+    ['Heated',           config.heated          ? '✓ Yes' : '✗ No'],
+    ['Lane Assist',      config.lane_assist     ? '✓ Yes' : '✗ No'],
     config.audi_badge    ? ['Audi Badge',   config.audi_badge] : null,
     config.outer_trim_col ? ['Outer Trim',  colorName(config.outer_trim_col)] : null,
     config.inner_trim_col ? ['Inner Trim',  colorName(config.inner_trim_col)] : null,
@@ -163,7 +166,7 @@ function OrderModal({ order, onClose, onSave }) {
                     ${parseFloat(item.unit_price).toFixed(2)}
                   </div>
                 </div>
-                {item.config && <ConfigDetail config={item.config} />}
+                {item.config && <ConfigDetail config={item.config} itemName={item.item_name} />}
               </div>
             ))}
           </div>
@@ -325,7 +328,7 @@ export default function AdminDashboard() {
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
             <thead>
               <tr style={{ borderBottom: '1px solid var(--b)' }}>
-                {['Order ID', 'Customer', 'Date', 'Items', 'Total', 'Status', 'Photo', 'Actions'].map(h => (
+                {['Order ID', 'Customer', 'Date', 'Items', 'Total', 'Status', 'Actions'].map(h => (
                   <th key={h} style={{ padding: '10px 12px', textAlign: 'left', fontFamily: 'Orbitron, monospace', fontSize: 9, letterSpacing: 2, color: 'var(--t)', textTransform: 'uppercase' }}>{h}</th>
                 ))}
               </tr>
@@ -347,10 +350,7 @@ export default function AdminDashboard() {
                       {o.status?.replace(/_/g, ' ')}
                     </span>
                   </td>
-                  {/* Photo thumbnail in table */}
-                  <td style={{ padding: '8px 12px' }}>
-                    <PhotoThumb orderId={o.id} />
-                  </td>
+
                   <td style={{ padding: '12px' }}>
                     <button className="btn-outline sm" onClick={() => openOrder(o)}>VIEW & UPDATE</button>
                   </td>
@@ -370,28 +370,5 @@ export default function AdminDashboard() {
         <OrderModal order={selected} onClose={() => setSelected(null)} onSave={updateStatus} />
       )}
     </div>
-  );
-}
-
-// Small photo thumbnail that fetches the first photo for an order
-function PhotoThumb({ orderId }) {
-  const [url, setUrl] = useState(null);
-
-  useEffect(() => {
-    apiFetch(`/api/orders/${orderId}`)
-      .then(order => {
-        const items = (order.items || []).filter(Boolean);
-        const photo = items.map(i => i.config?.photo_url).find(Boolean);
-        if (photo) setUrl(photo);
-      })
-      .catch(() => {});
-  }, [orderId]);
-
-  if (!url) return <span style={{ color: 'var(--t)', fontSize: 10 }}>—</span>;
-
-  return (
-    <img src={url} alt="wheel"
-      style={{ width: 44, height: 44, objectFit: 'cover', border: '1px solid var(--b)', cursor: 'pointer' }}
-      onError={e => e.target.style.display = 'none'} />
   );
 }
