@@ -1,11 +1,14 @@
 import { useEffect, useState } from 'react';
-import { useSearchParams, Link } from 'react-router-dom';
+import { useSearchParams, Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../context';
+import { useAuth } from '../context';
 import { apiFetch } from '../lib/api';
 
 export default function OrderConfirmation() {
   const [params] = useSearchParams();
   const { clearCart } = useCart();
+  const { user } = useAuth();
+  const nav = useNavigate();
   const orderId = params.get('orderId');
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -60,10 +63,17 @@ export default function OrderConfirmation() {
           </div>
         )}
 
-        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-          <Link to="/catalog"><button className="btn" style={{ clipPath: 'none' }}>KEEP SHOPPING</button></Link>
-          {order && <Link to="/account"><button className="btn-outline sm">VIEW MY ORDERS</button></Link>}
-        </div>
+        {/* Buttons — centered when only one, side by side when two */}
+        {user ? (
+          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+            <button className="btn-outline sm" style={{ clipPath: 'none', flex: 1 }} onClick={() => nav('/catalog')}>KEEP SHOPPING</button>
+            <button className="btn" style={{ clipPath: 'none', flex: 1 }} onClick={() => nav(orderId ? `/account` : '/account')}>VIEW MY ORDER</button>
+          </div>
+        ) : (
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <button className="btn" style={{ clipPath: 'none', minWidth: 200 }} onClick={() => nav('/catalog')}>KEEP SHOPPING</button>
+          </div>
+        )}
       </div>
     </div>
   );

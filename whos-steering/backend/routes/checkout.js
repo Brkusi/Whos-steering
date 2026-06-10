@@ -2,7 +2,7 @@ const router = require('express').Router();
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const pool = require('../db/pool');
 
-// ── Server-side price calculation — mirrors frontend calcPrice ────────────────
+// ── Server-side price calculation for CUSTOM builds only ─────────────────────
 async function calcServerPrice(config) {
   const { rows } = await pool.query(
     'SELECT rule_key, amount FROM pricing_rules WHERE is_active = TRUE'
@@ -14,13 +14,9 @@ async function calcServerPrice(config) {
     ? (rules.base_audi || 750)
     : (rules.base_bmw || 849.99);
 
-  // Airbag cover (+$50)
   if (config.airbagCompat !== false) price += (rules.airbag_compat || 50);
-  // Full airbag upgrade (+$25)
   if (config.airbagUpgrade === true) price += (rules.airbag_upgrade || 25);
-  // Heated steering Audi (+$25)
   if (config.brand === 'AUDI' && config.heated !== false) price += (rules.heated_audi || 25);
-  // Magnetic paddles
   if (config.paddleShifters === 'Magnetic' || config.paddle_shifters === 'Magnetic') price += (rules.paddle_magnetic || 0);
 
   return Math.round(price * 100); // cents
@@ -56,13 +52,15 @@ router.post('/create-intent', async (req, res) => {
     for (const item of cartItems) {
       const cfg = item.config || config || {};
 
-      // Use server-side calculated price if config has brand info,
-      // otherwise fall back to the price the frontend sent
       let amountCents;
-      if (cfg.brand) {
+
+      // PRESET items: trust the price the frontend calculated
+      // CUSTOM builds: recalculate server-side for security
+      if (cfg.isPreset) {
+        amountCents = Math.round((item.price || 0) * 100);
+      } else if (cfg.brand) {
         amountCents = await calcServerPrice(cfg);
       } else {
-        // Preset items — use the price from the cart item directly
         amountCents = Math.round((item.price || 0) * 100);
       }
 
@@ -78,10 +76,10 @@ router.post('/create-intent', async (req, res) => {
          VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20)
          RETURNING id`,
         [
-          cfg.brand || 'BMW',
-          cfg.vehicleYear || '',
-          cfg.vehicleModel || '',
-          cfg.wheelStyle || 'Standard',
+          cfg.brand || 'AUDI',
+          cfg.vehicleYear || cfg.vehicle_year || '',
+          cfg.vehicleModel || cfg.vehicle_model || '',
+          cfg.wheelStyle || cfg.wheel_style || 'Standard',
           cfg.paddleShifters || cfg.paddle_shifters || 'Standard',
           cfg.topBottomMat || cfg.top_bottom_mat || 'Alcantara',
           cfg.topBottomCol || cfg.top_bottom_col || null,
@@ -105,7 +103,8 @@ router.post('/create-intent', async (req, res) => {
         configId: cfgRows[0].id,
         amountCents,
         quantity: item.quantity || 1,
-        name: item.name,
+        // Use the preset name from config if available, otherwise item name
+        name: cfg.presetName || item.name,
         detail: item.detail,
       });
     }

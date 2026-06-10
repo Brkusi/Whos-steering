@@ -1,36 +1,24 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useCart } from '../context';
-
-const AUDI_PRESETS = [
-  {
-    id: 'rs-sig-carbon',
-    brand: 'AUDI',
-    name: 'RS SIGNATURE CARBON',
-    price: 789.99,
-    compat: 'Fits 2011+ AUDI All Models',
-    features: ['Magnetic Paddle Shifters','Classic Carbon Top & Bottom','Perforated Leather Sides','S or RS Badging Option','Airbag Cover Compatible','Heated Steering'],
-    images: ['/PRESET_1.png', '/PRESET_1_2.png'],
-    desc: 'A bold carbon-forward build with perforated leather sides and magnetic paddle shifters. Available with S or RS badging.',
-  },
-  {
-    id: 'rs-stealth',
-    brand: 'AUDI',
-    name: 'RS STEALTH',
-    price: 779.99,
-    compat: 'Fits 2011+ AUDI All Models',
-    features: ['Magnetic Paddle Shifters','Full Alcantara Grip','Carbon Fiber Accents','RS Badging','Airbag Cover Compatible','Heated Steering'],
-    images: ['/PRESET_2.png', '/PRESET_2_2.png'],
-    desc: 'Blacked-out Alcantara all around with carbon fibre accents. Understated, aggressive, and purpose-built.',
-  },
-];
+import { AUDI_PRESETS_FULL as AUDI_PRESETS } from '../lib/data';
 
 function ArrowBtn({ dir, onClick }) {
   return (
-    <button onClick={e => { e.stopPropagation(); onClick(); }}
-      style={{ position: 'absolute', top: '50%', [dir === 'left' ? 'left' : 'right']: 10, transform: 'translateY(-50%)', background: 'rgba(0,0,0,.6)', border: '1px solid rgba(255,255,255,.15)', color: '#fff', width: 32, height: 32, borderRadius: '50%', cursor: 'pointer', fontSize: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2, transition: 'background .2s' }}
-      onMouseEnter={e => e.currentTarget.style.background = 'rgba(232,184,0,.7)'}
-      onMouseLeave={e => e.currentTarget.style.background = 'rgba(0,0,0,.6)'}>
+    <button
+      onClick={e => { e.stopPropagation(); e.preventDefault(); onClick(); }}
+      style={{
+        position: 'absolute', top: '50%',
+        [dir === 'left' ? 'left' : 'right']: 10,
+        transform: 'translateY(-50%)',
+        background: 'rgba(0,0,0,.75)', border: '1px solid rgba(255,255,255,.2)',
+        color: '#fff', width: 34, height: 34, borderRadius: '50%',
+        cursor: 'pointer', fontSize: 16,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        zIndex: 10, transition: 'background .2s',
+      }}
+      onMouseEnter={e => e.currentTarget.style.background = 'rgba(232,184,0,.8)'}
+      onMouseLeave={e => e.currentTarget.style.background = 'rgba(0,0,0,.75)'}>
       {dir === 'left' ? '‹' : '›'}
     </button>
   );
@@ -67,41 +55,36 @@ function PresetCard({ preset, onOpen }) {
   const [imgIdx, setImgIdx] = useState(0);
   const total = preset.images.length;
 
-  const prev = e => { e.stopPropagation(); setImgIdx(i => (i - 1 + total) % total); };
-  const next = e => { e.stopPropagation(); setImgIdx(i => (i + 1) % total); };
-
   return (
     <div style={{ background: 'var(--p)', display: 'flex', flexDirection: 'column', overflow: 'hidden', transition: 'background .2s', minHeight: 480 }}
       onMouseEnter={e => e.currentTarget.style.background = '#242424'}
       onMouseLeave={e => e.currentTarget.style.background = 'var(--p)'}>
 
-      {/* Image — clickable to open */}
-      <div style={{ width: '100%', aspectRatio: 1, background: '#0A0A0A', position: 'relative', overflow: 'hidden', cursor: 'pointer', flexShrink: 0 }}
-        onClick={() => onOpen(preset)}>
+      {/* Image with working arrows — no onClick on container so arrows work independently */}
+      <div style={{ width: '100%', aspectRatio: 1, background: '#0A0A0A', position: 'relative', overflow: 'hidden', flexShrink: 0 }}>
+        {/* Clickable overlay for opening details — sits behind arrows */}
+        <div onClick={() => onOpen(preset)} style={{ position: 'absolute', inset: 0, cursor: 'pointer', zIndex: 1 }} />
         <img src={preset.images[imgIdx]} alt={preset.name}
-          style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform .4s' }}
-          onMouseEnter={e => e.target.style.transform = 'scale(1.04)'}
-          onMouseLeave={e => e.target.style.transform = 'scale(1)'}
+          style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform .4s', pointerEvents: 'none' }}
           onError={e => e.target.style.display = 'none'} />
-        {/* Arrows */}
-        {total > 1 && <ArrowBtn dir="left" onClick={prev} />}
-        {total > 1 && <ArrowBtn dir="right" onClick={next} />}
-        <div style={{ position: 'absolute', top: 12, left: 12, background: 'var(--y)', color: '#000', fontFamily: 'Orbitron, monospace', fontSize: 9, fontWeight: 700, padding: '3px 8px', letterSpacing: 1 }}>AUDI</div>
-        <div style={{ position: 'absolute', top: 12, right: 12, background: '#1A3A1A', color: '#3DB85A', fontFamily: 'Orbitron, monospace', fontSize: 8, fontWeight: 700, padding: '3px 8px', letterSpacing: 1, border: '1px solid #3DB85A' }}>PRESET</div>
+        {/* Arrows — zIndex above the overlay */}
+        {total > 1 && <div style={{ zIndex: 20, position: 'absolute', top: 0, left: 0, bottom: 0, display: 'flex', alignItems: 'center', paddingLeft: 0 }}><ArrowBtn dir="left" onClick={() => setImgIdx(i => (i - 1 + total) % total)} /></div>}
+        {total > 1 && <div style={{ zIndex: 20, position: 'absolute', top: 0, right: 0, bottom: 0, display: 'flex', alignItems: 'center', paddingRight: 0 }}><ArrowBtn dir="right" onClick={() => setImgIdx(i => (i + 1) % total)} /></div>}
+        <div style={{ position: 'absolute', top: 12, left: 12, background: 'var(--y)', color: '#000', fontFamily: 'Orbitron, monospace', fontSize: 9, fontWeight: 700, padding: '3px 8px', letterSpacing: 1, zIndex: 5 }}>AUDI</div>
+        <div style={{ position: 'absolute', top: 12, right: 12, background: '#1A3A1A', color: '#3DB85A', fontFamily: 'Orbitron, monospace', fontSize: 8, fontWeight: 700, padding: '3px 8px', letterSpacing: 1, border: '1px solid #3DB85A', zIndex: 5 }}>PRESET</div>
         {total > 1 && (
-          <div style={{ position: 'absolute', bottom: 10, left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: 5 }}>
+          <div style={{ position: 'absolute', bottom: 10, left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: 5, zIndex: 5 }}>
             {preset.images.map((_, i) => (
               <div key={i} onClick={e => { e.stopPropagation(); setImgIdx(i); }}
-                style={{ width: 6, height: 6, borderRadius: '50%', background: i === imgIdx ? 'var(--y)' : 'rgba(255,255,255,.3)', cursor: 'pointer' }} />
+                style={{ width: 6, height: 6, borderRadius: '50%', background: i === imgIdx ? 'var(--y)' : 'rgba(255,255,255,.3)', cursor: 'pointer', zIndex: 15 }} />
             ))}
           </div>
         )}
-        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 60, background: 'linear-gradient(transparent, rgba(0,0,0,.7))' }} />
+        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 60, background: 'linear-gradient(transparent, rgba(0,0,0,.7))', zIndex: 2 }} />
       </div>
 
       {/* Body */}
       <div style={{ padding: '18px 20px 0', flex: 1, display: 'flex', flexDirection: 'column' }}>
-        {/* Clickable name */}
         <div onClick={() => onOpen(preset)} style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 24, marginBottom: 4, cursor: 'pointer', transition: 'color .2s' }}
           onMouseEnter={e => e.target.style.color = 'var(--y)'}
           onMouseLeave={e => e.target.style.color = 'inherit'}>
@@ -114,11 +97,10 @@ function PresetCard({ preset, onOpen }) {
             <span key={f} style={{ fontSize: 9, padding: '2px 7px', background: 'rgba(232,184,0,.08)', border: '1px solid rgba(232,184,0,.2)', color: 'var(--y)', letterSpacing: 1 }}>{f}</span>
           ))}
         </div>
-        <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontSize: 28, color: 'var(--y)', marginBottom: 2 }}>${preset.price.toFixed(2)}</div>
+        <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontSize: 28, color: 'var(--y)', marginBottom: 2 }}>${preset.base_price.toFixed(2)}</div>
         <div style={{ fontSize: 10, color: 'var(--t)', marginBottom: 14 }}>Starting price · Options available</div>
       </div>
 
-      {/* Button pinned to bottom */}
       <div style={{ padding: '0 20px 24px' }}>
         <button className="btn" style={{ clipPath: 'none', width: '100%' }} onClick={() => onOpen(preset)}>
           VIEW DETAILS
@@ -142,7 +124,12 @@ function PresetPage({ preset, onClose }) {
   const [added, setAdded] = useState(false);
   const total = preset.images.length;
 
-  const totalPrice = preset.price + (airbagCover ? 50 : 0) + (airbagUpgrade ? 25 : 0) + (heated ? 25 : 0);
+  // Correct pricing: base + add-ons (no double-counting)
+  const totalPrice =
+    preset.base_price +
+    (airbagCover   ? 50 : 0) +
+    (airbagUpgrade ? 25 : 0) +
+    (heated        ? 25 : 0);
 
   function YesNo({ label, sub, value, onChange }) {
     return (
@@ -167,7 +154,19 @@ function PresetPage({ preset, onClose }) {
     name: preset.name,
     detail: `${preset.brand} · ${badge} Badge · ${preset.features.slice(0, 2).join(' · ')}`,
     price: totalPrice,
-    config: { brand: preset.brand, presetId: preset.id, audiBadge: badge, airbagCompat: airbagCover, airbagUpgrade, heated, laneAssist, customNotes: notes },
+    config: {
+      brand: preset.brand,
+      presetId: preset.id,
+      presetName: preset.name,
+      audiBadge: badge,
+      airbagCompat: airbagCover,
+      airbagUpgrade,
+      heated,
+      laneAssist,
+      customNotes: notes,
+      // Mark as preset so backend uses cart price not recalculation
+      isPreset: true,
+    },
   });
 
   const handleAdd = () => {
@@ -184,7 +183,6 @@ function PresetPage({ preset, onClose }) {
 
   return (
     <div style={{ position: 'fixed', inset: 0, background: 'var(--d)', zIndex: 500, overflowY: 'auto', paddingTop: 88 }}>
-      {/* Back button sits below the real Nav */}
       <div style={{ padding: '12px 24px', borderBottom: '1px solid var(--b)', display: 'flex', alignItems: 'center', gap: 16 }}>
         <button onClick={onClose}
           style={{ background: 'none', border: '1px solid var(--b)', color: 'var(--t)', cursor: 'pointer', padding: '8px 16px', fontFamily: 'Orbitron, monospace', fontSize: 9, letterSpacing: 2, transition: 'color .2s' }}
@@ -199,14 +197,12 @@ function PresetPage({ preset, onClose }) {
 
         {/* Left — images */}
         <div>
-          {/* Main image with arrows */}
           <div style={{ background: '#0A0A0A', position: 'relative', overflow: 'hidden', aspectRatio: 1 }}>
             <img src={preset.images[imgIdx]} alt={preset.name}
               style={{ width: '100%', height: '100%', objectFit: 'cover' }}
               onError={e => e.target.style.display = 'none'} />
             {total > 1 && <ArrowBtn dir="left" onClick={() => setImgIdx(i => (i - 1 + total) % total)} />}
             {total > 1 && <ArrowBtn dir="right" onClick={() => setImgIdx(i => (i + 1) % total)} />}
-            {/* Dot indicators */}
             {total > 1 && (
               <div style={{ position: 'absolute', bottom: 12, left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: 6 }}>
                 {preset.images.map((_, i) => (
@@ -216,8 +212,6 @@ function PresetPage({ preset, onClose }) {
               </div>
             )}
           </div>
-
-          {/* Thumbnail strip */}
           {total > 1 && (
             <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
               {preset.images.map((src, i) => (
@@ -228,8 +222,6 @@ function PresetPage({ preset, onClose }) {
               ))}
             </div>
           )}
-
-          {/* Features */}
           <div style={{ marginTop: 24 }}>
             <div style={{ fontFamily: 'Orbitron, monospace', fontSize: 9, letterSpacing: 3, color: 'var(--y)', textTransform: 'uppercase', marginBottom: 12 }}>What's Included</div>
             {preset.features.map(f => (
@@ -261,6 +253,16 @@ function PresetPage({ preset, onClose }) {
                 </button>
               ))}
             </div>
+          </div>
+
+          {/* Price breakdown */}
+          <div style={{ marginBottom: 16, padding: '12px 16px', background: 'rgba(232,184,0,.04)', border: '1px solid rgba(232,184,0,.15)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: 'var(--t)', marginBottom: 6 }}>
+              <span>Base Price</span><span style={{ color: 'var(--w)' }}>${preset.base_price.toFixed(2)}</span>
+            </div>
+            {airbagCover   && <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: 'var(--t)', marginBottom: 6 }}><span>Airbag Cover</span><span style={{ color: 'var(--y)' }}>+$50.00</span></div>}
+            {airbagUpgrade && <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: 'var(--t)', marginBottom: 6 }}><span>Full Airbag Upgrade</span><span style={{ color: 'var(--y)' }}>+$25.00</span></div>}
+            {heated        && <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: 'var(--t)', marginBottom: 6 }}><span>Heated Steering</span><span style={{ color: 'var(--y)' }}>+$25.00</span></div>}
           </div>
 
           {/* Options */}

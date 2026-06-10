@@ -14,9 +14,34 @@ const ALL_STATUSES = ['pending','payment_processing','paid','in_build','quality_
 
 function ConfigDetail({ config }) {
   if (!config) return <div style={{ color: 'var(--t)', fontSize: 12 }}>No config data</div>;
+
+  // Preset build — show simplified spec
+  if (config.isPreset || config.preset_id || config.presetId) {
+    const rows = [
+      ['Type',            'Preset Build'],
+      config.brand       ? ['Brand',       config.brand] : null,
+      config.audiBadge || config.audi_badge ? ['Badge', config.audiBadge || config.audi_badge] : null,
+      ['Airbag Cover',    config.airbagCompat !== false && config.airbag_compat !== false ? '✓ Yes' : '✗ No'],
+      ['Full Airbag Upgrade', (config.airbagUpgrade || config.airbag_upgrade) ? '✓ Yes' : '✗ No'],
+      ['Heated',          config.heated !== false ? '✓ Yes' : '✗ No'],
+      ['Lane Assist',     config.laneAssist !== false && config.lane_assist !== false ? '✓ Yes' : '✗ No'],
+      (config.customNotes || config.custom_notes) ? ['Notes', config.customNotes || config.custom_notes] : null,
+    ].filter(Boolean);
+    return (
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2px 24px' }}>
+        {rows.map(([label, value]) => (
+          <div key={label} style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: '1px solid #1A1A1A', gap: 8 }}>
+            <span style={{ fontSize: 11, color: 'var(--t)', letterSpacing: 1, textTransform: 'uppercase', flexShrink: 0 }}>{label}</span>
+            <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--w)', textAlign: 'right' }}>{value || '—'}</span>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
   const rows = [
     ['Brand',            config.brand],
-    ['Vehicle',          [config.vehicle_year, config.brand, config.vehicle_model].filter(Boolean).join(' ')],
+    ['Vehicle',          [config.vehicle_year, config.brand, config.vehicle_model].filter(Boolean).join(' ') || '—'],
     ['Wheel Style',      config.wheel_style],
     ['Paddle Shifters',  config.paddle_shifters],
     ['Top/Bottom Mat',   config.top_bottom_mat],

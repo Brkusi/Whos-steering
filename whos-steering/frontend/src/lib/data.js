@@ -153,3 +153,30 @@ export const AUDI_PRESETS = [
     isPreset: true,
   },
 ];
+
+// ── Augmented AUDI_PRESETS with images/compat/desc for Catalog ────────────────
+// Overwrite the export with full data
+export const AUDI_PRESETS_FULL = [
+  {
+    id: 'rs-sig-carbon',
+    brand: 'AUDI',
+    name: 'RS SIGNATURE CARBON',
+    base_price: 789.99,
+    compat: 'Fits 2011+ AUDI All Models',
+    features: ['Magnetic Paddle Shifters','Classic Carbon Top & Bottom','Perforated Leather Sides','S or RS Badging Option','Airbag Cover Compatible','Heated Steering'],
+    images: ['/PRESET_1.png', '/PRESET_1_2.png'],
+    desc: 'A bold carbon-forward build with perforated leather sides and magnetic paddle shifters. Available with S or RS badging.',
+    isPreset: true,
+  },
+  {
+    id: 'rs-stealth',
+    brand: 'AUDI',
+    name: 'RS STEALTH',
+    base_price: 779.99,
+    compat: 'Fits 2011+ AUDI All Models',
+    features: ['Magnetic Paddle Shifters','Full Alcantara Grip','Carbon Fiber Accents','RS Badging','Airbag Cover Compatible','Heated Steering'],
+    images: ['/PRESET_2.png', '/PRESET_2_2.png'],
+    desc: 'Blacked-out Alcantara all around with carbon fibre accents. Understated, aggressive, and purpose-built.',
+    isPreset: true,
+  },
+];

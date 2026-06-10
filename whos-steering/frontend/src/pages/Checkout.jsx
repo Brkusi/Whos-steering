@@ -1,347 +1,266 @@
-import { useState, useEffect } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context';
+import { useAuth } from '../context';
+import { apiFetch } from '../lib/api';
 
-const AUDI_PRESETS = [
-  {
-    id: 'rs-sig-carbon',
-    brand: 'AUDI',
-    name: 'RS SIGNATURE CARBON',
-    price: 789.99,
-    compat: 'Fits 2011+ AUDI All Models',
-    features: ['Magnetic Paddle Shifters','Classic Carbon Top & Bottom','Perforated Leather Sides','S or RS Badging Option','Airbag Cover Compatible','Heated Steering'],
-    images: ['/PRESET_1.png', '/PRESET_1_2.png'],
-    desc: 'A bold carbon-forward build with perforated leather sides and magnetic paddle shifters. Available with S or RS badging.',
-  },
-  {
-    id: 'rs-stealth',
-    brand: 'AUDI',
-    name: 'RS STEALTH',
-    price: 779.99,
-    compat: 'Fits 2011+ AUDI All Models',
-    features: ['Magnetic Paddle Shifters','Full Alcantara Grip','Carbon Fiber Accents','RS Badging','Airbag Cover Compatible','Heated Steering'],
-    images: ['/PRESET_2.png', '/PRESET_2_2.png'],
-    desc: 'Blacked-out Alcantara all around with carbon fibre accents. Understated, aggressive, and purpose-built.',
-  },
-];
-
-function ArrowBtn({ dir, onClick }) {
-  return (
-    <button onClick={e => { e.stopPropagation(); onClick(); }}
-      style={{ position: 'absolute', top: '50%', [dir === 'left' ? 'left' : 'right']: 10, transform: 'translateY(-50%)', background: 'rgba(0,0,0,.6)', border: '1px solid rgba(255,255,255,.15)', color: '#fff', width: 32, height: 32, borderRadius: '50%', cursor: 'pointer', fontSize: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2, transition: 'background .2s' }}
-      onMouseEnter={e => e.currentTarget.style.background = 'rgba(232,184,0,.7)'}
-      onMouseLeave={e => e.currentTarget.style.background = 'rgba(0,0,0,.6)'}>
-      {dir === 'left' ? '‹' : '›'}
-    </button>
-  );
+// Stripe loaded via CDN in index.html — we access window.Stripe
+let stripePromise = null;
+function getStripe() {
+  if (!stripePromise && window.Stripe) {
+    stripePromise = window.Stripe(process.env.REACT_APP_STRIPE_PK);
+  }
+  return stripePromise;
 }
 
-function ConfigureCard({ brand, nav }) {
-  return (
-    <div style={{ background: 'linear-gradient(135deg, rgba(232,184,0,.08) 0%, var(--p) 100%)', display: 'flex', flexDirection: 'column', border: '1px dashed rgba(232,184,0,.3)', transition: 'all .2s', minHeight: 480 }}
-      onMouseEnter={e => { e.currentTarget.style.background = 'linear-gradient(135deg,rgba(232,184,0,.14) 0%,#242424 100%)'; e.currentTarget.style.borderColor = 'rgba(232,184,0,.6)'; }}
-      onMouseLeave={e => { e.currentTarget.style.background = 'linear-gradient(135deg,rgba(232,184,0,.08) 0%,var(--p) 100%)'; e.currentTarget.style.borderColor = 'rgba(232,184,0,.3)'; }}>
-      <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: 14, padding: 32 }}>
-        <svg viewBox="0 0 300 300" style={{ width: '55%', opacity: .25 }}>
-          <circle cx="150" cy="150" r="143" fill="none" stroke="#E8B800" strokeWidth="6" />
-          <line x1="150" y1="10" x2="150" y2="88" stroke="#E8B800" strokeWidth="6" strokeLinecap="round" />
-          <line x1="150" y1="212" x2="150" y2="290" stroke="#E8B800" strokeWidth="6" strokeLinecap="round" />
-          <line x1="10" y1="150" x2="88" y2="150" stroke="#E8B800" strokeWidth="6" strokeLinecap="round" />
-          <line x1="212" y1="150" x2="290" y2="150" stroke="#E8B800" strokeWidth="6" strokeLinecap="round" />
-          <circle cx="150" cy="150" r="37" fill="none" stroke="#E8B800" strokeWidth="6" />
-        </svg>
-        <div style={{ fontFamily: 'Orbitron, monospace', fontSize: 10, letterSpacing: 3, color: 'var(--y)', textAlign: 'center' }}>BUILD YOUR OWN {brand}</div>
-        <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 26, color: 'var(--y)', textAlign: 'center' }}>{brand} CUSTOM BUILD</div>
-        <div style={{ fontSize: 12, color: 'var(--t)', lineHeight: 1.6, textAlign: 'center', maxWidth: 240 }}>Choose every material, color, stripe and stitch. Fully tailored to your exact specification.</div>
-      </div>
-      <div style={{ padding: '0 20px 24px' }}>
-        <button className="btn" style={{ clipPath: 'none', width: '100%' }} onClick={() => nav(`/configure?brand=${brand}`)}>
-          START CONFIGURING →
-        </button>
-      </div>
-    </div>
-  );
-}
-
-function PresetCard({ preset, onOpen }) {
-  const [imgIdx, setImgIdx] = useState(0);
-  const total = preset.images.length;
-
-  const prev = e => { e.stopPropagation(); setImgIdx(i => (i - 1 + total) % total); };
-  const next = e => { e.stopPropagation(); setImgIdx(i => (i + 1) % total); };
-
-  return (
-    <div style={{ background: 'var(--p)', display: 'flex', flexDirection: 'column', overflow: 'hidden', transition: 'background .2s', minHeight: 480 }}
-      onMouseEnter={e => e.currentTarget.style.background = '#242424'}
-      onMouseLeave={e => e.currentTarget.style.background = 'var(--p)'}>
-
-      {/* Image — clickable to open */}
-      <div style={{ width: '100%', aspectRatio: 1, background: '#0A0A0A', position: 'relative', overflow: 'hidden', cursor: 'pointer', flexShrink: 0 }}
-        onClick={() => onOpen(preset)}>
-        <img src={preset.images[imgIdx]} alt={preset.name}
-          style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform .4s' }}
-          onMouseEnter={e => e.target.style.transform = 'scale(1.04)'}
-          onMouseLeave={e => e.target.style.transform = 'scale(1)'}
-          onError={e => e.target.style.display = 'none'} />
-        {/* Arrows */}
-        {total > 1 && <ArrowBtn dir="left" onClick={prev} />}
-        {total > 1 && <ArrowBtn dir="right" onClick={next} />}
-        <div style={{ position: 'absolute', top: 12, left: 12, background: 'var(--y)', color: '#000', fontFamily: 'Orbitron, monospace', fontSize: 9, fontWeight: 700, padding: '3px 8px', letterSpacing: 1 }}>AUDI</div>
-        <div style={{ position: 'absolute', top: 12, right: 12, background: '#1A3A1A', color: '#3DB85A', fontFamily: 'Orbitron, monospace', fontSize: 8, fontWeight: 700, padding: '3px 8px', letterSpacing: 1, border: '1px solid #3DB85A' }}>PRESET</div>
-        {total > 1 && (
-          <div style={{ position: 'absolute', bottom: 10, left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: 5 }}>
-            {preset.images.map((_, i) => (
-              <div key={i} onClick={e => { e.stopPropagation(); setImgIdx(i); }}
-                style={{ width: 6, height: 6, borderRadius: '50%', background: i === imgIdx ? 'var(--y)' : 'rgba(255,255,255,.3)', cursor: 'pointer' }} />
-            ))}
-          </div>
-        )}
-        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 60, background: 'linear-gradient(transparent, rgba(0,0,0,.7))' }} />
-      </div>
-
-      {/* Body */}
-      <div style={{ padding: '18px 20px 0', flex: 1, display: 'flex', flexDirection: 'column' }}>
-        {/* Clickable name */}
-        <div onClick={() => onOpen(preset)} style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 24, marginBottom: 4, cursor: 'pointer', transition: 'color .2s' }}
-          onMouseEnter={e => e.target.style.color = 'var(--y)'}
-          onMouseLeave={e => e.target.style.color = 'inherit'}>
-          {preset.name}
-        </div>
-        <div style={{ fontSize: 11, color: 'rgba(232,184,0,.7)', letterSpacing: 1, marginBottom: 8 }}>✓ {preset.compat}</div>
-        <div style={{ fontSize: 12, color: 'var(--t)', lineHeight: 1.5, marginBottom: 12, flex: 1 }}>{preset.desc}</div>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, marginBottom: 14 }}>
-          {preset.features.slice(0, 4).map(f => (
-            <span key={f} style={{ fontSize: 9, padding: '2px 7px', background: 'rgba(232,184,0,.08)', border: '1px solid rgba(232,184,0,.2)', color: 'var(--y)', letterSpacing: 1 }}>{f}</span>
-          ))}
-        </div>
-        <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontSize: 28, color: 'var(--y)', marginBottom: 2 }}>${preset.price.toFixed(2)}</div>
-        <div style={{ fontSize: 10, color: 'var(--t)', marginBottom: 14 }}>Starting price · Options available</div>
-      </div>
-
-      {/* Button pinned to bottom */}
-      <div style={{ padding: '0 20px 24px' }}>
-        <button className="btn" style={{ clipPath: 'none', width: '100%' }} onClick={() => onOpen(preset)}>
-          VIEW DETAILS
-        </button>
-        <div style={{ fontSize: 10, color: 'var(--t)', paddingTop: 10, marginTop: 4, borderTop: '1px solid var(--b)', textAlign: 'center' }}>🛡 6 Month Warranty · ⏱ 3–5 Week Build</div>
-      </div>
-    </div>
-  );
-}
-
-function PresetPage({ preset, onClose }) {
-  const { addItem } = useCart();
+export default function Checkout() {
+  const { items, total, clearCart } = useCart();
+  const { user } = useAuth();
   const nav = useNavigate();
-  const [imgIdx, setImgIdx] = useState(0);
-  const [badge, setBadge] = useState('RS');
-  const [airbagCover, setAirbagCover] = useState(true);
-  const [airbagUpgrade, setAirbagUpgrade] = useState(false);
-  const [heated, setHeated] = useState(true);
-  const [laneAssist, setLaneAssist] = useState(true);
-  const [notes, setNotes] = useState('');
-  const [added, setAdded] = useState(false);
-  const total = preset.images.length;
 
-  const totalPrice = preset.price + (airbagCover ? 50 : 0) + (airbagUpgrade ? 25 : 0) + (heated ? 25 : 0);
+  const [step, setStep] = useState(1); // 1=info, 2=payment
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [clientSecret, setClientSecret] = useState('');
+  const [orderId, setOrderId] = useState('');
 
-  function YesNo({ label, sub, value, onChange }) {
+  const [info, setInfo] = useState({
+    email: user?.email || '',
+    name: '',
+    address1: '',
+    address2: '',
+    city: '',
+    state: '',
+    zip: '',
+    country: 'US',
+  });
+  const [infoErrors, setInfoErrors] = useState({});
+
+  const cardRef = useRef(null);
+  const elementsRef = useRef(null);
+  const cardMountedRef = useRef(false);
+
+  useEffect(() => {
+    if (user) setInfo(prev => ({ ...prev, email: user.email || prev.email }));
+  }, [user]);
+
+  // Mount Stripe card element when on step 2
+  useEffect(() => {
+    if (step !== 2 || !clientSecret || cardMountedRef.current) return;
+    const stripe = getStripe();
+    if (!stripe) { setError('Stripe failed to load. Please refresh.'); return; }
+    const elements = stripe.elements({ clientSecret });
+    elementsRef.current = elements;
+    const card = elements.create('payment', { layout: 'tabs' });
+    const el = document.getElementById('card-element');
+    if (el) {
+      card.mount('#card-element');
+      cardRef.current = card;
+      cardMountedRef.current = true;
+    }
+    return () => { if (cardMountedRef.current) { card.unmount(); cardMountedRef.current = false; } };
+  }, [step, clientSecret]);
+
+  const validateInfo = () => {
+    const e = {};
+    if (!info.email) e.email = true;
+    if (!info.name)  e.name  = true;
+    if (!info.address1) e.address1 = true;
+    if (!info.city)  e.city  = true;
+    if (!info.state) e.state = true;
+    if (!info.zip)   e.zip   = true;
+    setInfoErrors(e);
+    return !Object.keys(e).length;
+  };
+
+  const handleContinue = async () => {
+    if (!validateInfo()) return;
+    if (!items.length) return;
+    setLoading(true);
+    setError('');
+    try {
+      const result = await apiFetch('/api/checkout/create-intent', {
+        method: 'POST',
+        body: JSON.stringify({
+          cartItems: items.map(item => ({
+            name: item.name,
+            detail: item.detail,
+            price: item.price,
+            quantity: 1,
+            config: item.config || {},
+          })),
+          customer: { email: info.email, name: info.name },
+          shippingAddress: {
+            name: info.name,
+            address1: info.address1,
+            address2: info.address2,
+            city: info.city,
+            state: info.state,
+            zip: info.zip,
+            country: info.country,
+          },
+        }),
+      });
+      setClientSecret(result.clientSecret);
+      setOrderId(result.orderId);
+      setStep(2);
+    } catch (err) {
+      setError(err.message || 'Failed to start checkout. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handlePay = async () => {
+    const stripe = getStripe();
+    if (!stripe || !elementsRef.current) return;
+    setLoading(true);
+    setError('');
+    try {
+      const { error: stripeError } = await stripe.confirmPayment({
+        elements: elementsRef.current,
+        confirmParams: {
+          return_url: `${window.location.origin}/order-confirmation?orderId=${orderId}`,
+          receipt_email: info.email,
+        },
+      });
+      if (stripeError) setError(stripeError.message);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const Field = ({ label, k, placeholder, half }) => (
+    <div style={{ flex: half ? '0 0 calc(50% - 5px)' : '1 1 100%' }}>
+      <label style={{ display: 'block', fontSize: 10, letterSpacing: 2, textTransform: 'uppercase', color: 'var(--t)', marginBottom: 5 }}>
+        {label} <span style={{ color: 'var(--y)' }}>*</span>
+      </label>
+      <input
+        className={`fi${infoErrors[k] ? ' error' : ''}`}
+        value={info[k]}
+        placeholder={placeholder}
+        onChange={e => { setInfo(p => ({ ...p, [k]: e.target.value })); setInfoErrors(p => ({ ...p, [k]: false })); }}
+        style={{ width: '100%' }}
+      />
+      {infoErrors[k] && <div className="err-msg">Required</div>}
+    </div>
+  );
+
+  if (!items.length && !clientSecret) {
     return (
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 0', borderBottom: '1px solid #1A1A1A', gap: 12, flexWrap: 'wrap' }}>
-        <div style={{ flex: 1 }}>
-          <div style={{ fontFamily: 'Rajdhani, sans-serif', fontWeight: 700, fontSize: 13, letterSpacing: 1, textTransform: 'uppercase', color: 'var(--w)' }}>{label}</div>
-          {sub && <div style={{ fontSize: 10, color: 'var(--y)', marginTop: 2 }}>{sub}</div>}
-        </div>
-        <div style={{ display: 'flex', flexShrink: 0 }}>
-          {['YES','NO'].map((v, i) => (
-            <button key={v} onClick={() => onChange(v === 'YES')}
-              style={{ padding: '6px 16px', border: '1px solid var(--b)', background: value === (v === 'YES') ? 'var(--y)' : 'transparent', color: value === (v === 'YES') ? '#000' : 'var(--t)', cursor: 'pointer', fontFamily: 'Rajdhani, sans-serif', fontSize: 11, fontWeight: 700, letterSpacing: 1, transition: 'all .2s', borderRight: i === 0 ? 'none' : undefined }}>
-              {v}
-            </button>
-          ))}
+      <div style={{ paddingTop: 88, minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--d)' }}>
+        <div style={{ textAlign: 'center', padding: 40 }}>
+          <div style={{ fontSize: 48, opacity: .2, marginBottom: 16 }}>🛒</div>
+          <div style={{ color: 'var(--t)', letterSpacing: 2, textTransform: 'uppercase', fontSize: 13, marginBottom: 20 }}>Your cart is empty</div>
+          <button className="btn" style={{ clipPath: 'none' }} onClick={() => nav('/catalog')}>SHOP CATALOG</button>
         </div>
       </div>
     );
   }
 
-  const buildItem = () => ({
-    name: preset.name,
-    detail: `${preset.brand} · ${badge} Badge · ${preset.features.slice(0, 2).join(' · ')}`,
-    price: totalPrice,
-    config: { brand: preset.brand, presetId: preset.id, audiBadge: badge, airbagCompat: airbagCover, airbagUpgrade, heated, laneAssist, customNotes: notes },
-  });
-
-  const handleAdd = () => {
-    addItem(buildItem());
-    setAdded(true);
-    setTimeout(() => onClose(), 1200);
-  };
-
-  const handleBuyNow = () => {
-    addItem(buildItem());
-    onClose();
-    nav('/checkout');
-  };
-
   return (
-    <div style={{ position: 'fixed', inset: 0, background: 'var(--d)', zIndex: 500, overflowY: 'auto', paddingTop: 88 }}>
-      {/* Back button sits below the real Nav */}
-      <div style={{ padding: '12px 24px', borderBottom: '1px solid var(--b)', display: 'flex', alignItems: 'center', gap: 16 }}>
-        <button onClick={onClose}
-          style={{ background: 'none', border: '1px solid var(--b)', color: 'var(--t)', cursor: 'pointer', padding: '8px 16px', fontFamily: 'Orbitron, monospace', fontSize: 9, letterSpacing: 2, transition: 'color .2s' }}
-          onMouseEnter={e => e.currentTarget.style.color = 'var(--y)'}
-          onMouseLeave={e => e.currentTarget.style.color = 'var(--t)'}>
-          ← BACK TO CATALOG
-        </button>
-        <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 22, color: 'var(--t)' }}>{preset.name}</div>
-      </div>
+    <div style={{ paddingTop: 88, minHeight: '100vh', background: 'var(--d)' }}>
+      <div style={{ maxWidth: 1100, margin: '0 auto', padding: '40px 24px', display: 'grid', gridTemplateColumns: window.innerWidth < 768 ? '1fr' : '1fr 400px', gap: 32, alignItems: 'start' }}>
 
-      <div style={{ maxWidth: 1100, margin: '0 auto', padding: '32px 24px', display: 'grid', gridTemplateColumns: window.innerWidth < 768 ? '1fr' : '1fr 1fr', gap: 48, alignItems: 'start' }}>
-
-        {/* Left — images */}
+        {/* Left — form */}
         <div>
-          {/* Main image with arrows */}
-          <div style={{ background: '#0A0A0A', position: 'relative', overflow: 'hidden', aspectRatio: 1 }}>
-            <img src={preset.images[imgIdx]} alt={preset.name}
-              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-              onError={e => e.target.style.display = 'none'} />
-            {total > 1 && <ArrowBtn dir="left" onClick={() => setImgIdx(i => (i - 1 + total) % total)} />}
-            {total > 1 && <ArrowBtn dir="right" onClick={() => setImgIdx(i => (i + 1) % total)} />}
-            {/* Dot indicators */}
-            {total > 1 && (
-              <div style={{ position: 'absolute', bottom: 12, left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: 6 }}>
-                {preset.images.map((_, i) => (
-                  <div key={i} onClick={() => setImgIdx(i)}
-                    style={{ width: 8, height: 8, borderRadius: '50%', background: i === imgIdx ? 'var(--y)' : 'rgba(255,255,255,.3)', cursor: 'pointer' }} />
-                ))}
+          {/* Steps */}
+          <div style={{ display: 'flex', gap: 0, marginBottom: 32, borderBottom: '1px solid var(--b)' }}>
+            {['Contact & Shipping', 'Payment'].map((label, i) => (
+              <div key={i} style={{ flex: 1, padding: '14px 20px', fontFamily: 'Orbitron, monospace', fontSize: 9, letterSpacing: 2, color: step === i + 1 ? 'var(--y)' : 'var(--t)', borderBottom: step === i + 1 ? '2px solid var(--y)' : '2px solid transparent', cursor: step > i + 1 ? 'pointer' : 'default', transition: 'color .2s' }}
+                onClick={() => step > i + 1 && setStep(i + 1)}>
+                {i + 1}. {label.toUpperCase()}
               </div>
-            )}
+            ))}
           </div>
 
-          {/* Thumbnail strip */}
-          {total > 1 && (
-            <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
-              {preset.images.map((src, i) => (
-                <div key={i} onClick={() => setImgIdx(i)}
-                  style={{ width: 72, height: 72, background: '#0A0A0A', cursor: 'pointer', overflow: 'hidden', border: `2px solid ${i === imgIdx ? 'var(--y)' : 'transparent'}`, transition: 'border-color .2s' }}>
-                  <img src={src} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={e => e.target.style.display = 'none'} />
+          {step === 1 && (
+            <div>
+              <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 28, marginBottom: 24 }}>CONTACT & SHIPPING</div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, marginBottom: 24 }}>
+                <Field label="Email" k="email" placeholder="your@email.com" />
+                <Field label="Full Name" k="name" placeholder="John Smith" />
+                <Field label="Address" k="address1" placeholder="123 Main St" />
+                <div style={{ flex: '1 1 100%' }}>
+                  <label style={{ display: 'block', fontSize: 10, letterSpacing: 2, textTransform: 'uppercase', color: 'var(--t)', marginBottom: 5 }}>Apt / Suite</label>
+                  <input className="fi" value={info.address2} placeholder="Optional"
+                    onChange={e => setInfo(p => ({ ...p, address2: e.target.value }))} style={{ width: '100%' }} />
                 </div>
-              ))}
+                <Field label="City"  k="city"  placeholder="New York" half />
+                <Field label="State" k="state" placeholder="NY" half />
+                <Field label="ZIP"   k="zip"   placeholder="10001" half />
+                <div style={{ flex: '0 0 calc(50% - 5px)' }}>
+                  <label style={{ display: 'block', fontSize: 10, letterSpacing: 2, textTransform: 'uppercase', color: 'var(--t)', marginBottom: 5 }}>Country</label>
+                  <select className="fi" value={info.country} onChange={e => setInfo(p => ({ ...p, country: e.target.value }))} style={{ width: '100%' }}>
+                    <option value="US">United States</option>
+                    <option value="CA">Canada</option>
+                    <option value="GB">United Kingdom</option>
+                    <option value="AU">Australia</option>
+                    <option value="DE">Germany</option>
+                    <option value="FR">France</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+              </div>
+              {error && <div style={{ padding: '10px 14px', background: 'rgba(204,51,0,.1)', border: '1px solid #CC3300', color: '#FF5533', fontSize: 12, marginBottom: 16 }}>{error}</div>}
+              <button className="btn" style={{ clipPath: 'none', width: '100%', padding: 18, fontSize: 13 }}
+                onClick={handleContinue} disabled={loading}>
+                {loading ? 'PROCESSING...' : 'CONTINUE TO PAYMENT →'}
+              </button>
             </div>
           )}
 
-          {/* Features */}
-          <div style={{ marginTop: 24 }}>
-            <div style={{ fontFamily: 'Orbitron, monospace', fontSize: 9, letterSpacing: 3, color: 'var(--y)', textTransform: 'uppercase', marginBottom: 12 }}>What's Included</div>
-            {preset.features.map(f => (
-              <div key={f} style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 10 }}>
-                <div style={{ width: 6, height: 6, background: 'var(--y)', flexShrink: 0 }} />
-                <span style={{ fontSize: 14, color: 'var(--w)' }}>{f}</span>
+          {step === 2 && (
+            <div>
+              <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 28, marginBottom: 24 }}>PAYMENT</div>
+              <div id="card-element" style={{ background: 'var(--p)', border: '1px solid var(--b)', padding: 20, marginBottom: 20, minHeight: 80 }} />
+              {error && <div style={{ padding: '10px 14px', background: 'rgba(204,51,0,.1)', border: '1px solid #CC3300', color: '#FF5533', fontSize: 12, marginBottom: 16 }}>{error}</div>}
+              <button className="btn" style={{ clipPath: 'none', width: '100%', padding: 18, fontSize: 13 }}
+                onClick={handlePay} disabled={loading}>
+                {loading ? 'PROCESSING...' : `PAY $${total.toFixed(2)}`}
+              </button>
+              <div style={{ fontSize: 11, color: 'var(--t)', textAlign: 'center', marginTop: 12 }}>
+                🔒 Secured by Stripe · Your card details are never stored
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Right — order summary */}
+        <div style={{ background: 'var(--p)', border: '1px solid var(--b)', padding: 24 }}>
+          <div style={{ fontFamily: 'Orbitron, monospace', fontSize: 10, letterSpacing: 3, color: 'var(--y)', marginBottom: 16 }}>ORDER SUMMARY</div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 1, marginBottom: 20 }}>
+            {items.map(item => (
+              <div key={item.cartId} style={{ padding: '14px 0', borderBottom: '1px solid var(--b)' }}>
+                <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 800, fontStyle: 'italic', fontSize: 18 }}>{item.name}</div>
+                {item.detail && <div style={{ fontSize: 11, color: 'var(--t)', marginTop: 2, lineHeight: 1.5 }}>{item.detail}</div>}
+                <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontSize: 22, color: 'var(--y)', marginTop: 6 }}>${item.price.toFixed(2)}</div>
               </div>
             ))}
-            <div style={{ marginTop: 14, padding: '10px 14px', background: 'rgba(232,184,0,.05)', border: '1px solid rgba(232,184,0,.2)', fontSize: 12, color: 'rgba(232,184,0,.8)', letterSpacing: 1 }}>
-              ✓ {preset.compat}
+          </div>
+          <div style={{ borderTop: '1px solid var(--b)', paddingTop: 16 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
+              <span style={{ fontSize: 12, color: 'var(--t)' }}>Subtotal</span>
+              <span style={{ fontWeight: 700 }}>${total.toFixed(2)}</span>
             </div>
-          </div>
-        </div>
-
-        {/* Right — options */}
-        <div>
-          <div style={{ fontFamily: 'Orbitron, monospace', fontSize: 10, letterSpacing: 3, color: 'var(--y)', marginBottom: 8 }}>AUDI · PRESET BUILD</div>
-          <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 48, lineHeight: 1, marginBottom: 12 }}>{preset.name}</div>
-          <div style={{ fontSize: 14, color: 'var(--t)', lineHeight: 1.7, marginBottom: 24 }}>{preset.desc}</div>
-
-          {/* Badge */}
-          <div style={{ marginBottom: 20 }}>
-            <div style={{ fontFamily: 'Rajdhani, sans-serif', fontWeight: 700, fontSize: 13, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 8, color: 'var(--t)' }}>Lower Badge</div>
-            <div style={{ display: 'flex', gap: 8 }}>
-              {['RS','S'].map(b => (
-                <button key={b} onClick={() => setBadge(b)}
-                  style={{ flex: 1, padding: 14, border: `1px solid ${badge === b ? 'var(--y)' : 'var(--b)'}`, background: badge === b ? 'rgba(232,184,0,.08)' : 'transparent', color: badge === b ? 'var(--y)' : 'var(--t)', cursor: 'pointer', fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontSize: 24, letterSpacing: 3, transition: 'all .2s' }}>
-                  {b}
-                </button>
-              ))}
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16 }}>
+              <span style={{ fontSize: 12, color: 'var(--t)' }}>Shipping</span>
+              <span style={{ fontSize: 12, color: '#3DB85A', fontWeight: 700 }}>Calculated at confirmation</span>
             </div>
-          </div>
-
-          {/* Options */}
-          <div style={{ marginBottom: 20 }}>
-            <div style={{ fontFamily: 'Rajdhani, sans-serif', fontWeight: 700, fontSize: 13, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 8, color: 'var(--t)' }}>Options</div>
-            <YesNo label="Airbag Cover" sub="+$50.00" value={airbagCover} onChange={setAirbagCover} />
-            <YesNo label="Full Upgraded Airbag Unit (full airbag not just cover)" sub="+$25.00" value={airbagUpgrade} onChange={setAirbagUpgrade} />
-            <YesNo label="Heated Steering" sub="+$25.00" value={heated} onChange={setHeated} />
-            <YesNo label="Lane Assist Compatible" value={laneAssist} onChange={setLaneAssist} />
-          </div>
-
-          {/* Notes */}
-          <div style={{ marginBottom: 24 }}>
-            <label style={{ fontSize: 11, letterSpacing: 2, textTransform: 'uppercase', color: 'var(--t)', display: 'block', marginBottom: 6 }}>Any other configurations not listed?</label>
-            <textarea className="fi" value={notes} onChange={e => setNotes(e.target.value)}
-              placeholder="e.g. specific stitching, custom embroidery..." rows={3} style={{ resize: 'vertical' }} />
-          </div>
-
-          {/* Price + buttons */}
-          <div style={{ borderTop: '1px solid var(--b)', paddingTop: 20 }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 16 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
               <span style={{ fontFamily: 'Orbitron, monospace', fontSize: 10, letterSpacing: 2, color: 'var(--t)' }}>TOTAL</span>
-              <span style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontSize: 44, color: 'var(--y)' }}>${totalPrice.toFixed(2)}</span>
+              <span style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontSize: 36, color: 'var(--y)' }}>${total.toFixed(2)}</span>
             </div>
-            <div style={{ display: 'flex', gap: 10, marginBottom: 12 }}>
-              <button className="btn" style={{ clipPath: 'none', flex: 1, fontSize: 12 }} onClick={handleBuyNow}>BUY NOW</button>
-              <button className="btn-outline sm" style={{ flex: 1, clipPath: 'none', padding: '13px 20px', fontSize: 11 }} onClick={handleAdd} disabled={added}>
-                {added ? '✓ ADDED' : '+ ADD TO CART'}
-              </button>
-            </div>
-            <div style={{ fontSize: 11, color: 'var(--t)', lineHeight: 1.7 }}>🛡 6 Month Warranty · ⏱ 3–5 Week Build · Made to Order</div>
+          </div>
+          <div style={{ marginTop: 20, padding: '12px 0', borderTop: '1px solid var(--b)', fontSize: 11, color: 'var(--t)', lineHeight: 1.9 }}>
+            🛡 6 Month Warranty<br />
+            ⏱ 3–5 Week Build Time<br />
+            📦 Made to Order — ships when complete
           </div>
         </div>
       </div>
-    </div>
-  );
-}
-
-export default function Catalog() {
-  const [filter, setFilter] = useState('ALL');
-  const [openPreset, setOpenPreset] = useState(null);
-  const nav = useNavigate();
-  const [params] = useSearchParams();
-
-  useEffect(() => {
-    const brand = params.get('brand');
-    if (brand) setFilter(brand);
-  }, []); // eslint-disable-line
-
-  const showBMW  = filter === 'ALL' || filter === 'BMW';
-  const showAUDI = filter === 'ALL' || filter === 'AUDI';
-
-  return (
-    <div style={{ paddingTop: 88, minHeight: '100vh' }}>
-      <div style={{ padding: '50px 40px 32px', borderBottom: '1px solid var(--b)', background: 'linear-gradient(180deg,rgba(232,184,0,.04) 0%,transparent 100%)' }}>
-        <div style={{ fontFamily: 'Orbitron, monospace', fontSize: 10, letterSpacing: 4, color: 'var(--y)', textTransform: 'uppercase', marginBottom: 8 }}>Shop All</div>
-        <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 52, letterSpacing: 2 }}>CATALOG</div>
-      </div>
-
-      <div style={{ display: 'flex', gap: 10, padding: '16px 40px', borderBottom: '1px solid var(--b)', flexWrap: 'wrap' }}>
-        {['ALL','BMW','AUDI'].map(f => (
-          <button key={f} className={`ob${filter === f ? ' on' : ''}`} style={{ fontSize: 11, padding: '5px 16px' }} onClick={() => setFilter(f)}>{f}</button>
-        ))}
-      </div>
-
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 1, background: 'var(--b)' }}>
-        {showBMW  && <ConfigureCard key="bmw-config"  brand="BMW"  nav={nav} />}
-        {showAUDI && <ConfigureCard key="audi-config" brand="AUDI" nav={nav} />}
-        {showAUDI && AUDI_PRESETS.map(p => <PresetCard key={p.id} preset={p} onOpen={setOpenPreset} />)}
-      </div>
-
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', borderTop: '1px solid var(--b)', background: 'var(--m)', marginTop: 1 }}>
-        {[['🛡','6 Month Warranty','Manufacturer guaranteed'],['⏱','3–5 Week Build','Handcrafted to order'],['🔧','BMW & Audi','Fitment specialists']].map(([icon,title,sub]) => (
-          <div key={title} style={{ padding: '22px 28px', display: 'flex', alignItems: 'center', gap: 12, borderRight: '1px solid var(--b)' }}>
-            <span style={{ fontSize: 22, color: 'var(--y)' }}>{icon}</span>
-            <div><div style={{ fontWeight: 700, fontSize: 14, letterSpacing: 1 }}>{title}</div><div style={{ fontSize: 11, color: 'var(--t)' }}>{sub}</div></div>
-          </div>
-        ))}
-      </div>
-
-      {openPreset && <PresetPage preset={openPreset} onClose={() => setOpenPreset(null)} />}
     </div>
   );
 }
