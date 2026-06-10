@@ -1,81 +1,94 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { loadStripe } from '@stripe/stripe-js';
+import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { useCart } from '../context';
 import { useAuth } from '../context';
 import { apiFetch } from '../lib/api';
 
-// Stripe loaded via CDN in index.html — we access window.Stripe
-let stripePromise = null;
-function getStripe() {
-  if (!stripePromise && window.Stripe) {
-    stripePromise = window.Stripe(process.env.REACT_APP_STRIPE_PK);
-  }
-  return stripePromise;
+const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PK);
+
+// ── Payment form (lives inside <Elements>) ────────────────────────────────────
+function PaymentForm({ total, orderId, email }) {
+  const stripe = useStripe();
+  const elements = useElements();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const handlePay = async () => {
+    if (!stripe || !elements) return;
+    setLoading(true);
+    setError('');
+    const { error: stripeError } = await stripe.confirmPayment({
+      elements,
+      confirmParams: {
+        return_url: `${window.location.origin}/order-confirmation?orderId=${orderId}`,
+        receipt_email: email,
+      },
+    });
+    if (stripeError) setError(stripeError.message);
+    setLoading(false);
+  };
+
+  return (
+    <div>
+      <PaymentElement options={{ layout: 'tabs' }} />
+      {error && (
+        <div style={{ padding: '10px 14px', background: 'rgba(204,51,0,.1)', border: '1px solid #CC3300', color: '#FF5533', fontSize: 12, marginTop: 16 }}>
+          {error}
+        </div>
+      )}
+      <button
+        className="btn"
+        style={{ clipPath: 'none', width: '100%', padding: 18, fontSize: 13, marginTop: 20 }}
+        onClick={handlePay}
+        disabled={!stripe || loading}
+      >
+        {loading ? 'PROCESSING...' : `PAY $${total.toFixed(2)}`}
+      </button>
+      <div style={{ fontSize: 11, color: 'var(--t)', textAlign: 'center', marginTop: 12 }}>
+        🔒 Secured by Stripe · Your card details are never stored
+      </div>
+    </div>
+  );
 }
 
+// ── Main Checkout page ────────────────────────────────────────────────────────
 export default function Checkout() {
-  const { items, total, clearCart } = useCart();
+  const { items, total } = useCart();
   const { user } = useAuth();
   const nav = useNavigate();
 
-  const [step, setStep] = useState(1); // 1=info, 2=payment
+  const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [clientSecret, setClientSecret] = useState('');
   const [orderId, setOrderId] = useState('');
 
   const [info, setInfo] = useState({
-    email: user?.email || '',
-    name: '',
-    address1: '',
-    address2: '',
-    city: '',
-    state: '',
-    zip: '',
-    country: 'US',
+    email: '', name: '', address1: '', address2: '',
+    city: '', state: '', zip: '', country: 'US',
   });
   const [infoErrors, setInfoErrors] = useState({});
 
-  const cardRef = useRef(null);
-  const elementsRef = useRef(null);
-  const cardMountedRef = useRef(false);
-
   useEffect(() => {
-    if (user) setInfo(prev => ({ ...prev, email: user.email || prev.email }));
+    if (user?.email) setInfo(prev => ({ ...prev, email: user.email }));
   }, [user]);
-
-  // Mount Stripe card element when on step 2
-  useEffect(() => {
-    if (step !== 2 || !clientSecret || cardMountedRef.current) return;
-    const stripe = getStripe();
-    if (!stripe) { setError('Stripe failed to load. Please refresh.'); return; }
-    const elements = stripe.elements({ clientSecret });
-    elementsRef.current = elements;
-    const card = elements.create('payment', { layout: 'tabs' });
-    const el = document.getElementById('card-element');
-    if (el) {
-      card.mount('#card-element');
-      cardRef.current = card;
-      cardMountedRef.current = true;
-    }
-    return () => { if (cardMountedRef.current) { card.unmount(); cardMountedRef.current = false; } };
-  }, [step, clientSecret]);
 
   const validateInfo = () => {
     const e = {};
-    if (!info.email) e.email = true;
-    if (!info.name)  e.name  = true;
+    if (!info.email)    e.email    = true;
+    if (!info.name)     e.name     = true;
     if (!info.address1) e.address1 = true;
-    if (!info.city)  e.city  = true;
-    if (!info.state) e.state = true;
-    if (!info.zip)   e.zip   = true;
+    if (!info.city)     e.city     = true;
+    if (!info.state)    e.state    = true;
+    if (!info.zip)      e.zip      = true;
     setInfoErrors(e);
     return !Object.keys(e).length;
   };
 
   const handleContinue = async () => {
     if (!validateInfo()) return;
-    if (!items.length) return;
     setLoading(true);
     setError('');
     try {
@@ -91,13 +104,9 @@ export default function Checkout() {
           })),
           customer: { email: info.email, name: info.name },
           shippingAddress: {
-            name: info.name,
-            address1: info.address1,
-            address2: info.address2,
-            city: info.city,
-            state: info.state,
-            zip: info.zip,
-            country: info.country,
+            name: info.name, address1: info.address1,
+            address2: info.address2, city: info.city,
+            state: info.state, zip: info.zip, country: info.country,
           },
         }),
       });
@@ -106,27 +115,6 @@ export default function Checkout() {
       setStep(2);
     } catch (err) {
       setError(err.message || 'Failed to start checkout. Please try again.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handlePay = async () => {
-    const stripe = getStripe();
-    if (!stripe || !elementsRef.current) return;
-    setLoading(true);
-    setError('');
-    try {
-      const { error: stripeError } = await stripe.confirmPayment({
-        elements: elementsRef.current,
-        confirmParams: {
-          return_url: `${window.location.origin}/order-confirmation?orderId=${orderId}`,
-          receipt_email: info.email,
-        },
-      });
-      if (stripeError) setError(stripeError.message);
-    } catch (err) {
-      setError(err.message);
     } finally {
       setLoading(false);
     }
@@ -160,51 +148,68 @@ export default function Checkout() {
     );
   }
 
+  const stripeAppearance = {
+    theme: 'night',
+    variables: {
+      colorPrimary: '#E8B800',
+      colorBackground: '#1E1E1E',
+      colorText: '#F0F0F0',
+      colorDanger: '#FF5533',
+      fontFamily: 'Rajdhani, sans-serif',
+      borderRadius: '0px',
+    },
+  };
+
   return (
     <div style={{ paddingTop: 88, minHeight: '100vh', background: 'var(--d)' }}>
-      <div style={{ maxWidth: 1100, margin: '0 auto', padding: '40px 24px', display: 'grid', gridTemplateColumns: window.innerWidth < 768 ? '1fr' : '1fr 400px', gap: 32, alignItems: 'start' }}>
+      <div style={{
+        maxWidth: 1100, margin: '0 auto', padding: '40px 24px',
+        display: 'grid',
+        gridTemplateColumns: window.innerWidth < 768 ? '1fr' : '1fr 400px',
+        gap: 32, alignItems: 'start',
+      }}>
 
-        {/* Left — form */}
+        {/* ── Left: form ── */}
         <div>
-          {/* Steps */}
-          <div style={{ display: 'flex', gap: 0, marginBottom: 32, borderBottom: '1px solid var(--b)' }}>
+          {/* Step tabs */}
+          <div style={{ display: 'flex', marginBottom: 32, borderBottom: '1px solid var(--b)' }}>
             {['Contact & Shipping', 'Payment'].map((label, i) => (
-              <div key={i} style={{ flex: 1, padding: '14px 20px', fontFamily: 'Orbitron, monospace', fontSize: 9, letterSpacing: 2, color: step === i + 1 ? 'var(--y)' : 'var(--t)', borderBottom: step === i + 1 ? '2px solid var(--y)' : '2px solid transparent', cursor: step > i + 1 ? 'pointer' : 'default', transition: 'color .2s' }}
+              <div key={i}
+                style={{ flex: 1, padding: '14px 20px', fontFamily: 'Orbitron, monospace', fontSize: 9, letterSpacing: 2, color: step === i + 1 ? 'var(--y)' : 'var(--t)', borderBottom: step === i + 1 ? '2px solid var(--y)' : '2px solid transparent', cursor: step > i + 1 ? 'pointer' : 'default', transition: 'color .2s' }}
                 onClick={() => step > i + 1 && setStep(i + 1)}>
                 {i + 1}. {label.toUpperCase()}
               </div>
             ))}
           </div>
 
+          {/* Step 1 — info */}
           {step === 1 && (
             <div>
               <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 28, marginBottom: 24 }}>CONTACT & SHIPPING</div>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, marginBottom: 24 }}>
-                <Field label="Email" k="email" placeholder="your@email.com" />
-                <Field label="Full Name" k="name" placeholder="John Smith" />
-                <Field label="Address" k="address1" placeholder="123 Main St" />
+                <Field label="Email"    k="email"    placeholder="your@email.com" />
+                <Field label="Full Name" k="name"   placeholder="John Smith" />
+                <Field label="Address"  k="address1" placeholder="123 Main St" />
                 <div style={{ flex: '1 1 100%' }}>
                   <label style={{ display: 'block', fontSize: 10, letterSpacing: 2, textTransform: 'uppercase', color: 'var(--t)', marginBottom: 5 }}>Apt / Suite</label>
                   <input className="fi" value={info.address2} placeholder="Optional"
                     onChange={e => setInfo(p => ({ ...p, address2: e.target.value }))} style={{ width: '100%' }} />
                 </div>
-                <Field label="City"  k="city"  placeholder="New York" half />
-                <Field label="State" k="state" placeholder="NY" half />
-                <Field label="ZIP"   k="zip"   placeholder="10001" half />
+                <Field label="City"  k="city"  placeholder="New York"  half />
+                <Field label="State" k="state" placeholder="NY"        half />
+                <Field label="ZIP"   k="zip"   placeholder="10001"     half />
                 <div style={{ flex: '0 0 calc(50% - 5px)' }}>
                   <label style={{ display: 'block', fontSize: 10, letterSpacing: 2, textTransform: 'uppercase', color: 'var(--t)', marginBottom: 5 }}>Country</label>
                   <select className="fi" value={info.country} onChange={e => setInfo(p => ({ ...p, country: e.target.value }))} style={{ width: '100%' }}>
-                    <option value="US">United States</option>
-                    <option value="CA">Canada</option>
-                    <option value="GB">United Kingdom</option>
-                    <option value="AU">Australia</option>
-                    <option value="DE">Germany</option>
-                    <option value="FR">France</option>
-                    <option value="Other">Other</option>
+                    {[['US','United States'],['CA','Canada'],['GB','United Kingdom'],['AU','Australia'],['DE','Germany'],['FR','France'],['Other','Other']].map(([v,l]) => (
+                      <option key={v} value={v}>{l}</option>
+                    ))}
                   </select>
                 </div>
               </div>
-              {error && <div style={{ padding: '10px 14px', background: 'rgba(204,51,0,.1)', border: '1px solid #CC3300', color: '#FF5533', fontSize: 12, marginBottom: 16 }}>{error}</div>}
+              {error && (
+                <div style={{ padding: '10px 14px', background: 'rgba(204,51,0,.1)', border: '1px solid #CC3300', color: '#FF5533', fontSize: 12, marginBottom: 16 }}>{error}</div>
+              )}
               <button className="btn" style={{ clipPath: 'none', width: '100%', padding: 18, fontSize: 13 }}
                 onClick={handleContinue} disabled={loading}>
                 {loading ? 'PROCESSING...' : 'CONTINUE TO PAYMENT →'}
@@ -212,23 +217,18 @@ export default function Checkout() {
             </div>
           )}
 
-          {step === 2 && (
+          {/* Step 2 — Stripe */}
+          {step === 2 && clientSecret && (
             <div>
               <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 28, marginBottom: 24 }}>PAYMENT</div>
-              <div id="card-element" style={{ background: 'var(--p)', border: '1px solid var(--b)', padding: 20, marginBottom: 20, minHeight: 80 }} />
-              {error && <div style={{ padding: '10px 14px', background: 'rgba(204,51,0,.1)', border: '1px solid #CC3300', color: '#FF5533', fontSize: 12, marginBottom: 16 }}>{error}</div>}
-              <button className="btn" style={{ clipPath: 'none', width: '100%', padding: 18, fontSize: 13 }}
-                onClick={handlePay} disabled={loading}>
-                {loading ? 'PROCESSING...' : `PAY $${total.toFixed(2)}`}
-              </button>
-              <div style={{ fontSize: 11, color: 'var(--t)', textAlign: 'center', marginTop: 12 }}>
-                🔒 Secured by Stripe · Your card details are never stored
-              </div>
+              <Elements stripe={stripePromise} options={{ clientSecret, appearance: stripeAppearance }}>
+                <PaymentForm total={total} orderId={orderId} email={info.email} />
+              </Elements>
             </div>
           )}
         </div>
 
-        {/* Right — order summary */}
+        {/* ── Right: order summary ── */}
         <div style={{ background: 'var(--p)', border: '1px solid var(--b)', padding: 24 }}>
           <div style={{ fontFamily: 'Orbitron, monospace', fontSize: 10, letterSpacing: 3, color: 'var(--y)', marginBottom: 16 }}>ORDER SUMMARY</div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 1, marginBottom: 20 }}>
@@ -247,7 +247,7 @@ export default function Checkout() {
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16 }}>
               <span style={{ fontSize: 12, color: 'var(--t)' }}>Shipping</span>
-              <span style={{ fontSize: 12, color: '#3DB85A', fontWeight: 700 }}>Calculated at confirmation</span>
+              <span style={{ fontSize: 12, color: '#3DB85A', fontWeight: 700 }}>Confirmed after order</span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
               <span style={{ fontFamily: 'Orbitron, monospace', fontSize: 10, letterSpacing: 2, color: 'var(--t)' }}>TOTAL</span>
