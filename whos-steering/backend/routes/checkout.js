@@ -1,5 +1,4 @@
 const router = require('express').Router();
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const pool = require('../db/pool');
 
 // ── Server-side price calculation for CUSTOM builds only ─────────────────────
@@ -30,6 +29,7 @@ router.post('/create-intent', async (req, res) => {
     return res.status(400).json({ error: 'Missing required checkout data' });
   }
 
+  const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
   const client = await pool.connect();
   try {
     await client.query('BEGIN');
