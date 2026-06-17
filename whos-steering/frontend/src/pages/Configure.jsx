@@ -37,9 +37,21 @@ function ColorGrid({ colors, selected, onSelect }) {
   return (
     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 6, marginTop: 8 }}>
       {colors.map(c => (
-        <div key={c.h} className={`csw${selected === c.h ? ' on' : ''}`}
-          style={{ background: c.h, aspectRatio: 1, borderRadius: 3, cursor: 'pointer', border: `2px solid ${selected === c.h ? 'var(--y)' : 'transparent'}`, transition: 'transform .15s, border-color .15s', boxShadow: selected === c.h ? '0 0 0 1px var(--y)' : 'none' }}
-          title={c.n} onClick={() => onSelect(c.h)} />
+        <div key={c.h} title={c.n} onClick={() => onSelect(c.h)}
+          style={{ position: 'relative', aspectRatio: 1, borderRadius: 3, cursor: 'pointer',
+            border: `2px solid ${selected === c.h ? 'var(--y)' : 'transparent'}`,
+            boxShadow: selected === c.h ? '0 0 0 1px var(--y)' : 'none',
+            overflow: 'hidden', transition: 'border-color .15s' }}>
+          {c.img
+            ? <img src={c.img} alt={c.n} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+            : <div style={{ width: '100%', height: '100%', background: c.h }} />
+          }
+          {selected === c.h && (
+            <div style={{ position: 'absolute', inset: 0, background: 'rgba(232,184,0,.18)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <span style={{ fontSize: 14, color: 'var(--y)' }}>✓</span>
+            </div>
+          )}
+        </div>
       ))}
     </div>
   );
@@ -75,26 +87,28 @@ function Toggle({ label, sub, value, onChange }) {
 }
 
 function StripeConcept({ concept, selected, onSelect }) {
-  const { id, stripes, tri } = concept;
+  const { id, label, img } = concept;
+  const isSelected = selected === id;
   return (
-    <div onClick={() => onSelect(id)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6, cursor: 'pointer' }}>
-      <div style={{ width: 64, height: 40, background: '#111', border: `2px solid ${selected === id ? 'var(--y)' : '#2A2A2A'}`, borderRadius: 4, overflow: 'hidden', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: selected === id ? '0 0 0 1px var(--y)' : 'none' }}>
-        {[...Array(8)].map((_, i) => (
-          <div key={i} style={{ position: 'absolute', left: i * 9, top: 0, width: 5, height: '100%', background: 'rgba(255,255,255,.03)', transform: 'skewX(-10deg)' }} />
-        ))}
-        {stripes.length === 0 ? (
-          <div style={{ fontSize: 9, color: '#555', letterSpacing: 1 }}>NONE</div>
-        ) : tri ? (
-          <div style={{ display: 'flex', height: '100%', width: 18 }}>
-            {stripes.map((c, i) => <div key={i} style={{ flex: 1, background: c }} />)}
+    <div onClick={() => onSelect(id)}
+      style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 5, cursor: 'pointer' }}>
+      <div style={{ width: 80, height: 52, border: `2px solid ${isSelected ? 'var(--y)' : '#2A2A2A'}`,
+        borderRadius: 4, overflow: 'hidden', position: 'relative',
+        boxShadow: isSelected ? '0 0 0 1px var(--y)' : 'none', transition: 'border-color .15s' }}>
+        {img
+          ? <img src={img} alt={label} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+          : <div style={{ width: '100%', height: '100%', background: '#111', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <span style={{ fontSize: 9, color: '#555' }}>NONE</span>
+            </div>
+        }
+        {isSelected && (
+          <div style={{ position: 'absolute', inset: 0, background: 'rgba(232,184,0,.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <span style={{ fontSize: 14, color: 'var(--y)' }}>✓</span>
           </div>
-        ) : (
-          stripes.map((c, i) => (
-            <div key={i} style={{ position: 'absolute', left: '50%', transform: `translateX(${i * 6 - (stripes.length - 1) * 3}px)`, width: 5, height: '100%', background: c }} />
-          ))
         )}
       </div>
-      <div style={{ fontSize: 9, color: selected === id ? 'var(--y)' : 'var(--t)', letterSpacing: 1, textAlign: 'center', maxWidth: 64 }}>{id}</div>
+      <div style={{ fontSize: 9, color: isSelected ? 'var(--y)' : 'var(--t)', letterSpacing: .5,
+        textAlign: 'center', maxWidth: 80, lineHeight: 1.3 }}>{label}</div>
     </div>
   );
 }

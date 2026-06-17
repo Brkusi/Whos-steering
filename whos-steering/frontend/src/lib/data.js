@@ -16,25 +16,39 @@ export const COLORS = [
   { n: 'Brown',       h: '#6B3A2A' },
 ];
 
-// ── Stripe concepts C-1 through C-9 ──────────────────────────────────────────
-// Each entry: label, background (carbon weave) + stripe color(s)
+// ── Stripe concepts (image-based) ────────────────────────────────────────────
 export const STRIPE_CONCEPTS = [
-  { id: 'C-1', label: 'C-1 · No Stripe',      stripes: [] },
-  { id: 'C-2', label: 'C-2 · Red',            stripes: ['#CC2200'] },
-  { id: 'C-3', label: 'C-3 · Yellow',         stripes: ['#E8B800'] },
-  { id: 'C-4', label: 'C-4 · Blue',           stripes: ['#4499FF'] },
-  { id: 'C-5', label: 'C-5 · White',          stripes: ['#F0F0F0'] },
-  { id: 'C-6', label: 'C-6 · Double Dark',    stripes: ['#2A2A2A', '#555'] },
-  // C-7: German tri-color (blue | red | yellow)
-  { id: 'C-7', label: 'C-7 · Germany',        stripes: ['#4499FF', '#CC2200', '#E8B800'], tri: true },
-  // C-8: Italian tri-color (red | yellow)  — mapped to BMW tri
-  { id: 'C-8', label: 'C-8 · Italy',          stripes: ['#009246', '#F0F0F0', '#CC2200'], tri: true },
-  // C-9: Other tri
-  { id: 'C-9', label: 'C-9 · Tri-Accent',     stripes: ['#4499FF', '#F0F0F0', '#1A5C2A'], tri: true },
+  { id: 'C-1',  label: 'No Stripe',       img: '/stripes/stripe-none.jpg',       stripes: [] },
+  { id: 'C-2',  label: 'Black',           img: '/stripes/stripe-black.jpg',       stripes: ['#111111'] },
+  { id: 'C-3',  label: 'Pink',            img: '/stripes/stripe-pink.jpg',        stripes: ['#FF69B4'] },
+  { id: 'C-4',  label: 'Dark Blue',       img: '/stripes/stripe-dark-blue.jpg',   stripes: ['#0044CC'] },
+  { id: 'C-5',  label: 'Light Blue',      img: '/stripes/stripe-light-blue.jpg',  stripes: ['#4499FF'] },
+  { id: 'C-6',  label: 'Red',             img: '/stripes/stripe-red.jpg',         stripes: ['#CC2200'] },
+  { id: 'C-7',  label: 'Orange',          img: '/stripes/stripe-orange.jpg',      stripes: ['#E85500'] },
+  { id: 'C-8',  label: 'Dark Green',      img: '/stripes/stripe-dark-green.jpg',  stripes: ['#1A5C2A'] },
+  { id: 'C-9',  label: 'Lime Green',      img: '/stripes/stripe-lime-green.jpg',  stripes: ['#A0E800'] },
+  { id: 'C-10', label: 'Purple',          img: '/stripes/stripe-purple.jpg',      stripes: ['#6A1FA8'] },
+  { id: 'C-11', label: 'Brown',           img: '/stripes/stripe-brown.jpg',       stripes: ['#6B3A2A'] },
+  { id: 'C-12', label: 'BMW Tri Color',   img: '/stripes/stripe-bmw-tri.jpg',     stripes: ['#87CEEB','#003DA5','#CC0000'], tri: true, triKey: 'bmw' },
+  { id: 'C-13', label: 'German Tri Color',img: '/stripes/stripe-german-tri.jpg',  stripes: ['#000000','#DD0000','#FFCC00'], tri: true, triKey: 'germany' },
 ];
 
-// ── Stitch colors (same palette as COLORS) ───────────────────────────────────
-export const STITCH_COLORS = COLORS;
+// ── Stitch colors with real photos ───────────────────────────────────────────
+export const STITCH_COLORS = [
+  { n: 'Black',       h: '#111111', img: '/stitches/stitch-black.jpg' },
+  { n: 'Brown',       h: '#6B3A2A', img: '/stitches/stitch-brown.jpg' },
+  { n: 'Dark Green',  h: '#1A5C2A', img: '/stitches/stitch-dark-green.jpg' },
+  { n: 'Grey',        h: '#888888', img: '/stitches/stitch-grey.jpg' },
+  { n: 'Light Blue',  h: '#4499FF', img: '/stitches/stitch-light-blue.jpg' },
+  { n: 'Light Green', h: '#A0E800', img: '/stitches/stitch-light-green.jpg' },
+  { n: 'Navy Blue',   h: '#0A1F6E', img: '/stitches/stitch-navy-blue.jpg' },
+  { n: 'Orange',      h: '#E85500', img: '/stitches/stitch-orange.jpg' },
+  { n: 'Pink',        h: '#FF69B4', img: '/stitches/stitch-pink.jpg' },
+  { n: 'Purple',      h: '#6A1FA8', img: '/stitches/stitch-purple.jpg' },
+  { n: 'Red',         h: '#CC2200', img: '/stitches/stitch-red.jpg' },
+  { n: 'White',       h: '#F0F0F0', img: '/stitches/stitch-white.jpg' },
+  { n: 'Yellow',      h: '#E8B800', img: '/stitches/stitch-yellow.jpg' },
+];
 
 // ── Classic Carbon colors ─────────────────────────────────────────────────────
 export const CLASSIC_CARBON_COLORS = [
@@ -113,51 +127,6 @@ export function colorName(h) {
 // ── Audi preset products (frontend-only, no DB needed) ────────────────────────
 export const AUDI_PRESETS = [
   {
-    id: 'audi-pre-1',
-    brand: 'AUDI',
-    name: 'RS SPORT EDITION',
-    description: 'Full Alcantara grip, RS badge, Germany tri-color stripe, magnetic paddle shifters.',
-    base_price: 1129.99,
-    stripe_color: '#CC0000',
-    features: ['RS Badge', 'Germany Tri-Color', 'Full Alcantara', 'Magnetic Paddles', 'Heated', 'Airbag Compatible'],
-    isPreset: true,
-  },
-  {
-    id: 'audi-pre-2',
-    brand: 'AUDI',
-    name: 'S LINE CARBON',
-    description: 'Classic carbon top, perforated leather sides, S badge, red single stripe.',
-    base_price: 1199.99,
-    stripe_color: '#CC2200',
-    features: ['S Badge', 'Red Stripe', 'Classic Carbon Top', 'Perf. Leather Sides', 'Heated', 'Lane Assist'],
-    isPreset: true,
-  },
-  {
-    id: 'audi-pre-3',
-    brand: 'AUDI',
-    name: 'RS FORGED PRO',
-    description: 'Forged carbon black flakes top, Alcantara sides, RS badge, no stripe clean finish.',
-    base_price: 1349.99,
-    stripe_color: '#111111',
-    features: ['RS Badge', 'Forged Carbon Top', 'Alcantara Sides', 'Standard Paddles', 'Heated', 'Airbag Compatible'],
-    isPreset: true,
-  },
-  {
-    id: 'audi-pre-4',
-    brand: 'AUDI',
-    name: 'CLASSIC ALCANTARA',
-    description: 'Full Alcantara build, S badge, white single stripe, outer gold trim ring.',
-    base_price: 999.99,
-    stripe_color: '#F0F0F0',
-    features: ['S Badge', 'White Stripe', 'Full Alcantara', 'Gold Outer Trim', 'Heated', 'Lane Assist'],
-    isPreset: true,
-  },
-];
-
-// ── Augmented AUDI_PRESETS with images/compat/desc for Catalog ────────────────
-// Overwrite the export with full data
-export const AUDI_PRESETS_FULL = [
-  {
     id: 'rs-sig-carbon',
     brand: 'AUDI',
     name: 'RS SIGNATURE CARBON',
@@ -180,3 +149,6 @@ export const AUDI_PRESETS_FULL = [
     isPreset: true,
   },
 ];
+
+// Alias used by Catalog.jsx
+export const AUDI_PRESETS_FULL = AUDI_PRESETS;

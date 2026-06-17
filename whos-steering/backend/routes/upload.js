@@ -21,18 +21,11 @@ const upload = multer({
 });
 
 // POST /api/upload/wheel-photo
-// Optional query param: ?orderId=xxx to associate photo with order
 router.post('/wheel-photo', upload.single('photo'), async (req, res) => {
   if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
 
   const ext = path.extname(req.file.originalname).toLowerCase();
-  const uid = uuidv4();
-  
-  // Include orderId in filename if provided — makes it easy to match in Supabase Storage
-  const orderId = req.query.orderId || req.body.orderId || null;
-  const filename = orderId
-    ? `wheel-photos/order-${orderId}_${uid}${ext}`
-    : `wheel-photos/${uid}${ext}`;
+  const filename = `wheel-photos/${uuidv4()}${ext}`;
 
   try {
     const { error } = await supabase.storage
@@ -48,7 +41,7 @@ router.post('/wheel-photo', upload.single('photo'), async (req, res) => {
       .from('wheel-photos')
       .getPublicUrl(filename);
 
-    res.json({ url: data.publicUrl, filename });
+    res.json({ url: data.publicUrl });
   } catch (err) {
     console.error('Supabase storage upload error:', err);
     res.status(500).json({ error: 'File upload failed' });

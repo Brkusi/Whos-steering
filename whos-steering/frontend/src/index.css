@@ -40,7 +40,6 @@ a { color: inherit; text-decoration: none; }
   letter-spacing: 3px; text-transform: uppercase; cursor: pointer;
   clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
   transition: background .2s, transform .2s;
-  white-space: nowrap;
 }
 .btn:hover { background: var(--yl); transform: translateY(-2px); }
 .btn:disabled { opacity: .5; cursor: not-allowed; transform: none; }
@@ -53,7 +52,6 @@ a { color: inherit; text-decoration: none; }
   letter-spacing: 3px; text-transform: uppercase; cursor: pointer;
   clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
   transition: all .2s;
-  white-space: nowrap;
 }
 .btn-outline:hover { background: rgba(232,184,0,.08); transform: translateY(-2px); }
 .btn-outline.sm { clip-path: none; padding: 9px 18px; font-size: 10px; }
@@ -104,105 +102,5 @@ a { color: inherit; text-decoration: none; }
   to   { opacity: 1; transform: translateY(0); }
 }
 .fade-up { animation: fadeUp .8s forwards; }
+
 @keyframes spin { to { transform: translateY(-50%) rotate(360deg); } }
-
-/* ══════════════════════════════════════════════════════
-   MOBILE RESPONSIVE
-══════════════════════════════════════════════════════ */
-@media (max-width: 768px) {
-
-  /* Nav */
-  nav { padding: 0 16px !important; height: 72px !important; }
-  .ws-logo-top { font-size: 28px !important; }
-  .ws-logo-bot { font-size: 11px !important; letter-spacing: 2px !important; }
-
-  /* Hero */
-  #hero { height: 100svh; }
-  #hero .ws-logo-top { font-size: clamp(48px, 14vw, 80px) !important; }
-
-  /* Hero bottom brand strip — stack vertically */
-  #hero > div:last-child {
-    flex-direction: column !important;
-  }
-  #hero > div:last-child > div {
-    border-right: none !important;
-    border-bottom: 1px solid var(--b);
-  }
-
-  /* Catalog grid */
-  .catalog-grid {
-    grid-template-columns: 1fr !important;
-  }
-
-  /* Configure — stack preview above options on mobile */
-  .configure-layout {
-    grid-template-columns: 1fr !important;
-  }
-
-  /* Contact — stack columns */
-  .contact-grid {
-    grid-template-columns: 1fr !important;
-    gap: 32px !important;
-    padding: 32px 20px !important;
-  }
-
-  /* Materials section */
-  .materials-grid {
-    grid-template-columns: 1fr !important;
-    gap: 32px !important;
-    padding: 40px 20px !important;
-  }
-
-  /* Checkout */
-  .checkout-grid {
-    grid-template-columns: 1fr !important;
-    gap: 24px !important;
-    padding: 24px 16px !important;
-  }
-
-  /* Admin stats */
-  .admin-stats {
-    grid-template-columns: repeat(2, 1fr) !important;
-  }
-
-  /* Account */
-  .account-header {
-    flex-direction: column !important;
-    align-items: flex-start !important;
-    padding: 32px 20px 20px !important;
-  }
-
-  /* General padding reduction */
-  [style*="padding: '50px 40px'"],
-  [style*="padding: '48px 40px'"] {
-    padding: 28px 20px !important;
-  }
-
-  /* Buttons full width on mobile */
-  .btn, .btn-outline {
-    padding: 12px 20px !important;
-    font-size: 10px !important;
-    letter-spacing: 2px !important;
-  }
-
-  /* Info strips */
-  .info-strip {
-    grid-template-columns: 1fr !important;
-  }
-
-  /* Product cards min width */
-  .ccard { min-width: 100% !important; }
-}
-
-@media (max-width: 480px) {
-  .ws-logo-top { font-size: 24px !important; }
-  .ws-logo-bot { font-size: 10px !important; }
-
-  /* Hide some nav links on very small screens */
-  .nav-link-shop, .nav-link-contact { display: none; }
-
-  .btn, .btn-outline {
-    padding: 10px 14px !important;
-    font-size: 9px !important;
-  }
-}
