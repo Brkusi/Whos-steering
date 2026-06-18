@@ -33,7 +33,7 @@ export default function Home() {
 
         <div style={{ position: 'relative', zIndex: 2, textAlign: 'center', padding: '0 20px', width: '100%', maxWidth: 700 }}>
           {/* Logo */}
-          <div className="fade-up" style={{ marginBottom: 2, animationDelay: '.2s' }}>
+          <div className="fade-up" style={{ marginBottom: 0, animationDelay: '.2s' }}>
             <img
               src="/ws-logo.png"
               alt="Who's Steering"
@@ -44,6 +44,7 @@ export default function Home() {
                 objectFit: 'contain',
                 display: 'block',
                 margin: '0 auto',
+                marginBottom: '-4%',
               }}
             />
           </div>
