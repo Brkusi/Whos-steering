@@ -16,7 +16,10 @@ export default function Home() {
   return (
     <div>
       {/* ── Hero ── */}
-      <div id="hero" style={{ height: '100vh', position: 'relative', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', }}>
+      <div id="hero" style={{
+        height: '100vh', position: 'relative', overflow: 'hidden',
+        display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column',
+      }}>
         <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse at 20% 50%, rgba(232,184,0,.09) 0%, transparent 60%), #080808' }} />
         <div style={{ position: 'absolute', inset: 0, backgroundImage: 'linear-gradient(rgba(232,184,0,.03) 1px, transparent 1px), linear-gradient(90deg, rgba(232,184,0,.03) 1px, transparent 1px)', backgroundSize: '60px 60px', maskImage: 'radial-gradient(ellipse at center, black 30%, transparent 80%)' }} />
 
@@ -28,27 +31,35 @@ export default function Home() {
           <circle cx="150" cy="150" r="37" fill="none" stroke="#E8B800" strokeWidth="4" />
         </svg>
 
-        <div style={{ position: 'relative', zIndex: 2, textAlign: 'center', padding: '0 20px' }}>
-          {/* Real logo image */}
-          <div className="fade-up" style={{ marginBottom: 8, animationDelay: '.2s' }}>
+        <div style={{ position: 'relative', zIndex: 2, textAlign: 'center', padding: '0 20px', width: '100%', maxWidth: 700 }}>
+          {/* Logo */}
+          <div className="fade-up" style={{ marginBottom: 4, animationDelay: '.2s' }}>
             <img
               src="/ws-logo.png"
               alt="Who's Steering"
-              style={{ height: 'clamp(280px, 38vw, 480px)', width: 'auto', objectFit: 'contain', display: 'block' }}
+              style={{
+                /* Mobile: 55vw, capped at 320px. Desktop: 36vw, capped at 480px */
+                width: 'min(55vw, 320px)',
+                height: 'auto',
+                objectFit: 'contain',
+                display: 'block',
+                margin: '0 auto',
+              }}
             />
           </div>
-          <div className="fade-up" style={{ fontFamily: 'Orbitron, monospace', fontSize: 10, letterSpacing: 6, color: 'var(--y)', textTransform: 'uppercase', marginBottom: 12, animationDelay: '.55s' }}>
+
+          <div className="fade-up" style={{ fontFamily: 'Orbitron, monospace', fontSize: 'clamp(8px, 2vw, 10px)', letterSpacing: 6, color: 'var(--y)', textTransform: 'uppercase', marginBottom: 8, animationDelay: '.55s' }}>
             Custom Steering Wheels
           </div>
-          <div className="fade-up" style={{ fontSize: 15, color: 'var(--t)', letterSpacing: 3, textTransform: 'uppercase', marginTop: 10, animationDelay: '.7s' }}>
+          <div className="fade-up" style={{ fontSize: 'clamp(11px, 3vw, 15px)', color: 'var(--t)', letterSpacing: 3, textTransform: 'uppercase', marginBottom: 10, animationDelay: '.7s' }}>
             BMW &amp; AUDI SPECIALISTS
           </div>
-          <div className="fade-up" style={{ display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap', marginTop: 12, animationDelay: '.85s' }}>
+          <div className="fade-up" style={{ display: 'flex', gap: 10, justifyContent: 'center', flexWrap: 'wrap', marginBottom: 24, animationDelay: '.85s' }}>
             {['Made to Order', '6 Month Warranty', '3–5 Week Build'].map(b => (
-              <span key={b} style={{ fontFamily: 'Orbitron, monospace', fontSize: 9, letterSpacing: 2, padding: '5px 12px', border: '1px solid rgba(232,184,0,.3)', color: 'rgba(232,184,0,.75)' }}>{b}</span>
+              <span key={b} style={{ fontFamily: 'Orbitron, monospace', fontSize: 'clamp(7px, 2vw, 9px)', letterSpacing: 2, padding: '5px 10px', border: '1px solid rgba(232,184,0,.3)', color: 'rgba(232,184,0,.75)' }}>{b}</span>
             ))}
           </div>
-          <div className="fade-up" style={{ display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap', marginTop: 28, animationDelay: '1s' }}>
+          <div className="fade-up" style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap', animationDelay: '1s' }}>
             <button className="btn" onClick={() => nav('/configure')}>BUILD YOURS</button>
             <button className="btn-outline" onClick={() => nav('/catalog')}>SHOP CATALOG</button>
           </div>
@@ -62,14 +73,14 @@ export default function Home() {
             { id: 'custom', name: 'CUSTOM', tag: 'Full Configurator', badge: 'CONFIGURE' },
           ].map((b, i) => (
             <div key={b.id} onClick={() => nav(b.id === 'custom' ? '/configure' : `/catalog?brand=${b.name}`)}
-              style={{ flex: 1, padding: '16px 20px', display: 'flex', alignItems: 'center', gap: 12, background: 'rgba(20,20,20,.9)', borderRight: i < 2 ? '1px solid var(--b)' : 'none', cursor: 'pointer', transition: 'background .3s' }}
+              style={{ flex: 1, padding: 'clamp(10px,2vw,16px) clamp(8px,2vw,20px)', display: 'flex', alignItems: 'center', gap: 8, background: 'rgba(20,20,20,.9)', borderRight: i < 2 ? '1px solid var(--b)' : 'none', cursor: 'pointer', transition: 'background .3s', overflow: 'hidden' }}
               onMouseEnter={e => e.currentTarget.style.background = 'rgba(35,35,35,.9)'}
               onMouseLeave={e => e.currentTarget.style.background = 'rgba(20,20,20,.9)'}>
-              <div>
-                <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 800, fontStyle: 'italic', fontSize: 22, letterSpacing: 1 }}>{b.name}</div>
-                <div style={{ fontSize: 10, color: 'var(--t)', letterSpacing: 1, textTransform: 'uppercase' }}>{b.tag}</div>
+              <div style={{ minWidth: 0 }}>
+                <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 800, fontStyle: 'italic', fontSize: 'clamp(14px,3vw,22px)', letterSpacing: 1 }}>{b.name}</div>
+                <div style={{ fontSize: 'clamp(7px,1.5vw,10px)', color: 'var(--t)', letterSpacing: 1, textTransform: 'uppercase', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{b.tag}</div>
               </div>
-              <div style={{ marginLeft: 'auto', background: 'var(--y)', color: '#000', fontSize: 9, fontWeight: 700, padding: '3px 8px', fontFamily: 'Orbitron, monospace', letterSpacing: 1 }}>{b.badge}</div>
+              <div style={{ marginLeft: 'auto', background: 'var(--y)', color: '#000', fontSize: 'clamp(7px,1.5vw,9px)', fontWeight: 700, padding: '3px 6px', fontFamily: 'Orbitron, monospace', letterSpacing: 1, flexShrink: 0 }}>{b.badge}</div>
             </div>
           ))}
         </div>
@@ -77,10 +88,16 @@ export default function Home() {
 
       {/* ── Materials & Craftsmanship ── */}
       <div style={{ background: 'var(--m)', borderBottom: '1px solid var(--b)' }}>
-        <div style={{ maxWidth: 1100, margin: '0 auto', padding: '64px 40px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 60, alignItems: 'center' }}>
+        <div style={{
+          maxWidth: 1100, margin: '0 auto', padding: 'clamp(40px,6vw,64px) clamp(20px,5vw,40px)',
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+          gap: 'clamp(32px,5vw,60px)',
+          alignItems: 'center',
+        }}>
           <div>
             <div style={{ fontFamily: 'Orbitron, monospace', fontSize: 9, letterSpacing: 4, color: 'var(--y)', textTransform: 'uppercase', marginBottom: 10 }}>Our Standard</div>
-            <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 44, lineHeight: 1, marginBottom: 16 }}>
+            <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 'clamp(32px,5vw,44px)', lineHeight: 1, marginBottom: 16 }}>
               MATERIALS &<br /><span style={{ color: 'var(--y)' }}>CRAFTSMANSHIP</span>
             </div>
             <div style={{ fontSize: 13, color: 'var(--t)', lineHeight: 1.7 }}>
