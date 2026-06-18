@@ -44,7 +44,7 @@ export default function Home() {
                 objectFit: 'contain',
                 display: 'block',
                 margin: '0 auto',
-                marginBottom: '-4%',
+                marginBottom: '-12%',
               }}
             />
           </div>
