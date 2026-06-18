@@ -33,13 +33,13 @@ export default function Home() {
 
         <div style={{ position: 'relative', zIndex: 2, textAlign: 'center', padding: '0 20px', width: '100%', maxWidth: 700 }}>
           {/* Logo */}
-          <div className="fade-up" style={{ marginBottom: 4, animationDelay: '.2s' }}>
+          <div className="fade-up" style={{ marginBottom: 2, animationDelay: '.2s' }}>
             <img
               src="/ws-logo.png"
               alt="Who's Steering"
               style={{
                 /* Mobile: 55vw, capped at 320px. Desktop: 36vw, capped at 480px */
-                width: 'min(55vw, 320px)',
+                width: 'min(72vw, 520px)',
                 height: 'auto',
                 objectFit: 'contain',
                 display: 'block',
