@@ -14,7 +14,7 @@ function authRequired(req, res, next) {
 
 function adminRequired(req, res, next) {
   authRequired(req, res, () => {
-    if (!req.user.isAdmin) return res.status(403).json({ error: 'Admin access required' });
+    if (!req.user.is_admin && !req.user.isAdmin) return res.status(403).json({ error: 'Admin access required' });
     next();
   });
 }
