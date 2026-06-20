@@ -66,14 +66,13 @@ export const CLASSIC_CARBON_COLORS = [
   { n: 'Red Carbon',          h: '#6E0000' },
 ];
 
-// ── Forged Carbon colors (with "Flakes" suffix) ───────────────────────────────
+// ── Forged Carbon colors (image-based) ───────────────────────────────────────
 export const FORGED_CARBON_COLORS = [
-  { n: 'Black Flakes',        h: '#0D0D0D' },
-  { n: 'Gold Flakes',         h: '#3A2800' },
-  { n: 'Silver Flakes',       h: '#1A1A1A' },
-  { n: 'Blue Flakes',         h: '#0A1428' },
-  { n: 'Purple Flakes',       h: '#1A0A2E' },
-  { n: 'Red Flakes',          h: '#2E0000' },
+  { n: 'Classic',  h: '#111111', img: '/forged/forged-classic.png' },
+  { n: 'Purple',   h: '#1A0A2E', img: '/forged/forged-purple.png'  },
+  { n: 'Green',    h: '#0A2E10', img: '/forged/forged-green.png'   },
+  { n: 'Gold',     h: '#3A2800', img: '/forged/forged-gold.png'    },
+  { n: 'Blue',     h: '#0A1428', img: '/forged/forged-blue.png'    },
 ];
 
 // ── Honeycomb Carbon colors ────────────────────────────────────────────────────
@@ -87,6 +86,25 @@ export const MATS = [
   { n: 'Forged Carbon',       d: '#1A1F28', col: false, carbon: true,  cType: 'forged'    },
   { n: 'Honeycomb Carbon',    d: '#0A0A0A', col: false, carbon: true,  cType: 'honeycomb' },
   { n: 'Leather',             d: '#5C3A1E', col: true,  carbon: false  },
+  { n: 'Perforated Leather',  d: '#4A2E15', col: true,  carbon: false  },
+  { n: 'Alcantara',           d: '#3A3A3A', col: true,  carbon: false  },
+];
+
+// Top & Bottom only — no Perforated Leather
+export const TOP_BOTTOM_MATS = [
+  { n: 'Classic Carbon',      d: '#111111', col: false, carbon: true,  cType: 'classic'   },
+  { n: 'Forged Carbon',       d: '#1A1F28', col: false, carbon: true,  cType: 'forged'    },
+  { n: 'Honeycomb Carbon',    d: '#0A0A0A', col: false, carbon: true,  cType: 'honeycomb' },
+  { n: 'Classic Leather',     d: '#5C3A1E', col: true,  carbon: false  },
+  { n: 'Alcantara',           d: '#3A3A3A', col: true,  carbon: false  },
+];
+
+// Sides — all options including Perforated
+export const SIDE_MATS = [
+  { n: 'Classic Carbon',      d: '#111111', col: false, carbon: true,  cType: 'classic'   },
+  { n: 'Forged Carbon',       d: '#1A1F28', col: false, carbon: true,  cType: 'forged'    },
+  { n: 'Honeycomb Carbon',    d: '#0A0A0A', col: false, carbon: true,  cType: 'honeycomb' },
+  { n: 'Classic Leather',     d: '#5C3A1E', col: true,  carbon: false  },
   { n: 'Perforated Leather',  d: '#4A2E15', col: true,  carbon: false  },
   { n: 'Alcantara',           d: '#3A3A3A', col: true,  carbon: false  },
 ];
@@ -110,6 +128,9 @@ export const DEFAULT_CONFIG = {
   brand: 'BMW', vehicleYear: '', vehicleModel: '',
   wheelStyle: 'Standard', paddleShifters: 'Standard',
   topBottomMat: 'Alcantara', topBottomCol: null, topBottomCarbonCol: null,
+  wheelStyleType: 'RS',
+  startStopButtons: false,
+  ledDisplay: false,
   sideMat: 'Alcantara', sideCol: null, sideCarbonCol: null,
   stripeConceptId: 'C-1', stripeCustomColor: '',
   stitchColor: null, stitchCustomColor: '',

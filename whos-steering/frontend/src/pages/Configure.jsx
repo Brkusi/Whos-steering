@@ -5,6 +5,7 @@ import {
   COLORS, MATS, TRIS, DEFAULT_CONFIG, colorName,
   STRIPE_CONCEPTS, STITCH_COLORS,
   CLASSIC_CARBON_COLORS, FORGED_CARBON_COLORS, HONEYCOMB_CARBON_COLORS,
+  TOP_BOTTOM_MATS, SIDE_MATS,
 } from '../lib/data';
 import { calcPrice, apiFetch } from '../lib/api';
 import { useCart } from '../context';
@@ -118,12 +119,19 @@ function CarbonColorGrid({ colors, selected, onSelect }) {
     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8, marginTop: 8 }}>
       {colors.map(c => (
         <div key={c.h} onClick={() => onSelect(c.h)}
-          style={{ cursor: 'pointer', border: `2px solid ${selected === c.h ? 'var(--y)' : '#2A2A2A'}`, borderRadius: 4, overflow: 'hidden', boxShadow: selected === c.h ? '0 0 0 1px var(--y)' : 'none', transition: 'border-color .15s' }}>
-          <div style={{ background: c.h, height: 44, position: 'relative', overflow: 'hidden' }}>
-            {[...Array(6)].map((_, i) => (
-              <div key={i} style={{ position: 'absolute', left: i * 12, top: 0, width: 7, height: '100%', background: 'rgba(255,255,255,.04)', transform: 'skewX(-12deg)' }} />
-            ))}
-          </div>
+          style={{ cursor: 'pointer', border: `2px solid ${selected === c.h ? 'var(--y)' : '#2A2A2A'}`, borderRadius: 4, overflow: 'hidden', boxShadow: selected === c.h ? '0 0 0 1px var(--y)' : 'none', transition: 'border-color .15s', position: 'relative' }}>
+          {c.img ? (
+            <img src={c.img} alt={c.n} style={{ width: '100%', height: 60, objectFit: 'cover', display: 'block' }} />
+          ) : (
+            <div style={{ background: c.h, height: 44, position: 'relative', overflow: 'hidden' }}>
+              {[...Array(6)].map((_, i) => (
+                <div key={i} style={{ position: 'absolute', left: i * 12, top: 0, width: 7, height: '100%', background: 'rgba(255,255,255,.04)', transform: 'skewX(-12deg)' }} />
+              ))}
+            </div>
+          )}
+          {selected === c.h && (
+            <div style={{ position: 'absolute', top: 4, right: 4, background: 'var(--y)', borderRadius: '50%', width: 16, height: 16, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 10, color: '#000', fontWeight: 700 }}>✓</div>
+          )}
           <div style={{ padding: '4px 6px', background: '#111', fontSize: 9, color: selected === c.h ? 'var(--y)' : 'var(--t)', letterSpacing: .5, textAlign: 'center', lineHeight: 1.3 }}>{c.n}</div>
         </div>
       ))}
@@ -131,9 +139,10 @@ function CarbonColorGrid({ colors, selected, onSelect }) {
   );
 }
 
-function MatSection({ label, matKey, colKey, carbonColKey, customColKey, cfg, set }) {
+function MatSection({ label, matKey, colKey, carbonColKey, customColKey, cfg, set, matsOverride }) {
   const mat = cfg[matKey];
-  const selectedMat = MATS.find(m => m.n === mat);
+  const matList = matsOverride || MATS;
+  const selectedMat = matList.find(m => m.n === mat);
   const isCarbon = selectedMat?.carbon;
   const cType = selectedMat?.cType;
   const carbonColors = cType === 'classic' ? CLASSIC_CARBON_COLORS : cType === 'forged' ? FORGED_CARBON_COLORS : HONEYCOMB_CARBON_COLORS;
@@ -141,7 +150,7 @@ function MatSection({ label, matKey, colKey, carbonColKey, customColKey, cfg, se
   return (
     <Sect label={label} value={mat}>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7, marginBottom: 14 }}>
-        {MATS.map(m => (
+        {matList.map(m => (
           <button key={m.n} className={`ob${mat === m.n ? ' on' : ''}`}
             onClick={() => { set(matKey, m.n); set(colKey, null); set(carbonColKey, null); set(customColKey, ''); }}>
             {m.n}
@@ -235,7 +244,10 @@ export default function Configure() {
     return [
       ['Brand',            cfg.brand],
       ['Vehicle',          `${cfg.vehicleYear} ${cfg.brand} ${cfg.vehicleModel}`],
+      ['Wheel Style Type',  cfg.wheelStyleType],
       ['Wheel Style',      cfg.wheelStyle === 'Standard' ? 'Comfort' : 'Sport'],
+      cfg.wheelStyleType === 'R8' && cfg.startStopButtons ? ['Start/Stop Buttons', 'Yes (+$40)'] : null,
+      cfg.ledDisplay ? ['LED Display Strip', 'Yes (+$50)'] : null,
       ['Paddle Shifters',  cfg.paddleShifters],
       ['Top/Bottom',       cfg.topBottomMat + (cfg.topBottomCol ? ' · ' + colorName(cfg.topBottomCol) : '') + (cfg.topBottomCustomColor ? ' · ' + cfg.topBottomCustomColor : '')],
       ['Side Grip',        cfg.sideMat + (cfg.sideCol ? ' · ' + colorName(cfg.sideCol) : '') + (cfg.sideCustomColor ? ' · ' + cfg.sideCustomColor : '')],
@@ -330,6 +342,37 @@ export default function Configure() {
             {errors.photo && <div className="err-msg">A photo of your current wheel is required</div>}
           </Sect>
 
+          {/* Wheel Style Type */}
+          <Sect label="Wheel Style Type" value={cfg.wheelStyleType}>
+            <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
+              {['RS', 'R8'].map(style => (
+                <div key={style} onClick={() => set('wheelStyleType', style)}
+                  style={{ flex: 1, padding: '14px 12px', border: `2px solid ${cfg.wheelStyleType === style ? 'var(--y)' : 'var(--b)'}`, background: cfg.wheelStyleType === style ? 'rgba(232,184,0,.06)' : 'transparent', cursor: 'pointer', textAlign: 'center', transition: 'all .2s' }}>
+                  <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 28, color: cfg.wheelStyleType === style ? 'var(--y)' : 'var(--w)', letterSpacing: 2 }}>{style} STYLE</div>
+                  <div style={{ fontSize: 10, color: 'var(--t)', marginTop: 4 }}>
+                    {style === 'RS' ? 'Classic flat-bottom sport profile' : 'R8 supercar-inspired round profile'}
+                  </div>
+                </div>
+              ))}
+            </div>
+            {cfg.wheelStyleType === 'R8' && (
+              <div style={{ marginBottom: 12 }}>
+                <Toggle
+                  label="Start / Stop Buttons"
+                  sub="+$40.00"
+                  value={cfg.startStopButtons}
+                  onChange={v => set('startStopButtons', v)}
+                />
+              </div>
+            )}
+            <Toggle
+              label="LED Display Strip"
+              sub="+$50.00"
+              value={cfg.ledDisplay}
+              onChange={v => set('ledDisplay', v)}
+            />
+          </Sect>
+
           {/* Stripe */}
           <Sect label="Top Stripe" value={selectedStripeConcept.label}>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(72px,1fr))', gap: 10, marginBottom: 14 }}>
@@ -360,13 +403,13 @@ export default function Configure() {
           <MatSection label="Top & Bottom Grip Material"
             matKey="topBottomMat" colKey="topBottomCol"
             carbonColKey="topBottomCarbonCol" customColKey="topBottomCustomColor"
-            cfg={cfg} set={set} />
+            cfg={cfg} set={set} matsOverride={TOP_BOTTOM_MATS} />
 
           {/* Side Mat */}
           <MatSection label="Side Grip Material"
             matKey="sideMat" colKey="sideCol"
             carbonColKey="sideCarbonCol" customColKey="sideCustomColor"
-            cfg={cfg} set={set} />
+            cfg={cfg} set={set} matsOverride={SIDE_MATS} />
 
           {/* AUDI-only */}
           {isAudi && (
