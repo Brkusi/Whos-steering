@@ -283,7 +283,7 @@ export default function Configure() {
           <WheelPreview config={cfg} size={Math.min(360, window.innerWidth * 0.4)} />
           <div style={{ paddingTop: 12, borderTop: '1px solid var(--b)', width: '100%', textAlign: 'center' }}>
             <div style={{ fontFamily: 'Orbitron, monospace', fontSize: 9, letterSpacing: 3, color: 'var(--t)', textTransform: 'uppercase' }}>Estimated Total</div>
-            <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontSize: 56, color: 'var(--y)', lineHeight: 1 }}>${price.toFixed(2)}</div>
+            <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontSize: 'clamp(64px,8vw,88px)', color: 'var(--y)', lineHeight: 1, letterSpacing: -1 }}>${price.toFixed(2)}</div>
             <div style={{ fontSize: 10, color: 'var(--t)', letterSpacing: 1 }}>Final price confirmed at checkout</div>
           </div>
           <button className="btn" style={{ width: '100%', clipPath: 'polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%)', padding: 18, fontSize: 13, letterSpacing: 3 }}
@@ -342,36 +342,49 @@ export default function Configure() {
             {errors.photo && <div className="err-msg">A photo of your current wheel is required</div>}
           </Sect>
 
-          {/* Wheel Style Type */}
-          <Sect label="Wheel Style Type" value={cfg.wheelStyleType}>
-            <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
-              {['RS', 'R8'].map(style => (
-                <div key={style} onClick={() => set('wheelStyleType', style)}
-                  style={{ flex: 1, padding: '14px 12px', border: `2px solid ${cfg.wheelStyleType === style ? 'var(--y)' : 'var(--b)'}`, background: cfg.wheelStyleType === style ? 'rgba(232,184,0,.06)' : 'transparent', cursor: 'pointer', textAlign: 'center', transition: 'all .2s' }}>
-                  <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 28, color: cfg.wheelStyleType === style ? 'var(--y)' : 'var(--w)', letterSpacing: 2 }}>{style} STYLE</div>
-                  <div style={{ fontSize: 10, color: 'var(--t)', marginTop: 4 }}>
-                    {style === 'RS' ? 'Classic flat-bottom sport profile' : 'R8 supercar-inspired round profile'}
+          {/* Wheel Style Type — Audi only */}
+          {isAudi && (
+            <Sect label="Wheel Style Type" value={cfg.wheelStyleType}>
+              <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
+                {['RS', 'R8'].map(style => (
+                  <div key={style} onClick={() => set('wheelStyleType', style)}
+                    style={{ flex: 1, padding: '14px 12px', border: `2px solid ${cfg.wheelStyleType === style ? 'var(--y)' : 'var(--b)'}`, background: cfg.wheelStyleType === style ? 'rgba(232,184,0,.06)' : 'transparent', cursor: 'pointer', textAlign: 'center', transition: 'all .2s' }}>
+                    <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 28, color: cfg.wheelStyleType === style ? 'var(--y)' : 'var(--w)', letterSpacing: 2 }}>{style} STYLE</div>
+                    <div style={{ fontSize: 10, color: 'var(--t)', marginTop: 4 }}>
+                      {style === 'RS' ? 'Classic flat-bottom sport profile' : 'R8 supercar-inspired round profile'}
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
-            {cfg.wheelStyleType === 'R8' && (
-              <div style={{ marginBottom: 12 }}>
+                ))}
+              </div>
+              {cfg.wheelStyleType === 'R8' && (
                 <Toggle
-                  label="Start / Stop Buttons"
+                  label="Start / Stop & Drive Select Buttons"
                   sub="+$40.00"
                   value={cfg.startStopButtons}
                   onChange={v => set('startStopButtons', v)}
                 />
+              )}
+            </Sect>
+          )}
+
+          {/* LED Display Strip — Audi only, own full section */}
+          {isAudi && (
+            <Sect label="LED Display Strip" value={cfg.ledDisplay ? 'Yes · +$50' : 'No'} badge={cfg.ledDisplay ? 'ADDED' : undefined}>
+              <div style={{ marginBottom: 14, border: '1px solid var(--b)', overflow: 'hidden', background: '#0A0A0A' }}>
+                <img src="/led-display.png" alt="LED Display Strip"
+                  style={{ width: '100%', maxHeight: 200, objectFit: 'cover', objectPosition: 'center 30%', display: 'block' }} />
               </div>
-            )}
-            <Toggle
-              label="LED Display Strip"
-              sub="+$50.00"
-              value={cfg.ledDisplay}
-              onChange={v => set('ledDisplay', v)}
-            />
-          </Sect>
+              <div style={{ fontSize: 12, color: 'var(--t)', lineHeight: 1.7, marginBottom: 14, padding: '0 2px' }}>
+                Integrated LED RPM shift-light strip with live speed and gear display — embedded directly into the steering wheel, visible without moving your eyes from the road.
+              </div>
+              <Toggle
+                label="Add LED Display Strip"
+                sub="+$50.00"
+                value={cfg.ledDisplay}
+                onChange={v => set('ledDisplay', v)}
+              />
+            </Sect>
+          )}
 
           {/* Stripe */}
           <Sect label="Top Stripe" value={selectedStripeConcept.label}>
@@ -416,7 +429,7 @@ export default function Configure() {
             <>
               <Sect label="Lower Badge" value={cfg.audiBadge}>
                 <div style={{ display: 'flex', gap: 6 }}>
-                  {['RS','S'].map(b => (
+                  {['RS','S','R8'].map(b => (
                     <div key={b} className={`ob${cfg.audiBadge === b ? ' on' : ''}`}
                       style={{ flex: 1, padding: 14, textAlign: 'center', fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontSize: 26, letterSpacing: 3, cursor: 'pointer' }}
                       onClick={() => set('audiBadge', b)}>{b}</div>
@@ -481,7 +494,7 @@ export default function Configure() {
             {buildSummary().map(([k, v]) => (
               <div key={k} style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #1A1A1A', gap: 10 }}>
                 <span style={{ fontSize: 11, letterSpacing: 1, textTransform: 'uppercase', color: '#666', flexShrink: 0 }}>{k}</span>
-                <span style={{ fontSize: k === 'Est. Price' ? 18 : 13, fontWeight: 700, color: k === 'Est. Price' ? 'var(--y)' : 'var(--w)', textAlign: 'right' }}>{v}</span>
+                <span style={{ fontSize: k === 'Est. Price' ? 32 : 13, fontWeight: 900, color: k === 'Est. Price' ? 'var(--y)' : 'var(--w)', textAlign: 'right', fontFamily: k === 'Est. Price' ? '"Barlow Condensed", sans-serif' : 'inherit', letterSpacing: k === 'Est. Price' ? 1 : 'normal' }}>{v}</span>
               </div>
             ))}
             <div style={{ display: 'flex', gap: 12, marginTop: 20, flexWrap: 'wrap' }}>
