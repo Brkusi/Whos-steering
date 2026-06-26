@@ -10,9 +10,9 @@ export default function ShippingPolicy() {
         <div style={{ fontSize: 12, color: 'var(--t)', marginBottom: 40, borderBottom: '1px solid var(--b)', paddingBottom: 24 }}>Last updated: June 25, 2026</div>
 
         <Legal h="PRODUCTION & ORDER PROCESSING">
-          <p>Every Who's Steering wheel is built by hand to your exact specifications. Production begins within 24 hours of order confirmation and order processing takes place seven days a week.</p>
+          <p>Every Who's Steering wheel is built by hand to your exact specifications. Production begins within 24 hours of order confirmation and order processing takes place M-F.</p>
           <p>Standard production time is <strong style={{ color: 'var(--w)' }}>3–4 weeks</strong> from the date of order confirmation. Complex custom configurations or delays in sourcing OEM-specific components may extend this timeline. We will communicate any delays proactively.</p>
-          <p>Once your build is complete, you will receive a photo of your finished wheel for approval before it ships.</p>
+          <p>Once your build is complete, you will receive a photo of your finished wheel for approval before it is packaged and shipped.</p>
         </Legal>
 
         <Legal h="WHERE WE SHIP">
@@ -20,7 +20,7 @@ export default function ShippingPolicy() {
         </Legal>
 
         <Legal h="DELIVERY TIMEFRAMES">
-          <p>Once production is complete and your wheel is approved, please allow approximately <strong style={{ color: 'var(--w)' }}>3–5 business days</strong> for express worldwide tracked shipping. Domestic US orders typically arrive in 2–3 business days.</p>
+          <p>Once production is complete and your wheel is approved, please allow approximately <strong style={{ color: 'var(--w)' }}>5–7 business days</strong> for express worldwide tracked shipping. Domestic US orders typically arrive in 2–3 business days.</p>
           <p>All shipments include tracking information, which will be provided to you via email and viewable in your account dashboard.</p>
         </Legal>
 
