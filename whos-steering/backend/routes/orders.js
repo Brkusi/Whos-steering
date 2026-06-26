@@ -122,25 +122,28 @@ router.get('/', adminRequired, async (req, res) => {
   }
 });
 
-// PATCH /api/orders/:id/status  — update order status (admin)
+// PATCH /api/orders/:id/status  — update order status + tracking (admin)
 router.patch('/:id/status', adminRequired, async (req, res) => {
-  const { status, note } = req.body;
+  const { status, note, tracking } = req.body;
   const validStatuses = ['pending','payment_processing','paid','in_build','quality_check','shipped','delivered','cancelled','refunded'];
   if (!validStatuses.includes(status)) return res.status(400).json({ error: 'Invalid status' });
 
   const client = await pool.connect();
   try {
     await client.query('BEGIN');
-    const { rows } = await client.query(
-      `UPDATE orders SET status = $1, updated_at = NOW() WHERE id = $2 RETURNING *`,
-      [status, req.params.id]
-    );
+    let updateQuery, updateVals;
+    if (tracking && (tracking.number || tracking.carrier || tracking.url)) {
+      updateQuery = `UPDATE orders SET status=$1, updated_at=NOW(), tracking_carrier=$3, tracking_number=$4, tracking_url=$5 WHERE id=$2 RETURNING *`;
+      updateVals  = [status, req.params.id, tracking.carrier||null, tracking.number||null, tracking.url||null];
+    } else {
+      updateQuery = `UPDATE orders SET status=$1, updated_at=NOW() WHERE id=$2 RETURNING *`;
+      updateVals  = [status, req.params.id];
+    }
+    const { rows } = await client.query(updateQuery, updateVals);
     if (!rows.length) { await client.query('ROLLBACK'); return res.status(404).json({ error: 'Order not found' }); }
-
     await client.query(
-      `INSERT INTO order_status_history (order_id, from_status, to_status, note, changed_by)
-       VALUES ($1,$2,$3,$4,$5)`,
-      [req.params.id, rows[0].status, status, note || null, req.user.id]
+      `INSERT INTO order_status_history (order_id, from_status, to_status, note, changed_by) VALUES ($1,$2,$3,$4,$5)`,
+      [req.params.id, rows[0].status, status, note||null, req.user.id]
     );
     await client.query('COMMIT');
     res.json(rows[0]);

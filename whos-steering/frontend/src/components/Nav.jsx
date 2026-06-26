@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../context';
 import { useAuth } from '../context';
 import CartDrawer from './CartDrawer';
+import AnnouncementBar from './AnnouncementBar';
 
 export default function Nav() {
   const { count } = useCart();
@@ -19,8 +20,9 @@ export default function Nav() {
 
   return (
     <>
+      <AnnouncementBar />
       <nav style={{
-        position: 'fixed', top: 0, left: 0, right: 0, height: 88,
+        position: 'fixed', top: 32, left: 0, right: 0, height: 88,
         background: 'rgba(5,5,5,0.97)', backdropFilter: 'blur(16px)',
         borderBottom: '1px solid var(--b)',
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
@@ -42,7 +44,7 @@ export default function Nav() {
           <img
             src="/ws-logo.png"
             alt="Who's Steering"
-            style={{ height: 'clamp(52px, 5.5vw, 82px)', width: 'auto', objectFit: 'contain', display: 'block' }}
+            style={{ height: 78, width: 'auto', objectFit: 'contain', display: 'block' }}
           />
         </div>
 
@@ -87,7 +89,7 @@ export default function Nav() {
       {/* Mobile menu */}
       {menuOpen && (
         <div style={{
-          position: 'fixed', top: 88, left: 0, right: 0,
+          position: 'fixed', top: 120, left: 0, right: 0,
           background: 'rgba(5,5,5,.98)', borderBottom: '1px solid var(--b)',
           zIndex: 999, display: 'flex', flexDirection: 'column',
         }}>
