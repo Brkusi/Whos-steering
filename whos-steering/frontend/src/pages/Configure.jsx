@@ -116,29 +116,32 @@ function StripeConcept({ concept, selected, onSelect }) {
 
 function CarbonColorGrid({ colors, selected, onSelect }) {
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 6, marginTop: 8 }}>
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))', gap: 8, marginTop: 8 }}>
       {colors.map(c => {
         const isSel = selected === c.h;
         return (
-          <div key={c.h} title={c.n} onClick={() => onSelect(c.h)}
-            style={{ position: 'relative', aspectRatio: 1, borderRadius: 3, cursor: 'pointer',
-              border: `2px solid ${isSel ? 'var(--y)' : 'transparent'}`,
-              boxShadow: isSel ? '0 0 0 1px var(--y)' : 'none',
-              overflow: 'hidden', transition: 'border-color .15s' }}>
+          <div key={c.h} onClick={() => onSelect(c.h)}
+            style={{ cursor: 'pointer', border: `2px solid ${isSel ? 'var(--y)' : '#2A2A2A'}`,
+              borderRadius: 4, overflow: 'hidden', position: 'relative',
+              boxShadow: isSel ? '0 0 0 1px var(--y)' : 'none', transition: 'border-color .15s' }}>
             {c.img
-              ? <img src={c.img} alt={c.n} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-              : <div style={{ width: '100%', height: '100%', background: c.h }} />
+              ? <img src={c.img} alt={c.n}
+                  style={{ width: '100%', height: 100, objectFit: 'cover', display: 'block' }} />
+              : <div style={{ height: 100, background: c.h, position: 'relative', overflow: 'hidden' }}>
+                  {[...Array(6)].map((_, i) => (
+                    <div key={i} style={{ position: 'absolute', left: i*14, top: 0, width: 8,
+                      height: '100%', background: 'rgba(255,255,255,.04)', transform: 'skewX(-12deg)' }} />
+                  ))}
+                </div>
             }
             {isSel && (
-              <div style={{ position: 'absolute', inset: 0, background: 'rgba(232,184,0,.18)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <span style={{ fontSize: 14, color: 'var(--y)' }}>✓</span>
-              </div>
+              <div style={{ position: 'absolute', top: 6, right: 6, background: 'var(--y)',
+                borderRadius: '50%', width: 18, height: 18, display: 'flex',
+                alignItems: 'center', justifyContent: 'center', fontSize: 10, color: '#000', fontWeight: 700 }}>✓</div>
             )}
-            <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0,
-              background: 'rgba(0,0,0,.65)', padding: '2px 3px',
-              fontSize: 7, color: isSel ? 'var(--y)' : '#ccc',
-              letterSpacing: .3, textAlign: 'center', lineHeight: 1.3 }}>
+            <div style={{ padding: '5px 8px', background: '#111',
+              fontSize: 10, color: isSel ? 'var(--y)' : 'var(--t)',
+              letterSpacing: .5, textAlign: 'center', fontWeight: isSel ? 700 : 400 }}>
               {c.n}
             </div>
           </div>
