@@ -149,13 +149,52 @@ function MatSection({ label, matKey, colKey, carbonColKey, customColKey, cfg, se
 
   return (
     <Sect label={label} value={mat}>
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7, marginBottom: 14 }}>
-        {matList.map(m => (
-          <button key={m.n} className={`ob${mat === m.n ? ' on' : ''}`}
-            onClick={() => { set(matKey, m.n); set(colKey, null); set(carbonColKey, null); set(customColKey, ''); }}>
-            {m.n}
-          </button>
-        ))}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 6, marginBottom: 14 }}>
+        {matList.map(m => {
+          const isSel = mat === m.n;
+          const previewImg = m.cType === 'honeycomb' ? '/HoneyComb.jpeg'
+            : m.cType === 'classic' ? null
+            : m.cType === 'forged' ? null
+            : null;
+          const previewBg = m.carbon
+            ? (m.cType === 'classic' ? '#111' : m.cType === 'forged' ? '#1A1F28' : '#0A0A0A')
+            : m.d;
+          return (
+            <div key={m.n} title={m.n} onClick={() => { set(matKey, m.n); set(colKey, null); set(carbonColKey, null); set(customColKey, ''); }}
+              style={{ position: 'relative', aspectRatio: 1, borderRadius: 3, cursor: 'pointer',
+                border: `2px solid ${isSel ? 'var(--y)' : 'transparent'}`,
+                boxShadow: isSel ? '0 0 0 1px var(--y)' : 'none',
+                overflow: 'hidden', transition: 'border-color .15s',
+                background: previewBg }}>
+              {previewImg && (
+                <img src={previewImg} alt={m.n}
+                  style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+              )}
+              {!previewImg && m.carbon && (
+                <div style={{ width: '100%', height: '100%', background: previewBg,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  {[...Array(5)].map((_, i) => (
+                    <div key={i} style={{ position: 'absolute', left: i * 14, top: 0, width: 8,
+                      height: '100%', background: 'rgba(255,255,255,.04)', transform: 'skewX(-12deg)' }} />
+                  ))}
+                </div>
+              )}
+              {isSel && (
+                <div style={{ position: 'absolute', inset: 0, background: 'rgba(232,184,0,.18)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <span style={{ fontSize: 14, color: 'var(--y)', fontWeight: 700 }}>✓</span>
+                </div>
+              )}
+              <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0,
+                background: 'rgba(0,0,0,.65)', padding: '2px 3px',
+                fontSize: 7, color: isSel ? 'var(--y)' : '#ccc',
+                letterSpacing: .3, textAlign: 'center', lineHeight: 1.3,
+                fontWeight: isSel ? 700 : 400 }}>
+                {m.n}
+              </div>
+            </div>
+          );
+        })}
       </div>
       {isCarbon ? (
         <>
@@ -440,7 +479,7 @@ export default function Configure() {
           <MatSection label="Side Grip Material"
             matKey="sideMat" colKey="sideCol"
             carbonColKey="sideCarbonCol" customColKey="sideCustomColor"
-            cfg={cfg} set={set} matsOverride={SIDE_MATS.filter(m => !m.carbon)} />
+            cfg={cfg} set={set} matsOverride={SIDE_MATS} />
 
           {/* AUDI-only */}
           {isAudi && (
