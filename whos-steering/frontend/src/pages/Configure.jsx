@@ -159,11 +159,22 @@ function MatSection({ label, matKey, colKey, carbonColKey, customColKey, cfg, se
       </div>
       {isCarbon ? (
         <>
-          <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 4, color: 'var(--t)' }}>
-            {cType === 'classic' ? 'Classic Carbon Color' : cType === 'forged' ? 'Forged Carbon Flakes' : 'Honeycomb Carbon Color'}
-          </div>
-          <CarbonColorGrid colors={carbonColors} selected={cfg[carbonColKey]} onSelect={v => set(carbonColKey, v)} />
-          <CustomColorInput label="Type Any Color:" value={cfg[customColKey]} onChange={v => set(customColKey, v)} />
+          {cType !== 'honeycomb' && (
+            <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 4, color: 'var(--t)' }}>
+              {cType === 'classic' ? 'Classic Carbon Color' : 'Forged Carbon Flakes'}
+            </div>
+          )}
+          {cType === 'honeycomb' ? (
+            <div style={{ border: '1px solid var(--b)', overflow: 'hidden', marginTop: 4 }}>
+              <img src="/HoneyComb.jpeg" alt="Honeycomb Carbon"
+                style={{ width: '100%', height: 120, objectFit: 'cover', display: 'block' }} />
+            </div>
+          ) : (
+            <>
+              <CarbonColorGrid colors={carbonColors} selected={cfg[carbonColKey]} onSelect={v => set(carbonColKey, v)} />
+              <CustomColorInput label="Type Any Color:" value={cfg[customColKey]} onChange={v => set(customColKey, v)} />
+            </>
+          )}
         </>
       ) : selectedMat?.col ? (
         <>
@@ -353,6 +364,9 @@ export default function Configure() {
                     <div style={{ fontSize: 10, color: 'var(--t)', marginTop: 4 }}>
                       {style === 'RS' ? 'Classic flat-bottom sport profile' : 'R8 supercar-inspired round profile'}
                     </div>
+                    <div style={{ fontSize: 11, color: 'var(--y)', fontWeight: 700, marginTop: 6 }}>
+                      {style === 'RS' ? 'From $799.99' : 'From $864.99'}
+                    </div>
                   </div>
                 ))}
               </div>
@@ -422,11 +436,11 @@ export default function Configure() {
             carbonColKey="topBottomCarbonCol" customColKey="topBottomCustomColor"
             cfg={cfg} set={set} matsOverride={TOP_BOTTOM_MATS} />
 
-          {/* Side Mat */}
+          {/* Side Mat — no carbon options */}
           <MatSection label="Side Grip Material"
             matKey="sideMat" colKey="sideCol"
             carbonColKey="sideCarbonCol" customColKey="sideCustomColor"
-            cfg={cfg} set={set} matsOverride={SIDE_MATS} />
+            cfg={cfg} set={set} matsOverride={SIDE_MATS.filter(m => !m.carbon)} />
 
           {/* AUDI-only */}
           {isAudi && (
@@ -462,13 +476,12 @@ export default function Configure() {
             />
             <Toggle
               label="Will you require a full upgraded airbag unit (full airbag not just cover)?"
-              sub="+$25.00"
+              sub="+$75.00"
               value={cfg.airbagUpgrade}
               onChange={v => set('airbagUpgrade', v)}
             />
             <Toggle
               label="Heated Steering"
-              sub={isAudi ? '+$25.00' : ''}
               value={cfg.heated}
               onChange={v => set('heated', v)}
             />

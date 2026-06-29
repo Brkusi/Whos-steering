@@ -164,13 +164,17 @@ async function calcServerPrice(cfg) {
   const rules = {};
   rows.forEach(r => { rules[r.rule_key] = parseFloat(r.amount); });
 
-  let price = cfg.brand === 'AUDI'
-    ? (rules.base_audi || 750)
-    : (rules.base_bmw  || 849.99);
+  let price;
+  if (cfg.brand === 'AUDI') {
+    price = cfg.wheelStyleType === 'R8'
+      ? (rules.base_audi_r8 || 864.99)
+      : (rules.base_audi_rs || 799.99);
+  } else {
+    price = rules.base_bmw || 849.99;
+  }
 
   if (cfg.airbagCompat !== false)    price += (rules.airbag_compat  || 50);
-  if (cfg.airbagUpgrade === true)    price += (rules.airbag_upgrade  || 25);
-  if (cfg.brand === 'AUDI' && cfg.heated !== false) price += (rules.heated_audi || 25);
+  if (cfg.airbagUpgrade === true)    price += (rules.airbag_upgrade  || 75);
   if (cfg.paddleShifters === 'Magnetic') price += (rules.paddle_magnetic || 0);
   if (cfg.startStopButtons === true) price += 40;
   if (cfg.ledDisplay === true)       price += 50;

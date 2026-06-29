@@ -18,21 +18,20 @@ export async function apiFetch(path, opts = {}) {
 
 // ─── Pricing (mirrors server logic, uses live rules) ─────────────────────────
 export function calcPrice(config, rules = {}) {
-  let price = config.brand === 'AUDI'
-    ? (rules.base_audi ?? 750)
-    : (rules.base_bmw ?? 849.99);
+  let price;
 
-  // Airbag cover
+  if (config.brand === 'AUDI') {
+    price = config.wheelStyleType === 'R8'
+      ? (rules.base_audi_r8 ?? 864.99)
+      : (rules.base_audi_rs ?? 799.99);
+  } else {
+    price = rules.base_bmw ?? 849.99;
+  }
+
   if (config.airbagCompat !== false) price += (rules.airbag_compat ?? 50);
-  // Full airbag upgrade
-  if (config.airbagUpgrade === true) price += (rules.airbag_upgrade ?? 25);
-  // Heated
-  if (config.brand === 'AUDI' && config.heated !== false) price += (rules.heated_audi ?? 25);
-  // Magnetic paddles
+  if (config.airbagUpgrade === true) price += (rules.airbag_upgrade ?? 75);
   if (config.paddleShifters === 'Magnetic') price += (rules.paddle_magnetic ?? 0);
-  // R8 start/stop buttons
   if (config.startStopButtons === true) price += 40;
-  // LED display strip
   if (config.ledDisplay === true) price += 50;
 
   return price;
