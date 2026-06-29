@@ -68,11 +68,11 @@ export const CLASSIC_CARBON_COLORS = [
 
 // ── Forged Carbon colors (image-based) ───────────────────────────────────────
 export const FORGED_CARBON_COLORS = [
-  { n: 'Classic',  h: '#111111', img: '/forged/forged-classic.jpg' },
-  { n: 'Purple',   h: '#1A0A2E', img: '/forged/forged-purple.jpg'  },
-  { n: 'Green',    h: '#0A2E10', img: '/forged/forged-green.jpg'   },
-  { n: 'Gold',     h: '#3A2800', img: '/forged/forged-gold.jpg'    },
-  { n: 'Blue',     h: '#0A1428', img: '/forged/forged-blue.jpg'    },
+  { n: 'Classic',  h: '#111111', img: '/forged/forged-classic.jpeg' },
+  { n: 'Purple',   h: '#1A0A2E', img: '/forged/forged-purple.jpeg'  },
+  { n: 'Green',    h: '#0A2E10', img: '/forged/forged-green.jpeg'   },
+  { n: 'Gold',     h: '#3A2800', img: '/forged/forged-gold.jpeg'    },
+  { n: 'Blue',     h: '#0A1428', img: '/forged/forged-blue.jpeg'    },
 ];
 
 // ── Honeycomb Carbon colors ────────────────────────────────────────────────────
