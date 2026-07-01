@@ -39,7 +39,7 @@ export default function Home() {
               alt="Who's Steering"
               style={{
                 /* Mobile: 55vw, capped at 320px. Desktop: 36vw, capped at 480px */
-                width: 'min(55vw, 320px)',
+                width: 'min(80vw, 620px)',
                 height: 'auto',
                 objectFit: 'contain',
                 display: 'block',
