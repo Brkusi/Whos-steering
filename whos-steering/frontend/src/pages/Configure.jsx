@@ -63,7 +63,7 @@ function CustomColorInput({ label, value, onChange }) {
     <div style={{ marginTop: 10 }}>
       <label className="fl">{label || 'Type Any Color:'}</label>
       <input className="fi" type="text" value={value} onChange={e => onChange(e.target.value)}
-        placeholder="e.g. Midnight Blue, Olive Green, RAL 9005..." style={{ marginTop: 4 }} />
+        placeholder="e.g. Gold, Magenta, Dual Colors..." style={{ marginTop: 4 }} />
     </div>
   );
 }
