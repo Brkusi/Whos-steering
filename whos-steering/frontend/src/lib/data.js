@@ -194,4 +194,23 @@ export const BMW_PRESETS = [
     desc: 'A refined BMW build with G-Series styling, carbon fiber inlays, and dual red & blue stitching. Clean, purposeful, and unmistakably M.',
     isPreset: true,
   },
+  {
+    id: 'bmw-m-sport-carbon',
+    brand: 'BMW',
+    name: 'M SPORT CARBON',
+    base_price: 649.99,
+    compat: 'Fits F10, F30, G20, G30',
+    features: [
+      'G-Series Style',
+      'Carbon Fiber Base',
+      'Perforated Leather Sides',
+      'Carbon Fiber Inlays',
+      'Carbon Fiber Paddle Shifters',
+      'Option for M1 & M2 Buttons',
+      'Red & Blue Dual Stitching',
+    ],
+    images: ['/BMW_PRESET_2.png'],
+    desc: 'Full carbon fiber base with perforated leather sides and signature M stitching. Built for the driver who demands performance in every detail.',
+    isPreset: true,
+  },
 ];

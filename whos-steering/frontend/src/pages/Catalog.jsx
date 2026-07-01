@@ -248,18 +248,20 @@ function PresetPage({ preset, onClose }) {
           <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 48, lineHeight: 1, marginBottom: 12 }}>{preset.name}</div>
           <div style={{ fontSize: 14, color: 'var(--t)', lineHeight: 1.7, marginBottom: 24 }}>{preset.desc}</div>
 
-          {/* Badge */}
-          <div style={{ marginBottom: 20 }}>
-            <div style={{ fontFamily: 'Rajdhani, sans-serif', fontWeight: 700, fontSize: 13, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 8, color: 'var(--t)' }}>Lower Badge</div>
-            <div style={{ display: 'flex', gap: 8 }}>
-              {(isBMW ? ['M','M Sport'] : ['RS','S','R8']).map(b => (
-                <button key={b} onClick={() => setBadge(b)}
-                  style={{ flex: 1, padding: 14, border: `1px solid ${badge === b ? 'var(--y)' : 'var(--b)'}`, background: badge === b ? 'rgba(232,184,0,.08)' : 'transparent', color: badge === b ? 'var(--y)' : 'var(--t)', cursor: 'pointer', fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontSize: 24, letterSpacing: 3, transition: 'all .2s' }}>
-                  {b}
-                </button>
-              ))}
+          {/* Badge — Audi only */}
+          {!isBMW && (
+            <div style={{ marginBottom: 20 }}>
+              <div style={{ fontFamily: 'Rajdhani, sans-serif', fontWeight: 700, fontSize: 13, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 8, color: 'var(--t)' }}>Lower Badge</div>
+              <div style={{ display: 'flex', gap: 8 }}>
+                {['RS','S','R8'].map(b => (
+                  <button key={b} onClick={() => setBadge(b)}
+                    style={{ flex: 1, padding: 14, border: `1px solid ${badge === b ? 'var(--y)' : 'var(--b)'}`, background: badge === b ? 'rgba(232,184,0,.08)' : 'transparent', color: badge === b ? 'var(--y)' : 'var(--t)', cursor: 'pointer', fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontSize: 24, letterSpacing: 3, transition: 'all .2s' }}>
+                    {b}
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Price breakdown */}
           <div style={{ marginBottom: 16, padding: '12px 16px', background: 'rgba(232,184,0,.04)', border: '1px solid rgba(232,184,0,.15)' }}>
