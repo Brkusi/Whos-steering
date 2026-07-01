@@ -6,7 +6,7 @@ import { useCart } from '../context';
 import { useAuth } from '../context';
 import { apiFetch } from '../lib/api';
 
-const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY);
+const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PK);
 
 // ── Payment form (lives inside <Elements>) ────────────────────────────────────
 function PaymentForm({ total, orderId, email }) {
@@ -138,7 +138,7 @@ export default function Checkout() {
 
   if (!items.length && !clientSecret) {
     return (
-      <div style={{ paddingTop: 88, minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--d)' }}>
+      <div style={{ paddingTop: 120, minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--d)' }}>
         <div style={{ textAlign: 'center', padding: 40 }}>
           <div style={{ fontSize: 48, opacity: .2, marginBottom: 16 }}>🛒</div>
           <div style={{ color: 'var(--t)', letterSpacing: 2, textTransform: 'uppercase', fontSize: 13, marginBottom: 20 }}>Your cart is empty</div>
@@ -161,7 +161,7 @@ export default function Checkout() {
   };
 
   return (
-    <div style={{ paddingTop: 88, minHeight: '100vh', background: 'var(--d)' }}>
+    <div style={{ paddingTop: 120, minHeight: '100vh', background: 'var(--d)' }}>
       <div style={{
         maxWidth: 1100, margin: '0 auto', padding: '40px 24px',
         display: 'grid',
@@ -247,7 +247,7 @@ export default function Checkout() {
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16 }}>
               <span style={{ fontSize: 12, color: 'var(--t)' }}>Shipping</span>
-              <span style={{ fontSize: 12, color: '#3DB85A', fontWeight: 700 }}>FREE</span>
+              <span style={{ fontSize: 12, color: '#3DB85A', fontWeight: 700 }}>Confirmed after order</span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
               <span style={{ fontFamily: 'Orbitron, monospace', fontSize: 10, letterSpacing: 2, color: 'var(--t)' }}>TOTAL</span>
@@ -256,7 +256,7 @@ export default function Checkout() {
           </div>
           <div style={{ marginTop: 20, padding: '12px 0', borderTop: '1px solid var(--b)', fontSize: 11, color: 'var(--t)', lineHeight: 1.9 }}>
             🛡 6 Month Warranty<br />
-            ⏱ 3–5 Week Build Time<br />
+            ⏱ 3–4 Week Build Time<br />
             📦 Made to Order — ships when complete
           </div>
         </div>

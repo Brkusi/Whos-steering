@@ -33,18 +33,17 @@ export default function Home() {
 
         <div style={{ position: 'relative', zIndex: 2, textAlign: 'center', padding: '0 20px', width: '100%', maxWidth: 700 }}>
           {/* Logo */}
-          <div className="fade-up" style={{ marginBottom: 0, animationDelay: '.2s' }}>
+          <div className="fade-up" style={{ marginBottom: 4, animationDelay: '.2s' }}>
             <img
               src="/ws-logo.png"
               alt="Who's Steering"
               style={{
                 /* Mobile: 55vw, capped at 320px. Desktop: 36vw, capped at 480px */
-                width: 'min(72vw, 520px)',
+                width: 'min(55vw, 320px)',
                 height: 'auto',
                 objectFit: 'contain',
                 display: 'block',
                 margin: '0 auto',
-                marginBottom: '-12%',
               }}
             />
           </div>
@@ -56,7 +55,7 @@ export default function Home() {
             BMW &amp; AUDI SPECIALISTS
           </div>
           <div className="fade-up" style={{ display: 'flex', gap: 10, justifyContent: 'center', flexWrap: 'wrap', marginBottom: 24, animationDelay: '.85s' }}>
-            {['Made to Order', '6 Month Warranty', '3–5 Week Build'].map(b => (
+            {['Made to Order', '6 Month Warranty', '3–4 Week Build'].map(b => (
               <span key={b} style={{ fontFamily: 'Orbitron, monospace', fontSize: 'clamp(7px, 2vw, 9px)', letterSpacing: 2, padding: '5px 10px', border: '1px solid rgba(232,184,0,.3)', color: 'rgba(232,184,0,.75)' }}>{b}</span>
             ))}
           </div>

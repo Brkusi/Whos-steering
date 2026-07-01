@@ -30,9 +30,17 @@ export function calcPrice(config, rules = {}) {
 
   if (config.airbagCompat !== false) price += (rules.airbag_compat ?? 50);
   if (config.airbagUpgrade === true) price += (rules.airbag_upgrade ?? 75);
-  if (config.paddleShifters === 'Magnetic') price += (rules.paddle_magnetic ?? 0);
-  if (config.startStopButtons === true) price += 40;
-  if (config.ledDisplay === true) price += 50;
+  // BMW-only add-ons
+  if (config.brand === 'BMW') {
+    if (config.heated !== false)   price += (rules.heated_bmw ?? 75);
+    if (config.laneAssist !== false) price += (rules.lane_assist_bmw ?? 30);
+    if (config.paddleShifters === 'Magnetic') price += (rules.paddle_magnetic ?? 25);
+  }
+  // Audi-only add-ons
+  if (config.brand === 'AUDI') {
+    if (config.startStopButtons === true) price += 40;
+    if (config.ledDisplay === true) price += 50;
+  }
 
   return price;
 }

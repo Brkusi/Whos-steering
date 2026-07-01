@@ -432,14 +432,26 @@ export default function Configure() {
             <CustomColorInput label="Type Any Stitch Color:" value={cfg.stitchCustomColor} onChange={v => { set('stitchCustomColor', v); set('stitchColor', null); }} />
           </Sect>
 
-          {/* Wheel Style */}
-          <Sect label="Wheel Style" value={cfg.wheelStyle}>
-            <OptionRow options={['Standard', 'Sport']} selected={cfg.wheelStyle} onSelect={v => set('wheelStyle', v)} />
-          </Sect>
+          {/* Wheel Style — hidden for R8 (R8 has fixed round profile) */}
+          {!(isAudi && cfg.wheelStyleType === 'R8') && (
+            <Sect label="Wheel Style" value={cfg.wheelStyle}>
+              <OptionRow options={['Standard', 'Sport']} selected={cfg.wheelStyle} onSelect={v => set('wheelStyle', v)} />
+            </Sect>
+          )}
 
           {/* Paddles */}
-          <Sect label="Paddle Shifters" value={cfg.paddleShifters}>
+          <Sect label="Paddle Shifters" value={cfg.paddleShifters + (cfg.paddleShifters === 'Magnetic' ? ` · ${cfg.paddleLength}` : '')}>
             <OptionRow options={['Standard', 'Magnetic']} selected={cfg.paddleShifters} onSelect={v => set('paddleShifters', v)} />
+            {cfg.paddleShifters === 'Magnetic' && (
+              <div style={{ marginTop: 12 }}>
+                <div style={{ fontSize: 11, color: 'rgba(232,184,0,.7)', letterSpacing: 1, marginBottom: 8, padding: '6px 10px', background: 'rgba(232,184,0,.06)', border: '1px solid rgba(232,184,0,.2)' }}>
+                  ✦ All of our magnetic paddle shifters are carbon fiber
+                </div>
+                <div style={{ fontSize: 11, color: 'var(--t)', letterSpacing: 1, textTransform: 'uppercase', marginBottom: 6 }}>Paddle Length</div>
+                <OptionRow options={['Short', 'Long']} selected={cfg.paddleLength || 'Short'} onSelect={v => set('paddleLength', v)} />
+                {!isAudi && <div style={{ fontSize: 10, color: 'var(--y)', marginTop: 6 }}>+$25.00</div>}
+              </div>
+            )}
           </Sect>
 
           {/* Top/Bottom Mat */}
@@ -477,7 +489,7 @@ export default function Configure() {
             </>
           )}
 
-          {/* ── OPTIONS — updated labels and pricing ── */}
+          {/* ── OPTIONS ── */}
           <div style={{ padding: '20px 28px', borderBottom: '1px solid var(--b)' }}>
             <div style={{ fontFamily: 'Rajdhani, sans-serif', fontWeight: 700, fontSize: 15, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 8 }}>Options</div>
             <Toggle
@@ -494,11 +506,13 @@ export default function Configure() {
             />
             <Toggle
               label="Heated Steering"
+              sub={!isAudi ? '+$75.00' : ''}
               value={cfg.heated}
               onChange={v => set('heated', v)}
             />
             <Toggle
               label="Lane Assist Compatible"
+              sub={!isAudi ? '+$30.00' : ''}
               value={cfg.laneAssist}
               onChange={v => set('laneAssist', v)}
             />

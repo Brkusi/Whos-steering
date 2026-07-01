@@ -26,7 +26,7 @@ export default function OrderConfirmation() {
   }, [orderId]); // eslint-disable-line
 
   return (
-    <div style={{ paddingTop: 88, minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'radial-gradient(ellipse at 30% 50%, rgba(232,184,0,.05) 0%, transparent 60%), var(--d)' }}>
+    <div style={{ paddingTop: 120, minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'radial-gradient(ellipse at 30% 50%, rgba(232,184,0,.05) 0%, transparent 60%), var(--d)' }}>
       <div style={{ maxWidth: 560, width: '100%', padding: 40, background: 'var(--p)', border: '1px solid var(--b)', margin: '0 16px' }}>
 
         <div style={{ textAlign: 'center', marginBottom: 32 }}>
@@ -51,14 +51,14 @@ export default function OrderConfirmation() {
             </div>
             <div style={{ fontSize: 13, color: 'var(--t)', lineHeight: 1.9, marginBottom: 24 }}>
               🛡 Your custom wheel build is now queued.<br />
-              ⏱ Estimated build time: <strong style={{ color: 'var(--w)' }}>3–5 weeks</strong>.<br />
+              ⏱ Estimated build time: <strong style={{ color: 'var(--w)' }}>3–4 weeks</strong>.<br />
               📧 For any inquiries contact <a href="mailto:service@whossteering.com" style={{ color: 'var(--y)', textDecoration: 'none' }}>service@whossteering.com</a>
             </div>
           </div>
         ) : (
           <div style={{ color: 'var(--t)', fontSize: 13, lineHeight: 1.9, marginBottom: 24 }}>
             Your payment was received. A confirmation email will follow shortly.<br />
-            ⏱ Estimated build time: <strong style={{ color: 'var(--w)' }}>3–5 weeks</strong>.<br />
+            ⏱ Estimated build time: <strong style={{ color: 'var(--w)' }}>3–4 weeks</strong>.<br />
             📧 For any inquiries contact <a href="mailto:service@whossteering.com" style={{ color: 'var(--y)', textDecoration: 'none' }}>service@whossteering.com</a>
           </div>
         )}

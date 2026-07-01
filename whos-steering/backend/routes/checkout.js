@@ -175,9 +175,15 @@ async function calcServerPrice(cfg) {
 
   if (cfg.airbagCompat !== false)    price += (rules.airbag_compat  || 50);
   if (cfg.airbagUpgrade === true)    price += (rules.airbag_upgrade  || 75);
-  if (cfg.paddleShifters === 'Magnetic') price += (rules.paddle_magnetic || 0);
-  if (cfg.startStopButtons === true) price += 40;
-  if (cfg.ledDisplay === true)       price += 50;
+  if (cfg.brand === 'BMW') {
+    if (cfg.heated !== false)            price += (rules.heated_bmw      || 75);
+    if (cfg.laneAssist !== false)        price += (rules.lane_assist_bmw || 30);
+    if (cfg.paddleShifters === 'Magnetic') price += (rules.paddle_magnetic || 25);
+  }
+  if (cfg.brand === 'AUDI') {
+    if (cfg.startStopButtons === true) price += 40;
+    if (cfg.ledDisplay === true)       price += 50;
+  }
 
   return Math.round(price * 100);
 }

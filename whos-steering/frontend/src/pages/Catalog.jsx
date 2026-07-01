@@ -105,7 +105,7 @@ function PresetCard({ preset, onOpen }) {
         <button className="btn" style={{ clipPath: 'none', width: '100%' }} onClick={() => onOpen(preset)}>
           VIEW DETAILS
         </button>
-        <div style={{ fontSize: 10, color: 'var(--t)', paddingTop: 10, marginTop: 4, borderTop: '1px solid var(--b)', textAlign: 'center' }}>🛡 6 Month Warranty · ⏱ 3–5 Week Build</div>
+        <div style={{ fontSize: 10, color: 'var(--t)', paddingTop: 10, marginTop: 4, borderTop: '1px solid var(--b)', textAlign: 'center' }}>🛡 6 Month Warranty · ⏱ 3–4 Week Build</div>
       </div>
     </div>
   );
@@ -182,7 +182,7 @@ function PresetPage({ preset, onClose }) {
   };
 
   return (
-    <div style={{ position: 'fixed', inset: 0, background: 'var(--d)', zIndex: 500, overflowY: 'auto', paddingTop: 88 }}>
+    <div style={{ position: 'fixed', inset: 0, background: 'var(--d)', zIndex: 500, overflowY: 'auto', paddingTop: 120 }}>
       <div style={{ padding: '12px 24px', borderBottom: '1px solid var(--b)', display: 'flex', alignItems: 'center', gap: 16 }}>
         <button onClick={onClose}
           style={{ background: 'none', border: '1px solid var(--b)', color: 'var(--t)', cursor: 'pointer', padding: '8px 16px', fontFamily: 'Orbitron, monospace', fontSize: 9, letterSpacing: 2, transition: 'color .2s' }}
@@ -293,7 +293,7 @@ function PresetPage({ preset, onClose }) {
                 {added ? '✓ ADDED' : '+ ADD TO CART'}
               </button>
             </div>
-            <div style={{ fontSize: 11, color: 'var(--t)', lineHeight: 1.7 }}>🛡 6 Month Warranty · ⏱ 3–5 Week Build · Made to Order</div>
+            <div style={{ fontSize: 11, color: 'var(--t)', lineHeight: 1.7 }}>🛡 6 Month Warranty · ⏱ 3–4 Week Build · Made to Order</div>
           </div>
         </div>
       </div>
@@ -316,7 +316,7 @@ export default function Catalog() {
   const showAUDI = filter === 'ALL' || filter === 'AUDI';
 
   return (
-    <div style={{ paddingTop: 88, minHeight: '100vh' }}>
+    <div style={{ paddingTop: 120, minHeight: '100vh' }}>
       <div style={{ padding: '50px 40px 32px', borderBottom: '1px solid var(--b)', background: 'linear-gradient(180deg,rgba(232,184,0,.04) 0%,transparent 100%)' }}>
         <div style={{ fontFamily: 'Orbitron, monospace', fontSize: 10, letterSpacing: 4, color: 'var(--y)', textTransform: 'uppercase', marginBottom: 8 }}>Shop All</div>
         <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 52, letterSpacing: 2 }}>CATALOG</div>
@@ -335,7 +335,7 @@ export default function Catalog() {
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', borderTop: '1px solid var(--b)', background: 'var(--m)', marginTop: 1 }}>
-        {[['🛡','6 Month Warranty','Manufacturer guaranteed'],['⏱','3–5 Week Build','Handcrafted to order'],['🔧','BMW & Audi','Fitment specialists']].map(([icon,title,sub]) => (
+        {[['🛡','6 Month Warranty','Manufacturer guaranteed'],['⏱','3–4 Week Build','Handcrafted to order'],['🔧','BMW & Audi','Fitment specialists']].map(([icon,title,sub]) => (
           <div key={title} style={{ padding: '22px 28px', display: 'flex', alignItems: 'center', gap: 12, borderRight: '1px solid var(--b)' }}>
             <span style={{ fontSize: 22, color: 'var(--y)' }}>{icon}</span>
             <div><div style={{ fontWeight: 700, fontSize: 14, letterSpacing: 1 }}>{title}</div><div style={{ fontSize: 11, color: 'var(--t)' }}>{sub}</div></div>
