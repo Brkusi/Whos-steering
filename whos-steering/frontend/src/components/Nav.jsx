@@ -44,7 +44,7 @@ export default function Nav() {
           <img
             src="/ws-logo.png"
             alt="Who's Steering"
-            style={{ height: 110, width: 'auto', objectFit: 'contain', display: 'block' }}
+            style={{ height: 62, width: 'auto', objectFit: 'contain', display: 'block' }}
           />
         </div>
 
