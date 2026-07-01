@@ -173,3 +173,25 @@ export const AUDI_PRESETS = [
 
 // Alias used by Catalog.jsx
 export const AUDI_PRESETS_FULL = AUDI_PRESETS;
+
+// ── BMW Preset products ───────────────────────────────────────────────────────
+export const BMW_PRESETS = [
+  {
+    id: 'bmw-touch-of-taste',
+    brand: 'BMW',
+    name: 'TOUCH OF TASTE',
+    base_price: 549.99,
+    compat: 'Fits F10, F30, G20, G30',
+    features: [
+      'G-Series Style',
+      'Carbon Fiber Inlays',
+      'Carbon Fiber Paddle Shifters',
+      'Red Stripe at Top',
+      'Option for M1 & M2 Buttons',
+      'Red & Blue Dual Stitching',
+    ],
+    images: ['/BMW_PRESET_1.png'],
+    desc: 'A refined BMW build with G-Series styling, carbon fiber inlays, and dual red & blue stitching. Clean, purposeful, and unmistakably M.',
+    isPreset: true,
+  },
+];

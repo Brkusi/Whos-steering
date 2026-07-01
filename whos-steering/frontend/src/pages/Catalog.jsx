@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useCart } from '../context';
-import { AUDI_PRESETS_FULL as AUDI_PRESETS } from '../lib/data';
+import { AUDI_PRESETS_FULL as AUDI_PRESETS, BMW_PRESETS } from '../lib/data';
 
 function ArrowBtn({ dir, onClick }) {
   return (
@@ -70,7 +70,7 @@ function PresetCard({ preset, onOpen }) {
         {/* Arrows — zIndex above the overlay */}
         {total > 1 && <div style={{ zIndex: 20, position: 'absolute', top: 0, left: 0, bottom: 0, display: 'flex', alignItems: 'center', paddingLeft: 0 }}><ArrowBtn dir="left" onClick={() => setImgIdx(i => (i - 1 + total) % total)} /></div>}
         {total > 1 && <div style={{ zIndex: 20, position: 'absolute', top: 0, right: 0, bottom: 0, display: 'flex', alignItems: 'center', paddingRight: 0 }}><ArrowBtn dir="right" onClick={() => setImgIdx(i => (i + 1) % total)} /></div>}
-        <div style={{ position: 'absolute', top: 12, left: 12, background: 'var(--y)', color: '#000', fontFamily: 'Orbitron, monospace', fontSize: 9, fontWeight: 700, padding: '3px 8px', letterSpacing: 1, zIndex: 5 }}>AUDI</div>
+        <div style={{ position: 'absolute', top: 12, left: 12, background: 'var(--y)', color: '#000', fontFamily: 'Orbitron, monospace', fontSize: 9, fontWeight: 700, padding: '3px 8px', letterSpacing: 1, zIndex: 5 }}>{preset.brand}</div>
         <div style={{ position: 'absolute', top: 12, right: 12, background: '#1A3A1A', color: '#3DB85A', fontFamily: 'Orbitron, monospace', fontSize: 8, fontWeight: 700, padding: '3px 8px', letterSpacing: 1, border: '1px solid #3DB85A', zIndex: 5 }}>PRESET</div>
         {total > 1 && (
           <div style={{ position: 'absolute', bottom: 10, left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: 5, zIndex: 5 }}>
@@ -115,7 +115,8 @@ function PresetPage({ preset, onClose }) {
   const { addItem } = useCart();
   const nav = useNavigate();
   const [imgIdx, setImgIdx] = useState(0);
-  const [badge, setBadge] = useState('RS');
+  const [badge, setBadge] = useState(preset.brand === 'BMW' ? 'M' : 'RS');
+  const [m1m2, setM1m2] = useState(false);
   const [airbagCover, setAirbagCover] = useState(true);
   const [airbagUpgrade, setAirbagUpgrade] = useState(false);
   const [heated, setHeated] = useState(true);
@@ -123,13 +124,17 @@ function PresetPage({ preset, onClose }) {
   const [notes, setNotes] = useState('');
   const [added, setAdded] = useState(false);
   const total = preset.images.length;
+  const isBMW = preset.brand === 'BMW';
 
-  // Correct pricing: base + add-ons (no double-counting)
+  // BMW pricing: heated +$75, lane assist +$30, airbag upgrade +$75
+  // Audi pricing: heated free, lane assist free, airbag upgrade +$75
   const totalPrice =
     preset.base_price +
-    (airbagCover   ? 50 : 0) +
-    (airbagUpgrade ? 25 : 0) +
-    (heated        ? 25 : 0);
+    (airbagCover   ? 50   : 0) +
+    (airbagUpgrade ? 75   : 0) +
+    (heated && isBMW ? 75 : 0) +
+    (laneAssist && isBMW ? 30 : 0) +
+    (m1m2 && isBMW ? 40 : 0);
 
   function YesNo({ label, sub, value, onChange }) {
     return (
@@ -158,13 +163,14 @@ function PresetPage({ preset, onClose }) {
       brand: preset.brand,
       presetId: preset.id,
       presetName: preset.name,
-      audiBadge: badge,
+      audiBadge: preset.brand === 'AUDI' ? badge : undefined,
+      bmwBadge:  preset.brand === 'BMW'  ? badge : undefined,
+      m1m2Buttons: m1m2,
       airbagCompat: airbagCover,
       airbagUpgrade,
       heated,
       laneAssist,
       customNotes: notes,
-      // Mark as preset so backend uses cart price not recalculation
       isPreset: true,
     },
   });
@@ -238,7 +244,7 @@ function PresetPage({ preset, onClose }) {
 
         {/* Right — options */}
         <div>
-          <div style={{ fontFamily: 'Orbitron, monospace', fontSize: 10, letterSpacing: 3, color: 'var(--y)', marginBottom: 8 }}>AUDI · PRESET BUILD</div>
+          <div style={{ fontFamily: 'Orbitron, monospace', fontSize: 10, letterSpacing: 3, color: 'var(--y)', marginBottom: 8 }}>{preset.brand} · PRESET BUILD</div>
           <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 48, lineHeight: 1, marginBottom: 12 }}>{preset.name}</div>
           <div style={{ fontSize: 14, color: 'var(--t)', lineHeight: 1.7, marginBottom: 24 }}>{preset.desc}</div>
 
@@ -246,7 +252,7 @@ function PresetPage({ preset, onClose }) {
           <div style={{ marginBottom: 20 }}>
             <div style={{ fontFamily: 'Rajdhani, sans-serif', fontWeight: 700, fontSize: 13, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 8, color: 'var(--t)' }}>Lower Badge</div>
             <div style={{ display: 'flex', gap: 8 }}>
-              {['RS','S'].map(b => (
+              {(isBMW ? ['M','M Sport'] : ['RS','S','R8']).map(b => (
                 <button key={b} onClick={() => setBadge(b)}
                   style={{ flex: 1, padding: 14, border: `1px solid ${badge === b ? 'var(--y)' : 'var(--b)'}`, background: badge === b ? 'rgba(232,184,0,.08)' : 'transparent', color: badge === b ? 'var(--y)' : 'var(--t)', cursor: 'pointer', fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontSize: 24, letterSpacing: 3, transition: 'all .2s' }}>
                   {b}
@@ -261,17 +267,22 @@ function PresetPage({ preset, onClose }) {
               <span>Base Price</span><span style={{ color: 'var(--w)' }}>${preset.base_price.toFixed(2)}</span>
             </div>
             {airbagCover   && <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: 'var(--t)', marginBottom: 6 }}><span>Airbag Cover</span><span style={{ color: 'var(--y)' }}>+$50.00</span></div>}
-            {airbagUpgrade && <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: 'var(--t)', marginBottom: 6 }}><span>Full Airbag Upgrade</span><span style={{ color: 'var(--y)' }}>+$25.00</span></div>}
-            {heated        && <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: 'var(--t)', marginBottom: 6 }}><span>Heated Steering</span><span style={{ color: 'var(--y)' }}>+$25.00</span></div>}
+            {airbagUpgrade && <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: 'var(--t)', marginBottom: 6 }}><span>Full Airbag Upgrade</span><span style={{ color: 'var(--y)' }}>+$75.00</span></div>}
+            {heated && isBMW && <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: 'var(--t)', marginBottom: 6 }}><span>Heated Steering</span><span style={{ color: 'var(--y)' }}>+$75.00</span></div>}
+            {laneAssist && isBMW && <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: 'var(--t)', marginBottom: 6 }}><span>Lane Assist</span><span style={{ color: 'var(--y)' }}>+$30.00</span></div>}
+            {m1m2 && isBMW && <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: 'var(--t)', marginBottom: 6 }}><span>M1 & M2 Buttons</span><span style={{ color: 'var(--y)' }}>+$40.00</span></div>}
           </div>
 
           {/* Options */}
           <div style={{ marginBottom: 20 }}>
             <div style={{ fontFamily: 'Rajdhani, sans-serif', fontWeight: 700, fontSize: 13, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 8, color: 'var(--t)' }}>Options</div>
             <YesNo label="Airbag Cover" sub="+$50.00" value={airbagCover} onChange={setAirbagCover} />
-            <YesNo label="Full Upgraded Airbag Unit (full airbag not just cover)" sub="+$25.00" value={airbagUpgrade} onChange={setAirbagUpgrade} />
-            <YesNo label="Heated Steering" sub="+$25.00" value={heated} onChange={setHeated} />
-            <YesNo label="Lane Assist Compatible" value={laneAssist} onChange={setLaneAssist} />
+            <YesNo label="Full Upgraded Airbag Unit (full airbag not just cover)" sub="+$75.00" value={airbagUpgrade} onChange={setAirbagUpgrade} />
+            <YesNo label="Heated Steering" sub={isBMW ? '+$75.00' : 'Included'} value={heated} onChange={setHeated} />
+            <YesNo label="Lane Assist Compatible" sub={isBMW ? '+$30.00' : 'Included'} value={laneAssist} onChange={setLaneAssist} />
+            {isBMW && preset.features.some(f => f.includes('M1')) && (
+              <YesNo label="M1 & M2 Buttons" sub="+$40.00" value={m1m2} onChange={setM1m2} />
+            )}
           </div>
 
           {/* Notes */}
@@ -330,6 +341,7 @@ export default function Catalog() {
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 1, background: 'var(--b)' }}>
         {showBMW  && <ConfigureCard key="bmw-config"  brand="BMW"  nav={nav} />}
+        {showBMW  && BMW_PRESETS.map(p => <PresetCard key={p.id} preset={p} onOpen={setOpenPreset} />)}
         {showAUDI && <ConfigureCard key="audi-config" brand="AUDI" nav={nav} />}
         {showAUDI && AUDI_PRESETS.map(p => <PresetCard key={p.id} preset={p} onOpen={setOpenPreset} />)}
       </div>
