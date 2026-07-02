@@ -213,4 +213,24 @@ export const BMW_PRESETS = [
     desc: 'Full carbon fiber base with perforated leather sides and signature M stitching. Built for the driver who demands performance in every detail.',
     isPreset: true,
   },
+  ,
+  {
+    id: 'bmw-m-stealth',
+    brand: 'BMW',
+    name: 'M STEALTH',
+    base_price: 599.99,
+    compat: 'Fits F10, F30, G20, G30',
+    features: [
+      'G-Series Style',
+      'Fully Alcantara',
+      'Carbon Fiber Inlays',
+      'Carbon Fiber Paddle Shifters',
+      'Red Stripe at Top',
+      'Option for M1 & M2 Buttons',
+      'Red & Blue Dual Stitching',
+    ],
+    images: ['/BMW_PRESET_3.png'],
+    desc: 'Full Alcantara grip with carbon fiber inlays and a bold red stripe — the ultimate M stealth build. Aggressive without saying a word.',
+    isPreset: true,
+  }
 ];
