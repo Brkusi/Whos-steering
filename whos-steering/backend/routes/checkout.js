@@ -165,15 +165,23 @@ async function calcServerPrice(cfg) {
   rows.forEach(r => { rules[r.rule_key] = parseFloat(r.amount); });
 
   let price;
+  const isCarbonTop = cfg.topBottomMat && cfg.topBottomMat.toLowerCase().includes('carbon');
+
   if (cfg.brand === 'AUDI') {
-    price = cfg.wheelStyleType === 'R8'
-      ? (rules.base_audi_r8 || 864.99)
-      : (rules.base_audi_rs || 799.99);
+    price = rules.base_audi || 729.99;
+    if (isCarbonTop) price += 50;
+    if (cfg.wheelStyleType === 'R8') price = (rules.base_audi_r8 || 864.99) + (isCarbonTop ? 50 : 0);
+    else price = (rules.base_audi_rs || 729.99) + (isCarbonTop ? 50 : 0);
   } else {
-    price = rules.base_bmw || 849.99;
+    if (cfg.wheelStyleType === 'F-Series') {
+      price = rules.base_bmw_f || 449.99;
+    } else {
+      price = rules.base_bmw_g || 549.99;
+      if (isCarbonTop) price += 50;
+    }
   }
 
-  if (cfg.airbagCompat !== false)    price += (rules.airbag_compat  || 50);
+  if (cfg.airbagCompat !== false)    price += (rules.airbag_compat  || 25);
   if (cfg.airbagUpgrade === true)    price += (rules.airbag_upgrade  || 75);
   if (cfg.brand === 'BMW') {
     if (cfg.heated !== false)            price += (rules.heated_bmw      || 75);

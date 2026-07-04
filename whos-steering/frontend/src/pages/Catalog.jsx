@@ -130,7 +130,7 @@ function PresetPage({ preset, onClose }) {
   // Audi pricing: heated free, lane assist free, airbag upgrade +$75
   const totalPrice =
     preset.base_price +
-    (airbagCover   ? 50   : 0) +
+    (!isBMW && airbagCover ? 25 : 0) +
     (airbagUpgrade ? 75   : 0) +
     (heated && isBMW ? 75 : 0) +
     (laneAssist && isBMW ? 30 : 0) +
@@ -268,7 +268,7 @@ function PresetPage({ preset, onClose }) {
             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: 'var(--t)', marginBottom: 6 }}>
               <span>Base Price</span><span style={{ color: 'var(--w)' }}>${preset.base_price.toFixed(2)}</span>
             </div>
-            {airbagCover   && <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: 'var(--t)', marginBottom: 6 }}><span>Airbag Cover</span><span style={{ color: 'var(--y)' }}>+$50.00</span></div>}
+            {airbagCover && !isBMW && <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: 'var(--t)', marginBottom: 6 }}><span>Airbag Cover</span><span style={{ color: 'var(--y)' }}>+$25.00</span></div>}
             {airbagUpgrade && <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: 'var(--t)', marginBottom: 6 }}><span>Full Airbag Upgrade</span><span style={{ color: 'var(--y)' }}>+$75.00</span></div>}
             {heated && isBMW && <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: 'var(--t)', marginBottom: 6 }}><span>Heated Steering</span><span style={{ color: 'var(--y)' }}>+$75.00</span></div>}
             {laneAssist && isBMW && <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: 'var(--t)', marginBottom: 6 }}><span>Lane Assist</span><span style={{ color: 'var(--y)' }}>+$30.00</span></div>}
@@ -278,8 +278,8 @@ function PresetPage({ preset, onClose }) {
           {/* Options */}
           <div style={{ marginBottom: 20 }}>
             <div style={{ fontFamily: 'Rajdhani, sans-serif', fontWeight: 700, fontSize: 13, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 8, color: 'var(--t)' }}>Options</div>
-            <YesNo label="Airbag Cover" sub="+$50.00" value={airbagCover} onChange={setAirbagCover} />
-            <YesNo label="Full Upgraded Airbag Unit (full airbag not just cover)" sub="+$75.00" value={airbagUpgrade} onChange={setAirbagUpgrade} />
+            {!isBMW && <YesNo label="Airbag Cover" sub="+$25.00" value={airbagCover} onChange={setAirbagCover} />}
+            <YesNo label={isBMW ? "Full Airbag Unit" : "Full Upgraded Airbag Unit (full airbag not just cover)"} sub="+$75.00" value={airbagUpgrade} onChange={setAirbagUpgrade} />
             <YesNo label="Heated Steering" sub={isBMW ? '+$75.00' : 'Included'} value={heated} onChange={setHeated} />
             <YesNo label="Lane Assist Compatible" sub={isBMW ? '+$30.00' : 'Included'} value={laneAssist} onChange={setLaneAssist} />
             {isBMW && preset.features.some(f => f.includes('M1')) && (

@@ -233,4 +233,23 @@ export const BMW_PRESETS = [
     desc: 'Full Alcantara grip with carbon fiber inlays and a bold red stripe — the ultimate M stealth build. Aggressive without saying a word.',
     isPreset: true,
   }
+    ,
+  {
+    id: 'bmw-carbon-crusher',
+    brand: 'BMW',
+    name: 'CARBON CRUSHER',
+    base_price: 449.99,
+    compat: 'Fits F10, F30, E90',
+    features: [
+      'F-Series Base',
+      'Carbon Fiber Base',
+      'Perforated Leather Sides',
+      'Silver Inlay',
+      'Standard Paddle Shifters',
+      'Red & Blue Dual Stitching',
+    ],
+    images: ['/BMW_PRESET_4.png'],
+    desc: 'F-Series carbon fiber base with perforated leather sides and silver inlay. Built tough, finished clean.',
+    isPreset: true,
+  }
 ];

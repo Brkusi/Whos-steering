@@ -212,9 +212,11 @@ export default function Configure() {
   const [photoUploading, setPhotoUploading] = useState(false);
   const [errors, setErrors] = useState({});
 
+  const initBrand = params.get('brand') || 'BMW';
   const [cfg, setCfg] = useState({
     ...DEFAULT_CONFIG,
-    brand: params.get('brand') || 'BMW',
+    brand: initBrand,
+    wheelStyleType: initBrand === 'BMW' ? 'G-Series' : 'RS',
   });
 
   const set = useCallback((key, val) => setCfg(prev => ({ ...prev, [key]: val })), []);
@@ -226,7 +228,7 @@ export default function Configure() {
   const price = calcPrice(cfg, rules);
 
   const setBrand = (brand) => {
-    setCfg({ ...DEFAULT_CONFIG, brand });
+    setCfg({ ...DEFAULT_CONFIG, brand, wheelStyleType: brand === 'BMW' ? 'G-Series' : 'RS' });
     setPhoto(null);
     setErrors({});
   };
@@ -276,7 +278,7 @@ export default function Configure() {
       ['Side Grip',        cfg.sideMat + (cfg.sideCol ? ' · ' + colorName(cfg.sideCol) : '') + (cfg.sideCustomColor ? ' · ' + cfg.sideCustomColor : '')],
       ['Stripe',           selectedStripeConcept.label],
       ['Stitch Color',     cfg.stitchColor ? colorName(cfg.stitchColor) : cfg.stitchCustomColor || 'None'],
-      ['Airbag Cover',     cfg.airbagCompat ? 'Yes (+$50)' : 'No'],
+      ['Airbag Cover',     cfg.airbagCompat ? 'Yes (+$25)' : 'No'],
       ['Full Airbag Upgrade', cfg.airbagUpgrade ? 'Yes (+$25)' : 'No'],
       ['Heated',           cfg.heated ? 'Yes' : 'No'],
       ['Lane Assist',      cfg.laneAssist ? 'Yes' : 'No'],
@@ -365,33 +367,35 @@ export default function Configure() {
             {errors.photo && <div className="err-msg">A photo of your current wheel is required</div>}
           </Sect>
 
-          {/* Wheel Style Type — Audi only */}
-          {isAudi && (
-            <Sect label="Wheel Style Type" value={cfg.wheelStyleType}>
-              <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
-                {['RS', 'R8'].map(style => (
-                  <div key={style} onClick={() => set('wheelStyleType', style)}
-                    style={{ flex: 1, padding: '14px 12px', border: `2px solid ${cfg.wheelStyleType === style ? 'var(--y)' : 'var(--b)'}`, background: cfg.wheelStyleType === style ? 'rgba(232,184,0,.06)' : 'transparent', cursor: 'pointer', textAlign: 'center', transition: 'all .2s' }}>
-                    <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 28, color: cfg.wheelStyleType === style ? 'var(--y)' : 'var(--w)', letterSpacing: 2 }}>{style} STYLE</div>
-                    <div style={{ fontSize: 10, color: 'var(--t)', marginTop: 4 }}>
-                      {style === 'RS' ? 'Classic flat-bottom sport profile' : 'R8 supercar-inspired round profile'}
-                    </div>
-                    <div style={{ fontSize: 11, color: 'var(--y)', fontWeight: 700, marginTop: 6 }}>
-                      {style === 'RS' ? 'From $799.99' : 'From $864.99'}
-                    </div>
+          {/* Wheel Style Type */}
+          <Sect label="Wheel Style Type" value={cfg.wheelStyleType}>
+            <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
+              {(isAudi ? ['RS', 'R8'] : ['G-Series', 'F-Series']).map(style => (
+                <div key={style} onClick={() => set('wheelStyleType', style)}
+                  style={{ flex: 1, padding: '14px 12px', border: `2px solid ${cfg.wheelStyleType === style ? 'var(--y)' : 'var(--b)'}`, background: cfg.wheelStyleType === style ? 'rgba(232,184,0,.06)' : 'transparent', cursor: 'pointer', textAlign: 'center', transition: 'all .2s' }}>
+                  <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 28, color: cfg.wheelStyleType === style ? 'var(--y)' : 'var(--w)', letterSpacing: 2 }}>{style} STYLE</div>
+                  <div style={{ fontSize: 10, color: 'var(--t)', marginTop: 4 }}>
+                    {isAudi
+                      ? (style === 'RS' ? 'Classic flat-bottom sport profile' : 'R8 supercar-inspired round profile')
+                      : (style === 'G-Series' ? 'Modern G-chassis flat-bottom sport profile' : 'Classic F-chassis round profile')}
                   </div>
-                ))}
-              </div>
-              {cfg.wheelStyleType === 'R8' && (
-                <Toggle
-                  label="Start / Stop & Drive Select Buttons"
-                  sub="+$40.00"
-                  value={cfg.startStopButtons}
-                  onChange={v => set('startStopButtons', v)}
-                />
-              )}
-            </Sect>
-          )}
+                  <div style={{ fontSize: 11, color: 'var(--y)', fontWeight: 700, marginTop: 6 }}>
+                    {isAudi
+                      ? (style === 'RS' ? 'From $799.99' : 'From $864.99')
+                      : (style === 'G-Series' ? 'From $549.99' : 'From $449.99')}
+                  </div>
+                </div>
+              ))}
+            </div>
+            {isAudi && cfg.wheelStyleType === 'R8' && (
+              <Toggle
+                label="Start / Stop & Drive Select Buttons"
+                sub="+$40.00"
+                value={cfg.startStopButtons}
+                onChange={v => set('startStopButtons', v)}
+              />
+            )}
+          </Sect>
 
           {/* LED Display Strip — Audi only, own full section */}
           {isAudi && (
@@ -432,8 +436,8 @@ export default function Configure() {
             <CustomColorInput label="Type Any Stitch Color:" value={cfg.stitchCustomColor} onChange={v => { set('stitchCustomColor', v); set('stitchColor', null); }} />
           </Sect>
 
-          {/* Wheel Style — hidden for R8 (R8 has fixed round profile) */}
-          {!(isAudi && cfg.wheelStyleType === 'R8') && (
+          {/* Wheel Style — hidden for R8 and F-Series */}
+          {!(isAudi && cfg.wheelStyleType === 'R8') && !(!isAudi && cfg.wheelStyleType === 'F-Series') && (
             <Sect label="Wheel Style" value={cfg.wheelStyle}>
               <OptionRow options={['Standard', 'Sport']} selected={cfg.wheelStyle} onSelect={v => set('wheelStyle', v)} />
             </Sect>
@@ -494,7 +498,7 @@ export default function Configure() {
             <div style={{ fontFamily: 'Rajdhani, sans-serif', fontWeight: 700, fontSize: 15, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 8 }}>Options</div>
             <Toggle
               label="Airbag Cover"
-              sub="+$50.00"
+              sub="+$25.00"
               value={cfg.airbagCompat}
               onChange={v => set('airbagCompat', v)}
             />

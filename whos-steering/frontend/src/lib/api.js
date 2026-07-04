@@ -19,16 +19,25 @@ export async function apiFetch(path, opts = {}) {
 // ─── Pricing (mirrors server logic, uses live rules) ─────────────────────────
 export function calcPrice(config, rules = {}) {
   let price;
+  const isCarbonTop = config.topBottomMat && config.topBottomMat.toLowerCase().includes('carbon');
 
   if (config.brand === 'AUDI') {
-    price = config.wheelStyleType === 'R8'
-      ? (rules.base_audi_r8 ?? 864.99)
-      : (rules.base_audi_rs ?? 799.99);
+    // Audi base: $729.99, +$50 if carbon top
+    price = rules.base_audi ?? 729.99;
+    if (isCarbonTop) price += 50;
+    if (config.wheelStyleType === 'R8') price = (rules.base_audi_r8 ?? 864.99) + (isCarbonTop ? 50 : 0);
+    else if (config.wheelStyleType === 'RS') price = (rules.base_audi_rs ?? 729.99) + (isCarbonTop ? 50 : 0);
   } else {
-    price = rules.base_bmw ?? 849.99;
+    // BMW base: G-Series $549.99, F-Series $449.99; G-Series +$50 if carbon top
+    if (config.wheelStyleType === 'F-Series') {
+      price = rules.base_bmw_f ?? 449.99;
+    } else {
+      price = rules.base_bmw_g ?? 549.99;
+      if (isCarbonTop) price += 50;
+    }
   }
 
-  if (config.airbagCompat !== false) price += (rules.airbag_compat ?? 50);
+  if (config.airbagCompat !== false) price += (rules.airbag_compat ?? 25);
   if (config.airbagUpgrade === true) price += (rules.airbag_upgrade ?? 75);
   // BMW-only add-ons
   if (config.brand === 'BMW') {
