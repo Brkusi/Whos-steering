@@ -25,28 +25,42 @@ function ArrowBtn({ dir, onClick }) {
 }
 
 function ConfigureCard({ brand, nav }) {
+  // Slim horizontal bar — not a full grid cell
+  return null;
+}
+
+function ConfigureBar({ brand, nav }) {
   return (
-    <div style={{ background: 'linear-gradient(135deg, rgba(232,184,0,.08) 0%, var(--p) 100%)', display: 'flex', flexDirection: 'column', border: '1px dashed rgba(232,184,0,.3)', transition: 'all .2s', minHeight: 480 }}
-      onMouseEnter={e => { e.currentTarget.style.background = 'linear-gradient(135deg,rgba(232,184,0,.14) 0%,#242424 100%)'; e.currentTarget.style.borderColor = 'rgba(232,184,0,.6)'; }}
-      onMouseLeave={e => { e.currentTarget.style.background = 'linear-gradient(135deg,rgba(232,184,0,.08) 0%,var(--p) 100%)'; e.currentTarget.style.borderColor = 'rgba(232,184,0,.3)'; }}>
-      <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: 14, padding: 32 }}>
-        <svg viewBox="0 0 300 300" style={{ width: '55%', opacity: .25 }}>
-          <circle cx="150" cy="150" r="143" fill="none" stroke="#E8B800" strokeWidth="6" />
-          <line x1="150" y1="10" x2="150" y2="88" stroke="#E8B800" strokeWidth="6" strokeLinecap="round" />
-          <line x1="150" y1="212" x2="150" y2="290" stroke="#E8B800" strokeWidth="6" strokeLinecap="round" />
-          <line x1="10" y1="150" x2="88" y2="150" stroke="#E8B800" strokeWidth="6" strokeLinecap="round" />
-          <line x1="212" y1="150" x2="290" y2="150" stroke="#E8B800" strokeWidth="6" strokeLinecap="round" />
-          <circle cx="150" cy="150" r="37" fill="none" stroke="#E8B800" strokeWidth="6" />
+    <div onClick={() => nav(`/configure?brand=${brand}`)}
+      style={{
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        padding: '18px 32px', cursor: 'pointer',
+        background: 'linear-gradient(90deg, rgba(232,184,0,.06) 0%, transparent 100%)',
+        border: '1px solid rgba(232,184,0,.2)',
+        borderLeft: '3px solid var(--y)',
+        transition: 'all .2s', gap: 16,
+      }}
+      onMouseEnter={e => { e.currentTarget.style.background = 'linear-gradient(90deg,rgba(232,184,0,.12) 0%,transparent 100%)'; e.currentTarget.style.borderColor = 'rgba(232,184,0,.5)'; }}
+      onMouseLeave={e => { e.currentTarget.style.background = 'linear-gradient(90deg,rgba(232,184,0,.06) 0%,transparent 100%)'; e.currentTarget.style.borderColor = 'rgba(232,184,0,.2)'; }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
+        <svg viewBox="0 0 300 300" style={{ width: 36, height: 36, opacity: .5, flexShrink: 0 }}>
+          <circle cx="150" cy="150" r="143" fill="none" stroke="#E8B800" strokeWidth="8" />
+          <line x1="150" y1="10" x2="150" y2="88" stroke="#E8B800" strokeWidth="8" strokeLinecap="round" />
+          <line x1="150" y1="212" x2="150" y2="290" stroke="#E8B800" strokeWidth="8" strokeLinecap="round" />
+          <line x1="10" y1="150" x2="88" y2="150" stroke="#E8B800" strokeWidth="8" strokeLinecap="round" />
+          <line x1="212" y1="150" x2="290" y2="150" stroke="#E8B800" strokeWidth="8" strokeLinecap="round" />
+          <circle cx="150" cy="150" r="37" fill="none" stroke="#E8B800" strokeWidth="8" />
         </svg>
-        <div style={{ fontFamily: 'Orbitron, monospace', fontSize: 10, letterSpacing: 3, color: 'var(--y)', textAlign: 'center' }}>BUILD YOUR OWN {brand}</div>
-        <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 26, color: 'var(--y)', textAlign: 'center' }}>{brand} CUSTOM BUILD</div>
-        <div style={{ fontSize: 12, color: 'var(--t)', lineHeight: 1.6, textAlign: 'center', maxWidth: 240 }}>Choose every material, color, stripe and stitch. Fully tailored to your exact specification.</div>
+        <div>
+          <div style={{ fontFamily: 'Orbitron, monospace', fontSize: 8, letterSpacing: 3, color: 'rgba(232,184,0,.6)', textTransform: 'uppercase', marginBottom: 2 }}>Build Your Own</div>
+          <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 22, color: 'var(--y)', letterSpacing: 1 }}>{brand} CUSTOM BUILD</div>
+          <div style={{ fontSize: 11, color: 'var(--t)', marginTop: 2 }}>Choose every material, color, stripe & stitch — fully tailored to your spec</div>
+        </div>
       </div>
-      <div style={{ padding: '0 20px 24px' }}>
-        <button className="btn" style={{ clipPath: 'none', width: '100%' }} onClick={() => nav(`/configure?brand=${brand}`)}>
-          START CONFIGURING →
-        </button>
-      </div>
+      <button className="btn" style={{ clipPath: 'none', flexShrink: 0, padding: '10px 20px', fontSize: 11, whiteSpace: 'nowrap' }}
+        onClick={e => { e.stopPropagation(); nav(`/configure?brand=${brand}`); }}>
+        START CONFIGURING →
+      </button>
     </div>
   );
 }
@@ -341,11 +355,23 @@ export default function Catalog() {
         ))}
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 1, background: 'var(--b)' }}>
-        {showBMW  && <ConfigureCard key="bmw-config"  brand="BMW"  nav={nav} />}
-        {showBMW  && BMW_PRESETS.map(p => <PresetCard key={p.id} preset={p} onOpen={setOpenPreset} />)}
-        {showAUDI && <ConfigureCard key="audi-config" brand="AUDI" nav={nav} />}
-        {showAUDI && AUDI_PRESETS.map(p => <PresetCard key={p.id} preset={p} onOpen={setOpenPreset} />)}
+      <div style={{ background: 'var(--d)' }}>
+        {showBMW && (
+          <div>
+            <ConfigureBar brand="BMW" nav={nav} />
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 1, background: 'var(--b)', marginBottom: 1 }}>
+              {BMW_PRESETS.map(p => <PresetCard key={p.id} preset={p} onOpen={setOpenPreset} />)}
+            </div>
+          </div>
+        )}
+        {showAUDI && (
+          <div>
+            <ConfigureBar brand="AUDI" nav={nav} />
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 1, background: 'var(--b)' }}>
+              {AUDI_PRESETS.map(p => <PresetCard key={p.id} preset={p} onOpen={setOpenPreset} />)}
+            </div>
+          </div>
+        )}
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', borderTop: '1px solid var(--b)', background: 'var(--m)', marginTop: 1 }}>
