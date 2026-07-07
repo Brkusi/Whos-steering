@@ -169,6 +169,24 @@ export const AUDI_PRESETS = [
     desc: 'Blacked-out Alcantara all around with carbon fibre accents. Understated, aggressive, and purpose-built.',
     isPreset: true,
   },
+  ,
+  {
+    id: 'audi-flagship-carbon',
+    brand: 'AUDI',
+    name: 'FLAGSHIP CARBON',
+    base_price: 829.99,
+    compat: 'Fits All Audi Models 2011+',
+    features: [
+      'Alcantara Sides & Airbag',
+      'Carbon Fiber Top & Bottom',
+      'Carbon Fiber Paddles',
+      'Gloss Black Inlay',
+      'Red 12 O'Clock Stripe',
+    ],
+    images: ['/AUDI_PRESET_3.png'],
+    desc: 'Carbon fiber top and bottom with Alcantara sides, gloss black inlay, and a bold red 12 o'clock stripe. The flagship Audi build.',
+    isPreset: true,
+  }
 ];
 
 // Alias used by Catalog.jsx
@@ -250,6 +268,25 @@ export const BMW_PRESETS = [
     ],
     images: ['/BMW_PRESET_4.png'],
     desc: 'F-Series carbon fiber base with perforated leather sides and silver inlay. Built tough, finished clean.',
+    isPreset: true,
+  }
+  ,
+  {
+    id: 'bmw-classic-m-sport',
+    brand: 'BMW',
+    name: 'CLASSIC M SPORT',
+    base_price: 319.99,
+    compat: 'Fits F10, F30, E90',
+    features: [
+      'F-Series Base',
+      'Smooth Leather Top & Bottom',
+      'Perforated Leather Sides',
+      'Stealth Black Inlay',
+      'Standard Paddle Shifters',
+      'Red & Blue Dual Stitching',
+    ],
+    images: ['/BMW_PRESET_5.png'],
+    desc: 'Clean, smooth leather top and bottom with perforated sides and stealth black inlay. The essential M sport build.',
     isPreset: true,
   }
 ];

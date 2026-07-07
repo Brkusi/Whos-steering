@@ -58,10 +58,10 @@ function ConfigureBanner({ nav }) {
           onMouseLeave={e => { e.currentTarget.style.background = 'var(--y)'; }}>
           CONFIGURE BMW →
         </button>
-        <button style={btnOutlineStyle}
+        <button style={btnStyle}
           onClick={() => nav('/configure?brand=AUDI')}
-          onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,.1)'; }}
-          onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}>
+          onMouseEnter={e => { e.currentTarget.style.background = '#FFD000'; }}
+          onMouseLeave={e => { e.currentTarget.style.background = 'var(--y)'; }}>
           CONFIGURE AUDI →
         </button>
       </div>
