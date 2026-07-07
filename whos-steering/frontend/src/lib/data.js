@@ -181,10 +181,10 @@ export const AUDI_PRESETS = [
       'Carbon Fiber Top & Bottom',
       'Carbon Fiber Paddles',
       'Gloss Black Inlay',
-      'Red 12 O'Clock Stripe',
+      'Red 12 Stripe',
     ],
     images: ['/AUDI_PRESET_3.png'],
-    desc: 'Carbon fiber top and bottom with Alcantara sides, gloss black inlay, and a bold red 12 o'clock stripe. The flagship Audi build.',
+    desc: 'Carbon fiber top and bottom with Alcantara sides, gloss black inlay, and a bold red stripe. The flagship Audi build.',
     isPreset: true,
   }
 ];
