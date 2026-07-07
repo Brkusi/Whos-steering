@@ -30,24 +30,38 @@ function ConfigureCard({ brand, nav }) {
 }
 
 function ConfigureBanner({ nav }) {
+  const btnStyle = {
+    clipPath: 'none', flex: 1, padding: '12px 16px',
+    fontSize: 11, whiteSpace: 'nowrap', letterSpacing: 1.5,
+    background: 'var(--y)', color: '#000',
+    border: '2px solid var(--y)', cursor: 'pointer',
+    fontFamily: 'Orbitron, monospace', fontWeight: 700,
+    transition: 'all .2s',
+  };
+  const btnOutlineStyle = {
+    ...btnStyle,
+    background: 'transparent', color: '#fff',
+    border: '2px solid #fff',
+  };
   return (
     <div style={{
-      display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-      padding: '20px 40px', gap: 16, flexWrap: 'wrap',
+      padding: '16px 24px',
       background: 'linear-gradient(90deg, rgba(232,184,0,.07) 0%, transparent 60%)',
       borderBottom: '1px solid var(--b)',
     }}>
-      <div>
-        <div style={{ fontFamily: 'Orbitron, monospace', fontSize: 8, letterSpacing: 3, color: 'rgba(232,184,0,.6)', textTransform: 'uppercase', marginBottom: 4 }}>Want something fully custom?</div>
-        <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 22, color: 'var(--w)', letterSpacing: 1 }}>BUILD YOUR OWN — Choose every material, color, stripe &amp; stitch</div>
-      </div>
-      <div style={{ display: 'flex', gap: 10, flexShrink: 0, flexWrap: 'wrap' }}>
-        <button className="btn" style={{ clipPath: 'none', padding: '11px 22px', fontSize: 11, whiteSpace: 'nowrap' }}
-          onClick={() => nav('/configure?brand=BMW')}>
+      <div style={{ fontFamily: 'Orbitron, monospace', fontSize: 8, letterSpacing: 3, color: 'rgba(232,184,0,.6)', textTransform: 'uppercase', marginBottom: 4 }}>Want something fully custom?</div>
+      <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 18, color: 'var(--w)', marginBottom: 12 }}>BUILD YOUR OWN — Every material, color, stripe &amp; stitch</div>
+      <div style={{ display: 'flex', gap: 8 }}>
+        <button style={btnStyle}
+          onClick={() => nav('/configure?brand=BMW')}
+          onMouseEnter={e => { e.currentTarget.style.background = '#FFD000'; }}
+          onMouseLeave={e => { e.currentTarget.style.background = 'var(--y)'; }}>
           CONFIGURE BMW →
         </button>
-        <button className="btn-outline sm" style={{ clipPath: 'none', padding: '11px 22px', fontSize: 11, whiteSpace: 'nowrap' }}
-          onClick={() => nav('/configure?brand=AUDI')}>
+        <button style={btnOutlineStyle}
+          onClick={() => nav('/configure?brand=AUDI')}
+          onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,.1)'; }}
+          onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}>
           CONFIGURE AUDI →
         </button>
       </div>
