@@ -291,13 +291,13 @@ export default function Configure() {
   const isAudi = cfg.brand === 'AUDI';
 
   return (
-    <div style={{ paddingTop: 88, minHeight: '100vh', background: 'var(--d)' }}>
+    <div style={{ paddingTop: 120, minHeight: '100vh', background: 'var(--d)' }}>
       <div style={{ display: 'grid', gridTemplateColumns: window.innerWidth < 768 ? '1fr' : '1fr 1fr', minHeight: 'calc(100vh - 88px)' }}>
 
         {/* LEFT: Preview */}
         <div style={{
           position: window.innerWidth < 768 ? 'relative' : 'sticky',
-          top: 88,
+          top: 120,
           height: window.innerWidth < 768 ? 'auto' : 'calc(100vh - 88px)',
           background: '#111',
           display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',

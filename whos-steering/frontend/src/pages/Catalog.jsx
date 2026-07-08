@@ -360,9 +360,11 @@ export default function Catalog() {
       </div>
 
       <ConfigureBanner nav={nav} />
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 1, background: 'var(--b)' }}>
-        {showBMW  && BMW_PRESETS.map(p => <PresetCard key={p.id} preset={p} onOpen={setOpenPreset} />)}
-        {showAUDI && AUDI_PRESETS.map(p => <PresetCard key={p.id} preset={p} onOpen={setOpenPreset} />)}
+      <div style={{ maxWidth: 1600, margin: '0 auto', width: '100%' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))', gap: 1, background: 'var(--b)' }}>
+          {showBMW  && BMW_PRESETS.map(p => <PresetCard key={p.id} preset={p} onOpen={setOpenPreset} />)}
+          {showAUDI && AUDI_PRESETS.map(p => <PresetCard key={p.id} preset={p} onOpen={setOpenPreset} />)}
+        </div>
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', borderTop: '1px solid var(--b)', background: 'var(--m)', marginTop: 1 }}>
