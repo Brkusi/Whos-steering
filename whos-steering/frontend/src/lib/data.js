@@ -77,7 +77,13 @@ export const FORGED_CARBON_COLORS = [
 
 // ── Honeycomb Carbon colors ────────────────────────────────────────────────────
 export const HONEYCOMB_CARBON_COLORS = [
-  { n: 'Black Honeycomb',     h: '#0A0A0A' },
+  { n: 'Black Honeycomb',     h: '#0A0A0A', img: '/HoneyComb.jpeg' },
+];
+
+// ── Airbag material + color options ──────────────────────────────────────────
+export const AIRBAG_MATS = [
+  { n: 'Alcantara',       col: true },
+  { n: 'Smooth Leather',  col: true },
 ];
 
 // ── Materials list ─────────────────────────────────────────────────────────────
@@ -134,7 +140,10 @@ export const DEFAULT_CONFIG = {
   sideMat: 'Alcantara', sideCol: null, sideCarbonCol: null,
   stripeConceptId: 'C-1', stripeCustomColor: '',
   stitchColor: null, stitchCustomColor: '',
-  airbagCompat: true, airbagUpgrade: false, heated: true, laneAssist: true,
+  airbagCompat: false, airbagUpgrade: false, heated: false, laneAssist: false,
+  airbagMat: null, airbagCol: null, airbagCustomColor: '',
+  airbagStitchColor: null, airbagStitchCustomColor: '',
+  audiLogoCol: null, audiLogoCustomColor: '',
   audiBadge: 'RS', outerTrimCol: null, innerTrimCol: null,
   photoUrl: null,
   customNotes: '',

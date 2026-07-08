@@ -5,7 +5,7 @@ import {
   COLORS, MATS, TRIS, DEFAULT_CONFIG, colorName,
   STRIPE_CONCEPTS, STITCH_COLORS,
   CLASSIC_CARBON_COLORS, FORGED_CARBON_COLORS, HONEYCOMB_CARBON_COLORS,
-  TOP_BOTTOM_MATS, SIDE_MATS,
+  TOP_BOTTOM_MATS, SIDE_MATS, AIRBAG_MATS,
 } from '../lib/data';
 import { calcPrice, apiFetch } from '../lib/api';
 import { useCart } from '../context';
@@ -58,12 +58,12 @@ function ColorGrid({ colors, selected, onSelect }) {
   );
 }
 
-function CustomColorInput({ label, value, onChange }) {
+function CustomColorInput({ label, value, onChange, placeholder }) {
   return (
     <div style={{ marginTop: 10 }}>
       <label className="fl">{label || 'Type Any Color:'}</label>
       <input className="fi" type="text" value={value} onChange={e => onChange(e.target.value)}
-        placeholder="e.g. Gold, Magenta, Dual Colors..." style={{ marginTop: 4 }} />
+        placeholder={placeholder || 'e.g. Gold, Magenta, Beige...'} style={{ marginTop: 4 }} />
     </div>
   );
 }
@@ -151,16 +151,30 @@ function CarbonColorGrid({ colors, selected, onSelect }) {
   );
 }
 
-function MatSection({ label, matKey, colKey, carbonColKey, customColKey, cfg, set, matsOverride }) {
+function MatSection({ label, matKey, colKey, carbonColKey, customColKey, cfg, set, matsOverride, linkedMat }) {
   const mat = cfg[matKey];
-  const matList = matsOverride || MATS;
+  const fullList = matsOverride || MATS;
+
+  // If a linked material (e.g. Top/Bottom) has a carbon type selected, restrict
+  // this section's options to: the same carbon type, Alcantara, or Classic Leather.
+  const linkedCarbonType = linkedMat?.carbon ? linkedMat.cType : null;
+  const matList = linkedCarbonType
+    ? fullList.filter(m => (m.carbon && m.cType === linkedCarbonType) || m.n === 'Alcantara' || m.n === 'Classic Leather')
+    : fullList;
+
   const selectedMat = matList.find(m => m.n === mat);
   const isCarbon = selectedMat?.carbon;
   const cType = selectedMat?.cType;
   const carbonColors = cType === 'classic' ? CLASSIC_CARBON_COLORS : cType === 'forged' ? FORGED_CARBON_COLORS : HONEYCOMB_CARBON_COLORS;
+  const carbonLabel = cType === 'classic' ? 'Classic Carbon Color' : cType === 'forged' ? 'Forged Carbon Flakes' : 'Honeycomb Carbon Flakes';
 
   return (
     <Sect label={label} value={mat}>
+      {linkedCarbonType && (
+        <div style={{ fontSize: 10, color: 'rgba(232,184,0,.7)', letterSpacing: .5, marginBottom: 10, padding: '6px 10px', background: 'rgba(232,184,0,.06)', border: '1px solid rgba(232,184,0,.2)' }}>
+          ✦ Limited to matching carbon, Alcantara, or Classic Leather based on your other grip selection
+        </div>
+      )}
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7, marginBottom: 14 }}>
         {matList.map(m => (
           <button key={m.n} className={`ob${mat === m.n ? ' on' : ''}`}
@@ -171,21 +185,12 @@ function MatSection({ label, matKey, colKey, carbonColKey, customColKey, cfg, se
       </div>
       {isCarbon ? (
         <>
+          <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 4, color: 'var(--t)' }}>
+            {carbonLabel}
+          </div>
+          <CarbonColorGrid colors={carbonColors} selected={cfg[carbonColKey]} onSelect={v => set(carbonColKey, v)} />
           {cType !== 'honeycomb' && (
-            <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 4, color: 'var(--t)' }}>
-              {cType === 'classic' ? 'Classic Carbon Color' : 'Forged Carbon Flakes'}
-            </div>
-          )}
-          {cType === 'honeycomb' ? (
-            <div style={{ border: '1px solid var(--b)', overflow: 'hidden', marginTop: 4 }}>
-              <img src="/HoneyComb.jpeg" alt="Honeycomb Carbon"
-                style={{ width: '100%', height: 120, objectFit: 'cover', display: 'block' }} />
-            </div>
-          ) : (
-            <>
-              <CarbonColorGrid colors={carbonColors} selected={cfg[carbonColKey]} onSelect={v => set(carbonColKey, v)} />
-              <CustomColorInput label="Type Any Color:" value={cfg[customColKey]} onChange={v => set(customColKey, v)} />
-            </>
+            <CustomColorInput label="Type Any Color:" value={cfg[customColKey]} onChange={v => set(customColKey, v)} />
           )}
         </>
       ) : selectedMat?.col ? (
@@ -384,6 +389,11 @@ export default function Configure() {
                       ? (style === 'RS' ? 'From $799.99' : 'From $864.99')
                       : (style === 'G-Series' ? 'From $549.99' : 'From $449.99')}
                   </div>
+                  {!isAudi && (
+                    <div style={{ fontSize: 10, color: 'var(--t)', marginTop: 4, letterSpacing: .5 }}>
+                      {style === 'G-Series' ? '✓ Fits F10, F30, G20, G30' : '✓ Fits F10, F30, E90'}
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
@@ -433,7 +443,7 @@ export default function Configure() {
           {/* Stitch */}
           <Sect label="Stitch Color" value={cfg.stitchColor ? colorName(cfg.stitchColor) : cfg.stitchCustomColor || 'None'}>
             <ColorGrid colors={STITCH_COLORS} selected={cfg.stitchColor} onSelect={v => { set('stitchColor', v); set('stitchCustomColor', ''); }} />
-            <CustomColorInput label="Type Any Stitch Color:" value={cfg.stitchCustomColor} onChange={v => { set('stitchCustomColor', v); set('stitchColor', null); }} />
+            <CustomColorInput label="Type Any Stitch Color:" value={cfg.stitchCustomColor} onChange={v => { set('stitchCustomColor', v); set('stitchColor', null); }} placeholder="e.g. Gold, Magenta, Dual Colors..." />
           </Sect>
 
           {/* Wheel Style — hidden for R8 and F-Series */}
@@ -445,7 +455,13 @@ export default function Configure() {
 
           {/* Paddles */}
           <Sect label="Paddle Shifters" value={cfg.paddleShifters + (cfg.paddleShifters === 'Magnetic' ? ` · ${cfg.paddleLength}` : '')}>
-            <OptionRow options={['Standard', 'Magnetic']} selected={cfg.paddleShifters} onSelect={v => set('paddleShifters', v)} />
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7 }}>
+              {['Standard', 'Magnetic'].map(o => (
+                <button key={o} className={`ob${cfg.paddleShifters === o ? ' on' : ''}`} onClick={() => set('paddleShifters', o)}>
+                  {o}{o === 'Magnetic' && !isAudi ? ' (+$25.00)' : ''}
+                </button>
+              ))}
+            </div>
             {cfg.paddleShifters === 'Magnetic' && (
               <div style={{ marginTop: 12 }}>
                 <div style={{ fontSize: 11, color: 'rgba(232,184,0,.7)', letterSpacing: 1, marginBottom: 8, padding: '6px 10px', background: 'rgba(232,184,0,.06)', border: '1px solid rgba(232,184,0,.2)' }}>
@@ -453,7 +469,6 @@ export default function Configure() {
                 </div>
                 <div style={{ fontSize: 11, color: 'var(--t)', letterSpacing: 1, textTransform: 'uppercase', marginBottom: 6 }}>Paddle Length</div>
                 <OptionRow options={['Short', 'Long']} selected={cfg.paddleLength || 'Short'} onSelect={v => set('paddleLength', v)} />
-                {!isAudi && <div style={{ fontSize: 10, color: 'var(--y)', marginTop: 6 }}>+$25.00</div>}
               </div>
             )}
           </Sect>
@@ -464,11 +479,12 @@ export default function Configure() {
             carbonColKey="topBottomCarbonCol" customColKey="topBottomCustomColor"
             cfg={cfg} set={set} matsOverride={TOP_BOTTOM_MATS} />
 
-          {/* Side Mat — no carbon options */}
+          {/* Side Mat — restricted to match Top/Bottom carbon type when applicable */}
           <MatSection label="Side Grip Material"
             matKey="sideMat" colKey="sideCol"
             carbonColKey="sideCarbonCol" customColKey="sideCustomColor"
-            cfg={cfg} set={set} matsOverride={SIDE_MATS} />
+            cfg={cfg} set={set} matsOverride={SIDE_MATS}
+            linkedMat={TOP_BOTTOM_MATS.find(m => m.n === cfg.topBottomMat)} />
 
           {/* AUDI-only */}
           {isAudi && (
@@ -520,6 +536,44 @@ export default function Configure() {
               value={cfg.laneAssist}
               onChange={v => set('laneAssist', v)}
             />
+
+            {(cfg.airbagCompat || cfg.airbagUpgrade) && (
+              <div style={{ marginTop: 14, paddingTop: 14, borderTop: '1px solid #1A1A1A' }}>
+                <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 8, color: 'var(--t)' }}>Airbag Material</div>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7, marginBottom: 14 }}>
+                  {AIRBAG_MATS.map(m => (
+                    <button key={m.n} className={`ob${cfg.airbagMat === m.n ? ' on' : ''}`}
+                      onClick={() => { set('airbagMat', m.n); set('airbagCol', null); set('airbagCustomColor', ''); }}>
+                      {m.n}
+                    </button>
+                  ))}
+                </div>
+                {cfg.airbagMat && (
+                  <>
+                    <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 4, color: 'var(--t)' }}>
+                      Color: {colorName(cfg.airbagCol) || (cfg.airbagCustomColor ? cfg.airbagCustomColor : '—')}
+                    </div>
+                    <ColorGrid colors={COLORS} selected={cfg.airbagCol} onSelect={v => { set('airbagCol', v); set('airbagCustomColor', ''); }} />
+                    <CustomColorInput label="Type Any Color:" value={cfg.airbagCustomColor} onChange={v => { set('airbagCustomColor', v); set('airbagCol', null); }} />
+                  </>
+                )}
+                <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase', margin: '16px 0 4px', color: 'var(--t)' }}>
+                  Airbag Stitch Color: {cfg.airbagStitchColor ? colorName(cfg.airbagStitchColor) : cfg.airbagStitchCustomColor || 'None'}
+                </div>
+                <ColorGrid colors={STITCH_COLORS} selected={cfg.airbagStitchColor} onSelect={v => { set('airbagStitchColor', v); set('airbagStitchCustomColor', ''); }} />
+                <CustomColorInput label="Type Any Stitch Color:" value={cfg.airbagStitchCustomColor} onChange={v => { set('airbagStitchCustomColor', v); set('airbagStitchColor', null); }} placeholder="e.g. Gold, Magenta, Dual Colors..." />
+              </div>
+            )}
+
+            {isAudi && (
+              <div style={{ marginTop: 14, paddingTop: 14, borderTop: '1px solid #1A1A1A' }}>
+                <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 4, color: 'var(--t)' }}>
+                  Audi Logo Color: {colorName(cfg.audiLogoCol) || (cfg.audiLogoCustomColor ? cfg.audiLogoCustomColor : '—')}
+                </div>
+                <ColorGrid colors={COLORS} selected={cfg.audiLogoCol} onSelect={v => { set('audiLogoCol', v); set('audiLogoCustomColor', ''); }} />
+                <CustomColorInput label="Type Any Color:" value={cfg.audiLogoCustomColor} onChange={v => { set('audiLogoCustomColor', v); set('audiLogoCol', null); }} />
+              </div>
+            )}
           </div>
 
           {/* Custom Notes */}
