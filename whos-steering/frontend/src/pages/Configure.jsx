@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import WheelPreview from '../components/WheelPreview';
+import ZoomableImage from '../components/ZoomableImage';
 import {
   COLORS, MATS, TRIS, DEFAULT_CONFIG, colorName,
   STRIPE_CONCEPTS, STITCH_COLORS,
@@ -44,7 +45,7 @@ function ColorGrid({ colors, selected, onSelect }) {
             boxShadow: selected === c.h ? '0 0 0 1px var(--y)' : 'none',
             overflow: 'hidden', transition: 'border-color .15s' }}>
           {c.img
-            ? <img src={c.img} alt={c.n} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+            ? <ZoomableImage src={c.img} alt={c.n} iconSize={16} />
             : <div style={{ width: '100%', height: '100%', background: c.h }} />
           }
           {selected === c.h && (
@@ -97,7 +98,7 @@ function StripeConcept({ concept, selected, onSelect }) {
         borderRadius: 4, overflow: 'hidden', position: 'relative',
         boxShadow: isSelected ? '0 0 0 1px var(--y)' : 'none', transition: 'border-color .15s' }}>
         {img
-          ? <img src={img} alt={label} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+          ? <ZoomableImage src={img} alt={label} iconSize={16} />
           : <div style={{ width: '100%', height: '100%', background: '#111', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <span style={{ fontSize: 9, color: '#555' }}>NONE</span>
             </div>
@@ -125,8 +126,7 @@ function CarbonColorGrid({ colors, selected, onSelect }) {
               borderRadius: 4, overflow: 'hidden', position: 'relative',
               boxShadow: isSel ? '0 0 0 1px var(--y)' : 'none', transition: 'border-color .15s' }}>
             {c.img
-              ? <img src={c.img} alt={c.n}
-                  style={{ width: '100%', height: 100, objectFit: 'cover', display: 'block' }} />
+              ? <ZoomableImage src={c.img} alt={c.n} imgStyle={{ height: 100 }} iconSize={18} corner="left" />
               : <div style={{ height: 100, background: c.h, position: 'relative', overflow: 'hidden' }}>
                   {[...Array(6)].map((_, i) => (
                     <div key={i} style={{ position: 'absolute', left: i*14, top: 0, width: 8,
@@ -345,6 +345,11 @@ export default function Configure() {
                 ✓ Fits 2011+ AUDI All Models
               </div>
             )}
+            {!isAudi && (
+              <div style={{ padding: '8px 12px', background: 'rgba(232,184,0,.05)', border: '1px solid rgba(232,184,0,.2)', marginBottom: 12, fontSize: 11, color: 'var(--t)', letterSpacing: 1 }}>
+                ✓ {cfg.wheelStyleType === 'F-Series' ? 'Fits F10, F30, E90' : 'Fits F10, F30, G20, G30'}
+              </div>
+            )}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 12 }}>
               <div>
                 <label className="fl">Year <span className="req">*</span></label>
@@ -389,11 +394,6 @@ export default function Configure() {
                       ? (style === 'RS' ? 'From $799.99' : 'From $864.99')
                       : (style === 'G-Series' ? 'From $549.99' : 'From $449.99')}
                   </div>
-                  {!isAudi && (
-                    <div style={{ fontSize: 10, color: 'var(--t)', marginTop: 4, letterSpacing: .5 }}>
-                      {style === 'G-Series' ? '✓ Fits F10, F30, G20, G30' : '✓ Fits F10, F30, E90'}
-                    </div>
-                  )}
                 </div>
               ))}
             </div>
@@ -418,9 +418,8 @@ export default function Configure() {
               />
               {cfg.ledDisplay && (
                 <div style={{ marginTop: 12, display: 'flex', alignItems: 'center', gap: 12 }}>
-                  <div style={{ flexShrink: 0, border: '1px solid var(--b)', overflow: 'hidden', background: '#0A0A0A', width: 120, height: 80 }}>
-                    <img src="/led-display.png" alt="LED Display Strip"
-                      style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 30%', display: 'block' }} />
+                  <div style={{ flexShrink: 0, border: '1px solid var(--b)', overflow: 'hidden', background: '#0A0A0A', width: 120, height: 80, position: 'relative' }}>
+                    <ZoomableImage src="/led-display.png" alt="LED Display Strip" imgStyle={{ objectPosition: 'center 30%' }} iconSize={16} />
                   </div>
                   <div style={{ fontSize: 11, color: 'var(--t)', lineHeight: 1.7 }}>
                     Integrated LED RPM shift-light strip with live speed and gear display — embedded directly into the steering wheel, visible without moving your eyes from the road.
@@ -458,7 +457,7 @@ export default function Configure() {
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7 }}>
               {['Standard', 'Magnetic'].map(o => (
                 <button key={o} className={`ob${cfg.paddleShifters === o ? ' on' : ''}`} onClick={() => set('paddleShifters', o)}>
-                  {o}{o === 'Magnetic' && !isAudi ? ' (+$25.00)' : ''}
+                  {o}{o === 'Magnetic' ? ' (+$25.00)' : ''}
                 </button>
               ))}
             </div>
