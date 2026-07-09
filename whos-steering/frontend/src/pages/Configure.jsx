@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import WheelPreview from '../components/WheelPreview';
-import ZoomableImage from '../components/ZoomableImage';
 import {
   COLORS, MATS, TRIS, DEFAULT_CONFIG, colorName,
   STRIPE_CONCEPTS, STITCH_COLORS,
@@ -16,7 +15,7 @@ function Sect({ label, value, children, badge }) {
     <div style={{ padding: '20px 28px', borderBottom: '1px solid var(--b)' }}>
       <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, marginBottom: 12, flexWrap: 'wrap' }}>
         <span style={{ fontFamily: 'Rajdhani, sans-serif', fontWeight: 700, fontSize: 15, letterSpacing: 2, textTransform: 'uppercase' }}>{label}</span>
-        {badge && <span style={{ background: 'var(--y)', color: '#000', fontFamily: 'Orbitron, monospace', fontSize: 8, fontWeight: 700, padding: '2px 8px', letterSpacing: 2 }}>{badge}</span>}
+        {badge && <span style={{ background: 'var(--y)', color: '#000', fontFamily: 'Orbitron, monospace', fontSize: 11, fontWeight: 700, padding: '2px 8px', letterSpacing: 2 }}>{badge}</span>}
         {value && <><span style={{ color: '#444', fontSize: 13 }}>|</span>
         <span style={{ fontFamily: 'Rajdhani, sans-serif', fontWeight: 600, fontSize: 14, color: 'var(--y)', letterSpacing: .5 }}>{value}</span></>}
       </div>
@@ -45,7 +44,7 @@ function ColorGrid({ colors, selected, onSelect }) {
             boxShadow: selected === c.h ? '0 0 0 1px var(--y)' : 'none',
             overflow: 'hidden', transition: 'border-color .15s' }}>
           {c.img
-            ? <ZoomableImage src={c.img} alt={c.n} iconSize={16} />
+            ? <img src={c.img} alt={c.n} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
             : <div style={{ width: '100%', height: '100%', background: c.h }} />
           }
           {selected === c.h && (
@@ -74,12 +73,12 @@ function Toggle({ label, sub, value, onChange }) {
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 0', borderBottom: '1px solid #1A1A1A', flexWrap: 'wrap', gap: 8 }}>
       <div style={{ flex: 1, paddingRight: 12 }}>
         <div style={{ fontFamily: 'Rajdhani, sans-serif', fontWeight: 700, fontSize: 14, letterSpacing: 1, textTransform: 'uppercase' }}>{label}</div>
-        {sub && <div style={{ fontSize: 10, color: 'var(--y)', letterSpacing: .5 }}>{sub}</div>}
+        {sub && <div style={{ fontSize: 12, color: 'var(--y)', letterSpacing: .5 }}>{sub}</div>}
       </div>
       <div style={{ display: 'flex', flexShrink: 0 }}>
         {['YES','NO'].map((v, i) => (
           <button key={v} onClick={() => onChange(v === 'YES')}
-            style={{ padding: '6px 16px', border: '1px solid var(--b)', background: value === (v === 'YES') ? 'var(--y)' : 'transparent', color: value === (v === 'YES') ? '#000' : 'var(--t)', cursor: 'pointer', fontFamily: 'Rajdhani, sans-serif', fontSize: 11, fontWeight: 700, letterSpacing: 1, transition: 'all .2s', borderRight: i === 0 ? 'none' : undefined }}>
+            style={{ padding: '6px 16px', border: '1px solid var(--b)', background: value === (v === 'YES') ? 'var(--y)' : 'transparent', color: value === (v === 'YES') ? '#000' : 'var(--t)', cursor: 'pointer', fontFamily: 'Rajdhani, sans-serif', fontSize: 13, fontWeight: 700, letterSpacing: 1, transition: 'all .2s', borderRight: i === 0 ? 'none' : undefined }}>
             {v}
           </button>
         ))}
@@ -98,9 +97,9 @@ function StripeConcept({ concept, selected, onSelect }) {
         borderRadius: 4, overflow: 'hidden', position: 'relative',
         boxShadow: isSelected ? '0 0 0 1px var(--y)' : 'none', transition: 'border-color .15s' }}>
         {img
-          ? <ZoomableImage src={img} alt={label} iconSize={16} />
+          ? <img src={img} alt={label} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
           : <div style={{ width: '100%', height: '100%', background: '#111', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <span style={{ fontSize: 9, color: '#555' }}>NONE</span>
+              <span style={{ fontSize: 11, color: '#555' }}>NONE</span>
             </div>
         }
         {isSelected && (
@@ -109,7 +108,7 @@ function StripeConcept({ concept, selected, onSelect }) {
           </div>
         )}
       </div>
-      <div style={{ fontSize: 9, color: isSelected ? 'var(--y)' : 'var(--t)', letterSpacing: .5,
+      <div style={{ fontSize: 11, color: isSelected ? 'var(--y)' : 'var(--t)', letterSpacing: .5,
         textAlign: 'center', maxWidth: 80, lineHeight: 1.3 }}>{label}</div>
     </div>
   );
@@ -126,7 +125,8 @@ function CarbonColorGrid({ colors, selected, onSelect }) {
               borderRadius: 4, overflow: 'hidden', position: 'relative',
               boxShadow: isSel ? '0 0 0 1px var(--y)' : 'none', transition: 'border-color .15s' }}>
             {c.img
-              ? <ZoomableImage src={c.img} alt={c.n} imgStyle={{ height: 100 }} iconSize={18} corner="left" />
+              ? <img src={c.img} alt={c.n}
+                  style={{ width: '100%', height: 100, objectFit: 'cover', display: 'block' }} />
               : <div style={{ height: 100, background: c.h, position: 'relative', overflow: 'hidden' }}>
                   {[...Array(6)].map((_, i) => (
                     <div key={i} style={{ position: 'absolute', left: i*14, top: 0, width: 8,
@@ -137,10 +137,10 @@ function CarbonColorGrid({ colors, selected, onSelect }) {
             {isSel && (
               <div style={{ position: 'absolute', top: 6, right: 6, background: 'var(--y)',
                 borderRadius: '50%', width: 18, height: 18, display: 'flex',
-                alignItems: 'center', justifyContent: 'center', fontSize: 10, color: '#000', fontWeight: 700 }}>✓</div>
+                alignItems: 'center', justifyContent: 'center', fontSize: 12, color: '#000', fontWeight: 700 }}>✓</div>
             )}
             <div style={{ padding: '5px 8px', background: '#111',
-              fontSize: 10, color: isSel ? 'var(--y)' : 'var(--t)',
+              fontSize: 12, color: isSel ? 'var(--y)' : 'var(--t)',
               letterSpacing: .5, textAlign: 'center', fontWeight: isSel ? 700 : 400 }}>
               {c.n}
             </div>
@@ -171,7 +171,7 @@ function MatSection({ label, matKey, colKey, carbonColKey, customColKey, cfg, se
   return (
     <Sect label={label} value={mat}>
       {linkedCarbonType && (
-        <div style={{ fontSize: 10, color: 'rgba(232,184,0,.7)', letterSpacing: .5, marginBottom: 10, padding: '6px 10px', background: 'rgba(232,184,0,.06)', border: '1px solid rgba(232,184,0,.2)' }}>
+        <div style={{ fontSize: 12, color: 'rgba(232,184,0,.7)', letterSpacing: .5, marginBottom: 10, padding: '6px 10px', background: 'rgba(232,184,0,.06)', border: '1px solid rgba(232,184,0,.2)' }}>
           ✦ Limited to matching carbon, Alcantara, or Classic Leather based on your other grip selection
         </div>
       )}
@@ -312,9 +312,9 @@ export default function Configure() {
         }}>
           <WheelPreview config={cfg} size={Math.min(360, window.innerWidth * 0.4)} />
           <div style={{ paddingTop: 12, borderTop: '1px solid var(--b)', width: '100%', textAlign: 'center' }}>
-            <div style={{ fontFamily: 'Orbitron, monospace', fontSize: 9, letterSpacing: 3, color: 'var(--t)', textTransform: 'uppercase' }}>Estimated Total</div>
+            <div style={{ fontFamily: 'Orbitron, monospace', fontSize: 11, letterSpacing: 3, color: 'var(--t)', textTransform: 'uppercase' }}>Estimated Total</div>
             <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontSize: 'clamp(64px,8vw,88px)', color: 'var(--y)', lineHeight: 1, letterSpacing: -1 }}>${price.toFixed(2)}</div>
-            <div style={{ fontSize: 10, color: 'var(--t)', letterSpacing: 1 }}>Final price confirmed at checkout</div>
+            <div style={{ fontSize: 12, color: 'var(--t)', letterSpacing: 1 }}>Final price confirmed at checkout</div>
           </div>
           <button className="btn" style={{ width: '100%', clipPath: 'polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%)', padding: 18, fontSize: 13, letterSpacing: 3 }}
             onClick={() => validate() && setShowReview(true)}>
@@ -329,7 +329,7 @@ export default function Configure() {
           <div style={{ padding: '20px 28px 16px', borderBottom: '1px solid var(--b)', background: 'var(--d)', position: 'sticky', top: 0, zIndex: 10, display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
             <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 28, letterSpacing: 2 }}>CUSTOMIZATION</div>
             {isAudi && (
-              <span style={{ background: 'rgba(232,184,0,.1)', border: '1px solid var(--y)', color: 'var(--y)', fontFamily: 'Orbitron, monospace', fontSize: 9, fontWeight: 700, padding: '4px 10px', letterSpacing: 2 }}>B9 STYLE</span>
+              <span style={{ background: 'rgba(232,184,0,.1)', border: '1px solid var(--y)', color: 'var(--y)', fontFamily: 'Orbitron, monospace', fontSize: 11, fontWeight: 700, padding: '4px 10px', letterSpacing: 2 }}>B9 STYLE</span>
             )}
           </div>
 
@@ -337,16 +337,16 @@ export default function Configure() {
           <Sect label="Vehicle" value={cfg.vehicleYear && cfg.vehicleModel ? `${cfg.vehicleYear} ${cfg.brand} ${cfg.vehicleModel}` : '—'}>
             <div style={{ display: 'flex', gap: 6, marginBottom: 14 }}>
               {['BMW','AUDI'].map(b => (
-                <button key={b} className={`ob${cfg.brand === b ? ' on' : ''}`} style={{ fontSize: 10, padding: '5px 20px' }} onClick={() => setBrand(b)}>{b}</button>
+                <button key={b} className={`ob${cfg.brand === b ? ' on' : ''}`} style={{ fontSize: 12, padding: '5px 20px' }} onClick={() => setBrand(b)}>{b}</button>
               ))}
             </div>
             {isAudi && (
-              <div style={{ padding: '8px 12px', background: 'rgba(232,184,0,.05)', border: '1px solid rgba(232,184,0,.2)', marginBottom: 12, fontSize: 11, color: 'var(--t)', letterSpacing: 1 }}>
+              <div style={{ padding: '8px 12px', background: 'rgba(232,184,0,.05)', border: '1px solid rgba(232,184,0,.2)', marginBottom: 12, fontSize: 13, color: 'var(--t)', letterSpacing: 1 }}>
                 ✓ Fits 2011+ AUDI All Models
               </div>
             )}
             {!isAudi && (
-              <div style={{ padding: '8px 12px', background: 'rgba(232,184,0,.05)', border: '1px solid rgba(232,184,0,.2)', marginBottom: 12, fontSize: 11, color: 'var(--t)', letterSpacing: 1 }}>
+              <div style={{ padding: '8px 12px', background: 'rgba(232,184,0,.05)', border: '1px solid rgba(232,184,0,.2)', marginBottom: 12, fontSize: 13, color: 'var(--t)', letterSpacing: 1 }}>
                 ✓ {cfg.wheelStyleType === 'F-Series' ? 'Fits F10, F30, E90' : 'Fits F10, F30, G20, G30'}
               </div>
             )}
@@ -372,7 +372,7 @@ export default function Configure() {
               {photo ? <img src={photo} alt="wheel" style={{ width: '100%', maxHeight: 120, objectFit: 'cover' }} />
                 : <><div style={{ fontSize: 20, opacity: .4, marginBottom: 3 }}>📷</div>
                    <div style={{ fontSize: 12, color: 'var(--t)' }}>{photoUploading ? 'Uploading...' : 'Drop or click to upload'}</div>
-                   <div style={{ fontSize: 10, color: '#444', marginTop: 2 }}>JPG / PNG — required for fitment verification</div></>}
+                   <div style={{ fontSize: 12, color: '#444', marginTop: 2 }}>JPG / PNG — required for fitment verification</div></>}
             </label>
             {errors.photo && <div className="err-msg">A photo of your current wheel is required</div>}
           </Sect>
@@ -384,12 +384,12 @@ export default function Configure() {
                 <div key={style} onClick={() => set('wheelStyleType', style)}
                   style={{ flex: 1, padding: '14px 12px', border: `2px solid ${cfg.wheelStyleType === style ? 'var(--y)' : 'var(--b)'}`, background: cfg.wheelStyleType === style ? 'rgba(232,184,0,.06)' : 'transparent', cursor: 'pointer', textAlign: 'center', transition: 'all .2s' }}>
                   <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 28, color: cfg.wheelStyleType === style ? 'var(--y)' : 'var(--w)', letterSpacing: 2 }}>{style} STYLE</div>
-                  <div style={{ fontSize: 10, color: 'var(--t)', marginTop: 4 }}>
+                  <div style={{ fontSize: 12, color: 'var(--t)', marginTop: 4 }}>
                     {isAudi
                       ? (style === 'RS' ? 'Classic flat-bottom sport profile' : 'R8 supercar-inspired round profile')
                       : (style === 'G-Series' ? 'Modern G-chassis flat-bottom sport profile' : 'Classic F-chassis round profile')}
                   </div>
-                  <div style={{ fontSize: 11, color: 'var(--y)', fontWeight: 700, marginTop: 6 }}>
+                  <div style={{ fontSize: 13, color: 'var(--y)', fontWeight: 700, marginTop: 6 }}>
                     {isAudi
                       ? (style === 'RS' ? 'From $799.99' : 'From $864.99')
                       : (style === 'G-Series' ? 'From $549.99' : 'From $449.99')}
@@ -418,10 +418,11 @@ export default function Configure() {
               />
               {cfg.ledDisplay && (
                 <div style={{ marginTop: 12, display: 'flex', alignItems: 'center', gap: 12 }}>
-                  <div style={{ flexShrink: 0, border: '1px solid var(--b)', overflow: 'hidden', background: '#0A0A0A', width: 120, height: 80, position: 'relative' }}>
-                    <ZoomableImage src="/led-display.png" alt="LED Display Strip" imgStyle={{ objectPosition: 'center 30%' }} iconSize={16} />
+                  <div style={{ flexShrink: 0, border: '1px solid var(--b)', overflow: 'hidden', background: '#0A0A0A', width: 120, height: 80 }}>
+                    <img src="/led-display.png" alt="LED Display Strip"
+                      style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 30%', display: 'block' }} />
                   </div>
-                  <div style={{ fontSize: 11, color: 'var(--t)', lineHeight: 1.7 }}>
+                  <div style={{ fontSize: 13, color: 'var(--t)', lineHeight: 1.7 }}>
                     Integrated LED RPM shift-light strip with live speed and gear display — embedded directly into the steering wheel, visible without moving your eyes from the road.
                   </div>
                 </div>
@@ -463,10 +464,10 @@ export default function Configure() {
             </div>
             {cfg.paddleShifters === 'Magnetic' && (
               <div style={{ marginTop: 12 }}>
-                <div style={{ fontSize: 11, color: 'rgba(232,184,0,.7)', letterSpacing: 1, marginBottom: 8, padding: '6px 10px', background: 'rgba(232,184,0,.06)', border: '1px solid rgba(232,184,0,.2)' }}>
+                <div style={{ fontSize: 13, color: 'rgba(232,184,0,.7)', letterSpacing: 1, marginBottom: 8, padding: '6px 10px', background: 'rgba(232,184,0,.06)', border: '1px solid rgba(232,184,0,.2)' }}>
                   ✦ All of our magnetic paddle shifters are carbon fiber
                 </div>
-                <div style={{ fontSize: 11, color: 'var(--t)', letterSpacing: 1, textTransform: 'uppercase', marginBottom: 6 }}>Paddle Length</div>
+                <div style={{ fontSize: 13, color: 'var(--t)', letterSpacing: 1, textTransform: 'uppercase', marginBottom: 6 }}>Paddle Length</div>
                 <OptionRow options={['Short', 'Long']} selected={cfg.paddleLength || 'Short'} onSelect={v => set('paddleLength', v)} />
               </div>
             )}
@@ -589,11 +590,11 @@ export default function Configure() {
       {showReview && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,.88)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2000, padding: 20, overflowY: 'auto' }}>
           <div style={{ background: 'var(--p)', border: '1px solid var(--b)', padding: 32, width: 520, maxWidth: '100%', maxHeight: '90vh', overflowY: 'auto' }}>
-            <div style={{ fontFamily: 'Orbitron, monospace', fontSize: 10, letterSpacing: 4, color: 'var(--y)', marginBottom: 4 }}>REVIEW YOUR BUILD</div>
+            <div style={{ fontFamily: 'Orbitron, monospace', fontSize: 12, letterSpacing: 4, color: 'var(--y)', marginBottom: 4 }}>REVIEW YOUR BUILD</div>
             <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 32, marginBottom: 20 }}>LOOKS GOOD?</div>
             {buildSummary().map(([k, v]) => (
               <div key={k} style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #1A1A1A', gap: 10 }}>
-                <span style={{ fontSize: 11, letterSpacing: 1, textTransform: 'uppercase', color: '#666', flexShrink: 0 }}>{k}</span>
+                <span style={{ fontSize: 13, letterSpacing: 1, textTransform: 'uppercase', color: '#666', flexShrink: 0 }}>{k}</span>
                 <span style={{ fontSize: k === 'Est. Price' ? 32 : 13, fontWeight: 900, color: k === 'Est. Price' ? 'var(--y)' : 'var(--w)', textAlign: 'right', fontFamily: k === 'Est. Price' ? '"Barlow Condensed", sans-serif' : 'inherit', letterSpacing: k === 'Est. Price' ? 1 : 'normal' }}>{v}</span>
               </div>
             ))}
