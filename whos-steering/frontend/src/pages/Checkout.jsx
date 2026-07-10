@@ -6,7 +6,8 @@ import { useCart } from '../context';
 import { useAuth } from '../context';
 import { apiFetch } from '../lib/api';
 
-const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PK);
+const STRIPE_PK = process.env.REACT_APP_STRIPE_PK;
+const stripePromise = STRIPE_PK ? loadStripe(STRIPE_PK) : null;
 
 // ── Payment form (lives inside <Elements>) ────────────────────────────────────
 function PaymentForm({ total, orderId, email }) {
@@ -14,6 +15,8 @@ function PaymentForm({ total, orderId, email }) {
   const elements = useElements();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [elementReady, setElementReady] = useState(false);
+  const [elementLoadError, setElementLoadError] = useState('');
 
   const handlePay = async () => {
     if (!stripe || !elements) return;
@@ -32,7 +35,23 @@ function PaymentForm({ total, orderId, email }) {
 
   return (
     <div>
-      <PaymentElement options={{ layout: 'tabs' }} />
+      {!elementReady && !elementLoadError && (
+        <div style={{ padding: '30px 0', textAlign: 'center', fontSize: 13, color: 'var(--t)', letterSpacing: 1 }}>
+          Loading payment form...
+        </div>
+      )}
+      <div style={{ display: elementReady ? 'block' : 'none' }}>
+        <PaymentElement
+          options={{ layout: 'tabs' }}
+          onReady={() => setElementReady(true)}
+          onLoadError={(e) => setElementLoadError(e?.error?.message || 'Failed to load payment form.')}
+        />
+      </div>
+      {elementLoadError && (
+        <div style={{ padding: '10px 14px', background: 'rgba(204,51,0,.1)', border: '1px solid #CC3300', color: '#FF5533', fontSize: 12, marginTop: 16 }}>
+          {elementLoadError} — please refresh the page. If this keeps happening, the Stripe client secret may have expired; go back and re-enter your shipping info to start a new payment session.
+        </div>
+      )}
       {error && (
         <div style={{ padding: '10px 14px', background: 'rgba(204,51,0,.1)', border: '1px solid #CC3300', color: '#FF5533', fontSize: 12, marginTop: 16 }}>
           {error}
@@ -42,7 +61,7 @@ function PaymentForm({ total, orderId, email }) {
         className="btn"
         style={{ clipPath: 'none', width: '100%', padding: 18, fontSize: 13, marginTop: 20 }}
         onClick={handlePay}
-        disabled={!stripe || loading}
+        disabled={!stripe || loading || !elementReady}
       >
         {loading ? 'PROCESSING...' : `PAY $${total.toFixed(2)}`}
       </button>
@@ -221,9 +240,15 @@ export default function Checkout() {
           {step === 2 && clientSecret && (
             <div>
               <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 28, marginBottom: 24 }}>PAYMENT</div>
-              <Elements stripe={stripePromise} options={{ clientSecret, appearance: stripeAppearance }}>
-                <PaymentForm total={total} orderId={orderId} email={info.email} />
-              </Elements>
+              {!stripePromise ? (
+                <div style={{ padding: '14px 16px', background: 'rgba(204,51,0,.1)', border: '1px solid #CC3300', color: '#FF5533', fontSize: 13, lineHeight: 1.6 }}>
+                  Payment form couldn't load: the Stripe publishable key (REACT_APP_STRIPE_PK) is missing from this build. This needs to be set as an environment variable in your Netlify site settings and the site redeployed — it must be set at build time, not just in a local .env file.
+                </div>
+              ) : (
+                <Elements stripe={stripePromise} options={{ clientSecret, appearance: stripeAppearance }}>
+                  <PaymentForm total={total} orderId={orderId} email={info.email} />
+                </Elements>
+              )}
             </div>
           )}
         </div>
