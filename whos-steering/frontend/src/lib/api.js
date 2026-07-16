@@ -50,6 +50,7 @@ export function calcPrice(config, rules = {}) {
   if (config.brand === 'BMW') {
     if (config.heated !== false)   price += (rules.heated_bmw ?? 75);
     if (config.laneAssist !== false) price += (rules.lane_assist_bmw ?? 30);
+    if (config.ledDisplay === true) price += (rules.rpm_gauge_bmw ?? 100);
   }
   // Audi-only add-ons
   if (config.brand === 'AUDI') {

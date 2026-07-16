@@ -86,7 +86,7 @@ function PresetCard({ preset, onOpen }) {
         <ZoomableImage src={preset.images[imgIdx]} alt={preset.name}
           imgStyle={{ transition: 'transform .4s', pointerEvents: 'none' }}
           onError={e => e.target.style.display = 'none'}
-          buttonStyle={{ top: 'auto', bottom: 12, right: 12, zIndex: 6 }} iconSize={26} />
+          buttonStyle={{ top: 'auto', bottom: 12, right: 12, zIndex: 25 }} iconSize={26} />
         {/* Arrows — zIndex above the overlay */}
         {total > 1 && <div style={{ zIndex: 20, position: 'absolute', top: 0, left: 0, bottom: 0, display: 'flex', alignItems: 'center', paddingLeft: 0 }}><ArrowBtn dir="left" onClick={() => setImgIdx(i => (i - 1 + total) % total)} /></div>}
         {total > 1 && <div style={{ zIndex: 20, position: 'absolute', top: 0, right: 0, bottom: 0, display: 'flex', alignItems: 'center', paddingRight: 0 }}><ArrowBtn dir="right" onClick={() => setImgIdx(i => (i + 1) % total)} /></div>}

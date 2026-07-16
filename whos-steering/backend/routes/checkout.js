@@ -193,6 +193,7 @@ async function calcServerPrice(cfg) {
   if (cfg.brand === 'BMW') {
     if (cfg.heated !== false)            price += (rules.heated_bmw      || 75);
     if (cfg.laneAssist !== false)        price += (rules.lane_assist_bmw || 30);
+    if (cfg.ledDisplay === true)         price += (rules.rpm_gauge_bmw   || 100);
   }
   if (cfg.brand === 'AUDI') {
     if (cfg.startStopButtons === true) price += 40;

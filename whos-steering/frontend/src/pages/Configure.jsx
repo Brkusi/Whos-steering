@@ -405,30 +405,50 @@ export default function Configure() {
                 onChange={v => set('startStopButtons', v)}
               />
             )}
+            {!isAudi && cfg.wheelStyleType === 'G-Series' && (
+              <div style={{ marginTop: 16 }}>
+                <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 8, color: 'var(--t)' }}>
+                  360° Preview
+                </div>
+                <model-viewer
+                  src="/models/BMW_M_Steering_Wheel.glb"
+                  alt="BMW G-Series M Steering Wheel 3D preview"
+                  camera-controls
+                  auto-rotate
+                  shadow-intensity="1"
+                  style={{ width: '100%', height: 320, background: '#0A0A0A', border: '1px solid var(--b)' }}
+                >
+                  <div slot="progress-bar" />
+                </model-viewer>
+                <div style={{ fontSize: 12, color: 'var(--t)', marginTop: 6 }}>
+                  Drag to rotate · Scroll to zoom
+                </div>
+              </div>
+            )}
           </Sect>
 
-          {/* LED Display Strip — Audi only, own full section */}
-          {isAudi && (
-            <Sect label="LED Display Strip" value={cfg.ledDisplay ? 'Yes · +$50' : 'No'} badge={cfg.ledDisplay ? 'ADDED' : undefined}>
-              <Toggle
-                label="Add LED Display Strip"
-                sub="+$50.00"
-                value={cfg.ledDisplay}
-                onChange={v => set('ledDisplay', v)}
-              />
-              {cfg.ledDisplay && (
-                <div style={{ marginTop: 12, display: 'flex', alignItems: 'center', gap: 12 }}>
-                  <div style={{ flexShrink: 0, border: '1px solid var(--b)', overflow: 'hidden', background: '#0A0A0A', width: 120, height: 80 }}>
-                    <img src="/led-display.png" alt="LED Display Strip"
-                      style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 30%', display: 'block' }} />
-                  </div>
-                  <div style={{ fontSize: 13, color: 'var(--t)', lineHeight: 1.7 }}>
-                    Integrated LED RPM shift-light strip with live speed and gear display — embedded directly into the steering wheel, visible without moving your eyes from the road.
-                  </div>
+          {/* LED / RPM Display Strip — both brands, price differs by brand */}
+          <Sect label={isAudi ? 'LED Display Strip' : 'RPM Gauge'}
+            value={cfg.ledDisplay ? `Yes · +$${isAudi ? '50' : '100'}` : 'No'}
+            badge={cfg.ledDisplay ? 'ADDED' : undefined}>
+            <Toggle
+              label={isAudi ? 'Add LED Display Strip' : 'Add RPM Gauge'}
+              sub={isAudi ? '+$50.00' : '+$100.00'}
+              value={cfg.ledDisplay}
+              onChange={v => set('ledDisplay', v)}
+            />
+            {cfg.ledDisplay && (
+              <div style={{ marginTop: 12, display: 'flex', alignItems: 'center', gap: 12 }}>
+                <div style={{ flexShrink: 0, border: '1px solid var(--b)', overflow: 'hidden', background: '#0A0A0A', width: 120, height: 80 }}>
+                  <img src="/led-display.png" alt={isAudi ? 'LED Display Strip' : 'RPM Gauge'}
+                    style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 30%', display: 'block' }} />
                 </div>
-              )}
-            </Sect>
-          )}
+                <div style={{ fontSize: 13, color: 'var(--t)', lineHeight: 1.7 }}>
+                  Integrated LED RPM shift-light strip with live speed and gear display — embedded directly into the steering wheel, visible without moving your eyes from the road.
+                </div>
+              </div>
+            )}
+          </Sect>
 
           {/* Stripe */}
           <Sect label="Top Stripe" value={selectedStripeConcept.label}>
