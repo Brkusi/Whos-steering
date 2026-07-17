@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import WheelPreview from '../components/WheelPreview';
 import {
@@ -206,6 +206,43 @@ function MatSection({ label, matKey, colKey, carbonColKey, customColKey, cfg, se
   );
 }
 
+function Model3DPreview({ src, alt, height }) {
+  const [loaded, setLoaded] = useState(false);
+  const ref = useRef(null);
+
+  useEffect(() => {
+    setLoaded(false);
+    const el = ref.current;
+    if (!el) return;
+    const onLoad = () => setLoaded(true);
+    el.addEventListener('load', onLoad);
+    return () => el.removeEventListener('load', onLoad);
+  }, [src]);
+
+  return (
+    <div style={{ position: 'relative', width: '100%', height }}>
+      <model-viewer
+        ref={ref}
+        src={src}
+        alt={alt}
+        camera-controls
+        auto-rotate
+        shadow-intensity="1"
+        style={{ width: '100%', height: '100%', background: 'transparent', opacity: loaded ? 1 : 0, transition: 'opacity .5s ease' }}
+      >
+        <div slot="progress-bar" />
+      </model-viewer>
+      {!loaded && (
+        <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 16 }}>
+          <div style={{ width: 52, height: 52, border: '3px solid rgba(232,184,0,.15)', borderTopColor: 'var(--y)', borderRadius: '50%', animation: 'spin3d 1s linear infinite' }} />
+          <div style={{ fontSize: 13, letterSpacing: 2, color: 'var(--t)', textTransform: 'uppercase' }}>Loading 3D Preview...</div>
+        </div>
+      )}
+      <style>{`@keyframes spin3d { to { transform: rotate(360deg); } }`}</style>
+    </div>
+  );
+}
+
 export default function Configure() {
   const [params] = useSearchParams();
   const nav = useNavigate();
@@ -311,16 +348,11 @@ export default function Configure() {
           order: window.innerWidth < 768 ? 2 : 1,
         }}>
           {!isAudi && cfg.wheelStyleType === 'G-Series' ? (
-            <model-viewer
+            <Model3DPreview
               src="/models/BMW_M_Steering_Wheel.glb"
               alt="BMW G-Series M Steering Wheel 3D preview"
-              camera-controls
-              auto-rotate
-              shadow-intensity="1"
-              style={{ width: Math.min(360, window.innerWidth * 0.4), height: Math.min(360, window.innerWidth * 0.4), background: 'transparent' }}
-            >
-              <div slot="progress-bar" />
-            </model-viewer>
+              height={window.innerWidth < 768 ? 420 : 'calc(100vh - 320px)'}
+            />
           ) : (
             <WheelPreview config={cfg} size={Math.min(360, window.innerWidth * 0.4)} />
           )}
