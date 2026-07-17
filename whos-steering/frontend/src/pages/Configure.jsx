@@ -310,7 +310,20 @@ export default function Configure() {
           borderRight: '1px solid var(--b)', overflow: 'hidden',
           order: window.innerWidth < 768 ? 2 : 1,
         }}>
-          <WheelPreview config={cfg} size={Math.min(360, window.innerWidth * 0.4)} />
+          {!isAudi && cfg.wheelStyleType === 'G-Series' ? (
+            <model-viewer
+              src="/models/BMW_M_Steering_Wheel.glb"
+              alt="BMW G-Series M Steering Wheel 3D preview"
+              camera-controls
+              auto-rotate
+              shadow-intensity="1"
+              style={{ width: Math.min(360, window.innerWidth * 0.4), height: Math.min(360, window.innerWidth * 0.4), background: 'transparent' }}
+            >
+              <div slot="progress-bar" />
+            </model-viewer>
+          ) : (
+            <WheelPreview config={cfg} size={Math.min(360, window.innerWidth * 0.4)} />
+          )}
           <div style={{ paddingTop: 12, borderTop: '1px solid var(--b)', width: '100%', textAlign: 'center' }}>
             <div style={{ fontFamily: 'Orbitron, monospace', fontSize: 11, letterSpacing: 3, color: 'var(--t)', textTransform: 'uppercase' }}>Estimated Total</div>
             <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontSize: 'clamp(64px,8vw,88px)', color: 'var(--y)', lineHeight: 1, letterSpacing: -1 }}>${price.toFixed(2)}</div>
@@ -404,26 +417,6 @@ export default function Configure() {
                 value={cfg.startStopButtons}
                 onChange={v => set('startStopButtons', v)}
               />
-            )}
-            {!isAudi && cfg.wheelStyleType === 'G-Series' && (
-              <div style={{ marginTop: 16 }}>
-                <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 8, color: 'var(--t)' }}>
-                  360° Preview
-                </div>
-                <model-viewer
-                  src="/models/BMW_M_Steering_Wheel.glb"
-                  alt="BMW G-Series M Steering Wheel 3D preview"
-                  camera-controls
-                  auto-rotate
-                  shadow-intensity="1"
-                  style={{ width: '100%', height: 320, background: '#0A0A0A', border: '1px solid var(--b)' }}
-                >
-                  <div slot="progress-bar" />
-                </model-viewer>
-                <div style={{ fontSize: 12, color: 'var(--t)', marginTop: 6 }}>
-                  Drag to rotate · Scroll to zoom
-                </div>
-              </div>
             )}
           </Sect>
 
