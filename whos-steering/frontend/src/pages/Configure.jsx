@@ -228,6 +228,8 @@ function Model3DPreview({ src, alt, height }) {
         camera-controls
         auto-rotate
         shadow-intensity="1"
+        environment-image="neutral"
+        exposure="1.1"
         style={{ width: '100%', height: '100%', background: 'transparent', opacity: loaded ? 1 : 0, transition: 'opacity .5s ease' }}
       >
         <div slot="progress-bar" />
