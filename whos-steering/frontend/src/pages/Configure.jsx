@@ -115,6 +115,7 @@ function StripeConcept({ concept, selected, onSelect }) {
 }
 
 function CarbonColorGrid({ colors, selected, onSelect }) {
+  const [starPressed, setStarPressed] = useState(null);
   return (
     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))', gap: 8, marginTop: 8 }}>
       {colors.map(c => {
@@ -134,6 +135,23 @@ function CarbonColorGrid({ colors, selected, onSelect }) {
                   ))}
                 </div>
             }
+            {c.rec && (
+              <div
+                onClick={e => { e.stopPropagation(); setStarPressed(p => p === c.n ? null : c.n); }}
+                title="Recommended"
+                style={{ position: 'absolute', top: 6, left: 6, width: 20, height: 20,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer',
+                  filter: 'drop-shadow(0 1px 2px rgba(0,0,0,.6))', zIndex: 2 }}>
+                <span style={{ fontSize: 16, color: '#FFD500', lineHeight: 1 }}>★</span>
+              </div>
+            )}
+            {c.rec && starPressed === c.n && (
+              <div style={{ position: 'absolute', top: 28, left: 6, background: '#FFD500', color: '#000',
+                fontSize: 10, fontWeight: 700, letterSpacing: .5, padding: '2px 6px', borderRadius: 3,
+                zIndex: 2, whiteSpace: 'nowrap' }}>
+                Recommended
+              </div>
+            )}
             {isSel && (
               <div style={{ position: 'absolute', top: 6, right: 6, background: 'var(--y)',
                 borderRadius: '50%', width: 18, height: 18, display: 'flex',

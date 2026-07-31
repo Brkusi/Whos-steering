@@ -50,20 +50,17 @@ export const STITCH_COLORS = [
   { n: 'Yellow',      h: '#E8B800', img: '/stitches/stitch-yellow.jpg' },
 ];
 
-// ── Classic Carbon colors ─────────────────────────────────────────────────────
+// ── Classic Carbon colors (image-based) ────────────────────────────────────
 export const CLASSIC_CARBON_COLORS = [
-  { n: 'Black Carbon',        h: '#111111' },
-  { n: 'Dark Carbon',         h: '#1A1A1A' },
-  { n: 'Green Carbon',        h: '#1A3020' },
-  { n: 'Navy Carbon',         h: '#0A1428' },
-  { n: 'Dark Blue Carbon',    h: '#0D1A2E' },
-  { n: 'Copper Carbon',       h: '#3D1F0A' },
-  { n: 'Olive Carbon',        h: '#2A2A10' },
-  { n: 'Silver Carbon',       h: '#555555' },
-  { n: 'Blue Carbon',         h: '#0A1F6E' },
-  { n: 'Purple Carbon',       h: '#2A0A5C' },
-  { n: 'Orange Carbon',       h: '#7A2800' },
-  { n: 'Red Carbon',          h: '#6E0000' },
+  { n: 'Black Carbon',              h: '#111111', img: '/classic/classic-black.png', rec: true },
+  { n: 'Black & Blue Carbon',       h: '#0A1F6E', img: '/classic/classic-black-blue.png' },
+  { n: 'Black & Gold Carbon',       h: '#3A2800', img: '/classic/classic-black-gold.png' },
+  { n: 'Black & Green Carbon',      h: '#1A3020', img: '/classic/classic-black-green.png' },
+  { n: 'Black & Orange Carbon',     h: '#7A2800', img: '/classic/classic-black-orange.png' },
+  { n: 'Black & Purple Carbon',     h: '#2A0A5C', img: '/classic/classic-black-purple.png' },
+  { n: 'Black & Red Carbon',        h: '#6E0000', img: '/classic/classic-black-red.png' },
+  { n: 'Black & Silver Carbon',     h: '#555555', img: '/classic/classic-black-silver.png' },
+  { n: 'Lime Green & Black Carbon', h: '#3A5C00', img: '/classic/classic-limegreen-black.png' },
 ];
 
 // ── Forged Carbon colors (image-based) ───────────────────────────────────────
