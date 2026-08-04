@@ -279,7 +279,7 @@ export default function Configure() {
   const [cfg, setCfg] = useState({
     ...DEFAULT_CONFIG,
     brand: initBrand,
-    wheelStyleType: initBrand === 'BMW' ? 'G-Series' : 'RS',
+    wheelStyleType: initBrand === 'BMW' ? 'G-Series' : 'B9',
   });
 
   const set = useCallback((key, val) => setCfg(prev => ({ ...prev, [key]: val })), []);
@@ -291,7 +291,7 @@ export default function Configure() {
   const price = calcPrice(cfg, rules);
 
   const setBrand = (brand) => {
-    setCfg({ ...DEFAULT_CONFIG, brand, wheelStyleType: brand === 'BMW' ? 'G-Series' : 'RS' });
+    setCfg({ ...DEFAULT_CONFIG, brand, wheelStyleType: brand === 'BMW' ? 'G-Series' : 'B9' });
     setPhoto(null);
     setErrors({});
   };
@@ -446,18 +446,18 @@ export default function Configure() {
           {/* Wheel Style Type */}
           <Sect label="Wheel Style Type" value={cfg.wheelStyleType}>
             <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
-              {(isAudi ? ['RS', 'R8'] : ['G-Series', 'F-Series']).map(style => (
+              {(isAudi ? ['B9', 'R8'] : ['G-Series', 'F-Series']).map(style => (
                 <div key={style} onClick={() => set('wheelStyleType', style)}
                   style={{ flex: 1, padding: '14px 12px', border: `2px solid ${cfg.wheelStyleType === style ? 'var(--y)' : 'var(--b)'}`, background: cfg.wheelStyleType === style ? 'rgba(232,184,0,.06)' : 'transparent', cursor: 'pointer', textAlign: 'center', transition: 'all .2s' }}>
                   <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 28, color: cfg.wheelStyleType === style ? 'var(--y)' : 'var(--w)', letterSpacing: 2 }}>{style} STYLE</div>
                   <div style={{ fontSize: 12, color: 'var(--t)', marginTop: 4 }}>
                     {isAudi
-                      ? (style === 'RS' ? 'Classic flat-bottom sport profile' : 'R8 supercar-inspired round profile')
+                      ? (style === 'B9' ? 'Classic flat-bottom sport profile' : 'R8 supercar-inspired round profile')
                       : (style === 'G-Series' ? 'Modern G-chassis flat-bottom sport profile' : 'Classic F-chassis round profile')}
                   </div>
                   <div style={{ fontSize: 13, color: 'var(--y)', fontWeight: 700, marginTop: 6 }}>
                     {isAudi
-                      ? (style === 'RS' ? 'From $799.99' : 'From $864.99')
+                      ? (style === 'B9' ? 'From $729.99' : 'From $864.99')
                       : (style === 'G-Series' ? 'From $549.99' : 'From $449.99')}
                   </div>
                 </div>

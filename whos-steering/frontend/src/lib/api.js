@@ -26,7 +26,7 @@ export function calcPrice(config, rules = {}) {
     price = rules.base_audi ?? 729.99;
     if (isCarbonTop) price += 50;
     if (config.wheelStyleType === 'R8') price = (rules.base_audi_r8 ?? 864.99) + (isCarbonTop ? 50 : 0);
-    else if (config.wheelStyleType === 'RS') price = (rules.base_audi_rs ?? 729.99) + (isCarbonTop ? 50 : 0);
+    else if (config.wheelStyleType === 'B9') price = (rules.base_audi_b9 ?? rules.base_audi_rs ?? 729.99) + (isCarbonTop ? 50 : 0);
   } else {
     // BMW base: G-Series $549.99, F-Series $449.99; G-Series +$50 if carbon top
     if (config.wheelStyleType === 'F-Series') {
@@ -40,11 +40,12 @@ export function calcPrice(config, rules = {}) {
   if (config.airbagCompat !== false) price += (rules.airbag_compat ?? 25);
   if (config.airbagUpgrade === true) price += (rules.airbag_upgrade ?? 75);
 
-  // $20 discount when Top & Bottom material is not any type of carbon
-  if (!isCarbonTop) price -= (rules.non_carbon_discount ?? 20);
+  // $40 discount when Top & Bottom material is not any type of carbon
+  if (!isCarbonTop) price -= (rules.non_carbon_discount ?? 40);
 
-  // Magnetic paddle shifters: +$25 for both brands
-  if (config.paddleShifters === 'Magnetic') price += (rules.paddle_magnetic ?? 25);
+  // Magnetic paddle shifters: +$25, except Audi B9 style which includes them at no extra cost
+  const isAudiB9 = config.brand === 'AUDI' && config.wheelStyleType === 'B9';
+  if (config.paddleShifters === 'Magnetic' && !isAudiB9) price += (rules.paddle_magnetic ?? 25);
 
   // BMW-only add-ons
   if (config.brand === 'BMW') {
