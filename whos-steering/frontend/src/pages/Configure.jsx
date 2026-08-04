@@ -341,7 +341,7 @@ export default function Configure() {
       ['Side Grip',        cfg.sideMat + (cfg.sideCol ? ' · ' + colorName(cfg.sideCol) : '') + (cfg.sideCustomColor ? ' · ' + cfg.sideCustomColor : '')],
       ['Stripe',           selectedStripeConcept.label],
       ['Stitch Color',     cfg.stitchColor ? colorName(cfg.stitchColor) : cfg.stitchCustomColor || 'None'],
-      ['Airbag Cover',     cfg.airbagCompat ? 'Yes (+$25)' : 'No'],
+      ['Airbag Cover',     cfg.airbagCompat ? (cfg.wheelStyleType === 'F-Series' && cfg.brand === 'BMW' ? 'Yes (FREE)' : 'Yes (+$25)') : 'No'],
       ['Full Airbag Upgrade', cfg.airbagUpgrade ? 'Yes (+$25)' : 'No'],
       ['Heated',           cfg.heated ? 'Yes' : 'No'],
       ['Lane Assist',      cfg.laneAssist ? 'Yes' : 'No'],
@@ -457,7 +457,7 @@ export default function Configure() {
                   </div>
                   <div style={{ fontSize: 13, color: 'var(--y)', fontWeight: 700, marginTop: 6 }}>
                     {isAudi
-                      ? (style === 'B9' ? 'From $729.99' : 'From $864.99')
+                      ? (style === 'B9' ? 'From $699.99' : 'From $799.99')
                       : (style === 'G-Series' ? 'From $549.99' : 'From $449.99')}
                   </div>
                 </div>
@@ -580,7 +580,9 @@ export default function Configure() {
             <div style={{ fontFamily: 'Rajdhani, sans-serif', fontWeight: 700, fontSize: 15, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 8 }}>Options</div>
             <Toggle
               label="Airbag Cover"
-              sub="+$25.00"
+              sub={cfg.brand === 'BMW' && cfg.wheelStyleType === 'F-Series'
+                ? <span style={{ display: 'inline-block', background: 'var(--y)', color: '#000', fontWeight: 800, fontSize: 11, letterSpacing: 1, padding: '2px 8px', borderRadius: 3 }}>FREE</span>
+                : '+$25.00'}
               value={cfg.airbagCompat}
               onChange={v => set('airbagCompat', v)}
             />
