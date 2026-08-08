@@ -70,8 +70,8 @@ router.post('/create-intent', async (req, res) => {
           cfg.heated !== false,
           cfg.laneAssist !== false,
           cfg.audiBadge || cfg.audi_badge || null,
-          cfg.outerTrimCol || cfg.outer_trim_col || null,
-          cfg.innerTrimCol || cfg.inner_trim_col || null,
+          cfg.plasticTrimCol || cfg.outerTrimCol || cfg.outer_trim_col || null,
+          cfg.innerTrimMatchCarbon ? 'MATCH_CARBON' : (cfg.innerTrimCol || cfg.inner_trim_col || null),
           cfg.photoUrl || cfg.photo_url || null,
           (amountCents / 100).toFixed(2),
         ]

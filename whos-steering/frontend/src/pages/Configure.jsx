@@ -289,6 +289,7 @@ export default function Configure() {
   }, []);
 
   const price = calcPrice(cfg, rules);
+  const isCarbonTopBottom = !!(cfg.topBottomMat && cfg.topBottomMat.toLowerCase().includes('carbon'));
 
   const setBrand = (brand) => {
     setCfg({ ...DEFAULT_CONFIG, brand, wheelStyleType: brand === 'BMW' ? 'G-Series' : 'B9' });
@@ -373,6 +374,12 @@ export default function Configure() {
               src="/models/BMW_M_Steering_Wheel.glb"
               alt="BMW G-Series M Steering Wheel 3D preview"
               height={window.innerWidth < 768 ? 420 : 'calc(100vh - 320px)'}
+            />
+          ) : !isAudi && cfg.wheelStyleType === 'F-Series' ? (
+            <img
+              src="/f-series-reference.png"
+              alt="BMW F-Series Steering Wheel customization options"
+              style={{ width: '100%', maxWidth: 480, height: window.innerWidth < 768 ? 420 : 'calc(100vh - 320px)', objectFit: 'contain', display: 'block' }}
             />
           ) : (
             <WheelPreview config={cfg} size={Math.min(360, window.innerWidth * 0.4)} />
@@ -564,13 +571,24 @@ export default function Configure() {
                   ))}
                 </div>
               </Sect>
-              <Sect label="Outer Trim Color" value={colorName(cfg.outerTrimCol)}>
-                <ColorGrid colors={COLORS} selected={cfg.outerTrimCol} onSelect={v => set('outerTrimCol', v)} />
-                <CustomColorInput label="Type Any Color:" value={cfg.outerTrimCustomColor || ''} onChange={v => set('outerTrimCustomColor', v)} />
+              <Sect label="Plastic Trim Color" value={colorName(cfg.plasticTrimCol)}>
+                <ColorGrid colors={COLORS} selected={cfg.plasticTrimCol} onSelect={v => set('plasticTrimCol', v)} />
+                <CustomColorInput label="Type Any Color:" value={cfg.plasticTrimCustomColor || ''} onChange={v => set('plasticTrimCustomColor', v)} />
               </Sect>
-              <Sect label="Inner Trim Color" value={colorName(cfg.innerTrimCol)}>
-                <ColorGrid colors={COLORS} selected={cfg.innerTrimCol} onSelect={v => set('innerTrimCol', v)} />
-                <CustomColorInput label="Type Any Color:" value={cfg.innerTrimCustomColor || ''} onChange={v => set('innerTrimCustomColor', v)} />
+              <Sect label="Inner Trim Color" value={cfg.innerTrimMatchCarbon ? 'Match Carbon Fiber' : colorName(cfg.innerTrimCol)}>
+                {isCarbonTopBottom && (
+                  <div onClick={() => { set('innerTrimMatchCarbon', !cfg.innerTrimMatchCarbon); set('innerTrimCol', null); }}
+                    className={`ob${cfg.innerTrimMatchCarbon ? ' on' : ''}`}
+                    style={{ padding: '10px 14px', marginBottom: 10, textAlign: 'center', cursor: 'pointer', fontSize: 13, fontWeight: 700, letterSpacing: 1, textTransform: 'uppercase' }}>
+                    Match Carbon Fiber Top & Bottom
+                  </div>
+                )}
+                {!cfg.innerTrimMatchCarbon && (
+                  <>
+                    <ColorGrid colors={COLORS} selected={cfg.innerTrimCol} onSelect={v => set('innerTrimCol', v)} />
+                    <CustomColorInput label="Type Any Color:" value={cfg.innerTrimCustomColor || ''} onChange={v => set('innerTrimCustomColor', v)} />
+                  </>
+                )}
               </Sect>
             </>
           )}

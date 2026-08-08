@@ -6,12 +6,13 @@ export default function WheelPreview({ config, size = 320 }) {
     stripeMode = 'none', stripeColor, triKey,
     topBottomMat = 'Alcantara', topBottomCol,
     sideMat = 'Alcantara', sideCol,
-    outerTrimCol, innerTrimCol,
+    plasticTrimCol, innerTrimCol, innerTrimMatchCarbon,
   } = config || {};
 
   const badge = brand === 'AUDI' ? audiBadge : 'BMW';
   const sc = sideCol || MAT_HEX[sideMat] || '#2A2A2A';
   const tc = topBottomCol || MAT_HEX[topBottomMat] || '#2A2A2A';
+  const innerTrimStroke = innerTrimMatchCarbon ? (MAT_HEX[topBottomMat] || '#1A1A1A') : innerTrimCol;
 
   const tri = triKey ? TRIS[triKey] : null;
   const showSolid = stripeMode === 'single' && stripeColor;
@@ -57,8 +58,8 @@ export default function WheelPreview({ config, size = 320 }) {
         fontFamily="Orbitron, monospace" fontSize="20" letterSpacing="2">{badge}</text>
 
       {/* Audi trim rings */}
-      {outerTrimCol && <circle cx="150" cy="150" r="143" fill="none" stroke={outerTrimCol} strokeWidth="4" />}
-      {innerTrimCol && <circle cx="150" cy="150" r="37"  fill="none" stroke={innerTrimCol} strokeWidth="4" />}
+      {plasticTrimCol && <circle cx="150" cy="150" r="143" fill="none" stroke={plasticTrimCol} strokeWidth="4" />}
+      {innerTrimStroke && <circle cx="150" cy="150" r="37"  fill="none" stroke={innerTrimStroke} strokeWidth="4" />}
     </svg>
   );
 }
