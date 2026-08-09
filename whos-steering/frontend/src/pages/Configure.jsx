@@ -376,11 +376,11 @@ export default function Configure() {
               height={window.innerWidth < 768 ? 420 : 'calc(100vh - 320px)'}
             />
           ) : !isAudi && cfg.wheelStyleType === 'F-Series' ? (
-            <div style={{ position: 'relative', width: '100%', flex: '1 1 auto', minHeight: 0, height: window.innerWidth < 768 ? 420 : 'calc(100vh - 320px)', overflow: 'hidden' }}>
+            <div style={{ position: 'relative', width: '100%', aspectRatio: '4 / 3', maxHeight: window.innerWidth < 768 ? 420 : 'calc(100vh - 320px)', overflow: 'hidden' }}>
               <img
                 src="/f-series-reference.png"
                 alt="BMW F-Series Steering Wheel customization options"
-                style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', display: 'block' }}
+                style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'contain', objectPosition: 'center', display: 'block' }}
               />
             </div>
           ) : (
