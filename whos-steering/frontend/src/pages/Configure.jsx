@@ -383,6 +383,22 @@ export default function Configure() {
                 style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'contain', objectPosition: 'center', display: 'block' }}
               />
             </div>
+          ) : isAudi && cfg.wheelStyleType === 'B9' ? (
+            <div style={{ position: 'relative', width: '100%', aspectRatio: '3 / 2', maxHeight: window.innerWidth < 768 ? 420 : 'calc(100vh - 320px)', overflow: 'hidden' }}>
+              <img
+                src="/b9-reference.png"
+                alt="Audi B9 Steering Wheel customization options"
+                style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'contain', objectPosition: 'center', display: 'block' }}
+              />
+            </div>
+          ) : isAudi && cfg.wheelStyleType === 'R8' ? (
+            <div style={{ position: 'relative', width: '100%', aspectRatio: '3 / 2', maxHeight: window.innerWidth < 768 ? 420 : 'calc(100vh - 320px)', overflow: 'hidden' }}>
+              <img
+                src="/r8-reference.png"
+                alt="Audi R8 Steering Wheel customization options"
+                style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'contain', objectPosition: 'center', display: 'block' }}
+              />
+            </div>
           ) : (
             <WheelPreview config={cfg} size={Math.min(360, window.innerWidth * 0.4)} />
           )}
