@@ -197,7 +197,7 @@ function MatSection({ label, matKey, colKey, carbonColKey, customColKey, cfg, se
         {matList.map(m => (
           <button key={m.n} className={`ob${mat === m.n ? ' on' : ''}`}
             onClick={() => { set(matKey, m.n); set(colKey, null); set(carbonColKey, null); set(customColKey, ''); }}>
-            {m.n}
+            {m.n}{m.carbon && <span style={{ marginLeft: 6, fontSize: 10, opacity: .75 }}>(+$40)</span>}
           </button>
         ))}
       </div>
@@ -345,7 +345,7 @@ export default function Configure() {
       ['Airbag Cover',     cfg.airbagCompat ? (cfg.wheelStyleType === 'F-Series' && cfg.brand === 'BMW' ? 'Yes (FREE)' : 'Yes (+$25)') : 'No'],
       ['Full Airbag Upgrade', cfg.airbagUpgrade ? 'Yes (+$25)' : 'No'],
       ['Heated',           cfg.heated ? 'Yes' : 'No'],
-      ['Lane Assist',      cfg.laneAssist ? 'Yes' : 'No'],
+      [cfg.brand === 'BMW' ? 'Driver Assistance Retained' : 'Lane Assist', cfg.laneAssist ? 'Yes' : 'No'],
       cfg.brand === 'AUDI' ? ['Audi Badge', cfg.audiBadge] : null,
       ['Notes',            cfg.customNotes || 'None'],
       ['Est. Price',       `$${price.toFixed(2)}`],
@@ -370,11 +370,13 @@ export default function Configure() {
           order: window.innerWidth < 768 ? 2 : 1,
         }}>
           {!isAudi && cfg.wheelStyleType === 'G-Series' ? (
-            <Model3DPreview
-              src="/models/BMW_M_Steering_Wheel.glb"
-              alt="BMW G-Series M Steering Wheel 3D preview"
-              height={window.innerWidth < 768 ? 420 : 'calc(100vh - 320px)'}
-            />
+            <div style={{ position: 'relative', width: '100%', aspectRatio: '4 / 3', maxHeight: window.innerWidth < 768 ? 420 : 'calc(100vh - 320px)', overflow: 'hidden' }}>
+              <img
+                src="/g-series-reference.png"
+                alt="BMW G-Series Steering Wheel customization options"
+                style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'contain', objectPosition: 'center', display: 'block' }}
+              />
+            </div>
           ) : !isAudi && cfg.wheelStyleType === 'F-Series' ? (
             <div style={{ position: 'relative', width: '100%', aspectRatio: '4 / 3', maxHeight: window.innerWidth < 768 ? 420 : 'calc(100vh - 320px)', overflow: 'hidden' }}>
               <img
@@ -438,7 +440,7 @@ export default function Configure() {
             )}
             {!isAudi && (
               <div style={{ padding: '8px 12px', background: 'rgba(232,184,0,.05)', border: '1px solid rgba(232,184,0,.2)', marginBottom: 12, fontSize: 13, color: 'var(--t)', letterSpacing: 1 }}>
-                ✓ {cfg.wheelStyleType === 'F-Series' ? 'Fits F10, F30, E90' : 'Fits F10, F30, G20, G30'}
+                ✓ {cfg.wheelStyleType === 'F-Series' ? 'Fits F10, F30, E90' : 'Fits F10, F30, G20, G30, G22, G42, G80, G82, G87'}
               </div>
             )}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 12 }}>
@@ -534,7 +536,7 @@ export default function Configure() {
           {/* Stitch */}
           <Sect label="Stitch Color" value={cfg.stitchColor ? colorName(cfg.stitchColor) : cfg.stitchCustomColor || 'None'}>
             <ColorGrid colors={STITCH_COLORS} selected={cfg.stitchColor} onSelect={v => { set('stitchColor', v); set('stitchCustomColor', ''); }} />
-            <CustomColorInput label="Type Any Stitch Color:" value={cfg.stitchCustomColor} onChange={v => { set('stitchCustomColor', v); set('stitchColor', null); }} placeholder="e.g. Gold, Magenta, Dual Colors..." />
+            <CustomColorInput label="Type Any Stitch Color (Max Two):" value={cfg.stitchCustomColor} onChange={v => { set('stitchCustomColor', v); set('stitchColor', null); }} placeholder="e.g. Gold, Magenta, Dual Colors..." />
           </Sect>
 
           {/* Wheel Style — hidden for R8 and F-Series */}
@@ -635,8 +637,10 @@ export default function Configure() {
               onChange={v => set('heated', v)}
             />
             <Toggle
-              label="Lane Assist Compatible"
-              sub={!isAudi ? '+$30.00' : ''}
+              label={!isAudi ? 'Does Your Original Steering Wheel Have Driver Assistance Functionality?' : 'Lane Assist Compatible'}
+              sub={!isAudi
+                ? (cfg.laneAssist ? 'Yes (I want to retain Driver Assistance) — +$30.00' : 'No')
+                : ''}
               value={cfg.laneAssist}
               onChange={v => set('laneAssist', v)}
             />
