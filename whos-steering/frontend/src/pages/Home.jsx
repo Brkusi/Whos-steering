@@ -16,15 +16,19 @@ export default function Home() {
   return (
     <div>
       {/* ── Hero ── */}
-      <div id="hero" style={{ position: 'relative', width: '100%', aspectRatio: '3 / 2', maxHeight: '100vh', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-        <img
-          src="/hero-main.png"
-          alt="Who's Steering — Designed by you. Built by us. Custom steering wheels made to your specification."
-          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', display: 'block' }}
-        />
-        <div className="fade-up" style={{ position: 'absolute', left: 'clamp(24px,5.5vw,86px)', top: '62%', display: 'flex', gap: 12, flexWrap: 'wrap', zIndex: 2, animationDelay: '.4s' }}>
-          <button className="btn" onClick={() => nav('/configure')}>BUILD YOURS</button>
-          <button className="btn-outline" onClick={() => nav('/catalog')}>EXPLORE WHEELS</button>
+      <div id="hero" style={{ position: 'relative', width: '100%', height: '100vh', overflow: 'hidden', background: '#080808', display: 'flex', flexDirection: 'column' }}>
+        <div style={{ flex: '1 1 auto', minHeight: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ position: 'relative', maxWidth: '100%', maxHeight: '100%', aspectRatio: '3 / 2' }}>
+            <img
+              src="/hero-main.png"
+              alt="Who's Steering — Designed by you. Built by us. Custom steering wheels made to your specification."
+              style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }}
+            />
+            <div className="fade-up" style={{ position: 'absolute', left: '5.5%', top: '65%', display: 'flex', gap: 10, flexWrap: 'wrap', zIndex: 2, animationDelay: '.4s' }}>
+              <button className="btn" onClick={() => nav('/configure')}>BUILD YOURS</button>
+              <button className="btn-outline" onClick={() => nav('/catalog')}>EXPLORE WHEELS</button>
+            </div>
+          </div>
         </div>
 
         {/* Bottom brand strip */}
