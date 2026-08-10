@@ -17,56 +17,53 @@ export default function Home() {
     <div>
       {/* ── Hero ── */}
       <div id="hero" style={{
-        height: '100vh', position: 'relative', overflow: 'hidden',
-        display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column',
+        minHeight: '100vh', position: 'relative', overflow: 'hidden',
+        display: 'flex', alignItems: 'center', flexDirection: 'column',
       }}>
-        <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse at 20% 50%, rgba(232,184,0,.09) 0%, transparent 60%), #080808' }} />
+        <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse at 75% 50%, rgba(232,184,0,.10) 0%, transparent 60%), #080808' }} />
         <div style={{ position: 'absolute', inset: 0, backgroundImage: 'linear-gradient(rgba(232,184,0,.03) 1px, transparent 1px), linear-gradient(90deg, rgba(232,184,0,.03) 1px, transparent 1px)', backgroundSize: '60px 60px', maskImage: 'radial-gradient(ellipse at center, black 30%, transparent 80%)' }} />
 
-        {/* Spinning wheel bg */}
-        <svg viewBox="0 0 300 300" style={{ position: 'absolute', right: -60, top: '50%', transform: 'translateY(-50%)', opacity: .04, width: 500, animation: 'spin 30s linear infinite' }}>
-          <circle cx="150" cy="150" r="143" fill="none" stroke="#E8B800" strokeWidth="4" />
-          <line x1="150" y1="10" x2="150" y2="290" stroke="#E8B800" strokeWidth="6" />
-          <line x1="10" y1="150" x2="290" y2="150" stroke="#E8B800" strokeWidth="6" />
-          <circle cx="150" cy="150" r="37" fill="none" stroke="#E8B800" strokeWidth="4" />
-        </svg>
+        <div style={{
+          position: 'relative', zIndex: 2, width: '100%', maxWidth: 1360,
+          flex: 1, display: 'flex', alignItems: 'center',
+          margin: '0 auto', padding: 'clamp(90px,10vw,40px) clamp(24px,5vw,64px) clamp(60px,8vw,40px)',
+        }}>
+        <div style={{
+          display: 'grid', gridTemplateColumns: 'minmax(280px,560px) minmax(280px,1fr)',
+          gap: 'clamp(24px,4vw,40px)', alignItems: 'center', width: '100%',
+        }}>
+          {/* Left: copy */}
+          <div className="fade-up" style={{ animationDelay: '.2s' }}>
+            <div style={{ fontFamily: 'Orbitron, monospace', fontSize: 'clamp(9px,1.6vw,11px)', letterSpacing: 4, color: 'var(--y)', textTransform: 'uppercase', marginBottom: 16 }}>
+              Built Around You.
+            </div>
+            <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 'clamp(40px,6.5vw,76px)', lineHeight: .95, letterSpacing: -1, marginBottom: 20, textTransform: 'uppercase' }}>
+              Designed by <span style={{ color: 'var(--y)' }}>You.</span><br />
+              Built by <span style={{ color: 'var(--y)' }}>Us.</span>
+            </div>
+            <div style={{ fontSize: 'clamp(14px,2vw,16px)', color: 'var(--t)', lineHeight: 1.6, marginBottom: 28, maxWidth: 440 }}>
+              Handcrafted custom steering wheels built exactly to your specification.
+            </div>
+            <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+              <button className="btn" onClick={() => nav('/configure')}>BUILD YOURS</button>
+              <button className="btn-outline" onClick={() => nav('/catalog')}>EXPLORE WHEELS</button>
+            </div>
+          </div>
 
-        <div style={{ position: 'relative', zIndex: 2, textAlign: 'center', padding: '0 20px', width: '100%', maxWidth: 700 }}>
-          {/* Logo */}
-          <div className="fade-up" style={{ marginBottom: 0, animationDelay: '.2s' }}>
+          {/* Right: hero wheel photo */}
+          <div className="fade-up" style={{ animationDelay: '.4s', position: 'relative', display: 'flex', justifyContent: 'center' }}>
+            <div style={{ position: 'absolute', width: '80%', aspectRatio: '1/1', borderRadius: '50%', background: 'radial-gradient(ellipse at center, rgba(232,184,0,.25) 0%, transparent 70%)', filter: 'blur(10px)' }} />
             <img
-              src="/ws-logo.png"
-              alt="Who's Steering"
-              style={{
-                width: 'min(80vw, 620px)',
-                height: 'auto',
-                objectFit: 'contain',
-                display: 'block',
-                margin: '0 auto',
-                marginBottom: '-18%',
-              }}
+              src="/BMW_PRESET_1.png"
+              alt="Custom BMW M steering wheel"
+              style={{ position: 'relative', width: '100%', maxWidth: 620, height: 'auto', objectFit: 'contain', display: 'block' }}
             />
           </div>
-
-          <div className="fade-up" style={{ fontFamily: 'Orbitron, monospace', fontSize: 'clamp(8px, 2vw, 10px)', letterSpacing: 6, color: 'var(--y)', textTransform: 'uppercase', marginBottom: 8, animationDelay: '.55s' }}>
-            Custom Steering Wheels
-          </div>
-          <div className="fade-up" style={{ fontSize: 'clamp(11px, 3vw, 15px)', color: 'var(--t)', letterSpacing: 3, textTransform: 'uppercase', marginBottom: 10, animationDelay: '.7s' }}>
-            BMW &amp; AUDI SPECIALISTS
-          </div>
-          <div className="fade-up" style={{ display: 'flex', gap: 10, justifyContent: 'center', flexWrap: 'wrap', marginBottom: 24, animationDelay: '.85s' }}>
-            {['Made to Order', '6 Month Warranty', '3–4 Week Build'].map(b => (
-              <span key={b} style={{ fontFamily: 'Orbitron, monospace', fontSize: 'clamp(7px, 2vw, 9px)', letterSpacing: 2, padding: '5px 10px', border: '1px solid rgba(232,184,0,.3)', color: 'rgba(232,184,0,.75)' }}>{b}</span>
-            ))}
-          </div>
-          <div className="fade-up" style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap', animationDelay: '1s' }}>
-            <button className="btn" onClick={() => nav('/configure')}>BUILD YOURS</button>
-            <button className="btn-outline" onClick={() => nav('/catalog')}>SHOP CATALOG</button>
-          </div>
+        </div>
         </div>
 
         {/* Bottom brand strip */}
-        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, display: 'flex', borderTop: '1px solid var(--b)' }}>
+        <div style={{ position: 'relative', zIndex: 2, width: '100%', display: 'flex', borderTop: '1px solid var(--b)', marginTop: 'auto' }}>
           {[
             { id: 'bmw',    name: 'BMW',    tag: 'M Sport Builds',    badge: 'IN STOCK'  },
             { id: 'audi',   name: 'AUDI',   tag: 'RS Edition Builds', badge: 'IN STOCK'  },
