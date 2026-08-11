@@ -40,7 +40,7 @@
       rgba(0, 0, 0, 0.10) 58%,
       rgba(0, 0, 0, 0.18) 100%
     ),
-    url('/hero/hero-bg-desktop.webp');
+    url('../assets/hero/hero-bg-desktop.webp');
   background-size: cover;
   background-position: center center;
   background-repeat: no-repeat;
@@ -54,7 +54,7 @@
   z-index: -4;
   opacity: 0.14;
   pointer-events: none;
-  background: url('/hero/hero-tech-overlay.webp') center / cover no-repeat;
+  background: url('../assets/hero/hero-tech-overlay.webp') center / cover no-repeat;
   mix-blend-mode: screen;
 }
 
@@ -473,7 +473,7 @@
         rgba(0, 0, 0, 0.05) 58%,
         rgba(0, 0, 0, 0.30) 100%
       ),
-      url('/hero/hero-bg-mobile.webp');
+      url('../assets/hero/hero-bg-mobile.webp');
     background-position: center top;
     transform: none;
   }
@@ -494,7 +494,7 @@
     right: -24%;
     width: 68vw;
     aspect-ratio: 1;
-    background: url('/hero/hero-watermark.webp') center / contain no-repeat;
+    background: url('../assets/hero/hero-watermark.webp') center / contain no-repeat;
     opacity: 0.11;
     filter: drop-shadow(0 0 22px rgba(232, 184, 0, 0.24));
     pointer-events: none;

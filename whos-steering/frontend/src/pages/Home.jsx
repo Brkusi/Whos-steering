@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import './Home.css';
+import heroWheel from '../assets/hero/hero-wheel.webp';
 
 const MATERIALS = [
   'Carbon fibre base engineered for superior strength, weave consistency, and surface finish',
@@ -76,7 +77,7 @@ export default function Home() {
             <div className="hero-product-glow" />
             <img
               className="hero-wheel"
-              src="/hero/hero-wheel.webp"
+              src={heroWheel}
               alt=""
               draggable="false"
             />
