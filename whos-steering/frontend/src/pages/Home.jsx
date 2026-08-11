@@ -1,8 +1,15 @@
 import { useNavigate } from 'react-router-dom';
 import './Home.css';
 
-import heroDesktop from '../assets/hero/hero-exact-desktop.webp';
-import heroMobile from '../assets/hero/hero-exact-mobile.webp';
+import heroBase from '../assets/hero/hero-base.webp';
+import heroGrid from '../assets/hero/hero-grid.webp';
+import heroSmoke from '../assets/hero/hero-smoke.webp';
+import heroCarbon from '../assets/hero/hero-carbon.webp';
+import heroWatermark from '../assets/hero/hero-watermark.webp';
+import heroWheel from '../assets/hero/hero-wheel-highlighted.webp';
+import heroHeadline from '../assets/hero/hero-headline-exact.webp';
+import heroSubtitle from '../assets/hero/hero-subtitle-exact.webp';
+import heroMobileApproved from '../assets/hero/hero-mobile-approved.webp';
 
 const MATERIALS = [
   'Carbon fibre base engineered for superior strength, weave consistency, and surface finish',
@@ -33,43 +40,58 @@ export default function Home() {
 
   return (
     <main className="ws-home">
-      {/* EXACT APPROVED HERO RENDER */}
-      <section
-        id="hero"
-        className="ws-exact-hero"
-        aria-label="Who's Steering custom steering wheels"
-      >
-        <picture className="ws-exact-hero__picture">
-          <source media="(max-width: 760px)" srcSet={heroMobile} />
-          <img
-            className="ws-exact-hero__art"
-            src={heroDesktop}
-            alt="Designed by you. Built by us. Custom steering wheels made to your specification."
-            draggable="false"
-          />
-        </picture>
+      <section id="hero" className="ws-hero">
+        {/* DESKTOP: true layered hero */}
+        <div className="ws-hero-desktop" aria-hidden="true">
+          <img className="ws-layer ws-layer--base" src={heroBase} alt="" />
+          <img className="ws-layer ws-layer--grid" src={heroGrid} alt="" />
+          <img className="ws-layer ws-layer--smoke" src={heroSmoke} alt="" />
+          <img className="ws-layer ws-layer--watermark" src={heroWatermark} alt="" />
+          <img className="ws-layer ws-layer--carbon" src={heroCarbon} alt="" />
 
-        {/*
-          The approved artwork already contains the visible buttons.
-          These transparent React buttons sit exactly over them,
-          preserving the approved visual while keeping navigation functional.
-        */}
-        <button
-          type="button"
-          className="ws-hero-hotspot ws-hero-hotspot--build"
-          onClick={() => nav('/configure')}
-          aria-label="Build yours"
+          <img className="ws-hero-headline" src={heroHeadline} alt="" />
+          <img className="ws-hero-subtitle" src={heroSubtitle} alt="" />
+
+          <div className="ws-wheel-wrap">
+            <div className="ws-wheel-glow" />
+            <img className="ws-hero-wheel" src={heroWheel} alt="" />
+          </div>
+        </div>
+
+        {/* Accessible text: visual typography is the pixel-exact image layer above. */}
+        <div className="ws-sr-only">
+          <h1>Designed by you. Built by us.</h1>
+          <p>Custom steering wheels made to your specification.</p>
+        </div>
+
+        {/* MOBILE: approved mobile composition remains the reference visual. */}
+        <img
+          className="ws-hero-mobile-art"
+          src={heroMobileApproved}
+          alt="Designed by you. Built by us. Custom steering wheels made to your specification."
+          draggable="false"
         />
 
-        <button
-          type="button"
-          className="ws-hero-hotspot ws-hero-hotspot--explore"
-          onClick={() => nav('/catalog')}
-          aria-label="Explore wheels"
-        />
+        {/* REAL React buttons, not baked into the desktop artwork. */}
+        <div className="ws-hero-actions">
+          <button
+            type="button"
+            className="ws-hero-btn ws-hero-btn--primary"
+            onClick={() => nav('/configure')}
+          >
+            BUILD YOURS
+          </button>
+
+          <button
+            type="button"
+            className="ws-hero-btn ws-hero-btn--secondary"
+            onClick={() => nav('/catalog')}
+          >
+            EXPLORE WHEELS
+          </button>
+        </div>
       </section>
 
-      {/* BMW / AUDI / CUSTOM STRIP */}
       <section className="ws-brand-strip" aria-label="Shop by category">
         {BRAND_CARDS.map((brand) => (
           <button
@@ -82,24 +104,19 @@ export default function Home() {
               <span className="ws-brand-card__name">{brand.name}</span>
               <span className="ws-brand-card__tag">{brand.tag}</span>
             </span>
-
             <span className="ws-brand-card__badge">{brand.badge}</span>
           </button>
         ))}
       </section>
 
-      {/* MATERIALS & CRAFTSMANSHIP */}
       <section className="ws-materials">
         <div className="ws-materials__inner">
           <div>
             <div className="ws-materials__eyebrow">Our Standard</div>
-
             <h2 className="ws-materials__title">
-              MATERIALS &amp;
-              <br />
+              MATERIALS &amp;<br />
               <span>CRAFTSMANSHIP</span>
             </h2>
-
             <p className="ws-materials__intro">
               Every wheel we build is a commitment to quality. From the materials
               we select to the hands that assemble them, no detail is overlooked.

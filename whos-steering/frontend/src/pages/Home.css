@@ -1,8 +1,7 @@
 .ws-home {
   --ws-yellow: var(--y, #e8b800);
-  --ws-border: var(--b, rgba(255, 255, 255, 0.12));
-  --ws-muted: var(--t, #898989);
-
+  --ws-border: var(--b, rgba(255,255,255,.12));
+  --ws-muted: var(--t, #888);
   width: 100%;
   overflow-x: hidden;
   background: #050505;
@@ -16,115 +15,256 @@
 }
 
 /* =========================================================
-   EXACT HERO
-
-   No grid.
-   No max-width.
-   No object-fit: contain.
-   No recreated title/wheel positioning.
-
-   The approved artwork itself controls the visual composition.
+   HERO
+   Target desktop composition: 1672 × 739
    ========================================================= */
-
-.ws-exact-hero {
+.ws-hero {
   position: relative;
   width: 100%;
+  height: clamp(620px, 44.2vw, 900px);
+  min-height: 620px;
   overflow: hidden;
+  isolation: isolate;
   background: #050505;
-  line-height: 0;
 }
 
-.ws-exact-hero__picture {
-  display: block;
-  width: 100%;
+.ws-hero-desktop {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
 }
 
-.ws-exact-hero__art {
+.ws-layer,
+.ws-hero-headline,
+.ws-hero-subtitle,
+.ws-hero-wheel {
+  position: absolute;
   display: block;
-  width: 100%;
-  height: auto;
-  max-width: none;
   user-select: none;
+  pointer-events: none;
   -webkit-user-drag: none;
 }
 
-/*
-  Invisible click targets over the buttons baked into the approved artwork.
-  Coordinates are percentages, so they stay aligned as the image scales.
-*/
-.ws-hero-hotspot {
-  position: absolute;
+/* Base uses cover so there are NO empty black side gutters. */
+.ws-layer--base {
+  z-index: 0;
+  inset: -1%;
+  width: 102%;
+  height: 102%;
+  object-fit: cover;
+  object-position: center 54%;
+}
+
+/* Subtle technical grid/details */
+.ws-layer--grid {
+  z-index: 1;
+  inset: -3%;
+  width: 106%;
+  height: 106%;
+  object-fit: cover;
+  opacity: .13;
+  mix-blend-mode: screen;
+}
+
+/* Additional smoke and gold highlight energy */
+.ws-layer--smoke {
+  z-index: 2;
+  left: 22%;
+  top: -11%;
+  width: 83%;
+  height: 119%;
+  object-fit: cover;
+  opacity: .16;
+  mix-blend-mode: screen;
+}
+
+/* Faded emblem on the right, matching the reference */
+.ws-layer--watermark {
+  z-index: 2;
+  right: -4%;
+  top: -8%;
+  width: 33%;
+  height: auto;
+  opacity: .11;
+  mix-blend-mode: screen;
+}
+
+/* Carbon sweep + yellow edge in the lower left */
+.ws-layer--carbon {
+  z-index: 3;
+  left: -2%;
+  bottom: -6%;
+  width: 59%;
+  height: auto;
+  opacity: .76;
+}
+
+/* Exact typography sampled from the approved desktop render */
+.ws-hero-headline {
   z-index: 5;
+  left: 7.05%;
+  top: 19.6%;
+  width: 35.75%;
+  height: auto;
+}
+
+.ws-hero-subtitle {
+  z-index: 5;
+  left: 7.55%;
+  top: 52.75%;
+  width: 29.05%;
+  height: auto;
+}
+
+/* Corrected wheel: subtle red stitching + gold rim highlight */
+.ws-wheel-wrap {
+  position: absolute;
+  z-index: 6;
+  right: 12.35%;
+  top: 6.7%;
+  width: min(39.2vw, 690px);
+  aspect-ratio: 1023 / 984;
+  pointer-events: none;
+}
+
+.ws-wheel-glow {
+  position: absolute;
+  inset: 5% 2% -4%;
+  border-radius: 50%;
+  background:
+    radial-gradient(
+      ellipse at 51% 76%,
+      rgba(255, 194, 0, .32) 0%,
+      rgba(232, 184, 0, .16) 35%,
+      rgba(232, 184, 0, 0) 70%
+    );
+  filter: blur(18px);
+  opacity: .72;
+}
+
+.ws-hero-wheel {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter:
+    drop-shadow(0 28px 26px rgba(0,0,0,.62))
+    drop-shadow(0 0 10px rgba(232,184,0,.10));
+}
+
+/* Actual clickable buttons */
+.ws-hero-actions {
+  position: absolute;
+  z-index: 12;
+  left: 7.45%;
+  top: 64.65%;
+  width: 32.35%;
+  display: grid;
+  grid-template-columns: .96fr 1.04fr;
+  gap: 12px;
+}
+
+.ws-hero-btn {
   appearance: none;
-  display: block;
-  padding: 0;
-  margin: 0;
-  border: 0;
-  background: transparent;
-  color: transparent;
+  width: 100%;
+  height: clamp(46px, 3.2vw, 58px);
+  padding: 0 22px;
+  border-radius: 0;
   cursor: pointer;
+  font-family: Orbitron, monospace;
+  font-size: clamp(9px, .72vw, 12px);
+  font-weight: 800;
+  letter-spacing: .18em;
+  white-space: nowrap;
+  transition:
+    transform 160ms ease,
+    filter 160ms ease,
+    background 160ms ease,
+    color 160ms ease;
 }
 
-/* Approved DESKTOP render button coordinates */
-.ws-hero-hotspot--build {
-  left: 7.35%;
-  top: 64.4%;
-  width: 15.45%;
-  height: 7.55%;
+.ws-hero-btn:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.08);
 }
 
-.ws-hero-hotspot--explore {
-  left: 23.25%;
-  top: 64.4%;
-  width: 16.5%;
-  height: 7.55%;
-}
-
-.ws-hero-hotspot:focus-visible {
+.ws-hero-btn:focus-visible {
   outline: 2px solid #fff;
-  outline-offset: -4px;
+  outline-offset: 3px;
+}
+
+.ws-hero-btn--primary {
+  color: #070707;
+  border: 1px solid var(--ws-yellow);
+  background: linear-gradient(90deg, #f0bd00 0%, #ffd018 100%);
+  clip-path: polygon(4% 0, 100% 0, 96% 100%, 0 100%);
+  box-shadow:
+    0 0 18px rgba(232,184,0,.12),
+    inset 0 1px rgba(255,255,255,.16);
+}
+
+.ws-hero-btn--secondary {
+  color: #eabb00;
+  border: 1px solid rgba(232,184,0,.72);
+  background: rgba(4,4,4,.74);
+  clip-path: polygon(4% 0, 100% 0, 96% 100%, 0 100%);
+  box-shadow: inset 0 0 18px rgba(232,184,0,.025);
+  backdrop-filter: blur(4px);
+}
+
+/* Mobile visual is hidden on desktop */
+.ws-hero-mobile-art {
+  display: none;
+}
+
+/* Accessible-only copy */
+.ws-sr-only {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0,0,0,0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
 }
 
 /* =========================================================
-   BRAND STRIP
+   CATEGORY STRIP
    ========================================================= */
-
 .ws-brand-strip {
   position: relative;
-  z-index: 10;
+  z-index: 20;
   width: 100%;
   min-height: 80px;
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  background: #121212;
   border-top: 1px solid var(--ws-border);
   border-bottom: 1px solid var(--ws-border);
+  background: #121212;
 }
 
 .ws-brand-card {
   appearance: none;
   min-width: 0;
   min-height: 80px;
-  padding: 13px clamp(14px, 1.8vw, 28px);
+  padding: 13px clamp(14px,1.8vw,28px);
   display: flex;
   align-items: center;
   gap: 12px;
   border: 0;
   border-right: 1px solid var(--ws-border);
-  background: rgba(18, 18, 18, 0.98);
+  background: #121212;
   color: #fff;
   text-align: left;
   cursor: pointer;
-  transition: background 160ms ease;
 }
 
-.ws-brand-card:last-child {
-  border-right: 0;
-}
-
-.ws-brand-card:hover {
-  background: #1b1b1b;
-}
+.ws-brand-card:last-child { border-right: 0; }
+.ws-brand-card:hover { background: #1b1b1b; }
 
 .ws-brand-card__copy {
   min-width: 0;
@@ -134,19 +274,19 @@
 
 .ws-brand-card__name {
   font-family: "Barlow Condensed", Impact, sans-serif;
-  font-size: clamp(18px, 1.4vw, 25px);
+  font-size: clamp(18px,1.4vw,25px);
   line-height: 1;
   font-style: italic;
   font-weight: 900;
-  letter-spacing: 0.04em;
+  letter-spacing: .04em;
 }
 
 .ws-brand-card__tag {
   margin-top: 4px;
   overflow: hidden;
   color: var(--ws-muted);
-  font-size: clamp(7px, 0.6vw, 10px);
-  letter-spacing: 0.12em;
+  font-size: clamp(7px,.6vw,10px);
+  letter-spacing: .12em;
   text-transform: uppercase;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -159,16 +299,15 @@
   background: var(--ws-yellow);
   color: #000;
   font-family: Orbitron, monospace;
-  font-size: clamp(7px, 0.55vw, 9px);
+  font-size: clamp(7px,.55vw,9px);
   line-height: 1;
   font-weight: 800;
-  letter-spacing: 0.08em;
+  letter-spacing: .08em;
 }
 
 /* =========================================================
    MATERIALS
    ========================================================= */
-
 .ws-materials {
   background: var(--m, #111);
   border-bottom: 1px solid var(--ws-border);
@@ -177,10 +316,10 @@
 .ws-materials__inner {
   max-width: 1100px;
   margin: 0 auto;
-  padding: clamp(40px, 6vw, 64px) clamp(20px, 5vw, 40px);
+  padding: clamp(40px,6vw,64px) clamp(20px,5vw,40px);
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: clamp(32px, 5vw, 60px);
+  grid-template-columns: repeat(auto-fit,minmax(280px,1fr));
+  gap: clamp(32px,5vw,60px);
   align-items: center;
 }
 
@@ -196,15 +335,13 @@
 .ws-materials__title {
   margin: 0 0 16px;
   font-family: "Barlow Condensed", Impact, sans-serif;
-  font-size: clamp(32px, 5vw, 44px);
+  font-size: clamp(32px,5vw,44px);
   line-height: 1;
   font-style: italic;
   font-weight: 900;
 }
 
-.ws-materials__title span {
-  color: var(--ws-yellow);
-}
+.ws-materials__title span { color: var(--ws-yellow); }
 
 .ws-materials__intro {
   margin: 0;
@@ -230,8 +367,8 @@
   flex-shrink: 0;
   display: grid;
   place-items: center;
-  border: 1px solid rgba(232, 184, 0, 0.3);
-  background: rgba(232, 184, 0, 0.1);
+  border: 1px solid rgba(232,184,0,.3);
+  background: rgba(232,184,0,.1);
 }
 
 .ws-material-item__icon > span {
@@ -241,35 +378,86 @@
 }
 
 /* =========================================================
-   MOBILE — EXACT IPHONE RENDER
+   TABLET
    ========================================================= */
-
-@media (max-width: 760px) {
-  /*
-    Approved MOBILE render button coordinates.
-    The source image automatically switches through <picture>.
-  */
-  .ws-hero-hotspot--build {
-    left: 18.6%;
-    top: 84.2%;
-    width: 62.1%;
-    height: 6.6%;
+@media (max-width: 1100px) and (min-width: 761px) {
+  .ws-hero {
+    height: clamp(610px, 48vw, 760px);
   }
 
-  .ws-hero-hotspot--explore {
-    left: 18.6%;
-    top: 92.3%;
-    width: 62.1%;
-    height: 6.25%;
+  .ws-wheel-wrap {
+    right: 7.5%;
+    width: min(44vw, 610px);
+  }
+
+  .ws-hero-headline {
+    left: 5.2%;
+    width: 40%;
+  }
+
+  .ws-hero-subtitle {
+    left: 5.6%;
+    width: 33%;
+  }
+
+  .ws-hero-actions {
+    left: 5.4%;
+    width: 36%;
+  }
+}
+
+/* =========================================================
+   MOBILE
+   The approved mobile artwork remains the visual foundation,
+   and the real buttons cover the baked button areas.
+   ========================================================= */
+@media (max-width: 760px) {
+  .ws-hero {
+    height: auto;
+    min-height: 0;
+    background: #050505;
+  }
+
+  .ws-hero-desktop {
+    display: none;
+  }
+
+  .ws-hero-mobile-art {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-width: none;
+    user-select: none;
+    -webkit-user-drag: none;
+  }
+
+  .ws-hero-actions {
+    left: 18.55%;
+    top: 82.8%;
+    width: 62.2%;
+    display: flex;
+    flex-direction: column;
+    gap: 2.35vw;
+  }
+
+  .ws-hero-btn {
+    height: clamp(58px, 12.7vw, 82px);
+    font-size: clamp(10px, 2.6vw, 16px);
+    letter-spacing: .18em;
+  }
+
+  .ws-hero-btn--primary,
+  .ws-hero-btn--secondary {
+    clip-path: polygon(4% 0,100% 0,96% 100%,0 100%);
   }
 
   .ws-brand-strip {
-    min-height: 115px;
+    min-height: 112px;
   }
 
   .ws-brand-card {
-    min-height: 115px;
-    padding: 15px 11px 13px;
+    min-height: 112px;
+    padding: 15px 10px 13px;
     flex-direction: column;
     align-items: flex-start;
     justify-content: center;
@@ -277,32 +465,25 @@
   }
 
   .ws-brand-card__name {
-    font-size: clamp(18px, 5vw, 24px);
+    font-size: clamp(17px,4.8vw,23px);
   }
 
   .ws-brand-card__tag {
     width: 100%;
-    margin-top: 6px;
-    font-size: clamp(6px, 1.8vw, 9px);
+    margin-top: 5px;
+    font-size: clamp(6px,1.75vw,9px);
   }
 
   .ws-brand-card__badge {
-    margin: 10px 0 0;
-    padding: 5px 7px;
-    font-size: clamp(6px, 1.8vw, 8px);
-  }
-
-  .ws-materials__inner {
-    padding-top: 46px;
+    margin: 9px 0 0;
+    padding: 5px 6px;
+    font-size: clamp(6px,1.75vw,8px);
   }
 }
 
-/* Prevent accidental horizontal page growth caused by global app styles */
-@media (max-width: 480px) {
-  .ws-exact-hero,
-  .ws-exact-hero__picture,
-  .ws-exact-hero__art {
-    width: 100%;
-    max-width: 100%;
+@media (max-width: 390px) {
+  .ws-hero-actions {
+    left: 16.5%;
+    width: 67%;
   }
 }
