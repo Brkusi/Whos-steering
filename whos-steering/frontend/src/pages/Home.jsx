@@ -1,6 +1,8 @@
 import { useNavigate } from 'react-router-dom';
 import './Home.css';
-import heroWheel from '../assets/hero/hero-wheel.webp';
+
+import heroDesktop from '../assets/hero/hero-exact-desktop.webp';
+import heroMobile from '../assets/hero/hero-exact-mobile.webp';
 
 const MATERIALS = [
   'Carbon fibre base engineered for superior strength, weave consistency, and surface finish',
@@ -21,107 +23,84 @@ const BRAND_CARDS = [
 export default function Home() {
   const nav = useNavigate();
 
-  const goToBrand = (brand) => {
-    if (brand.id === 'custom') {
-      nav('/configure');
-      return;
-    }
-
-    nav(`/catalog?brand=${encodeURIComponent(brand.name)}`);
+  const openBrand = (brand) => {
+    nav(
+      brand.id === 'custom'
+        ? '/configure'
+        : `/catalog?brand=${encodeURIComponent(brand.name)}`
+    );
   };
 
   return (
-    <main className="home-page">
-      {/* ── Hero ── */}
-      <section id="hero" className="home-hero">
-        <div className="hero-bg" aria-hidden="true" />
-        <div className="hero-tech" aria-hidden="true" />
-        <div className="hero-mobile-watermark" aria-hidden="true" />
-        <div className="hero-carbon-sweep" aria-hidden="true" />
+    <main className="ws-home">
+      {/* EXACT APPROVED HERO RENDER */}
+      <section
+        id="hero"
+        className="ws-exact-hero"
+        aria-label="Who's Steering custom steering wheels"
+      >
+        <picture className="ws-exact-hero__picture">
+          <source media="(max-width: 760px)" srcSet={heroMobile} />
+          <img
+            className="ws-exact-hero__art"
+            src={heroDesktop}
+            alt="Designed by you. Built by us. Custom steering wheels made to your specification."
+            draggable="false"
+          />
+        </picture>
 
-        <div className="hero-inner">
-          <div className="hero-copy fade-up">
-            <div className="hero-kicker">CUSTOM STEERING WHEELS</div>
+        {/*
+          The approved artwork already contains the visible buttons.
+          These transparent React buttons sit exactly over them,
+          preserving the approved visual while keeping navigation functional.
+        */}
+        <button
+          type="button"
+          className="ws-hero-hotspot ws-hero-hotspot--build"
+          onClick={() => nav('/configure')}
+          aria-label="Build yours"
+        />
 
-            <h1 className="hero-title">
-              <span className="hero-title-yellow">DESIGNED BY YOU.</span>
-              <span>BUILT BY US.</span>
-            </h1>
-
-            <p className="hero-subtitle">
-              Custom steering wheels
-              <br />
-              made to your specification.
-            </p>
-
-            <div className="hero-actions">
-              <button
-                type="button"
-                className="hero-btn hero-btn-primary"
-                onClick={() => nav('/configure')}
-              >
-                BUILD YOURS
-              </button>
-
-              <button
-                type="button"
-                className="hero-btn hero-btn-secondary"
-                onClick={() => nav('/catalog')}
-              >
-                EXPLORE WHEELS
-              </button>
-            </div>
-          </div>
-
-          <div className="hero-product" aria-hidden="true">
-            <div className="hero-product-glow" />
-            <img
-              className="hero-wheel"
-              src={heroWheel}
-              alt=""
-              draggable="false"
-            />
-          </div>
-        </div>
-
-        {/* Bottom brand strip */}
-        <div className="hero-brand-strip">
-          {BRAND_CARDS.map((brand, index) => (
-            <button
-              type="button"
-              key={brand.id}
-              className="hero-brand-card"
-              onClick={() => goToBrand(brand)}
-              aria-label={`${brand.name}: ${brand.tag}`}
-            >
-              <span className="hero-brand-copy">
-                <span className="hero-brand-name">{brand.name}</span>
-                <span className="hero-brand-tag">{brand.tag}</span>
-              </span>
-
-              <span className="hero-brand-badge">{brand.badge}</span>
-
-              {index < BRAND_CARDS.length - 1 && (
-                <span className="hero-brand-divider" aria-hidden="true" />
-              )}
-            </button>
-          ))}
-        </div>
+        <button
+          type="button"
+          className="ws-hero-hotspot ws-hero-hotspot--explore"
+          onClick={() => nav('/catalog')}
+          aria-label="Explore wheels"
+        />
       </section>
 
-      {/* ── Materials & Craftsmanship ── */}
-      <section className="materials-section">
-        <div className="materials-inner">
-          <div>
-            <div className="materials-kicker">Our Standard</div>
+      {/* BMW / AUDI / CUSTOM STRIP */}
+      <section className="ws-brand-strip" aria-label="Shop by category">
+        {BRAND_CARDS.map((brand) => (
+          <button
+            type="button"
+            key={brand.id}
+            className="ws-brand-card"
+            onClick={() => openBrand(brand)}
+          >
+            <span className="ws-brand-card__copy">
+              <span className="ws-brand-card__name">{brand.name}</span>
+              <span className="ws-brand-card__tag">{brand.tag}</span>
+            </span>
 
-            <h2 className="materials-title">
+            <span className="ws-brand-card__badge">{brand.badge}</span>
+          </button>
+        ))}
+      </section>
+
+      {/* MATERIALS & CRAFTSMANSHIP */}
+      <section className="ws-materials">
+        <div className="ws-materials__inner">
+          <div>
+            <div className="ws-materials__eyebrow">Our Standard</div>
+
+            <h2 className="ws-materials__title">
               MATERIALS &amp;
               <br />
               <span>CRAFTSMANSHIP</span>
             </h2>
 
-            <p className="materials-intro">
+            <p className="ws-materials__intro">
               Every wheel we build is a commitment to quality. From the materials
               we select to the hands that assemble them, no detail is overlooked.
             </p>
@@ -129,8 +108,8 @@ export default function Home() {
 
           <div>
             {MATERIALS.map((item, index) => (
-              <div className="material-row" key={index}>
-                <span className="material-icon" aria-hidden="true">
+              <div className="ws-material-item" key={index}>
+                <span className="ws-material-item__icon" aria-hidden="true">
                   <span />
                 </span>
                 <span>{item}</span>
