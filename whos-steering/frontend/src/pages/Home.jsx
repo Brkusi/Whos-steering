@@ -4,7 +4,6 @@ import './Home.css';
 import heroBase from '../assets/hero/hero-base.webp';
 import heroCarbon from '../assets/hero/hero-carbon-reference.webp';
 import heroWheel from '../assets/hero/hero-wheel-highlighted.webp';
-import heroMobileApproved from '../assets/hero/hero-mobile-approved.webp';
 
 const MATERIALS = [
   'Carbon fibre base engineered for superior strength, weave consistency, and surface finish',
@@ -36,41 +35,43 @@ export default function Home() {
   return (
     <main className="ws-home">
       <section id="hero" className="ws-hero">
-        {/* DESKTOP — layered, scalable, sharp */}
-        <div className="ws-hero-desktop">
-          <img
-            className="ws-hero-bg"
-            src={heroBase}
-            alt=""
-            aria-hidden="true"
-            draggable="false"
-          />
+        {/* One clean full-bleed background for both desktop and mobile */}
+        <img
+          className="ws-hero-bg"
+          src={heroBase}
+          alt=""
+          aria-hidden="true"
+          draggable="false"
+        />
 
-          <img
-            className="ws-hero-carbon"
-            src={heroCarbon}
-            alt=""
-            aria-hidden="true"
-            draggable="false"
-          />
+        {/* Desktop-only lower-left carbon highlight */}
+        <img
+          className="ws-hero-carbon"
+          src={heroCarbon}
+          alt=""
+          aria-hidden="true"
+          draggable="false"
+        />
 
-          <div className="ws-hero-copy">
-            <div className="ws-hero-accent-line" aria-hidden="true" />
+        {/* DESKTOP */}
+        <div className="ws-desktop-stage">
+          <div className="ws-desktop-copy">
+            <div className="ws-accent-line" aria-hidden="true" />
 
-            <h1 className="ws-hero-title">
-              <span className="ws-hero-title-yellow">DESIGNED BY YOU.</span>
-              <span className="ws-hero-title-white">BUILT BY US.</span>
+            <h1 className="ws-title">
+              <span className="ws-title-yellow">DESIGNED BY YOU.</span>
+              <span className="ws-title-white">BUILT BY US.</span>
             </h1>
 
-            <p className="ws-hero-subtitle">
+            <p className="ws-subtitle">
               <span>CUSTOM STEERING WHEELS</span>
               <span>MADE TO YOUR SPECIFICATION.</span>
             </p>
 
-            <div className="ws-hero-actions">
+            <div className="ws-desktop-actions">
               <button
                 type="button"
-                className="ws-hero-btn ws-hero-btn-primary"
+                className="ws-btn ws-btn-primary"
                 onClick={() => nav('/configure')}
               >
                 BUILD YOURS
@@ -78,7 +79,7 @@ export default function Home() {
 
               <button
                 type="button"
-                className="ws-hero-btn ws-hero-btn-secondary"
+                className="ws-btn ws-btn-secondary"
                 onClick={() => nav('/catalog')}
               >
                 EXPLORE WHEELS
@@ -86,25 +87,40 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="ws-wheel-wrap" aria-hidden="true">
-            <div className="ws-wheel-backlight" />
+          <div className="ws-desktop-wheel" aria-hidden="true">
+            <div className="ws-wheel-glow" />
             <img
-              className="ws-hero-wheel"
               src={heroWheel}
               alt=""
+              className="ws-wheel-image"
               draggable="false"
             />
           </div>
         </div>
 
-        {/* MOBILE — preserve the mobile composition you already liked */}
-        <div className="ws-hero-mobile">
-          <img
-            className="ws-hero-mobile-art"
-            src={heroMobileApproved}
-            alt="Designed by you. Built by us. Custom steering wheels made to your specification."
-            draggable="false"
-          />
+        {/* MOBILE — no baked artwork, no duplicate buttons */}
+        <div className="ws-mobile-stage">
+          <div className="ws-mobile-copy">
+            <h1 className="ws-mobile-title">
+              <span>DESIGNED BY YOU.</span>
+              <strong>BUILT BY US.</strong>
+            </h1>
+
+            <p className="ws-mobile-subtitle">
+              <span>CUSTOM STEERING WHEELS</span>
+              <span>MADE TO YOUR SPECIFICATION.</span>
+            </p>
+          </div>
+
+          <div className="ws-mobile-wheel" aria-hidden="true">
+            <div className="ws-wheel-glow ws-wheel-glow-mobile" />
+            <img
+              src={heroWheel}
+              alt=""
+              className="ws-wheel-image"
+              draggable="false"
+            />
+          </div>
 
           <div className="ws-mobile-actions">
             <button
