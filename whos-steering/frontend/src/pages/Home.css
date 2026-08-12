@@ -97,9 +97,9 @@
   top: 50%;
 
   width: 100%;
-  height: min(calc(100% - 24px), 44.2vw);
+  height: min(calc(100% - 12px), 44.2vw);
 
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -48.6%);
 
   pointer-events: none;
 }
@@ -108,10 +108,10 @@
 .ws-desktop-copy {
   position: absolute;
 
-  left: 7.5%;
-  top: 18.5%;
+  left: 7.2%;
+  top: 21.2%;
 
-  width: 39%;
+  width: 39.2%;
 
   pointer-events: auto;
 }
@@ -335,16 +335,13 @@
   position: absolute;
 
   /*
-    The wheel is now centered vertically and constrained by BOTH
-    the reference width and the available stage height.
-
-    This prevents the top of the wheel from being clipped on
-    wide/short screens.
+    Bring the wheel back closer to the larger approved look,
+    but keep it safely inside the hero on short viewports.
   */
-  right: 9.6%;
-  top: 50%;
+  right: 8.1%;
+  top: 52.2%;
 
-  height: min(92%, 36.5vw);
+  height: min(95%, 39.2vw);
   width: auto;
 
   aspect-ratio: 1031 / 988;
@@ -357,10 +354,10 @@
 .ws-wheel-glow {
   position: absolute;
 
-  left: 7%;
-  right: 7%;
-  top: 8%;
-  bottom: 1%;
+  left: 6%;
+  right: 6%;
+  top: 7%;
+  bottom: 0%;
 
   border-radius: 48%;
 
@@ -653,8 +650,9 @@
 
 @media (max-width: 1050px) and (min-width: 761px) {
   .ws-desktop-copy {
-    left: 5.3%;
-    width: 43%;
+    left: 5.2%;
+    top: 22.6%;
+    width: 44%;
   }
 
   .ws-title {
@@ -663,9 +661,9 @@
   }
 
   .ws-desktop-wheel {
-    right: 3.2%;
-    top: 50%;
-    height: min(90%, 42vw);
+    right: 2.2%;
+    top: 52.5%;
+    height: min(93%, 45vw);
     width: auto;
     transform: translateY(-50%);
   }
@@ -693,15 +691,15 @@
   }
 
   .ws-desktop-wheel {
-    right: 10%;
-    top: 50%;
-    height: 88%;
+    right: 8.7%;
+    top: 52%;
+    height: 90%;
     width: auto;
     transform: translateY(-50%);
   }
 
   .ws-desktop-copy {
-    top: 50%;
+    top: 52%;
     transform: translateY(-50%);
   }
 
@@ -779,12 +777,13 @@
     width: 100%;
 
     padding:
-      0
-      clamp(22px, 6vw, 38px);
+      clamp(10px, 2vw, 14px)
+      clamp(22px, 6vw, 38px)
+      0;
   }
 
   .ws-mobile-title {
-    margin: 0;
+    margin: 0 0 0 2px;
 
     display: flex;
     flex-direction: column;
@@ -894,12 +893,12 @@
     z-index: 4;
 
     width:
-      min(108vw, 680px);
+      min(114vw, 760px);
 
     aspect-ratio: 1031 / 988;
 
     margin-top:
-      clamp(6px, 2vw, 14px);
+      clamp(8px, 2.8vw, 18px);
 
     margin-left: 50%;
 
@@ -920,16 +919,16 @@
     position: relative;
     z-index: 8;
 
-    width: min(86%, 520px);
+    width: min(84%, 500px);
 
     margin-top:
-      clamp(-20px, -3vw, -10px);
+      clamp(-10px, -1.2vw, -2px);
 
     display: flex;
     flex-direction: column;
 
     gap:
-      clamp(12px, 3vw, 18px);
+      clamp(14px, 3.2vw, 18px);
   }
 
   .ws-mobile-btn {
@@ -1050,10 +1049,10 @@
   }
 
   .ws-mobile-wheel {
-    width: 112vw;
+    width: 116vw;
   }
 
   .ws-mobile-actions {
-    width: 88%;
+    width: 87%;
   }
 }
