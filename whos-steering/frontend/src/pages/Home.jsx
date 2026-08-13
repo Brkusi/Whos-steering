@@ -35,43 +35,45 @@ export default function Home() {
   return (
     <main className="ws-home">
       <section id="hero" className="ws-hero">
-        {/* One clean full-bleed background for both desktop and mobile */}
-        <img
-          className="ws-hero-bg"
-          src={heroBase}
-          alt=""
-          aria-hidden="true"
-          draggable="false"
-        />
+        {/* =====================================================
+            DESKTOP
+            Everything below lives inside ONE 1672×739 stage.
+            Background + wheel + copy + buttons scale together.
+        ====================================================== */}
+        <div className="ws-stage ws-stage-desktop">
+          <img
+            className="ws-stage-bg"
+            src={heroBase}
+            alt=""
+            aria-hidden="true"
+            draggable="false"
+          />
 
-        {/* Desktop-only lower-left carbon highlight */}
-        <img
-          className="ws-hero-carbon"
-          src={heroCarbon}
-          alt=""
-          aria-hidden="true"
-          draggable="false"
-        />
+          <img
+            className="ws-stage-carbon"
+            src={heroCarbon}
+            alt=""
+            aria-hidden="true"
+            draggable="false"
+          />
 
-        {/* DESKTOP */}
-        <div className="ws-desktop-stage">
-          <div className="ws-desktop-copy">
-            <div className="ws-accent-line" aria-hidden="true" />
+          <div className="ws-stage-copy">
+            <div className="ws-stage-line" aria-hidden="true" />
 
-            <h1 className="ws-title">
-              <span className="ws-title-yellow">DESIGNED BY YOU.</span>
-              <span className="ws-title-white">BUILT BY US.</span>
+            <h1 className="ws-stage-title">
+              <span className="ws-stage-title-yellow">DESIGNED BY YOU.</span>
+              <span className="ws-stage-title-white">BUILT BY US.</span>
             </h1>
 
-            <p className="ws-subtitle">
+            <p className="ws-stage-subtitle">
               <span>CUSTOM STEERING WHEELS</span>
               <span>MADE TO YOUR SPECIFICATION.</span>
             </p>
 
-            <div className="ws-desktop-actions">
+            <div className="ws-stage-actions">
               <button
                 type="button"
-                className="ws-btn ws-btn-primary"
+                className="ws-stage-btn ws-stage-btn-primary"
                 onClick={() => nav('/configure')}
               >
                 BUILD YOURS
@@ -79,7 +81,7 @@ export default function Home() {
 
               <button
                 type="button"
-                className="ws-btn ws-btn-secondary"
+                className="ws-stage-btn ws-stage-btn-secondary"
                 onClick={() => nav('/catalog')}
               >
                 EXPLORE WHEELS
@@ -87,7 +89,7 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="ws-desktop-wheel" aria-hidden="true">
+          <div className="ws-stage-wheel" aria-hidden="true">
             <div className="ws-wheel-glow" />
             <img
               src={heroWheel}
@@ -98,8 +100,21 @@ export default function Home() {
           </div>
         </div>
 
-        {/* MOBILE — no baked artwork, no duplicate buttons */}
-        <div className="ws-mobile-stage">
+        {/* =====================================================
+            MOBILE
+            Separate fixed-ratio design stage.
+            Again, background + wheel + copy + buttons all move
+            and scale together.
+        ====================================================== */}
+        <div className="ws-stage ws-stage-mobile">
+          <img
+            className="ws-mobile-bg"
+            src={heroBase}
+            alt=""
+            aria-hidden="true"
+            draggable="false"
+          />
+
           <div className="ws-mobile-copy">
             <h1 className="ws-mobile-title">
               <span>DESIGNED BY YOU.</span>
