@@ -331,22 +331,33 @@
 }
 
 /* WHEEL */
+
+/*
+  QUICK TUNING:
+  bottom: 16.5%  -> higher number moves wheel UP
+  height: 82%    -> lower number makes wheel SMALLER
+  right: 8.8%    -> higher number moves wheel LEFT
+*/
+
 .ws-desktop-wheel {
   position: absolute;
 
   /*
-    Bring the wheel back closer to the larger approved look,
-    but keep it safely inside the hero on short viewports.
+    Anchor from the BOTTOM instead of vertical centering.
+    This places the bottom of the wheel just above the bright
+    gold horizon where you marked it.
   */
-  right: 8.1%;
-  top: 52.2%;
+  right: 8.8%;
+  top: auto;
+  bottom: 16.5%;
 
-  height: min(95%, 39.2vw);
+  /* Slightly smaller than V6 */
+  height: min(82%, 35.8vw);
   width: auto;
 
   aspect-ratio: 1031 / 988;
 
-  transform: translateY(-50%);
+  transform: none;
 
   pointer-events: none;
 }
@@ -661,11 +672,12 @@
   }
 
   .ws-desktop-wheel {
-    right: 2.2%;
-    top: 52.5%;
-    height: min(93%, 45vw);
+    right: 3.4%;
+    top: auto;
+    bottom: 14%;
+    height: min(82%, 40vw);
     width: auto;
-    transform: translateY(-50%);
+    transform: none;
   }
 
   .ws-desktop-actions {
@@ -691,11 +703,12 @@
   }
 
   .ws-desktop-wheel {
-    right: 8.7%;
-    top: 52%;
-    height: 90%;
+    right: 9%;
+    top: auto;
+    bottom: 11%;
+    height: 78%;
     width: auto;
-    transform: translateY(-50%);
+    transform: none;
   }
 
   .ws-desktop-copy {
