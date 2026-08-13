@@ -674,7 +674,7 @@
   .ws-desktop-wheel {
     right: 3.4%;
     top: auto;
-    bottom: 50%;
+    bottom: 6%;
     height: min(82%, 40vw);
     width: auto;
     transform: none;
