@@ -651,6 +651,30 @@
   background: var(--ws-yellow);
 }
 
+
+/*
+=========================================================
+MOBILE QUICK TUNING GUIDE
+=========================================================
+Wheel left/right + up/down:
+  transform: translate(-18px, -6px);
+  first number: negative = LEFT, positive = RIGHT
+  second number: negative = UP, positive = DOWN
+
+Wheel size:
+  width: clamp(340px, 94vw, 630px);
+  90vw smaller / 98vw larger
+
+Headline position:
+  transform: translateY(-14px);
+  -24px higher / -6px lower
+
+Gap between title lines:
+  margin-top: clamp(2px, 0.6vw, 5px);
+  smaller = closer
+=========================================================
+*/
+
 /* =========================================================
    MOBILE — SAFE, CONTENT-DRIVEN RESPONSIVE LAYOUT
 
@@ -676,7 +700,7 @@
     overflow: hidden;
 
     padding:
-      calc(clamp(28px, 7vw, 46px) + env(safe-area-inset-top, 0px))
+      calc(clamp(14px, 3.5vw, 24px) + env(safe-area-inset-top, 0px))
       0
       clamp(30px, 8vw, 50px);
   }
@@ -724,6 +748,9 @@
     padding:
       0
       clamp(20px, 6vw, 42px);
+
+    /* More negative = move headline higher */
+    transform: translateY(-14px);
   }
 
   .ws-mobile-title {
@@ -775,8 +802,9 @@
   }
 
   .ws-mobile-title strong {
+    /* Smaller = DESIGNED BY YOU / BUILT BY US closer together */
     margin-top:
-      clamp(7px, 1.8vw, 11px);
+      clamp(2px, 0.6vw, 5px);
 
     font: inherit;
 
@@ -829,17 +857,25 @@
     position: relative;
     z-index: 4;
 
+    /* WHEEL SIZE: change 94vw to 90vw smaller / 98vw larger */
     width:
-      clamp(360px, 102vw, 690px);
+      clamp(340px, 94vw, 630px);
 
     max-width: none;
 
     aspect-ratio: 1031 / 988;
 
     margin:
-      clamp(8px, 2vw, 15px)
+      clamp(4px, 1vw, 9px)
       auto
       0;
+
+    /*
+      WHEEL POSITION:
+      first value = horizontal; negative moves LEFT
+      second value = vertical; positive moves DOWN
+    */
+    transform: translate(-18px, -6px);
 
     flex: 0 0 auto;
   }
@@ -857,7 +893,7 @@
       min(calc(100% - 40px), 540px);
 
     margin-top:
-      clamp(-22px, -3vw, -8px);
+      clamp(-14px, -2vw, -6px);
 
     display: flex;
     flex-direction: column;
@@ -988,7 +1024,8 @@
   }
 
   .ws-mobile-wheel {
-    width: 108vw;
+    width: 96vw;
+    transform: translate(-12px, -4px);
   }
 
   .ws-mobile-actions {
