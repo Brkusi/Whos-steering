@@ -652,8 +652,11 @@
 }
 
 /* =========================================================
-   MOBILE
-   941×1282 reference stage from the approved mobile layout.
+   MOBILE — SAFE, CONTENT-DRIVEN RESPONSIVE LAYOUT
+
+   Do not force one fixed portrait aspect ratio on every phone.
+   The content now defines the hero height so the navbar can
+   never cover the title and the wheel/buttons stay visible.
    ========================================================= */
 
 @media (max-width: 760px) {
@@ -663,16 +666,19 @@
 
   .ws-stage-mobile {
     position: relative;
-    display: block;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 
     width: 100%;
-
-    /*
-      Every mobile element now shares this one scale.
-    */
-    aspect-ratio: 941 / 1282;
+    min-height: 0;
 
     overflow: hidden;
+
+    padding:
+      calc(clamp(28px, 7vw, 46px) + env(safe-area-inset-top, 0px))
+      0
+      clamp(30px, 8vw, 50px);
   }
 
   .ws-mobile-bg {
@@ -701,20 +707,23 @@
     background:
       linear-gradient(
         180deg,
-        rgba(0, 0, 0, 0.22) 0%,
-        rgba(0, 0, 0, 0.03) 43%,
-        rgba(0, 0, 0, 0.18) 100%
+        rgba(0, 0, 0, 0.30) 0%,
+        rgba(0, 0, 0, 0.05) 35%,
+        rgba(0, 0, 0, 0.03) 64%,
+        rgba(0, 0, 0, 0.20) 100%
       );
   }
 
+  /* Copy stays in normal flow so it cannot hide behind the navbar. */
   .ws-mobile-copy {
-    position: absolute;
+    position: relative;
     z-index: 5;
 
-    left: 6.1%;
-    top: 3.8%;
+    width: min(100%, 620px);
 
-    width: 87%;
+    padding:
+      0
+      clamp(20px, 6vw, 42px);
   }
 
   .ws-mobile-title {
@@ -729,8 +738,10 @@
       Impact,
       sans-serif;
 
-    font-size: 14.0vw;
-    line-height: 0.87;
+    font-size:
+      clamp(48px, 14vw, 78px);
+
+    line-height: 0.88;
 
     font-style: italic;
     font-weight: 900;
@@ -744,9 +755,13 @@
       );
   }
 
-  .ws-mobile-title span {
+  .ws-mobile-title span,
+  .ws-mobile-title strong {
     display: block;
+    white-space: nowrap;
+  }
 
+  .ws-mobile-title span {
     background:
       linear-gradient(
         180deg,
@@ -760,9 +775,8 @@
   }
 
   .ws-mobile-title strong {
-    display: block;
-
-    margin-top: 2.1%;
+    margin-top:
+      clamp(7px, 1.8vw, 11px);
 
     font: inherit;
 
@@ -779,7 +793,10 @@
   }
 
   .ws-mobile-subtitle {
-    margin: 5.2% 0 0;
+    margin:
+      clamp(22px, 5vw, 31px)
+      0
+      0;
 
     display: flex;
     flex-direction: column;
@@ -788,12 +805,13 @@
       Orbitron,
       sans-serif;
 
-    font-size: 2.05vw;
-    line-height: 2;
+    font-size:
+      clamp(8px, 2vw, 11px);
 
+    line-height: 1.9;
     font-weight: 500;
 
-    letter-spacing: 0.29em;
+    letter-spacing: 0.27em;
 
     color:
       rgba(240, 240, 240, 0.80);
@@ -806,46 +824,60 @@
     white-space: nowrap;
   }
 
-  /*
-    Mobile wheel position is also % of the mobile stage.
-    It no longer depends on viewport height at all.
-  */
+  /* Wheel is now in normal document flow. */
   .ws-mobile-wheel {
-    position: absolute;
+    position: relative;
     z-index: 4;
 
-    left: 5.2%;
-    top: 26.0%;
+    width:
+      clamp(360px, 102vw, 690px);
 
-    width: 89.6%;
+    max-width: none;
 
     aspect-ratio: 1031 / 988;
+
+    margin:
+      clamp(8px, 2vw, 15px)
+      auto
+      0;
+
+    flex: 0 0 auto;
   }
 
   .ws-wheel-glow-mobile {
     opacity: 0.9;
   }
 
+  /* Buttons are also in normal flow. */
   .ws-mobile-actions {
-    position: absolute;
+    position: relative;
     z-index: 8;
 
-    left: 18%;
-    bottom: 4.1%;
+    width:
+      min(calc(100% - 40px), 540px);
 
-    width: 64%;
+    margin-top:
+      clamp(-22px, -3vw, -8px);
 
     display: flex;
     flex-direction: column;
 
-    gap: 1.6vw;
+    gap:
+      clamp(12px, 3vw, 18px);
   }
 
   .ws-mobile-btn {
     appearance: none;
 
     width: 100%;
-    height: 12.2vw;
+
+    min-height: 58px;
+    height:
+      clamp(58px, 13vw, 78px);
+
+    padding:
+      0
+      clamp(18px, 5vw, 32px);
 
     border-radius: 0;
 
@@ -855,7 +887,9 @@
       Orbitron,
       sans-serif;
 
-    font-size: 2.55vw;
+    font-size:
+      clamp(10px, 2.6vw, 15px);
+
     font-weight: 800;
 
     letter-spacing: 0.18em;
@@ -928,11 +962,110 @@
 
   .ws-brand-badge {
     margin: 9px 0 0;
-
     padding: 5px 6px;
 
     font-size:
       clamp(6px, 1.75vw, 8px);
+  }
+}
+
+/* Very narrow phones */
+@media (max-width: 390px) {
+  .ws-mobile-title {
+    font-size:
+      clamp(43px, 13.5vw, 58px);
+  }
+
+  .ws-mobile-copy {
+    padding: 0 18px;
+  }
+
+  .ws-mobile-subtitle {
+    font-size:
+      clamp(7px, 1.9vw, 9px);
+
+    letter-spacing: 0.23em;
+  }
+
+  .ws-mobile-wheel {
+    width: 108vw;
+  }
+
+  .ws-mobile-actions {
+    width:
+      calc(100% - 30px);
+  }
+}
+
+/* Phone landscape */
+@media (max-width: 760px) and (orientation: landscape) {
+  .ws-stage-mobile {
+    display: grid;
+
+    grid-template-columns:
+      minmax(0, 0.88fr)
+      minmax(0, 1.12fr);
+
+    grid-template-areas:
+      "copy wheel"
+      "actions wheel";
+
+    align-items: center;
+
+    padding:
+      26px
+      clamp(18px, 4vw, 34px)
+      28px;
+
+    gap:
+      14px
+      clamp(12px, 3vw, 28px);
+  }
+
+  .ws-mobile-copy {
+    grid-area: copy;
+    width: 100%;
+    padding: 0;
+  }
+
+  .ws-mobile-title {
+    font-size:
+      clamp(38px, 7vw, 62px);
+  }
+
+  .ws-mobile-subtitle {
+    margin-top: 18px;
+
+    font-size:
+      clamp(7px, 1.15vw, 10px);
+
+    letter-spacing: 0.22em;
+  }
+
+  .ws-mobile-wheel {
+    grid-area: wheel;
+
+    width:
+      min(54vw, 520px);
+
+    margin: 0 auto;
+  }
+
+  .ws-mobile-actions {
+    grid-area: actions;
+
+    width: 100%;
+    margin: 0;
+
+    gap: 10px;
+  }
+
+  .ws-mobile-btn {
+    height: 50px;
+    min-height: 50px;
+
+    font-size:
+      clamp(9px, 1.4vw, 12px);
   }
 }
 
