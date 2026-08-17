@@ -264,6 +264,102 @@ function Model3DPreview({ src, alt, height }) {
   );
 }
 
+
+const CONFIG_STEPS = [
+  { id: 'vehicle', number: '01', label: 'VEHICLE' },
+  { id: 'style', number: '02', label: 'STYLE' },
+  { id: 'materials', number: '03', label: 'MATERIALS' },
+  { id: 'details', number: '04', label: 'DETAILS' },
+  { id: 'review', number: '05', label: 'REVIEW' },
+];
+
+function ConfigProgress({ activeStep, onStep }) {
+  const activeIndex = CONFIG_STEPS.findIndex(step => step.id === activeStep);
+
+  return (
+    <div
+      aria-label="Configurator progress"
+      style={{
+        display: 'flex',
+        width: '100%',
+        overflowX: 'auto',
+        scrollbarWidth: 'none',
+        background: '#090909',
+        borderTop: '1px solid #181818',
+      }}
+    >
+      {CONFIG_STEPS.map((step, index) => {
+        const active = step.id === activeStep;
+        const complete = index < activeIndex;
+
+        return (
+          <button
+            key={step.id}
+            type="button"
+            onClick={() => onStep(step.id)}
+            aria-current={active ? 'step' : undefined}
+            style={{
+              position: 'relative',
+              flex: '1 0 auto',
+              minWidth: window.innerWidth < 768 ? 102 : 88,
+              padding: window.innerWidth < 768 ? '10px 12px 11px' : '9px 12px 10px',
+              border: 0,
+              borderRight: index < CONFIG_STEPS.length - 1 ? '1px solid #1D1D1D' : 'none',
+              background: active ? 'rgba(232,184,0,.08)' : 'transparent',
+              color: active || complete ? 'var(--y)' : '#666',
+              cursor: 'pointer',
+              textAlign: 'left',
+              transition: 'background .18s, color .18s',
+            }}
+          >
+            <span
+              style={{
+                display: 'block',
+                fontFamily: 'Orbitron, monospace',
+                fontSize: 7,
+                fontWeight: 800,
+                letterSpacing: 1.5,
+                opacity: active ? 1 : .7,
+                marginBottom: 3,
+              }}
+            >
+              {complete ? '✓' : step.number}
+            </span>
+
+            <span
+              style={{
+                display: 'block',
+                fontFamily: 'Rajdhani, sans-serif',
+                fontSize: window.innerWidth < 768 ? 11 : 10,
+                fontWeight: 800,
+                letterSpacing: 1.6,
+                whiteSpace: 'nowrap',
+              }}
+            >
+              {step.label}
+            </span>
+
+            {active && (
+              <span
+                aria-hidden="true"
+                style={{
+                  position: 'absolute',
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  height: 2,
+                  background: 'var(--y)',
+                  boxShadow: '0 0 10px rgba(232,184,0,.35)',
+                }}
+              />
+            )}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
 export default function Configure() {
   const [params] = useSearchParams();
   const nav = useNavigate();
@@ -274,6 +370,14 @@ export default function Configure() {
   const [photo, setPhoto] = useState(null);
   const [photoUploading, setPhotoUploading] = useState(false);
   const [errors, setErrors] = useState({});
+  const [activeStep, setActiveStep] = useState('vehicle');
+
+  const optionsRef = useRef(null);
+  const vehicleRef = useRef(null);
+  const styleRef = useRef(null);
+  const materialsRef = useRef(null);
+  const detailsRef = useRef(null);
+  const reviewRef = useRef(null);
 
   const initBrand = params.get('brand') || 'BMW';
   const [cfg, setCfg] = useState({
@@ -287,6 +391,60 @@ export default function Configure() {
   useEffect(() => {
     apiFetch('/api/products/pricing/rules').then(setRules).catch(console.error);
   }, []);
+
+  useEffect(() => {
+    const tracked = [
+      vehicleRef.current,
+      styleRef.current,
+      materialsRef.current,
+      detailsRef.current,
+      reviewRef.current,
+    ].filter(Boolean);
+
+    if (!tracked.length || typeof IntersectionObserver === 'undefined') return;
+
+    const isMobileViewport = window.innerWidth < 768;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter(entry => entry.isIntersecting)
+          .sort((a, b) => {
+            const targetY = isMobileViewport ? 210 : 175;
+            return Math.abs(a.boundingClientRect.top - targetY) - Math.abs(b.boundingClientRect.top - targetY);
+          });
+
+        const step = visible[0]?.target?.dataset?.step;
+        if (step) setActiveStep(step);
+      },
+      {
+        root: isMobileViewport ? null : optionsRef.current,
+        rootMargin: isMobileViewport
+          ? '-180px 0px -52% 0px'
+          : '-145px 0px -52% 0px',
+        threshold: [0, 0.01, 0.1, 0.25],
+      }
+    );
+
+    tracked.forEach(node => observer.observe(node));
+    return () => observer.disconnect();
+  }, []);
+
+  const scrollToStep = (step) => {
+    const targets = {
+      vehicle: vehicleRef,
+      style: styleRef,
+      materials: materialsRef,
+      details: detailsRef,
+      review: reviewRef,
+    };
+
+    setActiveStep(step);
+    targets[step]?.current?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start',
+    });
+  };
 
   const price = calcPrice(cfg, rules);
   const isCarbonTopBottom = !!(cfg.topBottomMat && cfg.topBottomMat.toLowerCase().includes('carbon'));
@@ -355,7 +513,12 @@ export default function Configure() {
   const isAudi = cfg.brand === 'AUDI';
 
   return (
-    <div style={{ paddingTop: 0, minHeight: '100vh', background: 'var(--d)' }}>
+    <div style={{
+      paddingTop: 0,
+      paddingBottom: window.innerWidth < 768 ? 74 : 0,
+      minHeight: '100vh',
+      background: 'var(--d)',
+    }}>
       <div style={{ display: 'grid', gridTemplateColumns: window.innerWidth < 768 ? '1fr' : '1fr 1fr', minHeight: 'calc(100vh - 120px)' }}>
 
         {/* LEFT: Preview */}
@@ -418,17 +581,31 @@ export default function Configure() {
         </div>
 
         {/* RIGHT: Options */}
-        <div style={{ background: 'var(--d)', overflowY: 'auto', display: 'flex', flexDirection: 'column', order: 2 }}>
+        <div ref={optionsRef} style={{ background: 'var(--d)', overflowY: 'auto', display: 'flex', flexDirection: 'column', order: 2 }}>
 
-          {/* Heading */}
-          <div style={{ padding: '20px 28px 16px', borderBottom: '1px solid var(--b)', background: 'var(--d)', position: 'sticky', top: 120, zIndex: 10, display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
-            <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 28, letterSpacing: 2 }}>CUSTOMIZATION</div>
-            {isAudi && (
-              <span style={{ background: 'rgba(232,184,0,.1)', border: '1px solid var(--y)', color: 'var(--y)', fontFamily: 'Orbitron, monospace', fontSize: 11, fontWeight: 700, padding: '4px 10px', letterSpacing: 2 }}>B9 STYLE</span>
-            )}
+          {/* Sticky heading + progress */}
+          <div style={{
+            position: 'sticky',
+            top: 120,
+            zIndex: 30,
+            background: 'var(--d)',
+            borderBottom: '1px solid var(--b)',
+            boxShadow: '0 8px 22px rgba(0,0,0,.24)',
+          }}>
+            <div style={{ padding: '16px 28px 12px', display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+              <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 28, letterSpacing: 2 }}>CUSTOMIZATION</div>
+              {isAudi && (
+                <span style={{ background: 'rgba(232,184,0,.1)', border: '1px solid var(--y)', color: 'var(--y)', fontFamily: 'Orbitron, monospace', fontSize: 11, fontWeight: 700, padding: '4px 10px', letterSpacing: 2 }}>B9 STYLE</span>
+              )}
+              <div style={{ marginLeft: 'auto', fontFamily: 'Orbitron, monospace', color: 'var(--y)', fontSize: 8, letterSpacing: 1.4 }}>
+                {CONFIG_STEPS.findIndex(s => s.id === activeStep) + 1} / {CONFIG_STEPS.length}
+              </div>
+            </div>
+            <ConfigProgress activeStep={activeStep} onStep={scrollToStep} />
           </div>
 
           {/* Vehicle */}
+          <div ref={vehicleRef} data-step="vehicle" style={{ scrollMarginTop: window.innerWidth < 768 ? 205 : 170 }}>
           <Sect label="Vehicle" value={cfg.vehicleYear && cfg.vehicleModel ? `${cfg.vehicleYear} ${cfg.brand} ${cfg.vehicleModel}` : '—'}>
             <div style={{ display: 'flex', gap: 6, marginBottom: 14 }}>
               {['BMW','AUDI'].map(b => (
@@ -471,7 +648,10 @@ export default function Configure() {
             </label>
             {errors.photo && <div className="err-msg">A photo of your current wheel is required</div>}
           </Sect>
+          </div>
 
+          {/* Style */}
+          <div ref={styleRef} data-step="style" style={{ scrollMarginTop: window.innerWidth < 768 ? 205 : 170 }}>
           {/* Wheel Style Type */}
           <Sect label="Wheel Style Type" value={cfg.wheelStyleType}>
             <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
@@ -568,6 +748,10 @@ export default function Configure() {
             )}
           </Sect>
 
+          </div>
+
+          {/* Materials */}
+          <div ref={materialsRef} data-step="materials" style={{ scrollMarginTop: window.innerWidth < 768 ? 205 : 170 }}>
           {/* Top/Bottom Mat */}
           <MatSection label="Top & Bottom Grip Material"
             matKey="topBottomMat" colKey="topBottomCol"
@@ -615,6 +799,10 @@ export default function Configure() {
             </>
           )}
 
+          </div>
+
+          {/* Details */}
+          <div ref={detailsRef} data-step="details" style={{ scrollMarginTop: window.innerWidth < 768 ? 205 : 170 }}>
           {/* ── OPTIONS ── */}
           <div style={{ padding: '20px 28px', borderBottom: '1px solid var(--b)' }}>
             <div style={{ fontFamily: 'Rajdhani, sans-serif', fontWeight: 700, fontSize: 15, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 8 }}>Options</div>
@@ -686,6 +874,10 @@ export default function Configure() {
             )}
           </div>
 
+          </div>
+
+          {/* Review / final checkout */}
+          <div ref={reviewRef} data-step="review" style={{ scrollMarginTop: window.innerWidth < 768 ? 205 : 170 }}>
           {/* Custom Notes */}
           <div style={{ padding: '20px 28px', borderBottom: '1px solid var(--b)' }}>
             <label className="fl" style={{ marginBottom: 8 }}>Let us know if there are any other configurations you would like that have not been listed</label>
@@ -737,9 +929,78 @@ export default function Configure() {
               </button>
             </div>
           )}
+          </div>
 
         </div>
       </div>
+
+      {/* Sticky mobile build total — tap to jump to final review */}
+      {window.innerWidth < 768 && activeStep !== 'review' && !showReview && (
+        <button
+          type="button"
+          onClick={() => scrollToStep('review')}
+          aria-label={`Build total $${price.toFixed(2)}. Jump to review.`}
+          style={{
+            position: 'fixed',
+            left: '50%',
+            bottom: 'calc(14px + env(safe-area-inset-bottom, 0px))',
+            transform: 'translateX(-50%)',
+            zIndex: 1200,
+            width: 'calc(100% - 28px)',
+            maxWidth: 560,
+            minHeight: 58,
+            padding: '9px 14px 9px 16px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: 12,
+            border: '1px solid rgba(232,184,0,.72)',
+            background: 'rgba(8,8,8,.94)',
+            backdropFilter: 'blur(14px)',
+            boxShadow: '0 10px 36px rgba(0,0,0,.55), 0 0 0 1px rgba(232,184,0,.05) inset',
+            color: '#fff',
+            cursor: 'pointer',
+          }}
+        >
+          <span style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', minWidth: 0 }}>
+            <span style={{
+              fontFamily: 'Orbitron, monospace',
+              fontSize: 7,
+              fontWeight: 800,
+              letterSpacing: 1.8,
+              color: 'var(--y)',
+              marginBottom: 2,
+            }}>
+              BUILD TOTAL
+            </span>
+            <span style={{
+              fontFamily: '"Barlow Condensed", sans-serif',
+              fontSize: 28,
+              fontWeight: 900,
+              lineHeight: .95,
+              letterSpacing: .3,
+              whiteSpace: 'nowrap',
+            }}>
+              ${price.toFixed(2)}
+            </span>
+          </span>
+
+          <span style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 8,
+            color: 'var(--y)',
+            fontFamily: 'Orbitron, monospace',
+            fontSize: 7,
+            fontWeight: 800,
+            letterSpacing: 1.2,
+            whiteSpace: 'nowrap',
+          }}>
+            REVIEW BUILD
+            <span aria-hidden="true" style={{ fontSize: 14 }}>↓</span>
+          </span>
+        </button>
+      )}
 
       {/* Review overlay */}
       {showReview && (

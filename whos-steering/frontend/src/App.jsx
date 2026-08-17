@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { CartProvider, AuthProvider } from './context';
 import Nav from './components/Nav';
 import Footer from './components/Footer';
+import BrandLoader from './components/BrandLoader';
 import './index.css';
 
 import { lazy, Suspense } from 'react';
@@ -21,17 +22,13 @@ const ShippingPolicy    = lazy(() => import('./pages/ShippingPolicy'));
 const RefundPolicy      = lazy(() => import('./pages/RefundPolicy'));
 const PaymentPolicy     = lazy(() => import('./pages/PaymentPolicy'));
 
-function Spinner() {
-  return <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', color: 'var(--y)', fontFamily: 'Orbitron, monospace', letterSpacing: 4 }}>LOADING...</div>;
-}
-
 export default function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
         <CartProvider>
           <Nav />
-          <Suspense fallback={<Spinner />}>
+          <Suspense fallback={<BrandLoader />}>
             <Routes>
               <Route path="/"                   element={<Home />} />
               <Route path="/catalog"            element={<Catalog />} />
