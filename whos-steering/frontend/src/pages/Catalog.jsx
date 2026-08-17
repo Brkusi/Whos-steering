@@ -355,7 +355,14 @@ export default function Catalog() {
   const showAUDI = filter === 'ALL' || filter === 'AUDI';
 
   return (
-    <div style={{ paddingTop: 120, minHeight: '100vh' }}>
+    <div style={{
+      /*
+        AnnouncementBar + Nav are sticky now, so they already occupy their
+        real document space. The old 120px padding created the blank band.
+      */
+      paddingTop: 0,
+      minHeight: '100vh',
+    }}>
       <div style={{ padding: '50px 40px 32px', borderBottom: '1px solid var(--b)', background: 'linear-gradient(180deg,rgba(232,184,0,.04) 0%,transparent 100%)' }}>
         <div style={{ fontFamily: 'Orbitron, monospace', fontSize: 12, letterSpacing: 4, color: 'var(--y)', textTransform: 'uppercase', marginBottom: 8 }}>Shop All</div>
         <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 52, letterSpacing: 2 }}>CATALOG</div>

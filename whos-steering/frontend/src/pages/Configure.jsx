@@ -586,7 +586,14 @@ export default function Configure() {
           {/* Sticky heading + progress */}
           <div style={{
             position: 'sticky',
-            top: 120,
+
+            /*
+              Desktop options are already inside a scroll column that begins
+              BELOW the 120px site header, so desktop must stick at 0.
+              Mobile scrolls in the page viewport, so it still needs 120px.
+            */
+            top: window.innerWidth < 768 ? 120 : 0,
+
             zIndex: 30,
             background: 'var(--d)',
             borderBottom: '1px solid var(--b)',
@@ -605,7 +612,7 @@ export default function Configure() {
           </div>
 
           {/* Vehicle */}
-          <div ref={vehicleRef} data-step="vehicle" style={{ scrollMarginTop: window.innerWidth < 768 ? 205 : 170 }}>
+          <div ref={vehicleRef} data-step="vehicle" style={{ scrollMarginTop: window.innerWidth < 768 ? 205 : 88 }}>
           <Sect label="Vehicle" value={cfg.vehicleYear && cfg.vehicleModel ? `${cfg.vehicleYear} ${cfg.brand} ${cfg.vehicleModel}` : '—'}>
             <div style={{ display: 'flex', gap: 6, marginBottom: 14 }}>
               {['BMW','AUDI'].map(b => (
@@ -651,7 +658,7 @@ export default function Configure() {
           </div>
 
           {/* Style */}
-          <div ref={styleRef} data-step="style" style={{ scrollMarginTop: window.innerWidth < 768 ? 205 : 170 }}>
+          <div ref={styleRef} data-step="style" style={{ scrollMarginTop: window.innerWidth < 768 ? 205 : 88 }}>
           {/* Wheel Style Type */}
           <Sect label="Wheel Style Type" value={cfg.wheelStyleType}>
             <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
@@ -751,7 +758,7 @@ export default function Configure() {
           </div>
 
           {/* Materials */}
-          <div ref={materialsRef} data-step="materials" style={{ scrollMarginTop: window.innerWidth < 768 ? 205 : 170 }}>
+          <div ref={materialsRef} data-step="materials" style={{ scrollMarginTop: window.innerWidth < 768 ? 205 : 88 }}>
           {/* Top/Bottom Mat */}
           <MatSection label="Top & Bottom Grip Material"
             matKey="topBottomMat" colKey="topBottomCol"
@@ -802,7 +809,7 @@ export default function Configure() {
           </div>
 
           {/* Details */}
-          <div ref={detailsRef} data-step="details" style={{ scrollMarginTop: window.innerWidth < 768 ? 205 : 170 }}>
+          <div ref={detailsRef} data-step="details" style={{ scrollMarginTop: window.innerWidth < 768 ? 205 : 88 }}>
           {/* ── OPTIONS ── */}
           <div style={{ padding: '20px 28px', borderBottom: '1px solid var(--b)' }}>
             <div style={{ fontFamily: 'Rajdhani, sans-serif', fontWeight: 700, fontSize: 15, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 8 }}>Options</div>
@@ -877,7 +884,7 @@ export default function Configure() {
           </div>
 
           {/* Review / final checkout */}
-          <div ref={reviewRef} data-step="review" style={{ scrollMarginTop: window.innerWidth < 768 ? 205 : 170 }}>
+          <div ref={reviewRef} data-step="review" style={{ scrollMarginTop: window.innerWidth < 768 ? 205 : 88 }}>
           {/* Custom Notes */}
           <div style={{ padding: '20px 28px', borderBottom: '1px solid var(--b)' }}>
             <label className="fl" style={{ marginBottom: 8 }}>Let us know if there are any other configurations you would like that have not been listed</label>
