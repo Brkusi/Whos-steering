@@ -22,7 +22,7 @@ export default function Nav() {
     <>
       <AnnouncementBar />
       <nav style={{
-        position: 'fixed', top: 32, left: 0, right: 0, height: 88,
+        position: 'sticky', top: 32, left: 0, right: 0, height: 88,
         background: 'rgba(5,5,5,0.97)', backdropFilter: 'blur(16px)',
         borderBottom: '1px solid var(--b)',
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',

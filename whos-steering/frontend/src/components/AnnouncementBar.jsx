@@ -33,7 +33,7 @@ export default function AnnouncementBar() {
       `}</style>
 
       <div style={{
-        position: 'fixed', top: 0, left: 0, right: 0,
+        position: 'sticky', top: 0, left: 0, right: 0,
         height: 32, background: 'var(--y)', zIndex: 1100,
         overflow: 'hidden', display: 'flex', alignItems: 'center',
         borderBottom: '1px solid rgba(0,0,0,.15)',
