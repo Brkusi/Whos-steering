@@ -355,19 +355,19 @@ export default function Configure() {
   const isAudi = cfg.brand === 'AUDI';
 
   return (
-    <div style={{ paddingTop: 120, minHeight: '100vh', background: 'var(--d)' }}>
-      <div style={{ display: 'grid', gridTemplateColumns: window.innerWidth < 768 ? '1fr' : '1fr 1fr', minHeight: 'calc(100vh - 88px)' }}>
+    <div style={{ paddingTop: 0, minHeight: '100vh', background: 'var(--d)' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: window.innerWidth < 768 ? '1fr' : '1fr 1fr', minHeight: 'calc(100vh - 120px)' }}>
 
         {/* LEFT: Preview */}
         <div style={{
           position: window.innerWidth < 768 ? 'relative' : 'sticky',
-          top: 120,
-          height: window.innerWidth < 768 ? 'auto' : 'calc(100vh - 88px)',
+          top: window.innerWidth < 768 ? 0 : 120,
+          height: window.innerWidth < 768 ? 'auto' : 'calc(100vh - 120px)',
           background: '#111',
           display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
           gap: 16, padding: '28px 24px',
           borderRight: '1px solid var(--b)', overflow: 'hidden',
-          order: window.innerWidth < 768 ? 2 : 1,
+          order: 1,
         }}>
           {!isAudi && cfg.wheelStyleType === 'G-Series' ? (
             <div style={{ position: 'relative', width: '100%', aspectRatio: '4 / 3', maxHeight: window.innerWidth < 768 ? 420 : 'calc(100vh - 320px)', overflow: 'hidden' }}>
@@ -409,17 +409,19 @@ export default function Configure() {
             <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontSize: 'clamp(64px,8vw,88px)', color: 'var(--y)', lineHeight: 1, letterSpacing: -1 }}>${price.toFixed(2)}</div>
             <div style={{ fontSize: 12, color: 'var(--t)', letterSpacing: 1 }}>Final price confirmed at checkout</div>
           </div>
-          <button className="btn" style={{ width: '100%', clipPath: 'polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%)', padding: 18, fontSize: 13, letterSpacing: 3 }}
-            onClick={() => validate() && setShowReview(true)}>
-            + ADD TO CART
-          </button>
+          {window.innerWidth >= 768 && (
+            <button className="btn" style={{ width: '100%', clipPath: 'polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%)', padding: 18, fontSize: 13, letterSpacing: 3 }}
+              onClick={() => validate() && setShowReview(true)}>
+              + ADD TO CART
+            </button>
+          )}
         </div>
 
         {/* RIGHT: Options */}
-        <div style={{ background: 'var(--d)', overflowY: 'auto', display: 'flex', flexDirection: 'column', order: window.innerWidth < 768 ? 1 : 2 }}>
+        <div style={{ background: 'var(--d)', overflowY: 'auto', display: 'flex', flexDirection: 'column', order: 2 }}>
 
           {/* Heading */}
-          <div style={{ padding: '20px 28px 16px', borderBottom: '1px solid var(--b)', background: 'var(--d)', position: 'sticky', top: 0, zIndex: 10, display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+          <div style={{ padding: '20px 28px 16px', borderBottom: '1px solid var(--b)', background: 'var(--d)', position: 'sticky', top: 120, zIndex: 10, display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
             <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 28, letterSpacing: 2 }}>CUSTOMIZATION</div>
             {isAudi && (
               <span style={{ background: 'rgba(232,184,0,.1)', border: '1px solid var(--y)', color: 'var(--y)', fontFamily: 'Orbitron, monospace', fontSize: 11, fontWeight: 700, padding: '4px 10px', letterSpacing: 2 }}>B9 STYLE</span>
@@ -690,6 +692,51 @@ export default function Configure() {
             <textarea className="fi" value={cfg.customNotes} onChange={e => set('customNotes', e.target.value)}
               placeholder="e.g. specific stitching pattern, custom embroidery, unique material combination..." rows={4} style={{ resize: 'vertical', marginTop: 4 }} />
           </div>
+
+          {/* Mobile checkout CTA stays LAST, after every customization option */}
+          {window.innerWidth < 768 && (
+            <div style={{
+              padding: '24px 20px calc(30px + env(safe-area-inset-bottom, 0px))',
+              background: '#0A0A0A',
+              borderTop: '1px solid var(--b)',
+            }}>
+              <div style={{ textAlign: 'center', marginBottom: 16 }}>
+                <div style={{
+                  fontFamily: 'Orbitron, monospace',
+                  fontSize: 10,
+                  letterSpacing: 3,
+                  color: 'var(--t)',
+                  textTransform: 'uppercase',
+                  marginBottom: 3,
+                }}>
+                  Estimated Total
+                </div>
+                <div style={{
+                  fontFamily: '"Barlow Condensed", sans-serif',
+                  fontWeight: 900,
+                  fontSize: 46,
+                  color: 'var(--y)',
+                  lineHeight: 1,
+                }}>
+                  ${price.toFixed(2)}
+                </div>
+              </div>
+
+              <button
+                className="btn"
+                style={{
+                  width: '100%',
+                  clipPath: 'polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%)',
+                  padding: 18,
+                  fontSize: 13,
+                  letterSpacing: 3,
+                }}
+                onClick={() => validate() && setShowReview(true)}
+              >
+                + ADD TO CART
+              </button>
+            </div>
+          )}
 
         </div>
       </div>
