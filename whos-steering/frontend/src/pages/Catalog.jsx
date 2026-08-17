@@ -342,6 +342,13 @@ export default function Catalog() {
   useEffect(() => {
     const brand = params.get('brand');
     if (brand) setFilter(brand);
+
+    const presetId = params.get('preset');
+    if (presetId) {
+      const allPresets = [...BMW_PRESETS, ...AUDI_PRESETS].filter(Boolean);
+      const preset = allPresets.find(p => p.id === presetId);
+      if (preset) setOpenPreset(preset);
+    }
   }, []); // eslint-disable-line
 
   const showBMW  = filter === 'ALL' || filter === 'BMW';
