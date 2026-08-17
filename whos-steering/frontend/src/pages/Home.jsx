@@ -175,7 +175,7 @@ export default function Home() {
           </button>
         ))}
       </section>
-
+      <FeaturedWheels />
       <section className="ws-materials">
         <div className="ws-materials-inner">
           <div>
