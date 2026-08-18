@@ -141,21 +141,7 @@ export default function Account() {
 
       {/* Orders */}
       <div style={{ maxWidth: 960, margin: '0 auto', padding: '40px 24px' }}>
-        <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 32, marginBottom: 16 }}>MY ORDERS</div>
-
-        <div style={{
-          padding: '12px 14px',
-          marginBottom: 20,
-          border: '1px solid rgba(232,184,0,.35)',
-          background: 'rgba(232,184,0,.05)',
-          color: 'var(--t)',
-          fontSize: 12,
-          lineHeight: 1.65,
-        }}>
-          <strong style={{ color: 'var(--y)', letterSpacing: 1 }}>CANCELLATION WINDOW:</strong>{' '}
-          You may cancel an order while its status is <strong style={{ color: 'var(--w)' }}>Payment Confirmed</strong>.
-          Once order processing / the build begins, the order can no longer be canceled.
-        </div>
+        <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 32, marginBottom: 24 }}>MY ORDERS</div>
 
         {cancelMessage && (
           <div style={{

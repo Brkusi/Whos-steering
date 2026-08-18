@@ -765,29 +765,38 @@ export default function Configure() {
   });
 
   const isAudi = cfg.brand === 'AUDI';
+  const isMobileViewport = window.innerWidth < 768;
+  const previewMediaMaxHeight = isMobileViewport ? 420 : 'calc(100vh - 235px)';
 
   return (
     <div style={{
       paddingTop: 0,
-      paddingBottom: window.innerWidth < 768 ? 74 : 0,
+      paddingBottom: isMobileViewport ? 74 : 0,
       minHeight: '100vh',
       background: 'var(--d)',
     }}>
-      <div style={{ display: 'grid', gridTemplateColumns: window.innerWidth < 768 ? '1fr' : '1fr 1fr', minHeight: 'calc(100vh - 120px)' }}>
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: isMobileViewport ? '1fr' : 'minmax(0, 1.08fr) minmax(460px, 0.92fr)',
+        minHeight: isMobileViewport ? 'auto' : 'calc(100vh - 120px)',
+        alignItems: isMobileViewport ? 'start' : 'stretch',
+        alignContent: 'start',
+      }}>
 
         {/* LEFT: Preview */}
         <div style={{
-          position: window.innerWidth < 768 ? 'relative' : 'sticky',
-          top: window.innerWidth < 768 ? 0 : 120,
-          height: window.innerWidth < 768 ? 'auto' : 'calc(100vh - 120px)',
+          position: isMobileViewport ? 'relative' : 'sticky',
+          top: isMobileViewport ? 0 : 120,
+          height: isMobileViewport ? 'auto' : 'calc(100vh - 120px)',
+          minHeight: 0,
           background: '#111',
-          display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-          gap: 16, padding: '28px 24px',
-          borderRight: '1px solid var(--b)', overflow: 'hidden',
+          display: 'flex', flexDirection: 'column', alignItems: 'stretch', justifyContent: isMobileViewport ? 'flex-start' : 'center',
+          gap: isMobileViewport ? 16 : 12, padding: isMobileViewport ? '0 0 18px' : '20px 14px 18px',
+          borderRight: isMobileViewport ? 'none' : '1px solid var(--b)', overflow: 'hidden',
           order: 1,
         }}>
           {!isAudi && cfg.wheelStyleType === 'G-Series' ? (
-            <div style={{ position: 'relative', width: '100%', aspectRatio: '4 / 3', maxHeight: window.innerWidth < 768 ? 420 : 'calc(100vh - 320px)', overflow: 'hidden' }}>
+            <div style={{ position: 'relative', width: '100%', maxWidth: isMobileViewport ? '100%' : 980, margin: '0 auto', aspectRatio: '4 / 3', maxHeight: previewMediaMaxHeight, overflow: 'hidden' }}>
               <img
                 src="/g-series-reference.png"
                 alt="BMW G-Series Steering Wheel customization options"
@@ -795,7 +804,7 @@ export default function Configure() {
               />
             </div>
           ) : !isAudi && cfg.wheelStyleType === 'F-Series' ? (
-            <div style={{ position: 'relative', width: '100%', aspectRatio: '4 / 3', maxHeight: window.innerWidth < 768 ? 420 : 'calc(100vh - 320px)', overflow: 'hidden' }}>
+            <div style={{ position: 'relative', width: '100%', maxWidth: isMobileViewport ? '100%' : 980, margin: '0 auto', aspectRatio: '4 / 3', maxHeight: previewMediaMaxHeight, overflow: 'hidden' }}>
               <img
                 src="/f-series-reference.png"
                 alt="BMW F-Series Steering Wheel customization options"
@@ -803,7 +812,7 @@ export default function Configure() {
               />
             </div>
           ) : isAudi && cfg.wheelStyleType === 'B9' ? (
-            <div style={{ position: 'relative', width: '100%', aspectRatio: '3 / 2', maxHeight: window.innerWidth < 768 ? 420 : 'calc(100vh - 320px)', overflow: 'hidden' }}>
+            <div style={{ position: 'relative', width: '100%', maxWidth: isMobileViewport ? '100%' : 980, margin: '0 auto', aspectRatio: '3 / 2', maxHeight: previewMediaMaxHeight, overflow: 'hidden' }}>
               <img
                 src="/b9-reference.png"
                 alt="Audi B9 Steering Wheel customization options"
@@ -811,7 +820,7 @@ export default function Configure() {
               />
             </div>
           ) : isAudi && cfg.wheelStyleType === 'R8' ? (
-            <div style={{ position: 'relative', width: '100%', aspectRatio: '3 / 2', maxHeight: window.innerWidth < 768 ? 420 : 'calc(100vh - 320px)', overflow: 'hidden' }}>
+            <div style={{ position: 'relative', width: '100%', maxWidth: isMobileViewport ? '100%' : 980, margin: '0 auto', aspectRatio: '3 / 2', maxHeight: previewMediaMaxHeight, overflow: 'hidden' }}>
               <img
                 src="/r8-reference.png"
                 alt="Audi R8 Steering Wheel customization options"
@@ -819,14 +828,14 @@ export default function Configure() {
               />
             </div>
           ) : (
-            <WheelPreview config={cfg} size={Math.min(360, window.innerWidth * 0.4)} />
+            <WheelPreview config={cfg} size={Math.min(isMobileViewport ? 360 : 520, window.innerWidth * (isMobileViewport ? 0.74 : 0.46))} />
           )}
           <div style={{ paddingTop: 12, borderTop: '1px solid var(--b)', width: '100%', textAlign: 'center' }}>
             <div style={{ fontFamily: 'Orbitron, monospace', fontSize: 11, letterSpacing: 3, color: 'var(--t)', textTransform: 'uppercase' }}>Estimated Total</div>
             <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontSize: 'clamp(64px,8vw,88px)', color: 'var(--y)', lineHeight: 1, letterSpacing: -1 }}>${price.toFixed(2)}</div>
             <div style={{ fontSize: 12, color: 'var(--t)', letterSpacing: 1 }}>Final price confirmed at checkout</div>
           </div>
-          {window.innerWidth >= 768 && (
+          {!isMobileViewport && (
             <button className="btn" style={{ width: '100%', clipPath: 'polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%)', padding: 18, fontSize: 13, letterSpacing: 3 }}
               onClick={() => validate() && setShowReview(true)}>
               + ADD TO CART
@@ -846,7 +855,7 @@ export default function Configure() {
               BELOW the 120px site header, so desktop must stick at 0.
               Mobile scrolls in the page viewport, so it still needs 120px.
             */
-            top: window.innerWidth < 768 ? 120 : 0,
+            top: isMobileViewport ? 120 : 0,
 
             zIndex: 30,
             background: 'var(--d)',
@@ -866,7 +875,7 @@ export default function Configure() {
           </div>
 
           {/* Vehicle */}
-          <div ref={vehicleRef} data-step="vehicle" style={{ scrollMarginTop: window.innerWidth < 768 ? 205 : 88 }}>
+          <div ref={vehicleRef} data-step="vehicle" style={{ scrollMarginTop: isMobileViewport ? 205 : 88 }}>
           <Sect label="Vehicle" value={cfg.vehicleYear && cfg.vehicleModel ? `${cfg.vehicleYear} ${cfg.brand} ${cfg.vehicleModel}` : '—'}>
             <div style={{ display: 'flex', gap: 6, marginBottom: 14 }}>
               {['BMW','AUDI'].map(b => (
@@ -912,7 +921,7 @@ export default function Configure() {
           </div>
 
           {/* Style */}
-          <div ref={styleRef} data-step="style" style={{ scrollMarginTop: window.innerWidth < 768 ? 205 : 88 }}>
+          <div ref={styleRef} data-step="style" style={{ scrollMarginTop: isMobileViewport ? 205 : 88 }}>
           {/* Wheel Style Type */}
           <Sect label="Wheel Style Type" value={cfg.wheelStyleType}>
             <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
@@ -1013,7 +1022,7 @@ export default function Configure() {
           </div>
 
           {/* Materials */}
-          <div ref={materialsRef} data-step="materials" style={{ scrollMarginTop: window.innerWidth < 768 ? 205 : 88 }}>
+          <div ref={materialsRef} data-step="materials" style={{ scrollMarginTop: isMobileViewport ? 205 : 88 }}>
           {/* Top/Bottom Mat */}
           <MatSection label="Top & Bottom Grip Material"
             matKey="topBottomMat" colKey="topBottomCol"
@@ -1073,7 +1082,7 @@ export default function Configure() {
           </div>
 
           {/* Details */}
-          <div ref={detailsRef} data-step="details" style={{ scrollMarginTop: window.innerWidth < 768 ? 205 : 88 }}>
+          <div ref={detailsRef} data-step="details" style={{ scrollMarginTop: isMobileViewport ? 205 : 88 }}>
           {/* ── OPTIONS ── */}
           <div style={{ padding: '20px 28px', borderBottom: '1px solid var(--b)' }}>
             <div style={{ fontFamily: 'Rajdhani, sans-serif', fontWeight: 700, fontSize: 15, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 8 }}>Options</div>
@@ -1156,7 +1165,7 @@ export default function Configure() {
           </div>
 
           {/* Review / final checkout */}
-          <div ref={reviewRef} data-step="review" style={{ scrollMarginTop: window.innerWidth < 768 ? 205 : 88 }}>
+          <div ref={reviewRef} data-step="review" style={{ scrollMarginTop: isMobileViewport ? 205 : 88 }}>
           {/* Custom Notes */}
           <div style={{ padding: '20px 28px', borderBottom: '1px solid var(--b)' }}>
             <label className="fl" style={{ marginBottom: 8 }}>Let us know if there are any other configurations you would like that have not been listed</label>
@@ -1165,7 +1174,7 @@ export default function Configure() {
           </div>
 
           {/* Mobile checkout CTA stays LAST, after every customization option */}
-          {window.innerWidth < 768 && (
+          {isMobileViewport && (
             <div style={{
               padding: '24px 20px calc(30px + env(safe-area-inset-bottom, 0px))',
               background: '#0A0A0A',
@@ -1214,7 +1223,7 @@ export default function Configure() {
       </div>
 
       {/* Sticky mobile build total — tap to jump to final review */}
-      {window.innerWidth < 768 && activeStep !== 'review' && !showReview && (
+      {isMobileViewport && activeStep !== 'review' && !showReview && (
         <button
           type="button"
           onClick={() => scrollToStep('review')}

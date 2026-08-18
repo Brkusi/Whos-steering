@@ -7,7 +7,7 @@ export default function RefundPolicy() {
       <div style={{ maxWidth: 860, margin: '0 auto', padding: '48px 24px 80px' }}>
         <div style={{ fontFamily: 'Orbitron, monospace', fontSize: 10, letterSpacing: 4, color: 'var(--y)', marginBottom: 10 }}>LEGAL</div>
         <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 52, marginBottom: 8 }}>RETURN & REFUND POLICY</div>
-        <div style={{ fontSize: 12, color: 'var(--t)', marginBottom: 40, borderBottom: '1px solid var(--b)', paddingBottom: 24 }}>Last updated: June 25, 2026</div>
+        <div style={{ fontSize: 12, color: 'var(--t)', marginBottom: 40, borderBottom: '1px solid var(--b)', paddingBottom: 24 }}>Last updated: August 17, 2026</div>
 
         <div style={{ padding: '16px 20px', background: 'rgba(232,184,0,.06)', border: '1px solid rgba(232,184,0,.3)', marginBottom: 40, fontSize: 13, color: 'var(--w)', lineHeight: 1.7 }}>
           ⚠️ All Who's Steering products are <strong>custom-built to order</strong>. Because each wheel is individually crafted to your specifications, our return and refund policy reflects the nature of bespoke manufacturing.
@@ -18,9 +18,21 @@ export default function RefundPolicy() {
           <p>We encourage you to review your configuration carefully before placing your order. If you have any questions about compatibility or options, please contact us before purchasing.</p>
         </Legal>
 
-        <Legal h="CANCELLATION WINDOW">
-          <p>You may cancel your order within <strong style={{ color: 'var(--w)' }}>24 hours of purchase</strong> for a full refund, provided production has not yet begun. After 24 hours, cancellations are not accepted as materials and production scheduling are committed at that point.</p>
-          <p>To request a cancellation within the window, contact us immediately at <a href="mailto:service@whossteering.com" style={{ color: 'var(--y)' }}>service@whossteering.com</a> with your order number.</p>
+        <Legal h="CANCELLATION & REFUND WINDOW">
+          <p>
+            A paid order may be canceled <strong style={{ color: 'var(--w)' }}>before order processing or production begins</strong>.
+            While your order is still shown as <strong style={{ color: 'var(--w)' }}>Payment Confirmed</strong>, you may use the
+            cancellation option in your account to request cancellation and a refund to the original payment method.
+          </p>
+          <p>
+            <strong style={{ color: 'var(--w)' }}>Once order processing / the build begins, the order can no longer be canceled.</strong>
+            This includes orders that have entered production, quality control, or shipping.
+          </p>
+          <p>
+            If you are unable to use the account cancellation option, contact us promptly at{' '}
+            <a href="mailto:service@whossteering.com" style={{ color: 'var(--y)' }}>service@whossteering.com</a>{' '}
+            with your order number. A cancellation request is not considered approved until it is accepted before processing begins.
+          </p>
         </Legal>
 
         <Legal h="DEFECTS & WARRANTY">
@@ -34,7 +46,12 @@ export default function RefundPolicy() {
         </Legal>
 
         <Legal h="REFUND PROCESS">
-          <p>Where a refund is approved (within the cancellation window or for a valid warranty/damage claim), it will be processed to your original payment method within <strong style={{ color: 'var(--w)' }}>14 business days</strong>. You will receive an email confirmation once the refund has been issued.</p>
+          <p>
+            Where a refund is approved (including an eligible pre-production cancellation or a valid warranty/damage claim),
+            the refund will be sent to the <strong style={{ color: 'var(--w)' }}>original payment method</strong>.
+            We aim to process approved refunds within <strong style={{ color: 'var(--w)' }}>14 business days</strong>.
+            Your bank or card provider may require additional time before the credit appears on your statement.
+          </p>
         </Legal>
 
         <Legal h="CONTACT">

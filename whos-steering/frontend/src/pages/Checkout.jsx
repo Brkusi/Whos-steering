@@ -77,6 +77,69 @@ function PaymentForm({ total, orderId, email }) {
   );
 }
 
+
+// Stable shipping field component.
+// Important: keep this OUTSIDE Checkout(). If a component function is declared
+// inside Checkout, React receives a new component type on every state update,
+// which remounts the input and causes it to lose focus after each keystroke.
+function ShippingField({
+  label,
+  fieldKey,
+  placeholder,
+  half,
+  info,
+  setInfo,
+  infoErrors,
+  setInfoErrors,
+}) {
+  return (
+    <div style={{ flex: half ? '0 0 calc(50% - 5px)' : '1 1 100%' }}>
+      <label
+        htmlFor={`checkout-${fieldKey}`}
+        style={{
+          display: 'block',
+          fontSize: 10,
+          letterSpacing: 2,
+          textTransform: 'uppercase',
+          color: 'var(--t)',
+          marginBottom: 5,
+        }}
+      >
+        {label} <span style={{ color: 'var(--y)' }}>*</span>
+      </label>
+
+      <input
+        id={`checkout-${fieldKey}`}
+        className={`fi${infoErrors[fieldKey] ? ' error' : ''}`}
+        value={info[fieldKey]}
+        placeholder={placeholder}
+        autoComplete={
+          fieldKey === 'email' ? 'email' :
+          fieldKey === 'name' ? 'name' :
+          fieldKey === 'address1' ? 'address-line1' :
+          fieldKey === 'city' ? 'address-level2' :
+          fieldKey === 'state' ? 'address-level1' :
+          fieldKey === 'zip' ? 'postal-code' :
+          'off'
+        }
+        onChange={(e) => {
+          const value = e.target.value;
+          setInfo((prev) => ({ ...prev, [fieldKey]: value }));
+
+          if (infoErrors[fieldKey]) {
+            setInfoErrors((prev) => ({ ...prev, [fieldKey]: false }));
+          }
+        }}
+        style={{ width: '100%' }}
+      />
+
+      {infoErrors[fieldKey] && (
+        <div className="err-msg">Required</div>
+      )}
+    </div>
+  );
+}
+
 // ── Main Checkout page ────────────────────────────────────────────────────────
 export default function Checkout() {
   const { items, total } = useCart();
@@ -144,22 +207,6 @@ export default function Checkout() {
     }
   };
 
-  const Field = ({ label, k, placeholder, half }) => (
-    <div style={{ flex: half ? '0 0 calc(50% - 5px)' : '1 1 100%' }}>
-      <label style={{ display: 'block', fontSize: 10, letterSpacing: 2, textTransform: 'uppercase', color: 'var(--t)', marginBottom: 5 }}>
-        {label} <span style={{ color: 'var(--y)' }}>*</span>
-      </label>
-      <input
-        className={`fi${infoErrors[k] ? ' error' : ''}`}
-        value={info[k]}
-        placeholder={placeholder}
-        onChange={e => { setInfo(p => ({ ...p, [k]: e.target.value })); setInfoErrors(p => ({ ...p, [k]: false })); }}
-        style={{ width: '100%' }}
-      />
-      {infoErrors[k] && <div className="err-msg">Required</div>}
-    </div>
-  );
-
   if (!items.length && !clientSecret) {
     return (
       <div style={{ paddingTop: 0, minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--d)' }}>
@@ -211,17 +258,17 @@ export default function Checkout() {
             <div>
               <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 28, marginBottom: 24 }}>CONTACT & SHIPPING</div>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, marginBottom: 24 }}>
-                <Field label="Email"    k="email"    placeholder="your@email.com" />
-                <Field label="Full Name" k="name"   placeholder="John Smith" />
-                <Field label="Address"  k="address1" placeholder="123 Main St" />
+                <ShippingField label="Email" fieldKey="email" placeholder="your@email.com" info={info} setInfo={setInfo} infoErrors={infoErrors} setInfoErrors={setInfoErrors} />
+                <ShippingField label="Full Name" fieldKey="name" placeholder="John Smith" info={info} setInfo={setInfo} infoErrors={infoErrors} setInfoErrors={setInfoErrors} />
+                <ShippingField label="Address" fieldKey="address1" placeholder="123 Main St" info={info} setInfo={setInfo} infoErrors={infoErrors} setInfoErrors={setInfoErrors} />
                 <div style={{ flex: '1 1 100%' }}>
                   <label style={{ display: 'block', fontSize: 10, letterSpacing: 2, textTransform: 'uppercase', color: 'var(--t)', marginBottom: 5 }}>Apt / Suite</label>
                   <input className="fi" value={info.address2} placeholder="Optional"
                     onChange={e => setInfo(p => ({ ...p, address2: e.target.value }))} style={{ width: '100%' }} />
                 </div>
-                <Field label="City"  k="city"  placeholder="New York"  half />
-                <Field label="State" k="state" placeholder="NY"        half />
-                <Field label="ZIP"   k="zip"   placeholder="10001"     half />
+                <ShippingField label="City" fieldKey="city" placeholder="New York" half info={info} setInfo={setInfo} infoErrors={infoErrors} setInfoErrors={setInfoErrors} />
+                <ShippingField label="State" fieldKey="state" placeholder="NY" half info={info} setInfo={setInfo} infoErrors={infoErrors} setInfoErrors={setInfoErrors} />
+                <ShippingField label="ZIP" fieldKey="zip" placeholder="10001" half info={info} setInfo={setInfo} infoErrors={infoErrors} setInfoErrors={setInfoErrors} />
                 <div style={{ flex: '0 0 calc(50% - 5px)' }}>
                   <label style={{ display: 'block', fontSize: 10, letterSpacing: 2, textTransform: 'uppercase', color: 'var(--t)', marginBottom: 5 }}>Country</label>
                   <select className="fi" value={info.country} onChange={e => setInfo(p => ({ ...p, country: e.target.value }))} style={{ width: '100%' }}>
