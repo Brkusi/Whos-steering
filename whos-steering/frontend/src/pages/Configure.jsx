@@ -771,15 +771,15 @@ export default function Configure() {
   return (
     <div style={{
       paddingTop: 0,
-      paddingBottom: 0,
+      paddingBottom: isMobileViewport ? 88 : 0,
       minHeight: '100vh',
       background: 'var(--d)',
     }}>
       <div style={{
-        display: 'grid',
-        gridTemplateColumns: isMobileViewport ? '1fr' : 'minmax(0, 0.98fr) minmax(500px, 1.02fr)',
-        minHeight: isMobileViewport ? 'auto' : 'calc(100vh - 120px)',
-        alignItems: isMobileViewport ? 'start' : 'stretch',
+        display: isMobileViewport ? 'block' : 'grid',
+        gridTemplateColumns: isMobileViewport ? undefined : 'minmax(0, 0.98fr) minmax(500px, 1.02fr)',
+        minHeight: isMobileViewport ? 0 : 'calc(100vh - 120px)',
+        alignItems: isMobileViewport ? undefined : 'stretch',
         alignContent: 'start',
       }}>
 
@@ -936,11 +936,12 @@ export default function Configure() {
         {/* RIGHT: Options */}
         <div ref={optionsRef} style={{
           background: 'var(--d)',
-          overflowY: 'auto',
-          display: 'flex',
+          overflowY: isMobileViewport ? 'visible' : 'auto',
+          display: isMobileViewport ? 'block' : 'flex',
           flexDirection: 'column',
           order: 2,
           borderTop: isMobileViewport ? '1px solid var(--b)' : 'none',
+          minHeight: 0,
         }}>
 
           {/* Sticky heading + progress */}
@@ -1318,6 +1319,74 @@ export default function Configure() {
 
         </div>
       </div>
+
+      {/* Floating mobile build total */}
+      {isMobileViewport && activeStep !== 'review' && !showReview && (
+        <button
+          type="button"
+          onClick={() => scrollToStep('review')}
+          aria-label={`Build total $${price.toFixed(2)}. Jump to review.`}
+          style={{
+            position: 'fixed',
+            left: '50%',
+            bottom: 'calc(14px + env(safe-area-inset-bottom, 0px))',
+            transform: 'translateX(-50%)',
+            zIndex: 1200,
+            width: 'calc(100% - 28px)',
+            maxWidth: 560,
+            minHeight: 58,
+            padding: '9px 14px 9px 16px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: 12,
+            border: '1px solid rgba(232,184,0,.72)',
+            background: 'rgba(8,8,8,.94)',
+            backdropFilter: 'blur(14px)',
+            boxShadow: '0 10px 36px rgba(0,0,0,.55), 0 0 0 1px rgba(232,184,0,.05) inset',
+            color: '#fff',
+            cursor: 'pointer',
+          }}
+        >
+          <span style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', minWidth: 0 }}>
+            <span style={{
+              fontFamily: 'Orbitron, monospace',
+              fontSize: 7,
+              fontWeight: 800,
+              letterSpacing: 1.8,
+              color: 'var(--y)',
+              marginBottom: 2,
+            }}>
+              BUILD TOTAL
+            </span>
+            <span style={{
+              fontFamily: '"Barlow Condensed", sans-serif',
+              fontSize: 28,
+              fontWeight: 900,
+              lineHeight: .95,
+              letterSpacing: .3,
+              whiteSpace: 'nowrap',
+            }}>
+              ${price.toFixed(2)}
+            </span>
+          </span>
+
+          <span style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 8,
+            color: 'var(--y)',
+            fontFamily: 'Orbitron, monospace',
+            fontSize: 7,
+            fontWeight: 800,
+            letterSpacing: 1.2,
+            whiteSpace: 'nowrap',
+          }}>
+            REVIEW BUILD
+            <span aria-hidden="true" style={{ fontSize: 14 }}>↓</span>
+          </span>
+        </button>
+      )}
 
       {/* Review overlay */}
       {showReview && (

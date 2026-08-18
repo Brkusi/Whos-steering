@@ -1,7 +1,24 @@
-const router = require('express').Router();
+onst router = require('express').Router();
 const pool   = require('../db/pool');
 
 const hasText = (value) => typeof value === 'string' && value.trim().length > 0;
+
+const PROMO_CODES = Object.freeze({
+  complaints: {
+    code: 'complaints',
+    percentOff: 10,
+    label: '10% OFF',
+  },
+});
+
+const normalizePromoCode = (value) =>
+  typeof value === 'string' ? value.trim().toLowerCase() : '';
+
+function getPromo(value) {
+  const code = normalizePromoCode(value);
+  return code ? PROMO_CODES[code] || null : null;
+}
+
 
 function validateRequiredColors(cfg) {
   // Presets and legacy product-only cart items do not use the full configurator.
@@ -57,6 +74,30 @@ function validateRequiredColors(cfg) {
   return missing;
 }
 
+
+
+// POST /api/checkout/validate-promo
+// Promo rules live on the server so the browser cannot invent a discount.
+router.post('/validate-promo', (req, res) => {
+  const code = normalizePromoCode(req.body?.code);
+
+  if (!code) {
+    return res.json({ valid: false, error: 'Enter a promo code.' });
+  }
+
+  const promo = getPromo(code);
+
+  if (!promo) {
+    return res.json({ valid: false, error: 'Promo code not recognized.' });
+  }
+
+  res.json({
+    valid: true,
+    code: promo.code,
+    percentOff: promo.percentOff,
+    label: promo.label,
+  });
+});
 
 // GET /api/checkout/verify-payment
 // Used by the return/confirmation page. Stripe is the source of truth:
@@ -153,7 +194,7 @@ router.get('/verify-payment', async (req, res) => {
 // POST /api/checkout/create-intent
 router.post('/create-intent', async (req, res) => {
   const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
-  const { cartItems, customer, shippingAddress } = req.body;
+  const { cartItems, customer, shippingAddress, promoCode } = req.body;
 
   if (!customer?.email) {
     return res.status(400).json({ error: 'Missing customer email' });
@@ -167,6 +208,13 @@ router.post('/create-intent', async (req, res) => {
         missingOptions: missingColors,
       });
     }
+  }
+
+  const normalizedPromoCode = normalizePromoCode(promoCode);
+  const promo = getPromo(normalizedPromoCode);
+
+  if (normalizedPromoCode && !promo) {
+    return res.status(400).json({ error: 'Promo code is invalid.' });
   }
 
   const client = await pool.connect();
@@ -246,6 +294,15 @@ router.post('/create-intent', async (req, res) => {
       });
     }
 
+    const subtotalCents = totalCents;
+    const discountCents = promo
+      ? Math.round(subtotalCents * (promo.percentOff / 100))
+      : 0;
+
+    totalCents = Math.max(0, subtotalCents - discountCents);
+
+    const subtotalDollars = (subtotalCents / 100).toFixed(2);
+    const discountDollars = (discountCents / 100).toFixed(2);
     const totalDollars = (totalCents / 100).toFixed(2);
 
     const { rows: orderRows } = await client.query(
@@ -253,11 +310,12 @@ router.post('/create-intent', async (req, res) => {
         (customer_id, guest_email, status, subtotal, total,
          shipping_name, shipping_address1, shipping_address2,
          shipping_city, shipping_state, shipping_zip, shipping_country)
-       VALUES ($1,$2,'pending',$3,$3,$4,$5,$6,$7,$8,$9,$10)
+       VALUES ($1,$2,'pending',$3,$4,$5,$6,$7,$8,$9,$10,$11)
        RETURNING id`,
       [
         customerId,
         customer.email,
+        subtotalDollars,
         totalDollars,
         shippingAddress?.name     || customer.name || '',
         shippingAddress?.address1 || '',
@@ -288,7 +346,13 @@ router.post('/create-intent', async (req, res) => {
       amount: totalCents,
       currency: 'usd',
       receipt_email: customer.email,
-      metadata: { orderId, customerEmail: customer.email },
+      metadata: {
+        orderId,
+        customerEmail: customer.email,
+        promoCode: promo?.code || '',
+        promoPercent: promo ? String(promo.percentOff) : '0',
+        discountAmount: discountDollars,
+      },
       automatic_payment_methods: { enabled: true },
     });
 
@@ -300,12 +364,25 @@ router.post('/create-intent', async (req, res) => {
 
     await client.query(
       `INSERT INTO order_status_history (order_id, to_status, note)
-       VALUES ($1,'pending','Order created at checkout')`,
-      [orderId]
+       VALUES ($1,'pending',$2)`,
+      [
+        orderId,
+        promo
+          ? `Order created at checkout — promo ${promo.code} (${promo.percentOff}% off, -$${discountDollars})`
+          : 'Order created at checkout',
+      ]
     );
 
     await client.query('COMMIT');
-    res.json({ clientSecret: paymentIntent.client_secret, orderId, amount: totalDollars });
+    res.json({
+      clientSecret: paymentIntent.client_secret,
+      orderId,
+      subtotal: subtotalDollars,
+      discount: discountDollars,
+      amount: totalDollars,
+      promoCode: promo?.code || null,
+      promoPercent: promo?.percentOff || 0,
+    });
 
   } catch (err) {
     await client.query('ROLLBACK');

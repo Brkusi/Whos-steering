@@ -151,6 +151,12 @@ export default function Checkout() {
   const [error, setError] = useState('');
   const [clientSecret, setClientSecret] = useState('');
   const [orderId, setOrderId] = useState('');
+  const [paymentTotal, setPaymentTotal] = useState(total);
+
+  const [promoInput, setPromoInput] = useState('');
+  const [appliedPromo, setAppliedPromo] = useState(null);
+  const [promoMessage, setPromoMessage] = useState('');
+  const [promoLoading, setPromoLoading] = useState(false);
 
   const [info, setInfo] = useState({
     email: '', name: '', address1: '', address2: '',
@@ -161,6 +167,51 @@ export default function Checkout() {
   useEffect(() => {
     if (user?.email) setInfo(prev => ({ ...prev, email: user.email }));
   }, [user]);
+
+  const promoDiscount = appliedPromo
+    ? total * (appliedPromo.percentOff / 100)
+    : 0;
+
+  const displayedTotal = Math.max(0, total - promoDiscount);
+
+  const applyPromo = async () => {
+    const code = promoInput.trim();
+
+    if (!code) {
+      setAppliedPromo(null);
+      setPromoMessage('Enter a promo code.');
+      return;
+    }
+
+    setPromoLoading(true);
+    setPromoMessage('');
+
+    try {
+      const result = await apiFetch('/api/checkout/validate-promo', {
+        method: 'POST',
+        body: JSON.stringify({ code }),
+      });
+
+      if (!result.valid) {
+        setAppliedPromo(null);
+        setPromoMessage(result.error || 'Promo code not recognized.');
+        return;
+      }
+
+      setAppliedPromo({
+        code: result.code,
+        percentOff: Number(result.percentOff) || 0,
+        label: result.label || '',
+      });
+      setPromoInput(result.code);
+      setPromoMessage(`${result.code.toUpperCase()} applied — ${result.percentOff}% off.`);
+    } catch (err) {
+      setAppliedPromo(null);
+      setPromoMessage(err.message || 'Unable to validate promo code.');
+    } finally {
+      setPromoLoading(false);
+    }
+  };
 
   const validateInfo = () => {
     const e = {};
@@ -195,10 +246,12 @@ export default function Checkout() {
             address2: info.address2, city: info.city,
             state: info.state, zip: info.zip, country: info.country,
           },
+          promoCode: appliedPromo?.code || '',
         }),
       });
       setClientSecret(result.clientSecret);
       setOrderId(result.orderId);
+      setPaymentTotal(Number(result.amount));
       setStep(2);
     } catch (err) {
       setError(err.message || 'Failed to start checkout. Please try again.');
@@ -298,7 +351,7 @@ export default function Checkout() {
                 </div>
               ) : (
                 <Elements stripe={stripePromise} options={{ clientSecret, appearance: stripeAppearance }}>
-                  <PaymentForm total={total} orderId={orderId} email={info.email} />
+                  <PaymentForm total={paymentTotal} orderId={orderId} email={info.email} />
                 </Elements>
               )}
             </div>
@@ -317,18 +370,106 @@ export default function Checkout() {
               </div>
             ))}
           </div>
+
+          {/* Promo code */}
+          <div style={{
+            padding: '14px 0 16px',
+            borderBottom: '1px solid var(--b)',
+            marginBottom: 16,
+          }}>
+            <div style={{
+              fontFamily: 'Orbitron, monospace',
+              fontSize: 8,
+              letterSpacing: 2,
+              color: 'var(--t)',
+              marginBottom: 7,
+            }}>
+              PROMO CODE
+            </div>
+
+            <div style={{ display: 'flex', gap: 7 }}>
+              <input
+                className="fi"
+                value={promoInput}
+                disabled={step === 2}
+                placeholder="Enter promo code"
+                onChange={(e) => {
+                  setPromoInput(e.target.value);
+                  if (
+                    appliedPromo &&
+                    e.target.value.trim().toLowerCase() !== appliedPromo.code
+                  ) {
+                    setAppliedPromo(null);
+                    setPromoMessage('');
+                  }
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && step === 1) {
+                    e.preventDefault();
+                    applyPromo();
+                  }
+                }}
+                style={{
+                  flex: 1,
+                  minWidth: 0,
+                  textTransform: 'none',
+                  opacity: step === 2 ? .7 : 1,
+                }}
+              />
+
+              <button
+                type="button"
+                className="btn-outline sm"
+                onClick={applyPromo}
+                disabled={promoLoading || step === 2}
+                style={{
+                  minWidth: 84,
+                  clipPath: 'none',
+                  opacity: step === 2 ? .5 : 1,
+                }}
+              >
+                {promoLoading ? '...' : appliedPromo ? 'APPLIED' : 'APPLY'}
+              </button>
+            </div>
+
+            {promoMessage && (
+              <div style={{
+                marginTop: 7,
+                fontSize: 10,
+                lineHeight: 1.5,
+                color: appliedPromo ? '#5DCC73' : '#FF6650',
+              }}>
+                {promoMessage}
+              </div>
+            )}
+          </div>
+
           <div style={{ borderTop: '1px solid var(--b)', paddingTop: 16 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
               <span style={{ fontSize: 12, color: 'var(--t)' }}>Subtotal</span>
               <span style={{ fontWeight: 700 }}>${total.toFixed(2)}</span>
             </div>
+
+            {appliedPromo && (
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
+                <span style={{ fontSize: 12, color: '#5DCC73' }}>
+                  Promo ({appliedPromo.code.toUpperCase()} · {appliedPromo.percentOff}%)
+                </span>
+                <span style={{ fontSize: 12, color: '#5DCC73', fontWeight: 800 }}>
+                  -${promoDiscount.toFixed(2)}
+                </span>
+              </div>
+            )}
+
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16 }}>
               <span style={{ fontSize: 12, color: 'var(--t)' }}>Shipping</span>
               <span style={{ fontSize: 12, color: '#3DB85A', fontWeight: 700 }}>Confirmed after order</span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
               <span style={{ fontFamily: 'Orbitron, monospace', fontSize: 10, letterSpacing: 2, color: 'var(--t)' }}>TOTAL</span>
-              <span style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontSize: 36, color: 'var(--y)' }}>${total.toFixed(2)}</span>
+              <span style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontSize: 36, color: 'var(--y)' }}>
+                ${(step === 2 && clientSecret ? paymentTotal : displayedTotal).toFixed(2)}
+              </span>
             </div>
           </div>
           <div style={{ marginTop: 20, padding: '12px 0', borderTop: '1px solid var(--b)', fontSize: 11, color: 'var(--t)', lineHeight: 1.9 }}>
