@@ -771,7 +771,7 @@ export default function Configure() {
   return (
     <div style={{
       paddingTop: 0,
-      paddingBottom: isMobileViewport ? 74 : 0,
+      paddingBottom: 0,
       minHeight: '100vh',
       background: 'var(--d)',
     }}>
@@ -790,9 +790,12 @@ export default function Configure() {
           height: isMobileViewport ? 'auto' : 'calc(100vh - 120px)',
           minHeight: 0,
           background: '#111',
-          display: 'flex', flexDirection: 'column', alignItems: 'stretch', justifyContent: 'flex-start',
+          display: isMobileViewport ? 'block' : 'flex',
+          flexDirection: 'column',
+          alignItems: 'stretch',
+          justifyContent: 'flex-start',
           gap: isMobileViewport ? 0 : 10,
-          padding: isMobileViewport ? '0' : '14px 12px 14px',
+          padding: isMobileViewport ? 0 : '14px 12px 14px',
           borderRight: isMobileViewport ? 'none' : '1px solid var(--b)', overflow: 'hidden',
           order: 1,
         }}>
@@ -802,22 +805,22 @@ export default function Configure() {
               width: '100%',
               maxWidth: 'none',
               margin: 0,
-              aspectRatio: isMobileViewport ? '4 / 3' : 'auto',
+              aspectRatio: isMobileViewport ? 'auto' : 'auto',
               height: isMobileViewport ? 'auto' : 'calc(100vh - 292px)',
-              maxHeight: previewMediaMaxHeight,
-              flex: isMobileViewport ? '0 0 auto' : '1 1 auto',
+              maxHeight: isMobileViewport ? 'none' : previewMediaMaxHeight,
+              flex: isMobileViewport ? 'none' : '1 1 auto',
               minHeight: 0,
-              overflow: 'hidden',
+              overflow: isMobileViewport ? 'visible' : 'hidden',
             }}>
               <img
                 src="/g-series-reference.png"
                 alt="BMW G-Series Steering Wheel customization options"
                 style={{
-                  position: 'absolute',
-                  inset: 0,
+                  position: isMobileViewport ? 'relative' : 'absolute',
+                  inset: isMobileViewport ? 'auto' : 0,
                   width: '100%',
-                  height: '100%',
-                  objectFit: isMobileViewport ? 'contain' : 'contain',
+                  height: isMobileViewport ? 'auto' : '100%',
+                  objectFit: 'contain',
                   objectPosition: 'center',
                   display: 'block',
                   transform: isMobileViewport ? 'none' : 'scale(0.985)',
@@ -831,22 +834,22 @@ export default function Configure() {
               width: '100%',
               maxWidth: 'none',
               margin: 0,
-              aspectRatio: isMobileViewport ? '4 / 3' : 'auto',
+              aspectRatio: isMobileViewport ? 'auto' : 'auto',
               height: isMobileViewport ? 'auto' : 'calc(100vh - 292px)',
-              maxHeight: previewMediaMaxHeight,
-              flex: isMobileViewport ? '0 0 auto' : '1 1 auto',
+              maxHeight: isMobileViewport ? 'none' : previewMediaMaxHeight,
+              flex: isMobileViewport ? 'none' : '1 1 auto',
               minHeight: 0,
-              overflow: 'hidden',
+              overflow: isMobileViewport ? 'visible' : 'hidden',
             }}>
               <img
                 src="/f-series-reference.png"
                 alt="BMW F-Series Steering Wheel customization options"
                 style={{
-                  position: 'absolute',
-                  inset: 0,
+                  position: isMobileViewport ? 'relative' : 'absolute',
+                  inset: isMobileViewport ? 'auto' : 0,
                   width: '100%',
-                  height: '100%',
-                  objectFit: isMobileViewport ? 'contain' : 'contain',
+                  height: isMobileViewport ? 'auto' : '100%',
+                  objectFit: 'contain',
                   objectPosition: 'center',
                   display: 'block',
                   transform: isMobileViewport ? 'none' : 'scale(0.985)',
@@ -860,22 +863,22 @@ export default function Configure() {
               width: '100%',
               maxWidth: 'none',
               margin: 0,
-              aspectRatio: isMobileViewport ? '3 / 2' : 'auto',
+              aspectRatio: isMobileViewport ? 'auto' : 'auto',
               height: isMobileViewport ? 'auto' : 'calc(100vh - 292px)',
-              maxHeight: previewMediaMaxHeight,
-              flex: isMobileViewport ? '0 0 auto' : '1 1 auto',
+              maxHeight: isMobileViewport ? 'none' : previewMediaMaxHeight,
+              flex: isMobileViewport ? 'none' : '1 1 auto',
               minHeight: 0,
-              overflow: 'hidden',
+              overflow: isMobileViewport ? 'visible' : 'hidden',
             }}>
               <img
                 src="/b9-reference.png"
                 alt="Audi B9 Steering Wheel customization options"
                 style={{
-                  position: 'absolute',
-                  inset: 0,
+                  position: isMobileViewport ? 'relative' : 'absolute',
+                  inset: isMobileViewport ? 'auto' : 0,
                   width: '100%',
-                  height: '100%',
-                  objectFit: isMobileViewport ? 'contain' : 'contain',
+                  height: isMobileViewport ? 'auto' : '100%',
+                  objectFit: 'contain',
                   objectPosition: 'center',
                   display: 'block',
                   transform: isMobileViewport ? 'none' : 'scale(0.985)',
@@ -889,22 +892,22 @@ export default function Configure() {
               width: '100%',
               maxWidth: 'none',
               margin: 0,
-              aspectRatio: isMobileViewport ? '3 / 2' : 'auto',
+              aspectRatio: isMobileViewport ? 'auto' : 'auto',
               height: isMobileViewport ? 'auto' : 'calc(100vh - 292px)',
-              maxHeight: previewMediaMaxHeight,
-              flex: isMobileViewport ? '0 0 auto' : '1 1 auto',
+              maxHeight: isMobileViewport ? 'none' : previewMediaMaxHeight,
+              flex: isMobileViewport ? 'none' : '1 1 auto',
               minHeight: 0,
-              overflow: 'hidden',
+              overflow: isMobileViewport ? 'visible' : 'hidden',
             }}>
               <img
                 src="/r8-reference.png"
                 alt="Audi R8 Steering Wheel customization options"
                 style={{
-                  position: 'absolute',
-                  inset: 0,
+                  position: isMobileViewport ? 'relative' : 'absolute',
+                  inset: isMobileViewport ? 'auto' : 0,
                   width: '100%',
-                  height: '100%',
-                  objectFit: isMobileViewport ? 'contain' : 'contain',
+                  height: isMobileViewport ? 'auto' : '100%',
+                  objectFit: 'contain',
                   objectPosition: 'center',
                   display: 'block',
                   transform: isMobileViewport ? 'none' : 'scale(0.985)',
@@ -1315,74 +1318,6 @@ export default function Configure() {
 
         </div>
       </div>
-
-      {/* Sticky mobile build total — tap to jump to final review */}
-      {isMobileViewport && !['vehicle', 'review'].includes(activeStep) && !showReview && (
-        <button
-          type="button"
-          onClick={() => scrollToStep('review')}
-          aria-label={`Build total $${price.toFixed(2)}. Jump to review.`}
-          style={{
-            position: 'fixed',
-            left: '50%',
-            bottom: 'calc(14px + env(safe-area-inset-bottom, 0px))',
-            transform: 'translateX(-50%)',
-            zIndex: 1200,
-            width: 'calc(100% - 28px)',
-            maxWidth: 560,
-            minHeight: 58,
-            padding: '9px 14px 9px 16px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            gap: 12,
-            border: '1px solid rgba(232,184,0,.72)',
-            background: 'rgba(8,8,8,.94)',
-            backdropFilter: 'blur(14px)',
-            boxShadow: '0 10px 36px rgba(0,0,0,.55), 0 0 0 1px rgba(232,184,0,.05) inset',
-            color: '#fff',
-            cursor: 'pointer',
-          }}
-        >
-          <span style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', minWidth: 0 }}>
-            <span style={{
-              fontFamily: 'Orbitron, monospace',
-              fontSize: 7,
-              fontWeight: 800,
-              letterSpacing: 1.8,
-              color: 'var(--y)',
-              marginBottom: 2,
-            }}>
-              BUILD TOTAL
-            </span>
-            <span style={{
-              fontFamily: '"Barlow Condensed", sans-serif',
-              fontSize: 28,
-              fontWeight: 900,
-              lineHeight: .95,
-              letterSpacing: .3,
-              whiteSpace: 'nowrap',
-            }}>
-              ${price.toFixed(2)}
-            </span>
-          </span>
-
-          <span style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 8,
-            color: 'var(--y)',
-            fontFamily: 'Orbitron, monospace',
-            fontSize: 7,
-            fontWeight: 800,
-            letterSpacing: 1.2,
-            whiteSpace: 'nowrap',
-          }}>
-            REVIEW BUILD
-            <span aria-hidden="true" style={{ fontSize: 14 }}>↓</span>
-          </span>
-        </button>
-      )}
 
       {/* Review overlay */}
       {showReview && (
