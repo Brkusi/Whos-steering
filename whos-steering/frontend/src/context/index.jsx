@@ -4,6 +4,8 @@ import { apiFetch } from '../lib/api';
 // ── CART ─────────────────────────────────────────────────────────────────────
 const CartCtx = createContext(null);
 export function CartProvider({ children }) {
+  const [cartOpen, setCartOpen] = useState(false);
+
   const [items, setItems] = useState(() => {
     try { return JSON.parse(sessionStorage.getItem('ws_cart') || '[]'); } catch { return []; }
   });
@@ -25,7 +27,16 @@ export function CartProvider({ children }) {
   const total = items.reduce((s, i) => s + i.price, 0);
 
   return (
-    <CartCtx.Provider value={{ items, addItem, removeItem, clearCart, total, count: items.length }}>
+    <CartCtx.Provider value={{
+      items,
+      addItem,
+      removeItem,
+      clearCart,
+      total,
+      count: items.length,
+      cartOpen,
+      setCartOpen,
+    }}>
       {children}
     </CartCtx.Provider>
   );

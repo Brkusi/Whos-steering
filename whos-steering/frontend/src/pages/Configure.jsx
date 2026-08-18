@@ -409,7 +409,7 @@ function ConfigProgress({ activeStep, onStep }) {
 export default function Configure() {
   const [params] = useSearchParams();
   const nav = useNavigate();
-  const { addItem } = useCart();
+  const { addItem, cartOpen } = useCart();
   const [rules, setRules] = useState({});
   const [toast, setToast] = useState('');
   const [showReview, setShowReview] = useState(false);
@@ -1321,7 +1321,7 @@ export default function Configure() {
       </div>
 
       {/* Floating mobile build total */}
-      {isMobileViewport && activeStep !== 'review' && !showReview && (
+      {isMobileViewport && activeStep !== 'review' && !showReview && !cartOpen && (
         <button
           type="button"
           onClick={() => scrollToStep('review')}

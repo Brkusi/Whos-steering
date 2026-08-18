@@ -6,9 +6,8 @@ import CartDrawer from './CartDrawer';
 import AnnouncementBar from './AnnouncementBar';
 
 export default function Nav() {
-  const { count } = useCart();
+  const { count, cartOpen, setCartOpen } = useCart();
   const { user } = useAuth();
-  const [cartOpen, setCartOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const nav = useNavigate();
 
@@ -22,7 +21,7 @@ export default function Nav() {
     <>
       <AnnouncementBar />
       <nav style={{
-        position: 'sticky', top: 32, left: 0, right: 0, height: 88,
+        position: 'fixed', top: 32, left: 0, right: 0, height: 88,
         background: 'rgba(5,5,5,0.97)', backdropFilter: 'blur(16px)',
         borderBottom: '1px solid var(--b)',
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
