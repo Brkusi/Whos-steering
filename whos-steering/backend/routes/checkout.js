@@ -57,6 +57,99 @@ function validateRequiredColors(cfg) {
   return missing;
 }
 
+
+// GET /api/checkout/verify-payment
+// Used by the return/confirmation page. Stripe is the source of truth:
+// the UI must never show ORDER PLACED until the PaymentIntent is succeeded.
+router.get('/verify-payment', async (req, res) => {
+  const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+  const { orderId, paymentIntent } = req.query;
+
+  if (!orderId || !paymentIntent) {
+    return res.status(400).json({
+      error: 'Missing orderId or paymentIntent.',
+    });
+  }
+
+  try {
+    const pi = await stripe.paymentIntents.retrieve(paymentIntent);
+
+    if (pi.metadata?.orderId !== orderId) {
+      return res.status(403).json({
+        error: 'Payment does not match this order.',
+      });
+    }
+
+    const client = await pool.connect();
+
+    try {
+      await client.query('BEGIN');
+
+      await client.query(
+        `UPDATE payments
+         SET status = $1,
+             stripe_charge_id = COALESCE($2, stripe_charge_id),
+             updated_at = NOW()
+         WHERE order_id = $3
+           AND stripe_payment_intent = $4`,
+        [pi.status, pi.latest_charge || null, orderId, pi.id]
+      );
+
+      // Only a Stripe "succeeded" PaymentIntent can promote the order to paid.
+      if (pi.status === 'succeeded') {
+        const { rows: changed } = await client.query(
+          `UPDATE orders
+           SET status = 'paid', updated_at = NOW()
+           WHERE id = $1
+             AND status IN ('pending', 'payment_processing')
+           RETURNING id`,
+          [orderId]
+        );
+
+        if (changed.length) {
+          await client.query(
+            `INSERT INTO order_status_history
+              (order_id, from_status, to_status, note)
+             VALUES ($1, 'pending', 'paid', 'Payment verified with Stripe')`,
+            [orderId]
+          );
+        }
+      }
+
+      const { rows: orderRows } = await client.query(
+        `SELECT id, status, total
+         FROM orders
+         WHERE id = $1`,
+        [orderId]
+      );
+
+      await client.query('COMMIT');
+
+      if (!orderRows.length) {
+        return res.status(404).json({ error: 'Order not found.' });
+      }
+
+      res.json({
+        orderId,
+        paymentStatus: pi.status,
+        orderStatus: orderRows[0].status,
+        total: orderRows[0].total,
+        paid: pi.status === 'succeeded',
+      });
+    } catch (err) {
+      await client.query('ROLLBACK');
+      throw err;
+    } finally {
+      client.release();
+    }
+  } catch (err) {
+    console.error('Payment verification error:', err);
+    res.status(500).json({
+      error: 'Unable to verify payment status.',
+    });
+  }
+});
+
 // POST /api/checkout/create-intent
 router.post('/create-intent', async (req, res) => {
   const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);

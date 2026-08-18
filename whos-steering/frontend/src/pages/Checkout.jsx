@@ -287,7 +287,10 @@ export default function Checkout() {
           <div style={{ marginTop: 20, padding: '12px 0', borderTop: '1px solid var(--b)', fontSize: 11, color: 'var(--t)', lineHeight: 1.9 }}>
             🛡 6 Month Warranty<br />
             ⏱ 3–4 Week Build Time<br />
-            📦 Made to Order — ships when complete
+            📦 Made to Order — ships when complete<br />
+            <span style={{ color: 'var(--y)' }}>↩ Cancellation:</span>{' '}
+            Orders may be canceled before order processing / the build begins.
+            Once processing starts, cancellation is no longer available.
           </div>
         </div>
       </div>

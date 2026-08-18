@@ -33,18 +33,34 @@ app.post('/api/checkout/webhook',
     try {
       if (event.type === 'payment_intent.succeeded') {
         await pool.query(
-          `UPDATE payments SET status = 'succeeded', stripe_charge_id = $1 WHERE stripe_payment_intent = $2`,
+          `UPDATE payments
+           SET status = 'succeeded',
+               stripe_charge_id = $1,
+               updated_at = NOW()
+           WHERE stripe_payment_intent = $2`,
           [pi.latest_charge, pi.id]
         );
-        await pool.query(
-          `UPDATE orders SET status = 'paid', updated_at = NOW() WHERE id = $1 AND status = 'pending'`,
+
+        const { rows: changed } = await pool.query(
+          `UPDATE orders
+           SET status = 'paid', updated_at = NOW()
+           WHERE id = $1
+             AND status IN ('pending','payment_processing')
+           RETURNING id`,
           [pi.metadata.orderId]
         );
-        await pool.query(
-          `INSERT INTO order_status_history (order_id, from_status, to_status, note)
-           VALUES ($1,'pending','paid','Payment confirmed via Stripe webhook')`,
-          [pi.metadata.orderId]
-        );
+
+        // Insert history only if this webhook actually changed the status.
+        // That avoids duplicates if the confirmation verification endpoint
+        // already marked the same succeeded payment as paid.
+        if (changed.length) {
+          await pool.query(
+            `INSERT INTO order_status_history
+              (order_id, from_status, to_status, note)
+             VALUES ($1,'pending','paid','Payment confirmed via Stripe webhook')`,
+            [pi.metadata.orderId]
+          );
+        }
       }
 
       if (event.type === 'payment_intent.payment_failed') {
@@ -56,18 +72,42 @@ app.post('/api/checkout/webhook',
 
       if (event.type === 'charge.refunded') {
         const charge = event.data.object;
-        await pool.query(
-          `UPDATE payments SET refunded_amount = $1 WHERE stripe_charge_id = $2`,
+
+        const { rows: paymentRows } = await pool.query(
+          `UPDATE payments
+           SET refunded_amount = $1,
+               refund_reason = COALESCE(refund_reason, 'requested_by_customer'),
+               updated_at = NOW()
+           WHERE stripe_charge_id = $2
+           RETURNING order_id`,
           [(charge.amount_refunded / 100).toFixed(2), charge.id]
         );
-        await pool.query(
-          `UPDATE orders SET status = 'refunded', updated_at = NOW()
-           WHERE id = (SELECT order_id FROM payments WHERE stripe_charge_id = $1)`,
-          [charge.id]
-        );
+
+        if (paymentRows.length) {
+          const orderId = paymentRows[0].order_id;
+
+          const { rows: orderRows } = await pool.query(
+            `UPDATE orders
+             SET status = 'refunded', updated_at = NOW()
+             WHERE id = $1
+               AND status IN ('paid','cancelled')
+             RETURNING id, status`,
+            [orderId]
+          );
+
+          if (orderRows.length) {
+            await pool.query(
+              `INSERT INTO order_status_history
+                (order_id, from_status, to_status, note)
+               VALUES ($1,'cancelled','refunded','Stripe confirmed the refund')`,
+              [orderId]
+            );
+          }
+        }
       }
     } catch (err) {
       console.error('Webhook handler error:', err);
+      return res.status(500).json({ error: 'Webhook processing failed' });
     }
 
     res.json({ received: true });

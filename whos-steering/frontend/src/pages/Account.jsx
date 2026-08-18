@@ -18,7 +18,7 @@ const STATUS_LABEL = {
   quality_check: 'Quality Check',
   shipped: 'Shipped',
   delivered: 'Delivered',
-  cancelled: 'Cancelled',
+  cancelled: 'Cancelled / Refund Started',
   refunded: 'Refunded',
 };
 
@@ -61,19 +61,59 @@ export default function Account() {
   const [ordersLoading, setOrdersLoading] = useState(true);
   const [expanded, setExpanded] = useState(null);
   const [lightbox, setLightbox] = useState(null);
+  const [cancelingOrder, setCancelingOrder] = useState(null);
+  const [cancelMessage, setCancelMessage] = useState('');
 
   useEffect(() => {
     if (!authLoading && !user) nav('/login');
   }, [user, authLoading, nav]);
 
-  useEffect(() => {
-    if (user) {
-      apiFetch('/api/orders/my')
-        .then(setOrders)
-        .catch(console.error)
-        .finally(() => setOrdersLoading(false));
+  const loadOrders = async () => {
+    if (!user) return;
+    try {
+      const result = await apiFetch('/api/orders/my');
+      setOrders(result);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setOrdersLoading(false);
     }
-  }, [user]);
+  };
+
+  useEffect(() => {
+    loadOrders();
+  }, [user]); // eslint-disable-line
+
+  const cancelOrder = async (order) => {
+    const confirmed = window.confirm(
+      `Cancel order #${order.id.slice(0, 8).toUpperCase()}?\n\n` +
+      'A refund will be initiated to the original payment method. ' +
+      'This action is only available before order processing begins.'
+    );
+
+    if (!confirmed) return;
+
+    setCancelingOrder(order.id);
+    setCancelMessage('');
+
+    try {
+      const result = await apiFetch(`/api/orders/${order.id}/cancel`, {
+        method: 'POST',
+        body: JSON.stringify({}),
+      });
+
+      setCancelMessage(
+        result.message ||
+        'Order canceled. Your refund has been initiated.'
+      );
+
+      await loadOrders();
+    } catch (err) {
+      setCancelMessage(err.message || 'Unable to cancel this order.');
+    } finally {
+      setCancelingOrder(null);
+    }
+  };
 
   if (authLoading) return (
     <div style={{ paddingTop: 88, display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', color: 'var(--y)', fontFamily: 'Orbitron, monospace', letterSpacing: 4 }}>LOADING...</div>
@@ -101,7 +141,38 @@ export default function Account() {
 
       {/* Orders */}
       <div style={{ maxWidth: 960, margin: '0 auto', padding: '40px 24px' }}>
-        <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 32, marginBottom: 24 }}>MY ORDERS</div>
+        <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 32, marginBottom: 16 }}>MY ORDERS</div>
+
+        <div style={{
+          padding: '12px 14px',
+          marginBottom: 20,
+          border: '1px solid rgba(232,184,0,.35)',
+          background: 'rgba(232,184,0,.05)',
+          color: 'var(--t)',
+          fontSize: 12,
+          lineHeight: 1.65,
+        }}>
+          <strong style={{ color: 'var(--y)', letterSpacing: 1 }}>CANCELLATION WINDOW:</strong>{' '}
+          You may cancel an order while its status is <strong style={{ color: 'var(--w)' }}>Payment Confirmed</strong>.
+          Once order processing / the build begins, the order can no longer be canceled.
+        </div>
+
+        {cancelMessage && (
+          <div style={{
+            padding: '11px 14px',
+            marginBottom: 16,
+            border: `1px solid ${cancelMessage.toLowerCase().includes('unable') || cancelMessage.toLowerCase().includes('cannot') ? '#CC3300' : '#3DB85A'}`,
+            background: cancelMessage.toLowerCase().includes('unable') || cancelMessage.toLowerCase().includes('cannot')
+              ? 'rgba(204,51,0,.08)'
+              : 'rgba(61,184,90,.08)',
+            color: cancelMessage.toLowerCase().includes('unable') || cancelMessage.toLowerCase().includes('cannot')
+              ? '#FF6650'
+              : '#5DCC73',
+            fontSize: 12,
+          }}>
+            {cancelMessage}
+          </div>
+        )}
 
         {ordersLoading ? (
           <div style={{ color: 'var(--t)', fontFamily: 'Orbitron, monospace', letterSpacing: 3, fontSize: 11 }}>LOADING ORDERS...</div>
@@ -202,6 +273,35 @@ export default function Account() {
                           <div>{order.shipping_city}, {order.shipping_state} {order.shipping_zip}</div>
                         </div>
                       )}
+
+                      {/* Customer cancellation control */}
+                      <div style={{ marginTop: 18, borderTop: '1px solid var(--b)', paddingTop: 16 }}>
+                        {order.status === 'paid' ? (
+                          <div style={{ display: 'flex', justifyContent: 'space-between', gap: 16, alignItems: 'center', flexWrap: 'wrap' }}>
+                            <div style={{ maxWidth: 560, color: 'var(--t)', fontSize: 11, lineHeight: 1.6 }}>
+                              Need to cancel? You can cancel now because processing has not started.
+                              A refund will be initiated to your original payment method.
+                            </div>
+                            <button
+                              type="button"
+                              className="btn-outline sm"
+                              disabled={cancelingOrder === order.id}
+                              onClick={() => cancelOrder(order)}
+                              style={{
+                                borderColor: '#CC3300',
+                                color: '#FF6650',
+                                opacity: cancelingOrder === order.id ? .55 : 1,
+                              }}
+                            >
+                              {cancelingOrder === order.id ? 'CANCELING...' : 'CANCEL ORDER'}
+                            </button>
+                          </div>
+                        ) : ['in_build', 'quality_check', 'shipped', 'delivered'].includes(order.status) ? (
+                          <div style={{ color: '#E8B800', fontSize: 11, lineHeight: 1.6, letterSpacing: .4 }}>
+                            CANCELLATION CLOSED — order processing has started.
+                          </div>
+                        ) : null}
+                      </div>
                     </div>
                   )}
                 </div>
