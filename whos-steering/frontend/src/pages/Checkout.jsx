@@ -6,7 +6,12 @@ import { useCart } from '../context';
 import { useAuth } from '../context';
 import { apiFetch } from '../lib/api';
 
-const STRIPE_PK = process.env.REACT_APP_STRIPE_PK;
+// Preferred env name matches frontend/.env.example.
+// Legacy REACT_APP_STRIPE_PK is kept as a fallback so older deployments still work.
+const STRIPE_PK =
+  process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY ||
+  process.env.REACT_APP_STRIPE_PK;
+
 const stripePromise = STRIPE_PK ? loadStripe(STRIPE_PK) : null;
 
 // ── Payment form (lives inside <Elements>) ────────────────────────────────────
@@ -157,7 +162,7 @@ export default function Checkout() {
 
   if (!items.length && !clientSecret) {
     return (
-      <div style={{ paddingTop: 120, minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--d)' }}>
+      <div style={{ paddingTop: 0, minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--d)' }}>
         <div style={{ textAlign: 'center', padding: 40 }}>
           <div style={{ fontSize: 48, opacity: .2, marginBottom: 16 }}>🛒</div>
           <div style={{ color: 'var(--t)', letterSpacing: 2, textTransform: 'uppercase', fontSize: 13, marginBottom: 20 }}>Your cart is empty</div>
@@ -180,7 +185,7 @@ export default function Checkout() {
   };
 
   return (
-    <div style={{ paddingTop: 120, minHeight: '100vh', background: 'var(--d)' }}>
+    <div style={{ paddingTop: 0, minHeight: '100vh', background: 'var(--d)' }}>
       <div style={{
         maxWidth: 1100, margin: '0 auto', padding: '40px 24px',
         display: 'grid',
@@ -242,7 +247,7 @@ export default function Checkout() {
               <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 28, marginBottom: 24 }}>PAYMENT</div>
               {!stripePromise ? (
                 <div style={{ padding: '14px 16px', background: 'rgba(204,51,0,.1)', border: '1px solid #CC3300', color: '#FF5533', fontSize: 13, lineHeight: 1.6 }}>
-                  Payment form couldn't load: the Stripe publishable key (REACT_APP_STRIPE_PK) is missing from this build. This needs to be set as an environment variable in your Netlify site settings and the site redeployed — it must be set at build time, not just in a local .env file.
+                  Payment form couldn't load because the Stripe publishable key is missing from this build. Set REACT_APP_STRIPE_PUBLISHABLE_KEY in your Netlify environment variables, then redeploy the site. (REACT_APP_STRIPE_PK is still accepted as a legacy fallback.)
                 </div>
               ) : (
                 <Elements stripe={stripePromise} options={{ clientSecret, appearance: stripeAppearance }}>
