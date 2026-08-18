@@ -778,16 +778,17 @@ export default function Configure() {
       <div style={{
         display: isMobileViewport ? 'block' : 'grid',
         gridTemplateColumns: isMobileViewport ? undefined : 'minmax(0, 0.98fr) minmax(500px, 1.02fr)',
-        minHeight: isMobileViewport ? 0 : 'calc(100vh - 120px)',
+        minHeight: isMobileViewport ? 0 : 'calc(100dvh - 120px)',
+        height: isMobileViewport ? 'auto' : 'calc(100dvh - 120px)',
         alignItems: isMobileViewport ? undefined : 'stretch',
         alignContent: 'start',
       }}>
 
         {/* LEFT: Preview */}
         <div style={{
-          position: isMobileViewport ? 'relative' : 'sticky',
-          top: isMobileViewport ? 0 : 120,
-          height: isMobileViewport ? 'auto' : 'calc(100vh - 120px)',
+          position: 'relative',
+          top: 0,
+          height: isMobileViewport ? 'auto' : '100%',
           minHeight: 0,
           background: '#111',
           display: isMobileViewport ? 'block' : 'flex',
@@ -942,6 +943,8 @@ export default function Configure() {
           order: 2,
           borderTop: isMobileViewport ? '1px solid var(--b)' : 'none',
           minHeight: 0,
+          height: isMobileViewport ? 'auto' : '100%',
+          overscrollBehavior: isMobileViewport ? 'auto' : 'contain',
         }}>
 
           {/* Sticky heading + progress */}
