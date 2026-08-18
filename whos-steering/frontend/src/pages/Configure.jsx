@@ -777,7 +777,7 @@ export default function Configure() {
     }}>
       <div style={{
         display: 'grid',
-        gridTemplateColumns: isMobileViewport ? '1fr' : 'minmax(0, 1.22fr) minmax(440px, 0.78fr)',
+        gridTemplateColumns: isMobileViewport ? '1fr' : 'minmax(0, 0.98fr) minmax(500px, 1.02fr)',
         minHeight: isMobileViewport ? 'auto' : 'calc(100vh - 120px)',
         alignItems: isMobileViewport ? 'start' : 'stretch',
         alignContent: 'start',
@@ -791,8 +791,8 @@ export default function Configure() {
           minHeight: 0,
           background: '#111',
           display: 'flex', flexDirection: 'column', alignItems: 'stretch', justifyContent: 'flex-start',
-          gap: isMobileViewport ? 0 : 8,
-          padding: isMobileViewport ? '0' : '10px 8px 12px',
+          gap: isMobileViewport ? 0 : 10,
+          padding: isMobileViewport ? '0' : '14px 12px 14px',
           borderRight: isMobileViewport ? 'none' : '1px solid var(--b)', overflow: 'hidden',
           order: 1,
         }}>
@@ -803,7 +803,7 @@ export default function Configure() {
               maxWidth: 'none',
               margin: 0,
               aspectRatio: isMobileViewport ? '4 / 3' : 'auto',
-              height: isMobileViewport ? 'auto' : 'calc(100vh - 255px)',
+              height: isMobileViewport ? 'auto' : 'calc(100vh - 292px)',
               maxHeight: previewMediaMaxHeight,
               flex: isMobileViewport ? '0 0 auto' : '1 1 auto',
               minHeight: 0,
@@ -820,7 +820,7 @@ export default function Configure() {
                   objectFit: isMobileViewport ? 'contain' : 'contain',
                   objectPosition: 'center',
                   display: 'block',
-                  transform: isMobileViewport ? 'none' : 'scale(1.08)',
+                  transform: isMobileViewport ? 'none' : 'scale(0.985)',
                   transformOrigin: 'center',
                 }}
               />
@@ -832,7 +832,7 @@ export default function Configure() {
               maxWidth: 'none',
               margin: 0,
               aspectRatio: isMobileViewport ? '4 / 3' : 'auto',
-              height: isMobileViewport ? 'auto' : 'calc(100vh - 255px)',
+              height: isMobileViewport ? 'auto' : 'calc(100vh - 292px)',
               maxHeight: previewMediaMaxHeight,
               flex: isMobileViewport ? '0 0 auto' : '1 1 auto',
               minHeight: 0,
@@ -849,7 +849,7 @@ export default function Configure() {
                   objectFit: isMobileViewport ? 'contain' : 'contain',
                   objectPosition: 'center',
                   display: 'block',
-                  transform: isMobileViewport ? 'none' : 'scale(1.08)',
+                  transform: isMobileViewport ? 'none' : 'scale(0.985)',
                   transformOrigin: 'center',
                 }}
               />
@@ -861,7 +861,7 @@ export default function Configure() {
               maxWidth: 'none',
               margin: 0,
               aspectRatio: isMobileViewport ? '3 / 2' : 'auto',
-              height: isMobileViewport ? 'auto' : 'calc(100vh - 255px)',
+              height: isMobileViewport ? 'auto' : 'calc(100vh - 292px)',
               maxHeight: previewMediaMaxHeight,
               flex: isMobileViewport ? '0 0 auto' : '1 1 auto',
               minHeight: 0,
@@ -878,7 +878,7 @@ export default function Configure() {
                   objectFit: isMobileViewport ? 'contain' : 'contain',
                   objectPosition: 'center',
                   display: 'block',
-                  transform: isMobileViewport ? 'none' : 'scale(1.08)',
+                  transform: isMobileViewport ? 'none' : 'scale(0.985)',
                   transformOrigin: 'center',
                 }}
               />
@@ -890,7 +890,7 @@ export default function Configure() {
               maxWidth: 'none',
               margin: 0,
               aspectRatio: isMobileViewport ? '3 / 2' : 'auto',
-              height: isMobileViewport ? 'auto' : 'calc(100vh - 255px)',
+              height: isMobileViewport ? 'auto' : 'calc(100vh - 292px)',
               maxHeight: previewMediaMaxHeight,
               flex: isMobileViewport ? '0 0 auto' : '1 1 auto',
               minHeight: 0,
@@ -907,7 +907,7 @@ export default function Configure() {
                   objectFit: isMobileViewport ? 'contain' : 'contain',
                   objectPosition: 'center',
                   display: 'block',
-                  transform: isMobileViewport ? 'none' : 'scale(1.08)',
+                  transform: isMobileViewport ? 'none' : 'scale(0.985)',
                   transformOrigin: 'center',
                 }}
               />
@@ -917,9 +917,9 @@ export default function Configure() {
           )}
           {!isMobileViewport && (
             <div style={{ paddingTop: 8, borderTop: '1px solid var(--b)', width: '100%', textAlign: 'center', flexShrink: 0 }}>
-              <div style={{ fontFamily: 'Orbitron, monospace', fontSize: 9, letterSpacing: 2.5, color: 'var(--t)', textTransform: 'uppercase' }}>Estimated Total</div>
+              <div style={{ fontFamily: 'Orbitron, monospace', fontSize: 12, letterSpacing: 3, color: 'var(--t)', textTransform: 'uppercase', marginBottom: 2 }}>Estimated Total</div>
               <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontSize: 'clamp(54px,5vw,72px)', color: 'var(--y)', lineHeight: .95, letterSpacing: -1 }}>${price.toFixed(2)}</div>
-              <div style={{ fontSize: 10, color: 'var(--t)', letterSpacing: 1 }}>Final price confirmed at checkout</div>
+              <div style={{ fontSize: 13, color: 'var(--t)', letterSpacing: 1.15, marginTop: 2 }}>Final price confirmed at checkout</div>
             </div>
           )}
           {!isMobileViewport && (
