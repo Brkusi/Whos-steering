@@ -126,19 +126,19 @@ export const TRIS = {
 
 export const DEFAULT_CONFIG = {
   brand: 'BMW', vehicleYear: '', vehicleModel: '',
-  wheelStyle: 'Standard', paddleShifters: 'Standard',
-  topBottomMat: 'Classic Leather', topBottomCol: null, topBottomCarbonCol: null,
+  wheelStyle: 'Standard', paddleShifters: 'Standard', paddleLength: 'Short',
+  topBottomMat: 'Classic Leather', topBottomCol: null, topBottomCarbonCol: null, topBottomCustomColor: '',
   wheelStyleType: 'B9',
   startStopButtons: false,
   ledDisplay: false,
-  sideMat: 'Alcantara', sideCol: null, sideCarbonCol: null,
+  sideMat: 'Alcantara', sideCol: null, sideCarbonCol: null, sideCustomColor: '',
   stripeConceptId: 'C-1', stripeCustomColor: '',
   stitchColor: null, stitchCustomColor: '',
   airbagCompat: false, airbagUpgrade: false, heated: false, laneAssist: false,
   airbagMat: null, airbagCol: null, airbagCustomColor: '',
   airbagStitchColor: null, airbagStitchCustomColor: '',
   audiLogoCol: null, audiLogoCustomColor: '',
-  audiBadge: 'RS', plasticTrimCol: null, plasticTrimCustomColor: '', innerTrimCol: null, innerTrimMatchCarbon: false,
+  audiBadge: 'RS', plasticTrimCol: null, plasticTrimCustomColor: '', innerTrimCol: null, innerTrimCustomColor: '', innerTrimMatchCarbon: false,
   photoUrl: null,
   customNotes: '',
 };

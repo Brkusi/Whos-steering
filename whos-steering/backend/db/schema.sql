@@ -72,6 +72,7 @@ CREATE TABLE IF NOT EXISTS wheel_configurations (
   inner_trim_col  TEXT,                              -- AUDI only
   photo_url       TEXT,                              -- uploaded wheel photo
   calculated_price NUMERIC(10,2) NOT NULL,
+  config_json     JSONB NOT NULL DEFAULT '{}'::jsonb, -- full customer configurator snapshot
   created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 

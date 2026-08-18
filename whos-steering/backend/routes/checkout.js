@@ -1,6 +1,62 @@
 const router = require('express').Router();
 const pool   = require('../db/pool');
 
+const hasText = (value) => typeof value === 'string' && value.trim().length > 0;
+
+function validateRequiredColors(cfg) {
+  // Presets and legacy product-only cart items do not use the full configurator.
+  const isConfiguratorBuild = !cfg.isPreset && (
+    cfg.vehicleYear !== undefined ||
+    cfg.vehicleModel !== undefined ||
+    cfg.topBottomMat !== undefined ||
+    cfg.wheelStyleType !== undefined
+  );
+
+  if (!isConfiguratorBuild) return [];
+
+  const missing = [];
+  const topIsCarbon = hasText(cfg.topBottomMat) && cfg.topBottomMat.toLowerCase().includes('carbon');
+  const sideIsCarbon = hasText(cfg.sideMat) && cfg.sideMat.toLowerCase().includes('carbon');
+
+  if (!(topIsCarbon
+    ? (cfg.topBottomCarbonCol || hasText(cfg.topBottomCustomColor))
+    : (cfg.topBottomCol || hasText(cfg.topBottomCustomColor)))) {
+    missing.push('Top & Bottom Color');
+  }
+
+  if (!(sideIsCarbon
+    ? (cfg.sideCarbonCol || hasText(cfg.sideCustomColor))
+    : (cfg.sideCol || hasText(cfg.sideCustomColor)))) {
+    missing.push('Side Grip Color');
+  }
+
+  if (!(cfg.stitchColor || hasText(cfg.stitchCustomColor))) {
+    missing.push('Stitch Color');
+  }
+
+  if (cfg.brand === 'AUDI') {
+    if (!(cfg.plasticTrimCol || hasText(cfg.plasticTrimCustomColor))) {
+      missing.push('Plastic Trim Color');
+    }
+
+    if (!cfg.innerTrimMatchCarbon && !(cfg.innerTrimCol || hasText(cfg.innerTrimCustomColor))) {
+      missing.push('Inner Trim Color');
+    }
+  }
+
+  if (cfg.airbagCompat === true) {
+    if (!cfg.airbagMat) missing.push('Airbag Material');
+    if (!(cfg.airbagCol || hasText(cfg.airbagCustomColor))) missing.push('Airbag Color');
+    if (!(cfg.airbagStitchColor || hasText(cfg.airbagStitchCustomColor))) missing.push('Airbag Stitch Color');
+
+    if (cfg.brand === 'AUDI' && !(cfg.audiLogoCol || hasText(cfg.audiLogoCustomColor))) {
+      missing.push('Audi Logo Color');
+    }
+  }
+
+  return missing;
+}
+
 // POST /api/checkout/create-intent
 router.post('/create-intent', async (req, res) => {
   const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
@@ -8,6 +64,16 @@ router.post('/create-intent', async (req, res) => {
 
   if (!customer?.email) {
     return res.status(400).json({ error: 'Missing customer email' });
+  }
+
+  for (const item of cartItems || []) {
+    const missingColors = validateRequiredColors(item.config || {});
+    if (missingColors.length) {
+      return res.status(400).json({
+        error: `Please choose all required color options: ${missingColors.join(', ')}`,
+        missingOptions: missingColors,
+      });
+    }
   }
 
   const client = await pool.connect();
@@ -50,8 +116,8 @@ router.post('/create-intent', async (req, res) => {
            top_bottom_mat, top_bottom_col, side_mat, side_col,
            stripe_mode, stripe_color, tri_key,
            airbag_compat, heated, lane_assist,
-           audi_badge, outer_trim_col, inner_trim_col, photo_url, calculated_price)
-         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20)
+           audi_badge, outer_trim_col, inner_trim_col, photo_url, calculated_price, config_json)
+         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21)
          RETURNING id`,
         [
           cfg.brand || 'BMW',
@@ -74,6 +140,7 @@ router.post('/create-intent', async (req, res) => {
           cfg.innerTrimMatchCarbon ? 'MATCH_CARBON' : (cfg.innerTrimCol || cfg.inner_trim_col || null),
           cfg.photoUrl || cfg.photo_url || null,
           (amountCents / 100).toFixed(2),
+          cfg,
         ]
       );
 

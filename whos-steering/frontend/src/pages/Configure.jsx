@@ -169,7 +169,7 @@ function CarbonColorGrid({ colors, selected, onSelect }) {
   );
 }
 
-function MatSection({ label, matKey, colKey, carbonColKey, customColKey, cfg, set, matsOverride, linkedMat }) {
+function MatSection({ label, matKey, colKey, carbonColKey, customColKey, cfg, set, matsOverride, linkedMat, colorError }) {
   const mat = cfg[matKey];
   const fullList = matsOverride || MATS;
 
@@ -204,24 +204,70 @@ function MatSection({ label, matKey, colKey, carbonColKey, customColKey, cfg, se
       {isCarbon ? (
         <>
           <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 4, color: 'var(--t)' }}>
-            {carbonLabel}
+            {carbonLabel} <span className="req">*</span>
           </div>
-          <CarbonColorGrid colors={carbonColors} selected={cfg[carbonColKey]} onSelect={v => set(carbonColKey, v)} />
+          <CarbonColorGrid
+            colors={carbonColors}
+            selected={cfg[carbonColKey]}
+            onSelect={v => { set(carbonColKey, v); set(customColKey, ''); }}
+          />
           {cType !== 'honeycomb' && (
-            <CustomColorInput label="Type Any Color:" value={cfg[customColKey]} onChange={v => set(customColKey, v)} />
+            <CustomColorInput
+              label="Type Any Color:"
+              value={cfg[customColKey]}
+              onChange={v => { set(customColKey, v); set(carbonColKey, null); }}
+            />
           )}
         </>
       ) : selectedMat?.col ? (
         <>
           <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 4, color: 'var(--t)' }}>
-            Color: {colorName(cfg[colKey]) || (cfg[customColKey] ? cfg[customColKey] : '—')}
+            Color <span className="req">*</span>: {cfg[customColKey] ? cfg[customColKey] : colorName(cfg[colKey])}
           </div>
           <ColorGrid colors={COLORS} selected={cfg[colKey]} onSelect={v => { set(colKey, v); set(customColKey, ''); }} />
           <CustomColorInput label="Type Any Color:" value={cfg[customColKey]} onChange={v => { set(customColKey, v); set(colKey, null); }} />
         </>
       ) : null}
+      {colorError && <div className="err-msg" style={{ marginTop: 8 }}>Please choose a color option.</div>}
     </Sect>
   );
+}
+
+
+function textValue(value) {
+  return typeof value === 'string' ? value.trim() : '';
+}
+
+function stitchColorName(hex) {
+  if (!hex) return '—';
+  return STITCH_COLORS.find(c => c.h === hex)?.n || colorName(hex) || hex;
+}
+
+function carbonColorName(material, hex) {
+  if (!hex) return '—';
+  const list = material === 'Classic Carbon'
+    ? CLASSIC_CARBON_COLORS
+    : material === 'Forged Carbon'
+      ? FORGED_CARBON_COLORS
+      : HONEYCOMB_CARBON_COLORS;
+
+  return list.find(c => c.h === hex)?.n || hex;
+}
+
+function configuredMaterialColor(material, regularColor, carbonColor, customColor) {
+  const custom = textValue(customColor);
+  if (custom) return custom;
+  if (material && material.toLowerCase().includes('carbon')) {
+    return carbonColorName(material, carbonColor);
+  }
+  return regularColor ? colorName(regularColor) : '—';
+}
+
+function configuredColor(regularColor, customColor, palette = 'standard') {
+  const custom = textValue(customColor);
+  if (custom) return custom;
+  if (!regularColor) return '—';
+  return palette === 'stitch' ? stitchColorName(regularColor) : colorName(regularColor);
 }
 
 function Model3DPreview({ src, alt, height }) {
@@ -386,7 +432,42 @@ export default function Configure() {
     wheelStyleType: initBrand === 'BMW' ? 'G-Series' : 'B9',
   });
 
-  const set = useCallback((key, val) => setCfg(prev => ({ ...prev, [key]: val })), []);
+  const set = useCallback((key, val) => {
+    setCfg(prev => ({ ...prev, [key]: val }));
+
+    const errorMap = {
+      topBottomCol: 'topBottomColor',
+      topBottomCarbonCol: 'topBottomColor',
+      topBottomCustomColor: 'topBottomColor',
+
+      sideCol: 'sideColor',
+      sideCarbonCol: 'sideColor',
+      sideCustomColor: 'sideColor',
+
+      stitchColor: 'stitchColor',
+      stitchCustomColor: 'stitchColor',
+
+      plasticTrimCol: 'plasticTrimColor',
+      plasticTrimCustomColor: 'plasticTrimColor',
+      innerTrimCol: 'innerTrimColor',
+      innerTrimCustomColor: 'innerTrimColor',
+      innerTrimMatchCarbon: 'innerTrimColor',
+
+      airbagMat: 'airbagMaterial',
+      airbagCol: 'airbagColor',
+      airbagCustomColor: 'airbagColor',
+      airbagStitchColor: 'airbagStitchColor',
+      airbagStitchCustomColor: 'airbagStitchColor',
+
+      audiLogoCol: 'audiLogoColor',
+      audiLogoCustomColor: 'audiLogoColor',
+    };
+
+    const errorKey = errorMap[key];
+    if (errorKey) {
+      setErrors(prev => ({ ...prev, [errorKey]: false }));
+    }
+  }, []);
 
   useEffect(() => {
     apiFetch('/api/products/pricing/rules').then(setRules).catch(console.error);
@@ -455,6 +536,43 @@ export default function Configure() {
     setErrors({});
   };
 
+  const setAirbagCover = (enabled) => {
+    setCfg(prev => {
+      if (enabled) {
+        return {
+          ...prev,
+          airbagCompat: true,
+        };
+      }
+
+      // Airbag-dependent options must not remain active when the cover is disabled.
+      return {
+        ...prev,
+        airbagCompat: false,
+        airbagUpgrade: false,
+
+        airbagMat: null,
+        airbagCol: null,
+        airbagCustomColor: '',
+        airbagStitchColor: null,
+        airbagStitchCustomColor: '',
+
+        audiLogoCol: null,
+        audiLogoCustomColor: '',
+      };
+    });
+
+    if (!enabled) {
+      setErrors(prev => ({
+        ...prev,
+        airbagMaterial: false,
+        airbagColor: false,
+        airbagStitchColor: false,
+        audiLogoColor: false,
+      }));
+    }
+  };
+
   const handlePhoto = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -476,11 +594,68 @@ export default function Configure() {
 
   const validate = () => {
     const e = {};
-    if (!cfg.vehicleYear) e.year = true;
-    if (!cfg.vehicleModel) e.model = true;
-    if (!photo) e.photo = true;
+
+    if (!textValue(cfg.vehicleYear)) e.year = true;
+    if (!textValue(cfg.vehicleModel)) e.model = true;
+    if (!photo && !cfg.photoUrl) e.photo = true;
+
+    const topMaterial = TOP_BOTTOM_MATS.find(m => m.n === cfg.topBottomMat);
+    const topColorSelected = topMaterial?.carbon
+      ? Boolean(cfg.topBottomCarbonCol || textValue(cfg.topBottomCustomColor))
+      : Boolean(cfg.topBottomCol || textValue(cfg.topBottomCustomColor));
+    if (!topColorSelected) e.topBottomColor = true;
+
+    const sideMaterial = SIDE_MATS.find(m => m.n === cfg.sideMat);
+    const sideColorSelected = sideMaterial?.carbon
+      ? Boolean(cfg.sideCarbonCol || textValue(cfg.sideCustomColor))
+      : Boolean(cfg.sideCol || textValue(cfg.sideCustomColor));
+    if (!sideColorSelected) e.sideColor = true;
+
+    if (!cfg.stitchColor && !textValue(cfg.stitchCustomColor)) {
+      e.stitchColor = true;
+    }
+
+    if (cfg.brand === 'AUDI') {
+      if (!cfg.plasticTrimCol && !textValue(cfg.plasticTrimCustomColor)) {
+        e.plasticTrimColor = true;
+      }
+
+      if (!cfg.innerTrimMatchCarbon && !cfg.innerTrimCol && !textValue(cfg.innerTrimCustomColor)) {
+        e.innerTrimColor = true;
+      }
+    }
+
+    if (cfg.airbagCompat) {
+      if (!cfg.airbagMat) e.airbagMaterial = true;
+      if (!cfg.airbagCol && !textValue(cfg.airbagCustomColor)) e.airbagColor = true;
+      if (!cfg.airbagStitchColor && !textValue(cfg.airbagStitchCustomColor)) e.airbagStitchColor = true;
+
+      if (cfg.brand === 'AUDI' && !cfg.audiLogoCol && !textValue(cfg.audiLogoCustomColor)) {
+        e.audiLogoColor = true;
+      }
+    }
+
     setErrors(e);
-    return Object.keys(e).length === 0;
+
+    if (Object.keys(e).length > 0) {
+      const vehicleErrors = e.year || e.model || e.photo;
+      const styleErrors = e.stitchColor;
+      const materialErrors =
+        e.topBottomColor || e.sideColor ||
+        e.plasticTrimColor || e.innerTrimColor;
+      const detailErrors =
+        e.airbagMaterial || e.airbagColor || e.airbagStitchColor || e.audiLogoColor;
+
+      if (vehicleErrors) scrollToStep('vehicle');
+      else if (styleErrors) scrollToStep('style');
+      else if (materialErrors) scrollToStep('materials');
+      else if (detailErrors) scrollToStep('details');
+
+      showToast('PLEASE COMPLETE ALL REQUIRED OPTIONS');
+      return false;
+    }
+
+    return true;
   };
 
   const showToast = (msg) => { setToast(msg); setTimeout(() => setToast(''), 2400); };
@@ -488,27 +663,106 @@ export default function Configure() {
   const selectedStripeConcept = STRIPE_CONCEPTS.find(s => s.id === cfg.stripeConceptId) || STRIPE_CONCEPTS[0];
 
   const buildSummary = () => {
-    return [
-      ['Brand',            cfg.brand],
-      ['Vehicle',          `${cfg.vehicleYear} ${cfg.brand} ${cfg.vehicleModel}`],
-      ['Wheel Style Type',  cfg.wheelStyleType],
-      ['Wheel Style',      cfg.wheelStyle === 'Standard' ? 'Comfort' : 'Sport'],
-      cfg.wheelStyleType === 'R8' && cfg.startStopButtons ? ['Start/Stop Buttons', 'Yes (+$40)'] : null,
-      cfg.ledDisplay ? ['LED Display Strip', 'Yes (+$50)'] : null,
-      ['Paddle Shifters',  cfg.paddleShifters],
-      ['Top/Bottom',       cfg.topBottomMat + (cfg.topBottomCol ? ' · ' + colorName(cfg.topBottomCol) : '') + (cfg.topBottomCustomColor ? ' · ' + cfg.topBottomCustomColor : '')],
-      ['Side Grip',        cfg.sideMat + (cfg.sideCol ? ' · ' + colorName(cfg.sideCol) : '') + (cfg.sideCustomColor ? ' · ' + cfg.sideCustomColor : '')],
-      ['Stripe',           selectedStripeConcept.label],
-      ['Stitch Color',     cfg.stitchColor ? colorName(cfg.stitchColor) : cfg.stitchCustomColor || 'None'],
-      ['Airbag Cover',     cfg.airbagCompat ? (cfg.wheelStyleType === 'F-Series' && cfg.brand === 'BMW' ? 'Yes (FREE)' : 'Yes (+$25)') : 'No'],
-      ['Full Airbag Upgrade', cfg.airbagUpgrade ? 'Yes (+$25)' : 'No'],
-      ['Heated',           cfg.heated ? 'Yes' : 'No'],
-      [cfg.brand === 'BMW' ? 'Driver Assistance Retained' : 'Lane Assist', cfg.laneAssist ? 'Yes' : 'No'],
-      cfg.brand === 'AUDI' ? ['Audi Badge', cfg.audiBadge] : null,
-      ['Notes',            cfg.customNotes || 'None'],
-      ['Est. Price',       `$${price.toFixed(2)}`],
-    ].filter(Boolean);
+    const topColor = configuredMaterialColor(
+      cfg.topBottomMat,
+      cfg.topBottomCol,
+      cfg.topBottomCarbonCol,
+      cfg.topBottomCustomColor
+    );
+
+    const sideColor = configuredMaterialColor(
+      cfg.sideMat,
+      cfg.sideCol,
+      cfg.sideCarbonCol,
+      cfg.sideCustomColor
+    );
+
+    const rows = [
+      ['Brand', cfg.brand],
+      ['Vehicle Year', cfg.vehicleYear],
+      ['Vehicle Model', cfg.vehicleModel],
+      ['Current Wheel Photo', photo || cfg.photoUrl ? 'Attached' : 'Missing'],
+
+      ['Wheel Style Type', cfg.wheelStyleType],
+
+      cfg.brand === 'AUDI' && cfg.wheelStyleType === 'R8'
+        ? ['Start / Stop & Drive Select Buttons', cfg.startStopButtons ? 'Yes (+$40)' : 'No']
+        : null,
+
+      [cfg.brand === 'AUDI' ? 'LED Display Strip' : 'RPM Gauge',
+        cfg.ledDisplay ? `Yes (+$${cfg.brand === 'AUDI' ? '50' : '100'})` : 'No'],
+
+      ['Top Stripe', selectedStripeConcept.label],
+      textValue(cfg.stripeCustomColor)
+        ? ['Custom Stripe Color', textValue(cfg.stripeCustomColor)]
+        : null,
+
+      ['Stitch Color', configuredColor(cfg.stitchColor, cfg.stitchCustomColor, 'stitch')],
+
+      !(cfg.brand === 'AUDI' && cfg.wheelStyleType === 'R8') &&
+      !(cfg.brand === 'BMW' && cfg.wheelStyleType === 'F-Series')
+        ? ['Wheel Style', cfg.wheelStyle]
+        : null,
+
+      ['Paddle Shifters', cfg.paddleShifters],
+      cfg.paddleShifters === 'Magnetic'
+        ? ['Paddle Length', cfg.paddleLength || 'Short']
+        : null,
+
+      ['Top & Bottom Grip Material', cfg.topBottomMat],
+      ['Top & Bottom Color', topColor],
+      ['Side Grip Material', cfg.sideMat],
+      ['Side Grip Color', sideColor],
+
+      cfg.brand === 'AUDI' ? ['Lower Badge', cfg.audiBadge] : null,
+      cfg.brand === 'AUDI'
+        ? ['Plastic Trim Color', configuredColor(cfg.plasticTrimCol, cfg.plasticTrimCustomColor)]
+        : null,
+      cfg.brand === 'AUDI'
+        ? ['Inner Trim Color',
+            cfg.innerTrimMatchCarbon
+              ? 'Match Carbon Fiber Top & Bottom'
+              : configuredColor(cfg.innerTrimCol, cfg.innerTrimCustomColor)]
+        : null,
+
+      ['Airbag Cover',
+        cfg.airbagCompat
+          ? (cfg.brand === 'BMW' && cfg.wheelStyleType === 'F-Series' ? 'Yes (FREE)' : 'Yes (+$25)')
+          : 'No'],
+
+      cfg.airbagCompat
+        ? ['Full Upgraded Airbag Unit', cfg.airbagUpgrade ? 'Yes (+$75)' : 'No']
+        : null,
+
+      cfg.airbagCompat ? ['Airbag Material', cfg.airbagMat || '—'] : null,
+      cfg.airbagCompat
+        ? ['Airbag Color', configuredColor(cfg.airbagCol, cfg.airbagCustomColor)]
+        : null,
+      cfg.airbagCompat
+        ? ['Airbag Stitch Color', configuredColor(cfg.airbagStitchColor, cfg.airbagStitchCustomColor, 'stitch')]
+        : null,
+      cfg.brand === 'AUDI' && cfg.airbagCompat
+        ? ['Audi Logo Color', configuredColor(cfg.audiLogoCol, cfg.audiLogoCustomColor)]
+        : null,
+
+      ['Heated Steering', cfg.heated ? (cfg.brand === 'BMW' ? 'Yes (+$75)' : 'Yes') : 'No'],
+      [cfg.brand === 'BMW' ? 'Driver Assistance Retained' : 'Lane Assist Compatible',
+        cfg.laneAssist ? (cfg.brand === 'BMW' ? 'Yes (+$30)' : 'Yes') : 'No'],
+
+      ['Custom Notes', textValue(cfg.customNotes) || 'None'],
+      ['Est. Price', `$${price.toFixed(2)}`],
+    ];
+
+    return rows.filter(Boolean);
   };
+
+  const buildConfigSnapshot = () => ({
+    ...cfg,
+    paddleLength: cfg.paddleLength || 'Short',
+    topBottomCustomColor: cfg.topBottomCustomColor || '',
+    sideCustomColor: cfg.sideCustomColor || '',
+    innerTrimCustomColor: cfg.innerTrimCustomColor || '',
+  });
 
   const isAudi = cfg.brand === 'AUDI';
 
@@ -723,9 +977,10 @@ export default function Configure() {
           </Sect>
 
           {/* Stitch */}
-          <Sect label="Stitch Color" value={cfg.stitchColor ? colorName(cfg.stitchColor) : cfg.stitchCustomColor || 'None'}>
+          <Sect label="Stitch Color *" value={cfg.stitchColor ? stitchColorName(cfg.stitchColor) : cfg.stitchCustomColor || '—'}>
             <ColorGrid colors={STITCH_COLORS} selected={cfg.stitchColor} onSelect={v => { set('stitchColor', v); set('stitchCustomColor', ''); }} />
             <CustomColorInput label="Type Any Stitch Color (Max Two):" value={cfg.stitchCustomColor} onChange={v => { set('stitchCustomColor', v); set('stitchColor', null); }} placeholder="e.g. Gold, Magenta, Dual Colors..." />
+            {errors.stitchColor && <div className="err-msg" style={{ marginTop: 8 }}>Please choose a stitch color.</div>}
           </Sect>
 
           {/* Wheel Style — hidden for R8 and F-Series */}
@@ -763,14 +1018,16 @@ export default function Configure() {
           <MatSection label="Top & Bottom Grip Material"
             matKey="topBottomMat" colKey="topBottomCol"
             carbonColKey="topBottomCarbonCol" customColKey="topBottomCustomColor"
-            cfg={cfg} set={set} matsOverride={TOP_BOTTOM_MATS} />
+            cfg={cfg} set={set} matsOverride={TOP_BOTTOM_MATS}
+            colorError={errors.topBottomColor} />
 
           {/* Side Mat — restricted to match Top/Bottom carbon type when applicable */}
           <MatSection label="Side Grip Material"
             matKey="sideMat" colKey="sideCol"
             carbonColKey="sideCarbonCol" customColKey="sideCustomColor"
             cfg={cfg} set={set} matsOverride={SIDE_MATS}
-            linkedMat={TOP_BOTTOM_MATS.find(m => m.n === cfg.topBottomMat)} />
+            linkedMat={TOP_BOTTOM_MATS.find(m => m.n === cfg.topBottomMat)}
+            colorError={errors.sideColor} />
 
           {/* AUDI-only */}
           {isAudi && (
@@ -784,13 +1041,19 @@ export default function Configure() {
                   ))}
                 </div>
               </Sect>
-              <Sect label="Plastic Trim Color" value={colorName(cfg.plasticTrimCol)}>
-                <ColorGrid colors={COLORS} selected={cfg.plasticTrimCol} onSelect={v => set('plasticTrimCol', v)} />
-                <CustomColorInput label="Type Any Color:" value={cfg.plasticTrimCustomColor || ''} onChange={v => set('plasticTrimCustomColor', v)} />
+              <Sect label="Plastic Trim Color *" value={configuredColor(cfg.plasticTrimCol, cfg.plasticTrimCustomColor)}>
+                <ColorGrid colors={COLORS} selected={cfg.plasticTrimCol} onSelect={v => { set('plasticTrimCol', v); set('plasticTrimCustomColor', ''); }} />
+                <CustomColorInput label="Type Any Color:" value={cfg.plasticTrimCustomColor || ''} onChange={v => { set('plasticTrimCustomColor', v); set('plasticTrimCol', null); }} />
+                {errors.plasticTrimColor && <div className="err-msg" style={{ marginTop: 8 }}>Please choose a plastic trim color.</div>}
               </Sect>
-              <Sect label="Inner Trim Color" value={cfg.innerTrimMatchCarbon ? 'Match Carbon Fiber' : colorName(cfg.innerTrimCol)}>
+              <Sect label="Inner Trim Color *" value={cfg.innerTrimMatchCarbon ? 'Match Carbon Fiber' : configuredColor(cfg.innerTrimCol, cfg.innerTrimCustomColor)}>
                 {isCarbonTopBottom && (
-                  <div onClick={() => { set('innerTrimMatchCarbon', !cfg.innerTrimMatchCarbon); set('innerTrimCol', null); }}
+                  <div onClick={() => {
+                      const next = !cfg.innerTrimMatchCarbon;
+                      set('innerTrimMatchCarbon', next);
+                      set('innerTrimCol', null);
+                      if (next) set('innerTrimCustomColor', '');
+                    }}
                     className={`ob${cfg.innerTrimMatchCarbon ? ' on' : ''}`}
                     style={{ padding: '10px 14px', marginBottom: 10, textAlign: 'center', cursor: 'pointer', fontSize: 13, fontWeight: 700, letterSpacing: 1, textTransform: 'uppercase' }}>
                     Match Carbon Fiber Top & Bottom
@@ -798,10 +1061,11 @@ export default function Configure() {
                 )}
                 {!cfg.innerTrimMatchCarbon && (
                   <>
-                    <ColorGrid colors={COLORS} selected={cfg.innerTrimCol} onSelect={v => set('innerTrimCol', v)} />
-                    <CustomColorInput label="Type Any Color:" value={cfg.innerTrimCustomColor || ''} onChange={v => set('innerTrimCustomColor', v)} />
+                    <ColorGrid colors={COLORS} selected={cfg.innerTrimCol} onSelect={v => { set('innerTrimCol', v); set('innerTrimCustomColor', ''); }} />
+                    <CustomColorInput label="Type Any Color:" value={cfg.innerTrimCustomColor || ''} onChange={v => { set('innerTrimCustomColor', v); set('innerTrimCol', null); }} />
                   </>
                 )}
+                {errors.innerTrimColor && <div className="err-msg" style={{ marginTop: 8 }}>Please choose an inner trim color or select Match Carbon Fiber.</div>}
               </Sect>
             </>
           )}
@@ -819,14 +1083,18 @@ export default function Configure() {
                 ? <span style={{ display: 'inline-block', background: 'var(--y)', color: '#000', fontWeight: 800, fontSize: 11, letterSpacing: 1, padding: '2px 8px', borderRadius: 3 }}>FREE</span>
                 : '+$25.00'}
               value={cfg.airbagCompat}
-              onChange={v => set('airbagCompat', v)}
+              onChange={setAirbagCover}
             />
-            <Toggle
-              label="Will you require a full upgraded airbag unit (full airbag not just cover)?"
-              sub="+$75.00"
-              value={cfg.airbagUpgrade}
-              onChange={v => set('airbagUpgrade', v)}
-            />
+
+            {/* Only relevant when the customer is ordering an airbag cover */}
+            {cfg.airbagCompat && (
+              <Toggle
+                label="Will you require a full upgraded airbag unit (full airbag not just cover)?"
+                sub="+$75.00"
+                value={cfg.airbagUpgrade}
+                onChange={v => set('airbagUpgrade', v)}
+              />
+            )}
             <Toggle
               label="Heated Steering"
               sub={!isAudi ? '+$75.00' : ''}
@@ -842,9 +1110,9 @@ export default function Configure() {
               onChange={v => set('laneAssist', v)}
             />
 
-            {(cfg.airbagCompat || cfg.airbagUpgrade) && (
+            {cfg.airbagCompat && (
               <div style={{ marginTop: 14, paddingTop: 14, borderTop: '1px solid #1A1A1A' }}>
-                <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 8, color: 'var(--t)' }}>Airbag Material</div>
+                <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 8, color: 'var(--t)' }}>Airbag Material <span className="req">*</span></div>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7, marginBottom: 14 }}>
                   {AIRBAG_MATS.map(m => (
                     <button key={m.n} className={`ob${cfg.airbagMat === m.n ? ' on' : ''}`}
@@ -853,30 +1121,34 @@ export default function Configure() {
                     </button>
                   ))}
                 </div>
+                {errors.airbagMaterial && <div className="err-msg" style={{ margin: '-6px 0 10px' }}>Please choose an airbag material.</div>}
                 {cfg.airbagMat && (
                   <>
                     <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 4, color: 'var(--t)' }}>
-                      Color: {colorName(cfg.airbagCol) || (cfg.airbagCustomColor ? cfg.airbagCustomColor : '—')}
+                      Color <span className="req">*</span>: {configuredColor(cfg.airbagCol, cfg.airbagCustomColor)}
                     </div>
                     <ColorGrid colors={COLORS} selected={cfg.airbagCol} onSelect={v => { set('airbagCol', v); set('airbagCustomColor', ''); }} />
                     <CustomColorInput label="Type Any Color:" value={cfg.airbagCustomColor} onChange={v => { set('airbagCustomColor', v); set('airbagCol', null); }} />
+                    {errors.airbagColor && <div className="err-msg" style={{ marginTop: 8 }}>Please choose an airbag color.</div>}
                   </>
                 )}
                 <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase', margin: '16px 0 4px', color: 'var(--t)' }}>
-                  Airbag Stitch Color: {cfg.airbagStitchColor ? colorName(cfg.airbagStitchColor) : cfg.airbagStitchCustomColor || 'None'}
+                  Airbag Stitch Color <span className="req">*</span>: {configuredColor(cfg.airbagStitchColor, cfg.airbagStitchCustomColor, 'stitch')}
                 </div>
                 <ColorGrid colors={STITCH_COLORS} selected={cfg.airbagStitchColor} onSelect={v => { set('airbagStitchColor', v); set('airbagStitchCustomColor', ''); }} />
                 <CustomColorInput label="Type Any Stitch Color:" value={cfg.airbagStitchCustomColor} onChange={v => { set('airbagStitchCustomColor', v); set('airbagStitchColor', null); }} placeholder="e.g. Gold, Magenta, Dual Colors..." />
+                {errors.airbagStitchColor && <div className="err-msg" style={{ marginTop: 8 }}>Please choose an airbag stitch color.</div>}
               </div>
             )}
 
-            {isAudi && (
+            {isAudi && cfg.airbagCompat && (
               <div style={{ marginTop: 14, paddingTop: 14, borderTop: '1px solid #1A1A1A' }}>
                 <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 4, color: 'var(--t)' }}>
-                  Audi Logo Color: {colorName(cfg.audiLogoCol) || (cfg.audiLogoCustomColor ? cfg.audiLogoCustomColor : '—')}
+                  Audi Logo Color <span className="req">*</span>: {configuredColor(cfg.audiLogoCol, cfg.audiLogoCustomColor)}
                 </div>
                 <ColorGrid colors={COLORS} selected={cfg.audiLogoCol} onSelect={v => { set('audiLogoCol', v); set('audiLogoCustomColor', ''); }} />
                 <CustomColorInput label="Type Any Color:" value={cfg.audiLogoCustomColor} onChange={v => { set('audiLogoCustomColor', v); set('audiLogoCol', null); }} />
+                {errors.audiLogoColor && <div className="err-msg" style={{ marginTop: 8 }}>Please choose an Audi logo color.</div>}
               </div>
             )}
           </div>
@@ -1028,7 +1300,7 @@ export default function Configure() {
                   name: `${cfg.brand} Custom Wheel`,
                   detail: `${cfg.vehicleYear} ${cfg.brand} ${cfg.vehicleModel} · ${cfg.wheelStyle} · ${cfg.topBottomMat}`,
                   price,
-                  config: { ...cfg, topMatIsCarbon: topMat?.carbon },
+                  config: { ...buildConfigSnapshot(), topMatIsCarbon: topMat?.carbon },
                 });
                 setShowReview(false);
                 showToast('ADDED TO CART');

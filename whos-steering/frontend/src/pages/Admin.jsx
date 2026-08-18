@@ -2,7 +2,14 @@ import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../context';
 import { apiFetch } from '../lib/api';
 import { useNavigate } from 'react-router-dom';
-import { colorName } from '../lib/data';
+import {
+  colorName,
+  STRIPE_CONCEPTS,
+  STITCH_COLORS,
+  CLASSIC_CARBON_COLORS,
+  FORGED_CARBON_COLORS,
+  HONEYCOMB_CARBON_COLORS,
+} from '../lib/data';
 
 const STATUS_COLORS = {
   pending: '#888', payment_processing: '#4499FF', paid: '#3DB85A',
@@ -12,62 +19,200 @@ const STATUS_COLORS = {
 
 const ALL_STATUSES = ['pending','payment_processing','paid','in_build','quality_check','shipped','delivered','cancelled','refunded'];
 
+function adminText(value) {
+  return typeof value === 'string' ? value.trim() : '';
+}
+
+function adminStitchColor(hex) {
+  if (!hex) return '—';
+  return STITCH_COLORS.find(c => c.h === hex)?.n || colorName(hex) || hex;
+}
+
+function adminCarbonColor(material, hex) {
+  if (!hex) return '—';
+  const list = material === 'Classic Carbon'
+    ? CLASSIC_CARBON_COLORS
+    : material === 'Forged Carbon'
+      ? FORGED_CARBON_COLORS
+      : HONEYCOMB_CARBON_COLORS;
+
+  return list.find(c => c.h === hex)?.n || hex;
+}
+
+function adminMaterialColor(material, regularColor, carbonColor, customColor) {
+  const custom = adminText(customColor);
+  if (custom) return custom;
+  if (material && material.toLowerCase().includes('carbon')) {
+    return adminCarbonColor(material, carbonColor);
+  }
+  return regularColor ? colorName(regularColor) : '—';
+}
+
+function adminColor(regularColor, customColor, stitch = false) {
+  const custom = adminText(customColor);
+  if (custom) return custom;
+  if (!regularColor) return '—';
+  return stitch ? adminStitchColor(regularColor) : colorName(regularColor);
+}
+
 function ConfigDetail({ config, itemName }) {
-  if (!config) return <div style={{ color: 'var(--t)', fontSize: 12, padding: '8px 0' }}>No configuration data saved.</div>;
-
-  const colorName = (hex) => hex || '—';
-
-  // Detect preset: vehicle_year is empty or missing
-  const isPreset = !config.vehicle_year || config.vehicle_year === '';
-
-  if (isPreset) {
-    const rows = [
-      ['Type',          'Preset Build'],
-      itemName         ? ['Preset Name',  itemName] : null,
-      config.brand     ? ['Brand',        config.brand] : null,
-      config.audi_badge ? ['Badge',       config.audi_badge] : null,
-      ['Airbag Cover',   config.airbag_compat  ? '✓ Yes' : '✗ No'],
-      ['Heated Steering', config.heated        ? '✓ Yes' : '✗ No'],
-      ['Lane Assist',    config.lane_assist    ? '✓ Yes' : '✗ No'],
-      config.custom_notes ? ['Notes',     config.custom_notes] : null,
-    ].filter(Boolean);
+  if (!config) {
     return (
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2px 24px' }}>
-        {rows.map(([label, value]) => (
-          <div key={label} style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: '1px solid #1A1A1A', gap: 8 }}>
-            <span style={{ fontSize: 11, color: 'var(--t)', letterSpacing: 1, textTransform: 'uppercase', flexShrink: 0 }}>{label}</span>
-            <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--w)', textAlign: 'right' }}>{value || '—'}</span>
-          </div>
-        ))}
+      <div style={{ color: 'var(--t)', fontSize: 12, padding: '8px 0' }}>
+        No configuration data saved.
       </div>
     );
   }
 
-  const rows = [
-    ['Brand',            config.brand],
-    ['Vehicle',          [config.vehicle_year, config.brand, config.vehicle_model].filter(Boolean).join(' ') || '—'],
-    ['Wheel Style',      config.wheel_style],
-    ['Paddle Shifters',  config.paddle_shifters],
-    ['Top/Bottom Mat',   config.top_bottom_mat],
-    ['Top/Bottom Color', colorName(config.top_bottom_col)],
-    ['Side Material',    config.side_mat],
-    ['Side Color',       colorName(config.side_col)],
-    ['Stripe',           config.stripe_mode === 'none' ? 'None' : config.stripe_mode === 'tri' ? `Tri-Color (${config.tri_key})` : colorName(config.stripe_color)],
-    ['Airbag Cover',     config.airbag_compat   ? '✓ Yes' : '✗ No'],
-    ['Heated',           config.heated          ? '✓ Yes' : '✗ No'],
-    ['Lane Assist',      config.lane_assist     ? '✓ Yes' : '✗ No'],
-    config.audi_badge    ? ['Audi Badge',   config.audi_badge] : null,
-    config.outer_trim_col ? ['Outer Trim',  colorName(config.outer_trim_col)] : null,
-    config.inner_trim_col ? ['Inner Trim',  colorName(config.inner_trim_col)] : null,
-    config.custom_notes  ? ['Notes',        config.custom_notes] : null,
-  ].filter(Boolean);
+  const snapshot =
+    config.config_json &&
+    typeof config.config_json === 'object' &&
+    Object.keys(config.config_json).length
+      ? config.config_json
+      : null;
+
+  const isPreset = snapshot?.isPreset || !config.vehicle_year || config.vehicle_year === '';
+
+  let rows;
+
+  if (snapshot && isPreset) {
+    rows = [
+      ['Type', 'Preset Build'],
+      ['Preset Name', snapshot.presetName || itemName || '—'],
+      ['Brand', snapshot.brand || config.brand || '—'],
+      snapshot.audiBadge ? ['Badge', snapshot.audiBadge] : null,
+      snapshot.bmwBadge ? ['Badge', snapshot.bmwBadge] : null,
+      snapshot.m1m2Buttons !== undefined ? ['M1 / M2 Buttons', snapshot.m1m2Buttons ? '✓ Yes' : '✗ No'] : null,
+      ['Airbag Cover', snapshot.airbagCompat ? '✓ Yes' : '✗ No'],
+      snapshot.airbagCompat ? ['Full Upgraded Airbag Unit', snapshot.airbagUpgrade ? '✓ Yes' : '✗ No'] : null,
+      ['Heated Steering', snapshot.heated ? '✓ Yes' : '✗ No'],
+      ['Lane / Driver Assistance', snapshot.laneAssist ? '✓ Yes' : '✗ No'],
+      ['Notes', adminText(snapshot.customNotes) || 'None'],
+    ].filter(Boolean);
+  } else if (snapshot) {
+    const stripe = STRIPE_CONCEPTS.find(s => s.id === snapshot.stripeConceptId);
+    const isAudi = snapshot.brand === 'AUDI';
+
+    rows = [
+      ['Brand', snapshot.brand || config.brand],
+      ['Vehicle Year', snapshot.vehicleYear || config.vehicle_year || '—'],
+      ['Vehicle Model', snapshot.vehicleModel || config.vehicle_model || '—'],
+      ['Wheel Style Type', snapshot.wheelStyleType || '—'],
+
+      isAudi && snapshot.wheelStyleType === 'R8'
+        ? ['Start / Stop & Drive Select Buttons', snapshot.startStopButtons ? '✓ Yes' : '✗ No']
+        : null,
+
+      [isAudi ? 'LED Display Strip' : 'RPM Gauge', snapshot.ledDisplay ? '✓ Yes' : '✗ No'],
+
+      ['Top Stripe', stripe?.label || snapshot.stripeConceptId || '—'],
+      adminText(snapshot.stripeCustomColor)
+        ? ['Custom Stripe Color', adminText(snapshot.stripeCustomColor)]
+        : null,
+
+      ['Stitch Color', adminColor(snapshot.stitchColor, snapshot.stitchCustomColor, true)],
+
+      !(isAudi && snapshot.wheelStyleType === 'R8') &&
+      !(snapshot.brand === 'BMW' && snapshot.wheelStyleType === 'F-Series')
+        ? ['Wheel Style', snapshot.wheelStyle || '—']
+        : null,
+
+      ['Paddle Shifters', snapshot.paddleShifters || '—'],
+      snapshot.paddleShifters === 'Magnetic'
+        ? ['Paddle Length', snapshot.paddleLength || 'Short']
+        : null,
+
+      ['Top & Bottom Grip Material', snapshot.topBottomMat || '—'],
+      ['Top & Bottom Color',
+        adminMaterialColor(
+          snapshot.topBottomMat,
+          snapshot.topBottomCol,
+          snapshot.topBottomCarbonCol,
+          snapshot.topBottomCustomColor
+        )],
+
+      ['Side Grip Material', snapshot.sideMat || '—'],
+      ['Side Grip Color',
+        adminMaterialColor(
+          snapshot.sideMat,
+          snapshot.sideCol,
+          snapshot.sideCarbonCol,
+          snapshot.sideCustomColor
+        )],
+
+      isAudi ? ['Lower Badge', snapshot.audiBadge || '—'] : null,
+      isAudi
+        ? ['Plastic Trim Color', adminColor(snapshot.plasticTrimCol, snapshot.plasticTrimCustomColor)]
+        : null,
+      isAudi
+        ? ['Inner Trim Color',
+            snapshot.innerTrimMatchCarbon
+              ? 'Match Carbon Fiber Top & Bottom'
+              : adminColor(snapshot.innerTrimCol, snapshot.innerTrimCustomColor)]
+        : null,
+
+      ['Airbag Cover', snapshot.airbagCompat ? '✓ Yes' : '✗ No'],
+      snapshot.airbagCompat
+        ? ['Full Upgraded Airbag Unit', snapshot.airbagUpgrade ? '✓ Yes' : '✗ No']
+        : null,
+      snapshot.airbagCompat ? ['Airbag Material', snapshot.airbagMat || '—'] : null,
+      snapshot.airbagCompat
+        ? ['Airbag Color', adminColor(snapshot.airbagCol, snapshot.airbagCustomColor)]
+        : null,
+      snapshot.airbagCompat
+        ? ['Airbag Stitch Color', adminColor(snapshot.airbagStitchColor, snapshot.airbagStitchCustomColor, true)]
+        : null,
+      isAudi && snapshot.airbagCompat
+        ? ['Audi Logo Color', adminColor(snapshot.audiLogoCol, snapshot.audiLogoCustomColor)]
+        : null,
+
+      ['Heated Steering', snapshot.heated ? '✓ Yes' : '✗ No'],
+      [snapshot.brand === 'BMW' ? 'Driver Assistance Retained' : 'Lane Assist Compatible',
+        snapshot.laneAssist ? '✓ Yes' : '✗ No'],
+
+      ['Wheel Photo', snapshot.photoUrl || config.photo_url ? '✓ Attached' : '✗ Missing'],
+      ['Notes', adminText(snapshot.customNotes) || 'None'],
+    ].filter(Boolean);
+  } else {
+    // Legacy orders created before config_json was added.
+    rows = [
+      ['Brand', config.brand],
+      ['Vehicle', [config.vehicle_year, config.brand, config.vehicle_model].filter(Boolean).join(' ') || '—'],
+      ['Wheel Style', config.wheel_style],
+      ['Paddle Shifters', config.paddle_shifters],
+      ['Top/Bottom Mat', config.top_bottom_mat],
+      ['Top/Bottom Color', config.top_bottom_col || '—'],
+      ['Side Material', config.side_mat],
+      ['Side Color', config.side_col || '—'],
+      ['Stripe', config.stripe_mode || '—'],
+      ['Airbag Cover', config.airbag_compat ? '✓ Yes' : '✗ No'],
+      ['Heated', config.heated ? '✓ Yes' : '✗ No'],
+      ['Lane Assist', config.lane_assist ? '✓ Yes' : '✗ No'],
+      config.audi_badge ? ['Audi Badge', config.audi_badge] : null,
+      config.outer_trim_col ? ['Outer Trim', config.outer_trim_col] : null,
+      config.inner_trim_col ? ['Inner Trim', config.inner_trim_col] : null,
+    ].filter(Boolean);
+  }
 
   return (
     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2px 24px' }}>
-      {rows.map(([label, value]) => (
-        <div key={label} style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: '1px solid #1A1A1A', gap: 8 }}>
-          <span style={{ fontSize: 11, color: 'var(--t)', letterSpacing: 1, textTransform: 'uppercase', flexShrink: 0 }}>{label}</span>
-          <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--w)', textAlign: 'right' }}>{value || '—'}</span>
+      {rows.map(([label, value], index) => (
+        <div
+          key={`${label}-${index}`}
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            padding: '6px 0',
+            borderBottom: '1px solid #1A1A1A',
+            gap: 8,
+          }}
+        >
+          <span style={{ fontSize: 11, color: 'var(--t)', letterSpacing: 1, textTransform: 'uppercase', flexShrink: 0 }}>
+            {label}
+          </span>
+          <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--w)', textAlign: 'right', overflowWrap: 'anywhere' }}>
+            {value ?? '—'}
+          </span>
         </div>
       ))}
     </div>
