@@ -766,7 +766,7 @@ export default function Configure() {
 
   const isAudi = cfg.brand === 'AUDI';
   const isMobileViewport = window.innerWidth < 768;
-  const previewMediaMaxHeight = isMobileViewport ? 420 : 'calc(100vh - 235px)';
+  const previewMediaMaxHeight = isMobileViewport ? 440 : 'none';
 
   return (
     <div style={{
@@ -777,7 +777,7 @@ export default function Configure() {
     }}>
       <div style={{
         display: 'grid',
-        gridTemplateColumns: isMobileViewport ? '1fr' : 'minmax(0, 1.08fr) minmax(460px, 0.92fr)',
+        gridTemplateColumns: isMobileViewport ? '1fr' : 'minmax(0, 1.22fr) minmax(440px, 0.78fr)',
         minHeight: isMobileViewport ? 'auto' : 'calc(100vh - 120px)',
         alignItems: isMobileViewport ? 'start' : 'stretch',
         alignContent: 'start',
@@ -790,51 +790,138 @@ export default function Configure() {
           height: isMobileViewport ? 'auto' : 'calc(100vh - 120px)',
           minHeight: 0,
           background: '#111',
-          display: 'flex', flexDirection: 'column', alignItems: 'stretch', justifyContent: isMobileViewport ? 'flex-start' : 'center',
-          gap: isMobileViewport ? 16 : 12, padding: isMobileViewport ? '0 0 18px' : '20px 14px 18px',
+          display: 'flex', flexDirection: 'column', alignItems: 'stretch', justifyContent: 'flex-start',
+          gap: isMobileViewport ? 0 : 8,
+          padding: isMobileViewport ? '0' : '10px 8px 12px',
           borderRight: isMobileViewport ? 'none' : '1px solid var(--b)', overflow: 'hidden',
           order: 1,
         }}>
           {!isAudi && cfg.wheelStyleType === 'G-Series' ? (
-            <div style={{ position: 'relative', width: '100%', maxWidth: isMobileViewport ? '100%' : 980, margin: '0 auto', aspectRatio: '4 / 3', maxHeight: previewMediaMaxHeight, overflow: 'hidden' }}>
+            <div style={{
+              position: 'relative',
+              width: '100%',
+              maxWidth: 'none',
+              margin: 0,
+              aspectRatio: isMobileViewport ? '4 / 3' : 'auto',
+              height: isMobileViewport ? 'auto' : 'calc(100vh - 255px)',
+              maxHeight: previewMediaMaxHeight,
+              flex: isMobileViewport ? '0 0 auto' : '1 1 auto',
+              minHeight: 0,
+              overflow: 'hidden',
+            }}>
               <img
                 src="/g-series-reference.png"
                 alt="BMW G-Series Steering Wheel customization options"
-                style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'contain', objectPosition: 'center', display: 'block' }}
+                style={{
+                  position: 'absolute',
+                  inset: 0,
+                  width: '100%',
+                  height: '100%',
+                  objectFit: isMobileViewport ? 'contain' : 'contain',
+                  objectPosition: 'center',
+                  display: 'block',
+                  transform: isMobileViewport ? 'none' : 'scale(1.08)',
+                  transformOrigin: 'center',
+                }}
               />
             </div>
           ) : !isAudi && cfg.wheelStyleType === 'F-Series' ? (
-            <div style={{ position: 'relative', width: '100%', maxWidth: isMobileViewport ? '100%' : 980, margin: '0 auto', aspectRatio: '4 / 3', maxHeight: previewMediaMaxHeight, overflow: 'hidden' }}>
+            <div style={{
+              position: 'relative',
+              width: '100%',
+              maxWidth: 'none',
+              margin: 0,
+              aspectRatio: isMobileViewport ? '4 / 3' : 'auto',
+              height: isMobileViewport ? 'auto' : 'calc(100vh - 255px)',
+              maxHeight: previewMediaMaxHeight,
+              flex: isMobileViewport ? '0 0 auto' : '1 1 auto',
+              minHeight: 0,
+              overflow: 'hidden',
+            }}>
               <img
                 src="/f-series-reference.png"
                 alt="BMW F-Series Steering Wheel customization options"
-                style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'contain', objectPosition: 'center', display: 'block' }}
+                style={{
+                  position: 'absolute',
+                  inset: 0,
+                  width: '100%',
+                  height: '100%',
+                  objectFit: isMobileViewport ? 'contain' : 'contain',
+                  objectPosition: 'center',
+                  display: 'block',
+                  transform: isMobileViewport ? 'none' : 'scale(1.08)',
+                  transformOrigin: 'center',
+                }}
               />
             </div>
           ) : isAudi && cfg.wheelStyleType === 'B9' ? (
-            <div style={{ position: 'relative', width: '100%', maxWidth: isMobileViewport ? '100%' : 980, margin: '0 auto', aspectRatio: '3 / 2', maxHeight: previewMediaMaxHeight, overflow: 'hidden' }}>
+            <div style={{
+              position: 'relative',
+              width: '100%',
+              maxWidth: 'none',
+              margin: 0,
+              aspectRatio: isMobileViewport ? '3 / 2' : 'auto',
+              height: isMobileViewport ? 'auto' : 'calc(100vh - 255px)',
+              maxHeight: previewMediaMaxHeight,
+              flex: isMobileViewport ? '0 0 auto' : '1 1 auto',
+              minHeight: 0,
+              overflow: 'hidden',
+            }}>
               <img
                 src="/b9-reference.png"
                 alt="Audi B9 Steering Wheel customization options"
-                style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'contain', objectPosition: 'center', display: 'block' }}
+                style={{
+                  position: 'absolute',
+                  inset: 0,
+                  width: '100%',
+                  height: '100%',
+                  objectFit: isMobileViewport ? 'contain' : 'contain',
+                  objectPosition: 'center',
+                  display: 'block',
+                  transform: isMobileViewport ? 'none' : 'scale(1.08)',
+                  transformOrigin: 'center',
+                }}
               />
             </div>
           ) : isAudi && cfg.wheelStyleType === 'R8' ? (
-            <div style={{ position: 'relative', width: '100%', maxWidth: isMobileViewport ? '100%' : 980, margin: '0 auto', aspectRatio: '3 / 2', maxHeight: previewMediaMaxHeight, overflow: 'hidden' }}>
+            <div style={{
+              position: 'relative',
+              width: '100%',
+              maxWidth: 'none',
+              margin: 0,
+              aspectRatio: isMobileViewport ? '3 / 2' : 'auto',
+              height: isMobileViewport ? 'auto' : 'calc(100vh - 255px)',
+              maxHeight: previewMediaMaxHeight,
+              flex: isMobileViewport ? '0 0 auto' : '1 1 auto',
+              minHeight: 0,
+              overflow: 'hidden',
+            }}>
               <img
                 src="/r8-reference.png"
                 alt="Audi R8 Steering Wheel customization options"
-                style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'contain', objectPosition: 'center', display: 'block' }}
+                style={{
+                  position: 'absolute',
+                  inset: 0,
+                  width: '100%',
+                  height: '100%',
+                  objectFit: isMobileViewport ? 'contain' : 'contain',
+                  objectPosition: 'center',
+                  display: 'block',
+                  transform: isMobileViewport ? 'none' : 'scale(1.08)',
+                  transformOrigin: 'center',
+                }}
               />
             </div>
           ) : (
             <WheelPreview config={cfg} size={Math.min(isMobileViewport ? 360 : 520, window.innerWidth * (isMobileViewport ? 0.74 : 0.46))} />
           )}
-          <div style={{ paddingTop: 12, borderTop: '1px solid var(--b)', width: '100%', textAlign: 'center' }}>
-            <div style={{ fontFamily: 'Orbitron, monospace', fontSize: 11, letterSpacing: 3, color: 'var(--t)', textTransform: 'uppercase' }}>Estimated Total</div>
-            <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontSize: 'clamp(64px,8vw,88px)', color: 'var(--y)', lineHeight: 1, letterSpacing: -1 }}>${price.toFixed(2)}</div>
-            <div style={{ fontSize: 12, color: 'var(--t)', letterSpacing: 1 }}>Final price confirmed at checkout</div>
-          </div>
+          {!isMobileViewport && (
+            <div style={{ paddingTop: 8, borderTop: '1px solid var(--b)', width: '100%', textAlign: 'center', flexShrink: 0 }}>
+              <div style={{ fontFamily: 'Orbitron, monospace', fontSize: 9, letterSpacing: 2.5, color: 'var(--t)', textTransform: 'uppercase' }}>Estimated Total</div>
+              <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontSize: 'clamp(54px,5vw,72px)', color: 'var(--y)', lineHeight: .95, letterSpacing: -1 }}>${price.toFixed(2)}</div>
+              <div style={{ fontSize: 10, color: 'var(--t)', letterSpacing: 1 }}>Final price confirmed at checkout</div>
+            </div>
+          )}
           {!isMobileViewport && (
             <button className="btn" style={{ width: '100%', clipPath: 'polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%)', padding: 18, fontSize: 13, letterSpacing: 3 }}
               onClick={() => validate() && setShowReview(true)}>
@@ -844,7 +931,14 @@ export default function Configure() {
         </div>
 
         {/* RIGHT: Options */}
-        <div ref={optionsRef} style={{ background: 'var(--d)', overflowY: 'auto', display: 'flex', flexDirection: 'column', order: 2 }}>
+        <div ref={optionsRef} style={{
+          background: 'var(--d)',
+          overflowY: 'auto',
+          display: 'flex',
+          flexDirection: 'column',
+          order: 2,
+          borderTop: isMobileViewport ? '1px solid var(--b)' : 'none',
+        }}>
 
           {/* Sticky heading + progress */}
           <div style={{
@@ -1223,7 +1317,7 @@ export default function Configure() {
       </div>
 
       {/* Sticky mobile build total — tap to jump to final review */}
-      {isMobileViewport && activeStep !== 'review' && !showReview && (
+      {isMobileViewport && !['vehicle', 'review'].includes(activeStep) && !showReview && (
         <button
           type="button"
           onClick={() => scrollToStep('review')}
