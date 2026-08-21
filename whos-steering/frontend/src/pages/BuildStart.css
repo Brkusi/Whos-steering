@@ -1,0 +1,185 @@
+.build-start {
+  min-height: calc(100dvh - 120px);
+  background:
+    radial-gradient(circle at 50% 16%, rgba(232,184,0,.11), transparent 31%),
+    linear-gradient(180deg, #0b0b0b 0%, #070707 100%);
+  border-bottom: 1px solid var(--b);
+}
+
+.build-start__inner {
+  width: min(1280px, calc(100% - 40px));
+  margin: 0 auto;
+  padding: clamp(54px, 7vw, 90px) 0 clamp(64px, 8vw, 100px);
+}
+
+.build-start__eyebrow {
+  color: var(--y);
+  font-family: Orbitron, monospace;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: .36em;
+  margin-bottom: 10px;
+}
+
+.build-start__title {
+  margin: 0;
+  font-family: "Barlow Condensed", Impact, sans-serif;
+  font-size: clamp(42px, 5vw, 72px);
+  font-style: italic;
+  font-weight: 900;
+  line-height: .92;
+  letter-spacing: .01em;
+}
+
+.build-start__title span { color: var(--y); }
+
+.build-start__intro {
+  width: min(620px, 100%);
+  margin: 18px 0 34px;
+  color: var(--t);
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.build-start__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.build-brand-card {
+  appearance: none;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid #252525;
+  background: #111;
+  color: #fff;
+  cursor: pointer;
+  text-align: left;
+  transition: border-color .2s ease, transform .2s ease, box-shadow .2s ease;
+}
+
+.build-brand-card:hover {
+  border-color: rgba(232,184,0,.75);
+  transform: translateY(-3px);
+  box-shadow: 0 18px 44px rgba(0,0,0,.36);
+}
+
+.build-brand-card__media {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: #060606;
+}
+
+.build-brand-card__media::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 48%, rgba(0,0,0,.78));
+  pointer-events: none;
+}
+
+.build-brand-card__media img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  transition: transform .38s ease, filter .38s ease;
+}
+
+.build-brand-card:hover .build-brand-card__media img {
+  transform: scale(1.035);
+  filter: brightness(1.07);
+}
+
+.build-brand-card__badge {
+  position: absolute;
+  z-index: 2;
+  top: 15px;
+  left: 15px;
+  padding: 6px 10px;
+  background: var(--y);
+  color: #050505;
+  font-family: Orbitron, monospace;
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: .16em;
+}
+
+.build-brand-card__corner {
+  position: absolute;
+  z-index: 2;
+  right: 15px;
+  bottom: 15px;
+  width: 34px;
+  height: 34px;
+  border-right: 1px solid var(--y);
+  border-bottom: 1px solid var(--y);
+}
+
+.build-brand-card__content {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 22px 24px 24px;
+}
+
+.build-brand-card__fitment {
+  color: var(--y);
+  font-family: Orbitron, monospace;
+  font-size: 7px;
+  font-weight: 700;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.build-brand-card h2 {
+  margin: 0 0 5px;
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: clamp(28px, 2.8vw, 40px);
+  font-style: italic;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.build-brand-card p {
+  max-width: 470px;
+  margin: 0;
+  color: var(--t);
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.build-brand-card__action {
+  flex-shrink: 0;
+  color: var(--y);
+  font-family: Orbitron, monospace;
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: .14em;
+  white-space: nowrap;
+  padding-bottom: 3px;
+}
+
+.build-brand-card__action b { font-size: 14px; }
+
+.build-start__note {
+  margin-top: 20px;
+  color: #555;
+  font-size: 11px;
+  letter-spacing: .04em;
+}
+
+@media (max-width: 760px) {
+  .build-start__inner {
+    width: min(100% - 28px, 620px);
+    padding-top: 38px;
+  }
+
+  .build-start__grid { grid-template-columns: 1fr; }
+  .build-brand-card__content { padding: 18px; }
+  .build-brand-card__action { font-size: 7px; }
+}
