@@ -166,7 +166,7 @@ export default function Account() {
           <div style={{ padding: '60px 0', textAlign: 'center' }}>
             <div style={{ fontSize: 48, opacity: .2, marginBottom: 16 }}>🛞</div>
             <div style={{ color: 'var(--t)', letterSpacing: 2, textTransform: 'uppercase', fontSize: 13, marginBottom: 20 }}>No orders yet</div>
-            <Link to="/configure"><button className="btn" style={{ clipPath: 'none' }}>BUILD YOUR FIRST WHEEL</button></Link>
+            <Link to="/build"><button className="btn" style={{ clipPath: 'none' }}>BUILD YOUR FIRST WHEEL</button></Link>
           </div>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 1, background: 'var(--b)' }}>

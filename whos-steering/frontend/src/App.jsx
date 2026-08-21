@@ -9,7 +9,9 @@ import { lazy, Suspense } from 'react';
 const Home              = lazy(() => import('./pages/Home'));
 const Catalog           = lazy(() => import('./pages/Catalog'));
 const Product           = lazy(() => import('./pages/Product'));
+const BuildStart        = lazy(() => import('./pages/BuildStart'));
 const Configure         = lazy(() => import('./pages/Configure'));
+const TrackOrder        = lazy(() => import('./pages/TrackOrder'));
 const Checkout          = lazy(() => import('./pages/Checkout'));
 const OrderConfirmation = lazy(() => import('./pages/OrderConfirmation'));
 const Login             = lazy(() => import('./pages/Login'));
@@ -33,7 +35,9 @@ export default function App() {
               <Route path="/"                   element={<Home />} />
               <Route path="/catalog"            element={<Catalog />} />
               <Route path="/catalog/:id"        element={<Product />} />
+              <Route path="/build"              element={<BuildStart />} />
               <Route path="/configure"          element={<Configure />} />
+              <Route path="/track-order"        element={<TrackOrder />} />
               <Route path="/checkout"           element={<Checkout />} />
               <Route path="/order-confirmation" element={<OrderConfirmation />} />
               <Route path="/login"              element={<Login />} />

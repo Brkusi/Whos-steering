@@ -32,7 +32,7 @@ export default function Nav() {
           <Link to="/catalog" style={linkStyle}
             onMouseEnter={e => e.target.style.color = 'var(--y)'}
             onMouseLeave={e => e.target.style.color = 'var(--t)'}>Shop</Link>
-          <Link to="/configure" style={linkStyle}
+          <Link to="/build" style={linkStyle}
             onMouseEnter={e => e.target.style.color = 'var(--y)'}
             onMouseLeave={e => e.target.style.color = 'var(--t)'}>Configure</Link>
         </div>
@@ -49,6 +49,9 @@ export default function Nav() {
 
         {/* Right links */}
         <div style={{ display: 'flex', gap: 16, alignItems: 'center', minWidth: 160, justifyContent: 'flex-end' }}>
+          <Link to="/track-order" style={{ ...linkStyle, display: window.innerWidth <= 760 ? 'none' : 'block' }}
+            onMouseEnter={e => e.target.style.color = 'var(--y)'}
+            onMouseLeave={e => e.target.style.color = 'var(--t)'}>Track</Link>
           <Link to="/contact" style={{ ...linkStyle, display: window.innerWidth <= 480 ? 'none' : 'block' }}
             onMouseEnter={e => e.target.style.color = 'var(--y)'}
             onMouseLeave={e => e.target.style.color = 'var(--t)'}>Contact</Link>
@@ -92,7 +95,7 @@ export default function Nav() {
           background: 'rgba(5,5,5,.98)', borderBottom: '1px solid var(--b)',
           zIndex: 999, display: 'flex', flexDirection: 'column',
         }}>
-          {[['/catalog','SHOP'],['/configure','CONFIGURE'],['/contact','CONTACT'],[user ? '/account' : '/login', user ? 'ACCOUNT' : 'LOGIN']].map(([path, label]) => (
+          {[['/catalog','SHOP'],['/build','CONFIGURE'],['/track-order','TRACK ORDER'],['/contact','CONTACT'],[user ? '/account' : '/login', user ? 'ACCOUNT' : 'LOGIN']].map(([path, label]) => (
             <Link key={path} to={path} onClick={() => setMenuOpen(false)}
               style={{ padding: '16px 24px', borderBottom: '1px solid var(--b)', fontFamily: 'Orbitron, monospace', fontSize: 11, letterSpacing: 3, color: 'var(--t)', textDecoration: 'none' }}>
               {label}

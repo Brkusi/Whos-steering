@@ -2,6 +2,141 @@ const router = require('express').Router();
 const pool = require('../db/pool');
 const { authRequired, adminRequired } = require('../middleware/auth');
 
+
+const TRACKABLE_STATUSES = ['paid', 'in_build', 'quality_check', 'shipped', 'delivered'];
+const PUBLIC_ORDER_STATUSES = [...TRACKABLE_STATUSES, 'cancelled', 'refunded'];
+
+function extractTrackingNumber(note) {
+  if (!note || typeof note !== 'string') return null;
+  const trimmed = note.trim();
+  if (!trimmed) return null;
+
+  // Accept a tracking number pasted by itself (UPS/FedEx/USPS style), or text
+  // such as "Tracking: 1Z...". Ordinary admin notes are not exposed.
+  if (/^[A-Z0-9][A-Z0-9-]{7,39}$/i.test(trimmed)) return trimmed;
+
+  // Numeric carrier codes are often pasted with spaces. Only accept this
+  // relaxed form when the entire note looks like a number rather than prose.
+  if (/^[0-9 -]{10,48}$/.test(trimmed)) {
+    const compact = trimmed.replace(/[ -]/g, '');
+    if (/^\d{10,40}$/.test(compact)) return compact;
+  }
+
+  const prefixed = trimmed.match(/(?:tracking(?:\s*(?:number|no\.?|#))?|track)\s*[:#-]?\s*(.+)$/i);
+  if (prefixed) {
+    const candidate = prefixed[1].trim().replace(/\s+/g, '');
+    if (/^[A-Z0-9-]{8,40}$/i.test(candidate)) return candidate;
+  }
+
+  return null;
+}
+
+function publicStatusLabel(status) {
+  return {
+    paid: 'Order Confirmed',
+    in_build: 'Build In Progress',
+    quality_check: 'Quality Check',
+    shipped: 'Shipped',
+    delivered: 'Delivered',
+    cancelled: 'Cancelled',
+    refunded: 'Refunded',
+  }[status] || 'Order Confirmed';
+}
+
+
+// POST /api/orders/track — public order progress lookup.
+// Requires BOTH the checkout email and the order number. The response contains
+// only production/shipping status and never customer/address information.
+router.post('/track', async (req, res) => {
+  const email = String(req.body?.email || '').trim().toLowerCase();
+  const orderNumber = String(req.body?.orderNumber || '')
+    .trim()
+    .replace(/^#/, '')
+    .toLowerCase();
+
+  if (!email || !orderNumber || !/^\S+@\S+\.\S+$/.test(email)) {
+    return res.status(400).json({
+      error: 'Enter the email used at checkout and a valid order number.',
+    });
+  }
+
+  // Customers normally see the first 8 characters of the UUID as their order
+  // number, but accepting the full UUID as well makes support lookups easier.
+  if (!/^[a-f0-9-]{8,36}$/i.test(orderNumber)) {
+    return res.status(404).json({
+      error: 'We could not find an order matching that email and order number.',
+    });
+  }
+
+  try {
+    const { rows } = await pool.query(
+      `SELECT
+         o.id,
+         o.status,
+         o.updated_at,
+         o.tracking_carrier,
+         o.tracking_number,
+         o.tracking_url,
+         (
+           SELECT sh.note
+           FROM order_status_history sh
+           WHERE sh.order_id = o.id
+             AND sh.note IS NOT NULL
+             AND BTRIM(sh.note) <> ''
+           ORDER BY sh.created_at DESC
+           LIMIT 1
+         ) AS latest_admin_note
+       FROM orders o
+       LEFT JOIN customers c ON c.id = o.customer_id
+       WHERE LOWER(COALESCE(o.guest_email, c.email, '')) = $1
+         AND (
+           LOWER(o.id::text) = $2
+           OR LOWER(LEFT(o.id::text, 8)) = $2
+         )
+         AND o.status = ANY($3::text[])
+       LIMIT 1`,
+      [email, orderNumber, PUBLIC_ORDER_STATUSES]
+    );
+
+    if (!rows.length) {
+      // Keep the response generic so the endpoint cannot be used to confirm
+      // whether a specific email or order number exists independently.
+      return res.status(404).json({
+        error: 'We could not find an order matching that email and order number.',
+      });
+    }
+
+    const order = rows[0];
+    const progressIndex = TRACKABLE_STATUSES.indexOf(order.status);
+    const progressPercent = progressIndex >= 0
+      ? Math.round(((progressIndex + 1) / TRACKABLE_STATUSES.length) * 100)
+      : 0;
+
+    // Legacy/admin convenience: if a tracking number was pasted into the admin
+    // note instead of the dedicated tracking box, safely recognize it here.
+    const trackingNumber = order.tracking_number || extractTrackingNumber(order.latest_admin_note);
+
+    res.json({
+      orderNumber: String(order.id).slice(0, 8).toUpperCase(),
+      status: order.status,
+      statusLabel: publicStatusLabel(order.status),
+      progressIndex,
+      progressPercent,
+      updatedAt: order.updated_at,
+      tracking: trackingNumber
+        ? {
+            number: trackingNumber,
+            carrier: order.tracking_carrier || null,
+            url: order.tracking_url || null,
+          }
+        : null,
+    });
+  } catch (err) {
+    console.error('Public order tracking lookup failed:', err);
+    res.status(500).json({ error: 'Unable to check order status right now.' });
+  }
+});
+
 // GET /api/orders/my  — customer's own orders
 router.get('/my', authRequired, async (req, res) => {
   try {
@@ -284,6 +419,13 @@ router.patch('/:id/status', adminRequired, async (req, res) => {
   const validStatuses = ['pending','payment_processing','paid','in_build','quality_check','shipped','delivered','cancelled','refunded'];
   if (!validStatuses.includes(status)) return res.status(400).json({ error: 'Invalid status' });
 
+  const noteTrackingNumber = extractTrackingNumber(note);
+  const resolvedTracking = {
+    carrier: tracking?.carrier || null,
+    number: tracking?.number || noteTrackingNumber || null,
+    url: tracking?.url || null,
+  };
+
   const client = await pool.connect();
   try {
     await client.query('BEGIN');
@@ -298,9 +440,22 @@ router.patch('/:id/status', adminRequired, async (req, res) => {
     const previousStatus = beforeRows[0].status;
 
     let updateQuery, updateVals;
-    if (tracking && (tracking.number || tracking.carrier || tracking.url)) {
-      updateQuery = `UPDATE orders SET status=$1, updated_at=NOW(), tracking_carrier=$3, tracking_number=$4, tracking_url=$5 WHERE id=$2 RETURNING *`;
-      updateVals  = [status, req.params.id, tracking.carrier||null, tracking.number||null, tracking.url||null];
+    if (resolvedTracking.number || resolvedTracking.carrier || resolvedTracking.url) {
+      updateQuery = `UPDATE orders
+                     SET status=$1,
+                         updated_at=NOW(),
+                         tracking_carrier=COALESCE($3, tracking_carrier),
+                         tracking_number=COALESCE($4, tracking_number),
+                         tracking_url=COALESCE($5, tracking_url)
+                     WHERE id=$2
+                     RETURNING *`;
+      updateVals = [
+        status,
+        req.params.id,
+        resolvedTracking.carrier,
+        resolvedTracking.number,
+        resolvedTracking.url,
+      ];
     } else {
       updateQuery = `UPDATE orders SET status=$1, updated_at=NOW() WHERE id=$2 RETURNING *`;
       updateVals  = [status, req.params.id];

@@ -8,6 +8,9 @@ const BRANDS = ['BMW', 'AUDI'];
 export default function FeaturedWheels() {
   const nav = useNavigate();
   const railRef = useRef(null);
+  const dragRef = useRef({ active: false, startX: 0, startLeft: 0, moved: false });
+  const suppressClickRef = useRef(false);
+  const [dragging, setDragging] = useState(false);
   const [activeBrand, setActiveBrand] = useState('BMW');
 
   const wheelsByBrand = useMemo(
@@ -32,13 +35,58 @@ export default function FeaturedWheels() {
     const rail = railRef.current;
     if (!rail) return;
 
-    rail.scrollBy({
-      left: direction * Math.max(280, rail.clientWidth * 0.78),
-      behavior: 'smooth',
-    });
+    const firstCard = rail.querySelector('.featured-wheel-card');
+    const styles = window.getComputedStyle(rail);
+    const gap = parseFloat(styles.columnGap || styles.gap || '0') || 0;
+    const distance = firstCard ? firstCard.getBoundingClientRect().width + gap : rail.clientWidth * 0.72;
+
+    rail.scrollBy({ left: direction * distance, behavior: 'smooth' });
   };
 
-  const openWheel = (wheel) => {
+  const handlePointerDown = (event) => {
+    // Touch already has excellent native swipe/scroll behavior. Mouse/pen get drag-to-slide.
+    if (event.pointerType === 'touch' || (event.pointerType === 'mouse' && event.button !== 0)) return;
+    const rail = railRef.current;
+    if (!rail) return;
+
+    dragRef.current = {
+      active: true,
+      startX: event.clientX,
+      startLeft: rail.scrollLeft,
+      moved: false,
+    };
+    suppressClickRef.current = false;
+    setDragging(true);
+    rail.setPointerCapture?.(event.pointerId);
+  };
+
+  const handlePointerMove = (event) => {
+    const rail = railRef.current;
+    const drag = dragRef.current;
+    if (!rail || !drag.active) return;
+
+    const delta = event.clientX - drag.startX;
+    if (Math.abs(delta) > 6) {
+      drag.moved = true;
+      suppressClickRef.current = true;
+    }
+    rail.scrollLeft = drag.startLeft - delta;
+  };
+
+  const endDrag = (event) => {
+    if (!dragRef.current.active) return;
+    dragRef.current.active = false;
+    setDragging(false);
+    railRef.current?.releasePointerCapture?.(event.pointerId);
+  };
+
+  const openWheel = (wheel, event) => {
+    if (suppressClickRef.current) {
+      event?.preventDefault();
+      suppressClickRef.current = false;
+      return;
+    }
+
     nav(
       `/catalog?brand=${encodeURIComponent(wheel.brand)}&preset=${encodeURIComponent(wheel.id)}`
     );
@@ -82,15 +130,22 @@ export default function FeaturedWheels() {
 
         <div
           ref={railRef}
-          className="featured-wheels__rail"
+          className={`featured-wheels__rail${dragging ? ' is-dragging' : ''}`}
           aria-live="polite"
+          onPointerDown={handlePointerDown}
+          onPointerMove={handlePointerMove}
+          onPointerUp={endDrag}
+          onPointerCancel={endDrag}
+          onPointerLeave={(event) => {
+            if (dragRef.current.active && event.buttons === 0) endDrag(event);
+          }}
         >
           {wheels.map((wheel) => (
             <button
               type="button"
               className="featured-wheel-card"
               key={wheel.id}
-              onClick={() => openWheel(wheel)}
+              onClick={(event) => openWheel(wheel, event)}
               aria-label={`View ${wheel.brand} ${wheel.name}, starting at $${wheel.base_price.toFixed(2)}`}
             >
               <div className="featured-wheel-card__image-wrap">
@@ -99,6 +154,7 @@ export default function FeaturedWheels() {
                   alt={`${wheel.brand} ${wheel.name} steering wheel`}
                   className="featured-wheel-card__image"
                   loading="lazy"
+                  draggable="false"
                 />
 
                 <span className="featured-wheel-card__brand">

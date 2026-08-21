@@ -120,6 +120,9 @@ app.use(express.json({ limit: '2mb' }));
 // ── Rate limiting ─────────────────────────────────────────────
 app.use('/api/',      rateLimit({ windowMs: 15 * 60 * 1000, max: 300 }));
 app.use('/api/auth/', rateLimit({ windowMs: 15 * 60 * 1000, max: 20  }));
+// Public tracking lookups require email + order number. Keep this endpoint
+// tighter than the general API to discourage automated guessing.
+app.use('/api/orders/track', rateLimit({ windowMs: 15 * 60 * 1000, max: 30 }));
 
 // ── Routes ────────────────────────────────────────────────────
 app.use('/api/auth',     require('./routes/auth'));

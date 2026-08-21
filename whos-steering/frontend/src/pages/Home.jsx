@@ -1,6 +1,6 @@
-import FeaturedWheels from '../components/FeaturedWheels';
 import { useNavigate } from 'react-router-dom';
 import './Home.css';
+import FeaturedWheels from '../components/FeaturedWheels';
 
 import heroBase from '../assets/hero/hero-base.webp';
 import heroCarbon from '../assets/hero/hero-carbon-reference.webp';
@@ -28,7 +28,7 @@ export default function Home() {
   const openBrand = (brand) => {
     nav(
       brand.id === 'custom'
-        ? '/configure'
+        ? '/build'
         : `/catalog?brand=${encodeURIComponent(brand.name)}`
     );
   };
@@ -75,7 +75,7 @@ export default function Home() {
               <button
                 type="button"
                 className="ws-stage-btn ws-stage-btn-primary"
-                onClick={() => nav('/configure')}
+                onClick={() => nav('/build')}
               >
                 BUILD YOURS
               </button>
@@ -142,7 +142,7 @@ export default function Home() {
             <button
               type="button"
               className="ws-mobile-btn ws-mobile-btn-primary"
-              onClick={() => nav('/configure')}
+              onClick={() => nav('/build')}
             >
               BUILD YOURS
             </button>
@@ -175,7 +175,9 @@ export default function Home() {
           </button>
         ))}
       </section>
+
       <FeaturedWheels />
+
       <section className="ws-materials">
         <div className="ws-materials-inner">
           <div>

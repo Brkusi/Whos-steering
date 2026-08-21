@@ -10,7 +10,8 @@ const LEGAL_LINKS = [
 
 const NAV_LINKS = [
   { label: 'Shop',      to: '/catalog' },
-  { label: 'Configure', to: '/configure' },
+  { label: 'Configure', to: '/build' },
+  { label: 'Track Order', to: '/track-order' },
   { label: 'Contact',   to: '/contact' },
 ];
 

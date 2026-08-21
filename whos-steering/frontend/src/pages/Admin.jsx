@@ -222,6 +222,9 @@ function ConfigDetail({ config, itemName }) {
 function OrderModal({ order, onClose, onSave }) {
   const [newStatus, setNewStatus] = useState(order.status);
   const [note, setNote] = useState('');
+  const [trackingNumber, setTrackingNumber] = useState(order.tracking_number || '');
+  const [trackingCarrier, setTrackingCarrier] = useState(order.tracking_carrier || '');
+  const [trackingUrl, setTrackingUrl] = useState(order.tracking_url || '');
   const [lightbox, setLightbox] = useState(null);
   const [imgError, setImgError] = useState({});
 
@@ -336,11 +339,39 @@ function OrderModal({ order, onClose, onSave }) {
               </div>
               <div>
                 <label className="fl">Note (optional)</label>
-                <input className="fi" value={note} onChange={e => setNote(e.target.value)} placeholder="e.g. Shipped via UPS #1Z..." />
+                <input className="fi" value={note} onChange={e => setNote(e.target.value)} placeholder="e.g. Tracking: 1Z... or production note" />
               </div>
             </div>
+
+            <div style={{ padding: 14, marginBottom: 12, background: 'rgba(232,184,0,.04)', border: '1px solid rgba(232,184,0,.22)' }}>
+              <div style={{ fontFamily: 'Orbitron, monospace', fontSize: 8, letterSpacing: 2, color: 'var(--y)', marginBottom: 10 }}>
+                CUSTOMER SHIPPING TRACKING
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1.2fr .8fr', gap: 10, marginBottom: 10 }}>
+                <div>
+                  <label className="fl">Tracking Number</label>
+                  <input className="fi" value={trackingNumber} onChange={e => setTrackingNumber(e.target.value)} placeholder="1Z..., FedEx, USPS, etc." />
+                </div>
+                <div>
+                  <label className="fl">Carrier</label>
+                  <input className="fi" value={trackingCarrier} onChange={e => setTrackingCarrier(e.target.value)} placeholder="UPS / FedEx / USPS" />
+                </div>
+              </div>
+              <div>
+                <label className="fl">Tracking URL (optional)</label>
+                <input className="fi" value={trackingUrl} onChange={e => setTrackingUrl(e.target.value)} placeholder="https://..." />
+              </div>
+              <div style={{ marginTop: 8, color: '#666', fontSize: 10, lineHeight: 1.55 }}>
+                This tracking number is customer-visible on Track Order. If you paste only a tracking number into the Note field instead, the backend will recognize and save it too.
+              </div>
+            </div>
+
             <div style={{ display: 'flex', gap: 12 }}>
-              <button className="btn" style={{ clipPath: 'none' }} onClick={() => onSave(order.id, newStatus, note)}>SAVE CHANGES</button>
+              <button className="btn" style={{ clipPath: 'none' }} onClick={() => onSave(order.id, newStatus, note, {
+                number: trackingNumber.trim(),
+                carrier: trackingCarrier.trim(),
+                url: trackingUrl.trim(),
+              })}>SAVE CHANGES</button>
               <button className="btn-outline sm" onClick={onClose}>CLOSE</button>
             </div>
           </div>
@@ -390,11 +421,11 @@ export default function AdminDashboard() {
     }
   };
 
-  const updateStatus = async (orderId, status, note) => {
+  const updateStatus = async (orderId, status, note, tracking = {}) => {
     try {
       await apiFetch(`/api/orders/${orderId}/status`, {
         method: 'PATCH',
-        body: JSON.stringify({ status, note }),
+        body: JSON.stringify({ status, note, tracking }),
       });
       setMsg('Status updated!');
       loadOrders(filter);
