@@ -1,0 +1,78 @@
+.login-button-spinner {
+  width: 13px;
+  height: 13px;
+  display: inline-block;
+  margin-right: 8px;
+  vertical-align: -2px;
+  border: 2px solid rgba(0, 0, 0, .28);
+  border-top-color: #000;
+  border-radius: 50%;
+  animation: ws-login-spin .65s linear infinite;
+}
+
+.login-card[aria-busy='true'] input,
+.login-card[aria-busy='true'] button:not([type='submit']) {
+  pointer-events: none;
+}
+
+.login-wait-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2200;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(4, 4, 4, .86);
+  backdrop-filter: blur(9px);
+}
+
+.login-wait-panel {
+  width: min(360px, 92vw);
+  padding: 30px 24px;
+  text-align: center;
+  background: #0a0a0a;
+  border: 1px solid rgba(232, 184, 0, .45);
+  box-shadow: 0 18px 60px rgba(0, 0, 0, .55);
+}
+
+.login-wait-spinner {
+  width: 52px;
+  height: 52px;
+  margin: 0 auto 18px;
+  display: grid;
+  place-items: center;
+  color: var(--y);
+  border: 1px solid rgba(232, 184, 0, .24);
+  border-top-color: var(--y);
+  border-radius: 50%;
+  animation: ws-login-spin .8s linear infinite;
+}
+
+.login-wait-spinner span {
+  font-family: Orbitron, monospace;
+  font-size: 19px;
+}
+
+.login-wait-title {
+  color: var(--y);
+  font-family: Orbitron, monospace;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .24em;
+}
+
+.login-wait-copy {
+  margin-top: 9px;
+  color: var(--t);
+  font-size: 12px;
+  letter-spacing: .04em;
+}
+
+@keyframes ws-login-spin { to { transform: rotate(360deg); } }
+
+@media (max-width: 540px) {
+  .login-card {
+    padding: 28px 20px !important;
+    margin: 0 12px !important;
+  }
+}

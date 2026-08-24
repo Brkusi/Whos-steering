@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useCart } from '../context';
 import { AUDI_PRESETS_FULL as AUDI_PRESETS, BMW_PRESETS } from '../lib/data';
 import ZoomableImage from '../components/ZoomableImage';
+import './Catalog.css';
 
 function ArrowBtn({ dir, onClick }) {
   return (
@@ -52,7 +53,7 @@ function ConfigureBanner({ nav }) {
     }}>
       <div style={{ fontFamily: 'Orbitron, monospace', fontSize: 11, letterSpacing: 3, color: 'rgba(232,184,0,.6)', textTransform: 'uppercase', marginBottom: 4 }}>Want something fully custom?</div>
       <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 18, color: 'var(--w)', marginBottom: 12 }}>BUILD YOUR OWN — Every material, color, stripe &amp; stitch</div>
-      <div style={{ display: 'flex', gap: 8 }}>
+      <div className="catalog-config-actions" style={{ display: 'flex', gap: 8 }}>
         <button style={btnStyle}
           onClick={() => nav('/configure?brand=BMW')}
           onMouseEnter={e => { e.currentTarget.style.background = '#FFD000'; }}
@@ -207,7 +208,7 @@ function PresetPage({ preset, onClose }) {
   };
 
   return (
-    <div style={{ position: 'fixed', inset: 0, background: 'var(--d)', zIndex: 500, overflowY: 'auto', paddingTop: 120 }}>
+    <div className="catalog-preset-page" style={{ position: 'fixed', inset: 0, background: 'var(--d)', zIndex: 500, overflowY: 'auto', paddingTop: 120 }}>
       <div style={{ padding: '12px 24px', borderBottom: '1px solid var(--b)', display: 'flex', alignItems: 'center', gap: 16 }}>
         <button onClick={onClose}
           style={{ background: 'none', border: '1px solid var(--b)', color: 'var(--t)', cursor: 'pointer', padding: '8px 16px', fontFamily: 'Orbitron, monospace', fontSize: 11, letterSpacing: 2, transition: 'color .2s' }}
@@ -355,13 +356,13 @@ export default function Catalog() {
   const showAUDI = filter === 'ALL' || filter === 'AUDI';
 
   return (
-    <div style={{
-      /*
-        AnnouncementBar + Nav are sticky now, so they already occupy their
-        real document space. The old 120px padding created the blank band.
-      */
+    <div className="catalog-page" style={{
       paddingTop: 0,
       minHeight: '100vh',
+      width: '100%',
+      maxWidth: '100vw',
+      overflowX: 'clip',
+      overscrollBehaviorX: 'none',
     }}>
       <div style={{ padding: '50px 40px 32px', borderBottom: '1px solid var(--b)', background: 'linear-gradient(180deg,rgba(232,184,0,.04) 0%,transparent 100%)' }}>
         <div style={{ fontFamily: 'Orbitron, monospace', fontSize: 12, letterSpacing: 4, color: 'var(--y)', textTransform: 'uppercase', marginBottom: 8 }}>Shop All</div>
@@ -376,13 +377,13 @@ export default function Catalog() {
 
       <ConfigureBanner nav={nav} />
       <div style={{ maxWidth: 1600, margin: '0 auto', width: '100%' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))', gap: 1, background: 'var(--b)' }}>
+        <div className="catalog-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))', gap: 1, background: 'var(--b)' }}>
           {showBMW  && BMW_PRESETS.map(p => <PresetCard key={p.id} preset={p} onOpen={setOpenPreset} />)}
           {showAUDI && AUDI_PRESETS.map(p => <PresetCard key={p.id} preset={p} onOpen={setOpenPreset} />)}
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', borderTop: '1px solid var(--b)', background: 'var(--m)', marginTop: 1 }}>
+      <div className="catalog-trust-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', borderTop: '1px solid var(--b)', background: 'var(--m)', marginTop: 1 }}>
         {[['🛡','6 Month Warranty','Manufacturer guaranteed'],['⏱','3–4 Week Build','Handcrafted to order'],['🔧','BMW & Audi','Fitment specialists']].map(([icon,title,sub]) => (
           <div key={title} style={{ padding: '22px 28px', display: 'flex', alignItems: 'center', gap: 12, borderRight: '1px solid var(--b)' }}>
             <span style={{ fontSize: 22, color: 'var(--y)' }}>{icon}</span>

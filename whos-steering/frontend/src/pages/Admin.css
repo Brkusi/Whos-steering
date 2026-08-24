@@ -1,0 +1,151 @@
+.admin-page { width: 100%; max-width: 100vw; overflow-x: clip; }
+.admin-orders-table td { overflow-wrap: anywhere; }
+
+@media (max-width: 760px) {
+  .admin-page {
+    padding: 30px 12px 44px !important;
+  }
+
+  .admin-title {
+    font-size: 38px !important;
+    margin-bottom: 20px !important;
+  }
+
+  .admin-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    margin-bottom: 22px !important;
+  }
+
+  .admin-stats > div {
+    min-width: 0;
+    padding: 14px 12px !important;
+  }
+
+  .admin-stats > div > div:last-child {
+    font-size: 26px !important;
+    overflow-wrap: anywhere;
+  }
+
+  .admin-toolbar {
+    align-items: stretch !important;
+  }
+
+  .admin-search-wrap {
+    width: 100%;
+    flex-shrink: 1 !important;
+  }
+
+  .admin-search-input {
+    width: 100% !important;
+  }
+
+  .admin-filter-list {
+    width: 100%;
+    flex-wrap: nowrap !important;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding-bottom: 3px;
+  }
+
+  .admin-filter-list::-webkit-scrollbar { display: none; }
+  .admin-filter-list .ob { flex: 0 0 auto; }
+
+  .admin-orders-wrap {
+    overflow: visible !important;
+  }
+
+  .admin-orders-table,
+  .admin-orders-table tbody,
+  .admin-orders-table tr,
+  .admin-orders-table td {
+    display: block;
+    width: 100%;
+  }
+
+  .admin-orders-table thead { display: none; }
+
+  .admin-orders-table tr {
+    box-sizing: border-box;
+    margin-bottom: 12px;
+    padding: 10px 13px;
+    background: var(--p);
+    border: 1px solid var(--b) !important;
+  }
+
+  .admin-orders-table td {
+    box-sizing: border-box;
+    display: flex !important;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 8px 0 !important;
+    border-bottom: 1px solid #1c1c1c;
+    text-align: right;
+  }
+
+  .admin-orders-table td::before {
+    content: attr(data-label);
+    flex: 0 0 auto;
+    color: #666;
+    font-family: Orbitron, monospace;
+    font-size: 7px;
+    font-weight: 700;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+  }
+
+  .admin-orders-table td:last-child { border-bottom: 0; }
+  .admin-orders-table td:last-child button { width: 100%; }
+
+  .admin-modal-overlay {
+    padding: 0 !important;
+    align-items: stretch !important;
+  }
+
+  .admin-modal {
+    max-width: none !important;
+    min-height: 100dvh;
+    border: 0 !important;
+  }
+
+  .admin-modal-header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    padding: 16px !important;
+    background: rgba(14, 14, 14, .98);
+    backdrop-filter: blur(10px);
+  }
+
+  .admin-modal-body {
+    padding: 16px !important;
+    gap: 18px !important;
+  }
+
+  .admin-modal-summary-grid,
+  .admin-config-grid,
+  .admin-status-grid,
+  .admin-tracking-grid {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .admin-order-photo {
+    width: min(100%, 240px) !important;
+    height: auto !important;
+    aspect-ratio: 1;
+  }
+
+  .admin-order-photo--fallback { min-height: 180px; }
+
+  .admin-modal-actions {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+
+  .admin-modal-actions button { width: 100%; }
+}
+
+@media (max-width: 430px) {
+  .admin-stats { grid-template-columns: 1fr 1fr !important; }
+  .admin-modal-actions { grid-template-columns: 1fr; }
+}

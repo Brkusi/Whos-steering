@@ -85,6 +85,19 @@ export default function Footer() {
                 onMouseLeave={e => e.target.style.color = 'var(--t)'}>
                 service@whossteering.com
               </a></div>
+              <div style={{ marginTop: 8 }}>
+                <a
+                  href="https://www.instagram.com/whossteering/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Who's Steering on Instagram"
+                  style={{ color: 'var(--y)', textDecoration: 'none', fontFamily: 'Orbitron, monospace', fontSize: 10, letterSpacing: 1.4 }}
+                  onMouseEnter={e => e.currentTarget.style.color = 'var(--yl)'}
+                  onMouseLeave={e => e.currentTarget.style.color = 'var(--y)'}
+                >
+                  ◎ INSTAGRAM
+                </a>
+              </div>
               <div style={{ marginTop: 8, fontSize: 11, color: '#444', lineHeight: 1.7 }}>
                 Manufactured in Florida<br />
                 Assembled in New York City
@@ -101,7 +114,15 @@ export default function Footer() {
           <div style={{ fontSize: 11, color: '#333', letterSpacing: 1 }}>
             © {new Date().getFullYear()} WHO'S STEERING. ALL RIGHTS RESERVED.
           </div>
-          <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap', alignItems: 'center' }}>
+            <a
+              href="https://www.instagram.com/whossteering/"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ fontSize: 10, color: 'var(--y)', textDecoration: 'none', letterSpacing: 1, textTransform: 'uppercase' }}
+            >
+              Instagram ↗
+            </a>
             {LEGAL_LINKS.map(l => (
               <Link key={l.to} to={l.to}
                 style={{ fontSize: 10, color: '#333', textDecoration: 'none', letterSpacing: 1, textTransform: 'uppercase', transition: 'color .2s' }}

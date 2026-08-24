@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context';
 import { apiFetch } from '../lib/api';
 import { colorName } from '../lib/data';
+import './Account.css';
 
 const STATUS_COLORS = {
   pending: '#888', payment_processing: '#4499FF', paid: '#3DB85A',
@@ -43,7 +44,7 @@ function ConfigDetail({ config }) {
   ].filter(Boolean);
 
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2px 20px', marginTop: 12 }}>
+    <div className="account-config-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2px 20px', marginTop: 12 }}>
       {rows.map(([label, value]) => (
         <div key={label} style={{ display: 'flex', justifyContent: 'space-between', padding: '5px 0', borderBottom: '1px solid #1A1A1A', gap: 8 }}>
           <span style={{ fontSize: 11, color: 'var(--t)', letterSpacing: 1, textTransform: 'uppercase', flexShrink: 0 }}>{label}</span>
@@ -121,17 +122,17 @@ export default function Account() {
   if (!user) return null;
 
   return (
-    <div style={{ paddingTop: 88, minHeight: '100vh', background: 'var(--d)' }}>
+    <div className="account-page" style={{ paddingTop: 88, minHeight: '100vh', background: 'var(--d)' }}>
       {/* Header */}
-      <div style={{ padding: '50px 40px 32px', borderBottom: '1px solid var(--b)', background: 'linear-gradient(180deg, rgba(232,184,0,.04) 0%, transparent 100%)', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: 16 }}>
+      <div className="account-hero" style={{ padding: '50px 40px 32px', borderBottom: '1px solid var(--b)', background: 'linear-gradient(180deg, rgba(232,184,0,.04) 0%, transparent 100%)', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: 16 }}>
         <div>
           <div style={{ fontFamily: 'Orbitron, monospace', fontSize: 10, letterSpacing: 4, color: 'var(--y)', marginBottom: 8 }}>Welcome Back</div>
-          <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 48 }}>
+          <div className="account-hero__name" style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 48 }}>
             {user.first_name ? `${user.first_name} ${user.last_name || ''}`.trim() : user.email}
           </div>
           <div style={{ fontSize: 12, color: 'var(--t)', marginTop: 4 }}>{user.email}</div>
         </div>
-        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+        <div className="account-hero__actions" style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
           {user.is_admin && (
             <Link to="/admin"><button className="btn btn-sm" style={{ clipPath: 'none' }}>ADMIN DASHBOARD</button></Link>
           )}
@@ -140,7 +141,7 @@ export default function Account() {
       </div>
 
       {/* Orders */}
-      <div style={{ maxWidth: 960, margin: '0 auto', padding: '40px 24px' }}>
+      <div className="account-orders-shell" style={{ maxWidth: 960, margin: '0 auto', padding: '40px 24px' }}>
         <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 32, marginBottom: 24 }}>MY ORDERS</div>
 
         {cancelMessage && (
@@ -176,28 +177,28 @@ export default function Account() {
               const isOpen = expanded === order.id;
 
               return (
-                <div key={order.id} style={{ background: 'var(--p)' }}>
+                <div key={order.id} className="account-order-card" style={{ background: 'var(--p)' }}>
                   {/* Order header row */}
-                  <div onClick={() => setExpanded(isOpen ? null : order.id)}
+                  <div className="account-order-header" onClick={() => setExpanded(isOpen ? null : order.id)}
                     style={{ padding: '20px 24px', display: 'flex', gap: 20, alignItems: 'center', cursor: 'pointer', flexWrap: 'wrap' }}
                     onMouseEnter={e => e.currentTarget.style.background = '#242424'}
                     onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
-                    <div style={{ flex: 1, minWidth: 180 }}>
+                    <div className="account-order-meta" style={{ flex: 1, minWidth: 180 }}>
                       <div style={{ fontFamily: 'Orbitron, monospace', fontSize: 10, color: 'var(--y)', letterSpacing: 2 }}>#{order.id.slice(0, 8).toUpperCase()}</div>
                       <div style={{ fontSize: 12, color: 'var(--t)', marginTop: 2 }}>{new Date(order.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</div>
                     </div>
-                    <span style={{ display: 'inline-block', padding: '4px 12px', fontSize: 10, letterSpacing: 1, fontWeight: 700, textTransform: 'uppercase', background: `${STATUS_COLORS[order.status]}22`, color: STATUS_COLORS[order.status], border: `1px solid ${STATUS_COLORS[order.status]}66` }}>
+                    <span className="account-order-status" style={{ display: 'inline-block', padding: '4px 12px', fontSize: 10, letterSpacing: 1, fontWeight: 700, textTransform: 'uppercase', background: `${STATUS_COLORS[order.status]}22`, color: STATUS_COLORS[order.status], border: `1px solid ${STATUS_COLORS[order.status]}66` }}>
                       {STATUS_LABEL[order.status] || order.status}
                     </span>
-                    <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontSize: 24, color: 'var(--y)', minWidth: 90, textAlign: 'right' }}>
+                    <div className="account-order-total" style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontSize: 24, color: 'var(--y)', minWidth: 90, textAlign: 'right' }}>
                       ${parseFloat(order.total).toFixed(2)}
                     </div>
-                    <div style={{ color: 'var(--t)', fontSize: 18 }}>{isOpen ? '▲' : '▼'}</div>
+                    <div className="account-order-chevron" style={{ color: 'var(--t)', fontSize: 18 }}>{isOpen ? '▲' : '▼'}</div>
                   </div>
 
                   {/* Expanded detail */}
                   {isOpen && (
-                    <div style={{ padding: '0 24px 24px', borderTop: '1px solid var(--b)' }}>
+                    <div className="account-order-expanded" style={{ padding: '0 24px 24px', borderTop: '1px solid var(--b)' }}>
 
                       {/* Wheel photos */}
                       {photos.length > 0 && (
@@ -209,7 +210,7 @@ export default function Account() {
                             {photos.map((url, i) => (
                               <img key={i} src={url} alt={`Your wheel ${i + 1}`}
                                 onClick={() => setLightbox(url)}
-                                style={{ width: 140, height: 140, objectFit: 'cover', border: '1px solid var(--b)', cursor: 'zoom-in', transition: 'transform .2s' }}
+                                className="account-wheel-photo" style={{ width: 140, height: 140, objectFit: 'cover', border: '1px solid var(--b)', cursor: 'zoom-in', transition: 'transform .2s' }}
                                 onMouseEnter={e => e.target.style.transform = 'scale(1.04)'}
                                 onMouseLeave={e => e.target.style.transform = 'scale(1)'}
                                 onError={e => e.target.style.display = 'none'} />
@@ -263,7 +264,7 @@ export default function Account() {
                       {/* Customer cancellation control */}
                       <div style={{ marginTop: 18, borderTop: '1px solid var(--b)', paddingTop: 16 }}>
                         {order.status === 'paid' ? (
-                          <div style={{ display: 'flex', justifyContent: 'space-between', gap: 16, alignItems: 'center', flexWrap: 'wrap' }}>
+                          <div className="account-cancel-row" style={{ display: 'flex', justifyContent: 'space-between', gap: 16, alignItems: 'center', flexWrap: 'wrap' }}>
                             <div style={{ maxWidth: 560, color: 'var(--t)', fontSize: 11, lineHeight: 1.6 }}>
                               Need to cancel? You can cancel now because processing has not started.
                               A refund will be initiated to your original payment method.

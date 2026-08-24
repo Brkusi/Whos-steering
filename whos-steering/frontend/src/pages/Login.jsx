@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context';
+import './Login.css';
 
 export default function Login() {
   const { login, register } = useAuth();
@@ -8,6 +9,7 @@ export default function Login() {
   const [tab, setTab] = useState('signin');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [showLongLoading, setShowLongLoading] = useState(false);
 
   // Sign in fields
   const [siEmail, setSiEmail] = useState('');
@@ -20,12 +22,28 @@ export default function Login() {
   const [caPass, setCaPass]     = useState('');
   const [caPass2, setCaPass2]   = useState('');
 
+  // Preload the account chunk while the customer types so a successful login
+  // does not have to wait for the next page bundle after authentication.
+  useEffect(() => {
+    import('./Account').catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    if (!loading) {
+      setShowLongLoading(false);
+      return undefined;
+    }
+
+    const timer = setTimeout(() => setShowLongLoading(true), 300);
+    return () => clearTimeout(timer);
+  }, [loading]);
+
   const handleSignIn = async (e) => {
     e.preventDefault();
     setError(''); setLoading(true);
     try {
       await login(siEmail, siPass);
-      nav('/account');
+      nav('/account', { replace: true });
     } catch (err) {
       setError(err.message);
     } finally {
@@ -39,7 +57,7 @@ export default function Login() {
     setError(''); setLoading(true);
     try {
       await register({ firstName: caFirst, lastName: caLast, email: caEmail, password: caPass });
-      nav('/account');
+      nav('/account', { replace: true });
     } catch (err) {
       setError(err.message);
     } finally {
@@ -51,7 +69,7 @@ export default function Login() {
 
   return (
     <div style={{ paddingTop: 88, display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', background: 'radial-gradient(ellipse at 30% 50%, rgba(232,184,0,.05) 0%, transparent 60%), var(--d)' }}>
-      <div style={{ width: 400, maxWidth: '100%', padding: 40, background: 'var(--p)', border: '1px solid var(--b)', margin: '0 16px' }}>
+      <div className="login-card" aria-busy={loading} style={{ width: 400, maxWidth: '100%', padding: 40, background: 'var(--p)', border: '1px solid var(--b)', margin: '0 16px' }}>
 
         <div style={{ textAlign: 'center', marginBottom: 18 }}>
           <div className="ws-logo" style={{ alignItems: 'center' }}>
@@ -87,7 +105,7 @@ export default function Login() {
             </div>
             <div style={{ fontSize: 11, color: 'var(--t)', textAlign: 'right', marginBottom: 16, cursor: 'pointer', letterSpacing: 1 }}>Forgot password?</div>
             <button className="btn" type="submit" disabled={loading} style={{ clipPath: 'none', width: '100%' }}>
-              {loading ? 'SIGNING IN...' : 'SIGN IN'}
+              {loading ? <><span className="login-button-spinner" aria-hidden="true" /> SIGNING IN...</> : 'SIGN IN'}
             </button>
           </form>
         ) : (
@@ -115,11 +133,21 @@ export default function Login() {
               <input className="fi" type="password" value={caPass2} onChange={e => setCaPass2(e.target.value)} placeholder="••••••••" required />
             </div>
             <button className="btn" type="submit" disabled={loading} style={{ clipPath: 'none', width: '100%', marginTop: 4 }}>
-              {loading ? 'CREATING...' : 'CREATE ACCOUNT'}
+              {loading ? <><span className="login-button-spinner" aria-hidden="true" /> CREATING ACCOUNT...</> : 'CREATE ACCOUNT'}
             </button>
           </form>
         )}
       </div>
+
+      {showLongLoading && (
+        <div className="login-wait-overlay" role="status" aria-live="polite">
+          <div className="login-wait-panel">
+            <div className="login-wait-spinner" aria-hidden="true"><span>→</span></div>
+            <div className="login-wait-title">{tab === 'signin' ? 'SIGNING YOU IN' : 'CREATING YOUR ACCOUNT'}</div>
+            <div className="login-wait-copy">Securely connecting to your account…</div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

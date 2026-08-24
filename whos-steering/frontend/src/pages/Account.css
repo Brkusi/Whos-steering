@@ -1,0 +1,100 @@
+.account-page { width: 100%; max-width: 100vw; overflow-x: clip; }
+.account-hero__name { overflow-wrap: anywhere; }
+
+@media (max-width: 700px) {
+  .account-page { padding-top: 0 !important; }
+
+  .account-hero {
+    padding: 28px 18px 22px !important;
+    align-items: flex-start !important;
+  }
+
+  .account-hero__name {
+    font-size: 36px !important;
+    line-height: .98;
+  }
+
+  .account-hero__actions {
+    width: 100%;
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .account-hero__actions a,
+  .account-hero__actions button {
+    width: 100%;
+  }
+
+  .account-orders-shell {
+    padding: 28px 12px 40px !important;
+  }
+
+  .account-order-header {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 10px 12px !important;
+    padding: 16px !important;
+    align-items: center !important;
+  }
+
+  .account-order-meta {
+    min-width: 0 !important;
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .account-order-status {
+    grid-column: 2;
+    grid-row: 1;
+    justify-self: end;
+    max-width: 145px;
+    text-align: center;
+    line-height: 1.25;
+  }
+
+  .account-order-total {
+    min-width: 0 !important;
+    grid-column: 1;
+    grid-row: 2;
+    text-align: left !important;
+    font-size: 27px !important;
+  }
+
+  .account-order-chevron {
+    grid-column: 2;
+    grid-row: 2;
+    justify-self: end;
+  }
+
+  .account-order-expanded {
+    padding: 0 14px 18px !important;
+  }
+
+  .account-config-grid {
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 0 !important;
+  }
+
+  .account-config-grid > div {
+    min-width: 0;
+  }
+
+  .account-wheel-photo {
+    width: min(100%, 220px) !important;
+    height: auto !important;
+    aspect-ratio: 1;
+  }
+
+  .account-cancel-row {
+    align-items: stretch !important;
+  }
+
+  .account-cancel-row button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 420px) {
+  .account-hero__actions { grid-template-columns: 1fr; }
+  .account-order-status { max-width: 125px; font-size: 8px !important; }
+}

@@ -10,6 +10,7 @@ import {
   FORGED_CARBON_COLORS,
   HONEYCOMB_CARBON_COLORS,
 } from '../lib/data';
+import './Admin.css';
 
 const STATUS_COLORS = {
   pending: '#888', payment_processing: '#4499FF', paid: '#3DB85A',
@@ -195,7 +196,7 @@ function ConfigDetail({ config, itemName }) {
   }
 
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2px 24px' }}>
+    <div className="admin-config-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2px 24px' }}>
       {rows.map(([label, value], index) => (
         <div
           key={`${label}-${index}`}
@@ -233,11 +234,11 @@ function OrderModal({ order, onClose, onSave }) {
   const allPhotos = allConfigs.map(c => c.photo_url).filter(Boolean);
 
   return (
-    <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,.88)', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', zIndex: 2000, overflowY: 'auto', padding: '40px 16px' }}>
-      <div style={{ background: 'var(--p)', border: '1px solid var(--b)', width: '100%', maxWidth: 900 }}>
+    <div className="admin-modal-overlay" style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,.88)', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', zIndex: 2000, overflowY: 'auto', padding: '40px 16px' }}>
+      <div className="admin-modal" style={{ background: 'var(--p)', border: '1px solid var(--b)', width: '100%', maxWidth: 900 }}>
 
         {/* Header */}
-        <div style={{ padding: '20px 28px', borderBottom: '1px solid var(--b)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div className="admin-modal-header" style={{ padding: '20px 28px', borderBottom: '1px solid var(--b)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
             <div style={{ fontFamily: 'Orbitron, monospace', fontSize: 10, letterSpacing: 3, color: 'var(--y)' }}>ORDER DETAIL</div>
             <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 28 }}>
@@ -247,10 +248,10 @@ function OrderModal({ order, onClose, onSave }) {
           <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'var(--t)', cursor: 'pointer', fontSize: 22 }}>✕</button>
         </div>
 
-        <div style={{ padding: 28, display: 'flex', flexDirection: 'column', gap: 24 }}>
+        <div className="admin-modal-body" style={{ padding: 28, display: 'flex', flexDirection: 'column', gap: 24 }}>
 
           {/* Customer + shipping */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
+          <div className="admin-modal-summary-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
             <div>
               <div style={{ fontSize: 11, letterSpacing: 2, textTransform: 'uppercase', color: 'var(--t)', marginBottom: 8 }}>Customer</div>
               <div style={{ fontSize: 14, fontWeight: 700 }}>{order.customer_email || order.guest_email || '—'}</div>
@@ -283,11 +284,11 @@ function OrderModal({ order, onClose, onSave }) {
                     {!imgError[url] ? (
                       <img src={url} alt={`Wheel ${i + 1}`}
                         onError={() => setImgError(p => ({ ...p, [url]: true }))}
-                        style={{ width: 160, height: 160, objectFit: 'cover', display: 'block', transition: 'transform .2s' }}
+                        className="admin-order-photo" style={{ width: 160, height: 160, objectFit: 'cover', display: 'block', transition: 'transform .2s' }}
                         onMouseEnter={e => e.target.style.transform = 'scale(1.04)'}
                         onMouseLeave={e => e.target.style.transform = 'scale(1)'} />
                     ) : (
-                      <div style={{ width: 160, height: 160, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--m)', color: 'var(--t)', fontSize: 12 }}>
+                      <div className="admin-order-photo admin-order-photo--fallback" style={{ width: 160, height: 160, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--m)', color: 'var(--t)', fontSize: 12 }}>
                         Unavailable
                       </div>
                     )}
@@ -330,7 +331,7 @@ function OrderModal({ order, onClose, onSave }) {
           {/* Status update */}
           <div style={{ borderTop: '1px solid var(--b)', paddingTop: 20 }}>
             <div style={{ fontSize: 11, letterSpacing: 2, textTransform: 'uppercase', color: 'var(--t)', marginBottom: 12 }}>Update Status</div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 12 }}>
+            <div className="admin-status-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 12 }}>
               <div>
                 <label className="fl">New Status</label>
                 <select className="fi" value={newStatus} onChange={e => setNewStatus(e.target.value)}>
@@ -347,7 +348,7 @@ function OrderModal({ order, onClose, onSave }) {
               <div style={{ fontFamily: 'Orbitron, monospace', fontSize: 8, letterSpacing: 2, color: 'var(--y)', marginBottom: 10 }}>
                 CUSTOMER SHIPPING TRACKING
               </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1.2fr .8fr', gap: 10, marginBottom: 10 }}>
+              <div className="admin-tracking-grid" style={{ display: 'grid', gridTemplateColumns: '1.2fr .8fr', gap: 10, marginBottom: 10 }}>
                 <div>
                   <label className="fl">Tracking Number</label>
                   <input className="fi" value={trackingNumber} onChange={e => setTrackingNumber(e.target.value)} placeholder="1Z..., FedEx, USPS, etc." />
@@ -366,7 +367,7 @@ function OrderModal({ order, onClose, onSave }) {
               </div>
             </div>
 
-            <div style={{ display: 'flex', gap: 12 }}>
+            <div className="admin-modal-actions" style={{ display: 'flex', gap: 12 }}>
               <button className="btn" style={{ clipPath: 'none' }} onClick={() => onSave(order.id, newStatus, note, {
                 number: trackingNumber.trim(),
                 carrier: trackingCarrier.trim(),
@@ -445,14 +446,14 @@ export default function AdminDashboard() {
   });
 
   return (
-    <div style={{ paddingTop: 88, minHeight: '100vh', background: 'var(--d)', padding: '104px 24px 48px' }}>
-      <div style={{ maxWidth: 1200, margin: '0 auto' }}>
+    <div className="admin-page" style={{ paddingTop: 88, minHeight: '100vh', background: 'var(--d)', padding: '104px 24px 48px' }}>
+      <div className="admin-shell" style={{ maxWidth: 1200, margin: '0 auto' }}>
         <div style={{ fontFamily: 'Orbitron, monospace', fontSize: 10, letterSpacing: 4, color: 'var(--y)', marginBottom: 8 }}>ADMIN</div>
-        <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 48, marginBottom: 32 }}>DASHBOARD</div>
+        <div className="admin-title" style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 48, marginBottom: 32 }}>DASHBOARD</div>
 
         {/* Stats */}
         {stats && (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 1, background: 'var(--b)', marginBottom: 32 }}>
+          <div className="admin-stats" style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 1, background: 'var(--b)', marginBottom: 32 }}>
             {[
               ['Total Orders', stats.total_orders],
               ['Paid',         stats.paid],
@@ -470,21 +471,21 @@ export default function AdminDashboard() {
         )}
 
         {/* Search + Filter bar */}
-        <div style={{ display: 'flex', gap: 12, marginBottom: 20, flexWrap: 'wrap', alignItems: 'center' }}>
+        <div className="admin-toolbar" style={{ display: 'flex', gap: 12, marginBottom: 20, flexWrap: 'wrap', alignItems: 'center' }}>
           {/* Search box */}
-          <div style={{ position: 'relative', flexShrink: 0 }}>
+          <div className="admin-search-wrap" style={{ position: 'relative', flexShrink: 0 }}>
             <input
               className="fi"
               value={search}
               onChange={e => setSearch(e.target.value)}
               placeholder="Search order #..."
-              style={{ width: 220, paddingLeft: 32 }}
+              className="admin-search-input" style={{ width: 220, paddingLeft: 32 }}
             />
             <span style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', color: 'var(--t)', fontSize: 13 }}>🔍</span>
           </div>
 
           {/* Status filters */}
-          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+          <div className="admin-filter-list" style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
             {['', ...ALL_STATUSES].map(s => (
               <button key={s} className={`ob${filter === s ? ' on' : ''}`}
                 onClick={() => { setFilter(s); loadOrders(s); }}
@@ -500,8 +501,8 @@ export default function AdminDashboard() {
         )}
 
         {/* Orders table */}
-        <div style={{ overflowX: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+        <div className="admin-orders-wrap" style={{ overflowX: 'auto' }}>
+          <table className="admin-orders-table" style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
             <thead>
               <tr style={{ borderBottom: '1px solid var(--b)' }}>
                 {['Order ID', 'Customer', 'Date', 'Items', 'Total', 'Status', 'Actions'].map(h => (
@@ -514,20 +515,20 @@ export default function AdminDashboard() {
                 <tr key={o.id} style={{ borderBottom: '1px solid var(--b)', transition: 'background .15s' }}
                   onMouseEnter={e => e.currentTarget.style.background = 'var(--p)'}
                   onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
-                  <td style={{ padding: '12px' }}>
+                  <td data-label="Order ID" style={{ padding: '12px' }}>
                     <span style={{ fontFamily: 'Orbitron, monospace', fontSize: 10, color: 'var(--y)' }}>{o.id.slice(0, 8).toUpperCase()}</span>
                   </td>
-                  <td style={{ padding: '12px' }}>{o.customer_email || o.guest_email || '—'}</td>
-                  <td style={{ padding: '12px', color: 'var(--t)' }}>{new Date(o.created_at).toLocaleDateString()}</td>
-                  <td style={{ padding: '12px', color: 'var(--t)' }}>{o.item_count}</td>
-                  <td style={{ padding: '12px', fontWeight: 700, color: 'var(--y)' }}>${parseFloat(o.total).toFixed(2)}</td>
-                  <td style={{ padding: '12px' }}>
+                  <td data-label="Customer" style={{ padding: '12px' }}>{o.customer_email || o.guest_email || '—'}</td>
+                  <td data-label="Date" style={{ padding: '12px', color: 'var(--t)' }}>{new Date(o.created_at).toLocaleDateString()}</td>
+                  <td data-label="Items" style={{ padding: '12px', color: 'var(--t)' }}>{o.item_count}</td>
+                  <td data-label="Total" style={{ padding: '12px', fontWeight: 700, color: 'var(--y)' }}>${parseFloat(o.total).toFixed(2)}</td>
+                  <td data-label="Status" style={{ padding: '12px' }}>
                     <span style={{ display: 'inline-block', padding: '3px 10px', fontSize: 10, letterSpacing: 1, fontWeight: 700, textTransform: 'uppercase', background: `${STATUS_COLORS[o.status]}22`, color: STATUS_COLORS[o.status], border: `1px solid ${STATUS_COLORS[o.status]}66` }}>
                       {o.status?.replace(/_/g, ' ')}
                     </span>
                   </td>
 
-                  <td style={{ padding: '12px' }}>
+                  <td data-label="Actions" style={{ padding: '12px' }}>
                     <button className="btn-outline sm" onClick={() => openOrder(o)}>VIEW & UPDATE</button>
                   </td>
                 </tr>

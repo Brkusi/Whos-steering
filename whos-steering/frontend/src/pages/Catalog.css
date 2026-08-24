@@ -1,0 +1,38 @@
+.catalog-page,
+.catalog-preset-page {
+  box-sizing: border-box;
+  max-width: 100vw;
+  overflow-x: clip;
+  overscroll-behavior-x: none;
+}
+
+@media (max-width: 760px) {
+  .catalog-page,
+  .catalog-preset-page {
+    /* Portrait catalog is vertical-only. Product image changes still work via arrows. */
+    touch-action: pan-y;
+  }
+
+  .catalog-page *,
+  .catalog-preset-page * {
+    box-sizing: border-box;
+  }
+
+  .catalog-grid {
+    grid-template-columns: minmax(0, 1fr) !important;
+    width: 100%;
+  }
+
+  .catalog-config-actions {
+    flex-direction: column;
+  }
+
+  .catalog-trust-grid {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .catalog-trust-grid > div {
+    border-right: 0 !important;
+    border-bottom: 1px solid var(--b);
+  }
+}

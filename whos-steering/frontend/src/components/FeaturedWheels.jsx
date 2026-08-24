@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AUDI_PRESETS_FULL as AUDI_PRESETS, BMW_PRESETS } from '../lib/data';
 import './FeaturedWheels.css';
@@ -12,6 +12,7 @@ export default function FeaturedWheels() {
   const suppressClickRef = useRef(false);
   const [dragging, setDragging] = useState(false);
   const [activeBrand, setActiveBrand] = useState('BMW');
+  const [railIndicator, setRailIndicator] = useState({ left: 0, width: 34 });
 
   const wheelsByBrand = useMemo(
     () => ({
@@ -23,8 +24,37 @@ export default function FeaturedWheels() {
 
   const wheels = wheelsByBrand[activeBrand] || [];
 
+  useEffect(() => {
+    const rail = railRef.current;
+    if (!rail) return undefined;
+
+    const updateIndicator = () => {
+      const maxScroll = Math.max(0, rail.scrollWidth - rail.clientWidth);
+      const visibleRatio = rail.scrollWidth > 0 ? rail.clientWidth / rail.scrollWidth : 1;
+      const width = Math.max(18, Math.min(100, visibleRatio * 100));
+      const progress = maxScroll > 0 ? Math.max(0, Math.min(1, rail.scrollLeft / maxScroll)) : 0;
+      const left = progress * (100 - width);
+
+      setRailIndicator(prev => {
+        if (Math.abs(prev.left - left) < 0.15 && Math.abs(prev.width - width) < 0.15) return prev;
+        return { left, width };
+      });
+    };
+
+    const frame = requestAnimationFrame(updateIndicator);
+    rail.addEventListener('scroll', updateIndicator, { passive: true });
+    window.addEventListener('resize', updateIndicator);
+
+    return () => {
+      cancelAnimationFrame(frame);
+      rail.removeEventListener('scroll', updateIndicator);
+      window.removeEventListener('resize', updateIndicator);
+    };
+  }, [activeBrand, wheels.length]);
+
   const selectBrand = (brand) => {
     setActiveBrand(brand);
+    setRailIndicator(prev => ({ ...prev, left: 0 }));
 
     requestAnimationFrame(() => {
       if (railRef.current) railRef.current.scrollTo({ left: 0, behavior: 'smooth' });
@@ -184,7 +214,7 @@ export default function FeaturedWheels() {
 
         <div className="featured-wheels__footer">
           <div className="featured-wheels__line" aria-hidden="true">
-            <span />
+            <span style={{ left: `${railIndicator.left}%`, width: `${railIndicator.width}%` }} />
           </div>
 
           <div className="featured-wheels__controls">
