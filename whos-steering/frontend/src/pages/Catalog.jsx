@@ -91,7 +91,7 @@ function PresetCard({ preset, onOpen }) {
         {total > 1 && <div style={{ zIndex: 20, position: 'absolute', top: 0, left: 0, bottom: 0, display: 'flex', alignItems: 'center', paddingLeft: 0 }}><ArrowBtn dir="left" onClick={() => setImgIdx(i => (i - 1 + total) % total)} /></div>}
         {total > 1 && <div style={{ zIndex: 20, position: 'absolute', top: 0, right: 0, bottom: 0, display: 'flex', alignItems: 'center', paddingRight: 0 }}><ArrowBtn dir="right" onClick={() => setImgIdx(i => (i + 1) % total)} /></div>}
         <div style={{ position: 'absolute', top: 12, left: 12, background: 'var(--y)', color: '#000', fontFamily: 'Orbitron, monospace', fontSize: 11, fontWeight: 700, padding: '3px 8px', letterSpacing: 1, zIndex: 5 }}>{preset.brand}</div>
-        <div style={{ position: 'absolute', top: 12, right: 12, background: '#1A3A1A', color: '#3DB85A', fontFamily: 'Orbitron, monospace', fontSize: 11, fontWeight: 700, padding: '3px 8px', letterSpacing: 1, border: '1px solid #3DB85A', zIndex: 5 }}>PRESET</div>
+        <div style={{ position: 'absolute', top: 12, right: 12, background: '#1A3A1A', color: '#3DB85A', fontFamily: 'Orbitron, monospace', fontSize: 11, fontWeight: 700, padding: '3px 8px', letterSpacing: 1, border: '1px solid #3DB85A', zIndex: 5 }}>{preset.statusBadge || 'PRESET'}</div>
         {total > 1 && (
           <div style={{ position: 'absolute', bottom: 10, left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: 5, zIndex: 5 }}>
             {preset.images.map((_, i) => (
@@ -119,7 +119,7 @@ function PresetCard({ preset, onOpen }) {
         </div>
         <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontSize: 28, color: 'var(--y)', marginBottom: 2 }}>${preset.base_price.toFixed(2)}</div>
         <div style={{ fontSize: 12, color: 'var(--t)', marginBottom: 14 }}>
-          {preset.customizable === false ? 'Fixed build · Sold as shown' : 'Starting price · Options available'}
+          {preset.customizable === false ? (preset.fixedBuildNote || 'Fixed build · Sold as shown') : 'Starting price · Options available'}
         </div>
       </div>
 
@@ -127,7 +127,7 @@ function PresetCard({ preset, onOpen }) {
         <button className="btn" style={{ clipPath: 'none', width: '100%' }} onClick={() => onOpen(preset)}>
           VIEW DETAILS
         </button>
-        <div style={{ fontSize: 12, color: 'var(--t)', paddingTop: 10, marginTop: 4, borderTop: '1px solid var(--b)', textAlign: 'center' }}>🛡 6 Month Warranty · ⏱ 3–4 Week Build</div>
+        <div style={{ fontSize: 12, color: 'var(--t)', paddingTop: 10, marginTop: 4, borderTop: '1px solid var(--b)', textAlign: 'center' }}>{preset.readyToShip ? '🛡 6 Month Warranty · Ready to Ship' : '🛡 6 Month Warranty · ⏱ 3–4 Week Build'}</div>
       </div>
     </div>
   );
@@ -186,7 +186,9 @@ function PresetPage({ preset, onClose }) {
   const buildItem = () => ({
     name: preset.name,
     detail: isFixedPreset
-      ? `${preset.brand} · ${preset.features.join(' · ')}`
+      ? (preset.readyToShip
+          ? `${preset.brand} · Ready to Ship · ${preset.features.join(' · ')}`
+          : `${preset.brand} · ${preset.features.join(' · ')}`)
       : `${preset.brand} · ${badge} Badge · ${preset.features.slice(0, 2).join(' · ')}`,
     price: totalPrice,
     config: {
@@ -207,11 +209,12 @@ function PresetPage({ preset, onClose }) {
       heated: isFixedPreset ? false : heated,
       laneAssist: isFixedPreset ? false : laneAssist,
 
-      topBottomMat: isInfiniti ? 'Purple Carbon Fiber' : undefined,
-      topBottomCarbonCol: isInfiniti ? 'Purple' : undefined,
-      sideMat: isInfiniti ? 'Alcantara' : undefined,
-      sideCol: isInfiniti ? '#111111' : undefined,
-      stitchColor: isInfiniti ? '#111111' : undefined,
+      topBottomMat: isInfiniti ? preset.fixedConfig?.topBottomMat : undefined,
+      topBottomCarbonCol: isInfiniti ? preset.fixedConfig?.topBottomCarbonCol : undefined,
+      sideMat: isInfiniti ? preset.fixedConfig?.sideMat : undefined,
+      sideCol: isInfiniti ? preset.fixedConfig?.sideCol : undefined,
+      stitchColor: isInfiniti ? preset.fixedConfig?.stitchColor : undefined,
+      stripeConceptLabel: isInfiniti ? preset.fixedConfig?.stripe : undefined,
 
       customNotes: isFixedPreset ? '' : notes,
       isPreset: true,
@@ -288,7 +291,7 @@ function PresetPage({ preset, onClose }) {
 
         {/* Right — options */}
         <div>
-          <div style={{ fontFamily: 'Orbitron, monospace', fontSize: 12, letterSpacing: 3, color: 'var(--y)', marginBottom: 8 }}>{preset.brand} · PRESET BUILD</div>
+          <div style={{ fontFamily: 'Orbitron, monospace', fontSize: 12, letterSpacing: 3, color: 'var(--y)', marginBottom: 8 }}>{preset.productTypeLabel || `${preset.brand} · PRESET BUILD`}</div>
           <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 48, lineHeight: 1, marginBottom: 12 }}>{preset.name}</div>
           <div style={{ fontSize: 14, color: 'var(--t)', lineHeight: 1.7, marginBottom: 24 }}>{preset.desc}</div>
 
@@ -347,11 +350,10 @@ function PresetPage({ preset, onClose }) {
               background: 'rgba(232,184,0,.05)',
             }}>
               <div style={{ fontFamily: 'Orbitron, monospace', fontSize: 10, letterSpacing: 2.5, color: 'var(--y)', marginBottom: 7 }}>
-                FIXED INFINITI PRESET
+                {preset.fixedInfoTitle || 'FIXED INFINITI PRESET'}
               </div>
               <div style={{ fontSize: 13, lineHeight: 1.7, color: 'var(--t)' }}>
-                Purple Rain is sold exactly as shown. Infiniti customization is not available yet.
-                This build has no airbag, heated-steering, or lane-assist options.
+                {preset.fixedInfoBody || 'This wheel is sold exactly as shown. Customization is not available yet.'}
               </div>
             </div>
           )}
@@ -368,7 +370,7 @@ function PresetPage({ preset, onClose }) {
                 {added ? '✓ ADDED' : '+ ADD TO CART'}
               </button>
             </div>
-            <div style={{ fontSize: 13, color: 'var(--t)', lineHeight: 1.7 }}>🛡 6 Month Warranty · ⏱ 3–4 Week Build · Made to Order</div>
+            <div style={{ fontSize: 13, color: 'var(--t)', lineHeight: 1.7 }}>{preset.footerMeta || '🛡 6 Month Warranty · ⏱ 3–4 Week Build · Made to Order'}</div>
           </div>
         </div>
       </div>
