@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AUDI_PRESETS_FULL as AUDI_PRESETS, BMW_PRESETS } from '../lib/data';
+import { AUDI_PRESETS_FULL as AUDI_PRESETS, BMW_PRESETS, INFINITI_PRESETS } from '../lib/data';
 import './FeaturedWheels.css';
 
-const BRANDS = ['BMW', 'AUDI'];
+const BRANDS = ['BMW', 'AUDI', 'INFINITI'];
 
 export default function FeaturedWheels() {
   const nav = useNavigate();
@@ -18,6 +18,7 @@ export default function FeaturedWheels() {
     () => ({
       BMW: BMW_PRESETS.filter(Boolean),
       AUDI: AUDI_PRESETS.filter(Boolean),
+      INFINITI: INFINITI_PRESETS.filter(Boolean),
     }),
     []
   );

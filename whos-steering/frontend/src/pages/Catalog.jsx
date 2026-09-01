@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useCart } from '../context';
-import { AUDI_PRESETS_FULL as AUDI_PRESETS, BMW_PRESETS } from '../lib/data';
+import { AUDI_PRESETS_FULL as AUDI_PRESETS, BMW_PRESETS, INFINITI_PRESETS } from '../lib/data';
 import ZoomableImage from '../components/ZoomableImage';
 import './Catalog.css';
 
@@ -118,7 +118,9 @@ function PresetCard({ preset, onOpen }) {
           ))}
         </div>
         <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontSize: 28, color: 'var(--y)', marginBottom: 2 }}>${preset.base_price.toFixed(2)}</div>
-        <div style={{ fontSize: 12, color: 'var(--t)', marginBottom: 14 }}>Starting price · Options available</div>
+        <div style={{ fontSize: 12, color: 'var(--t)', marginBottom: 14 }}>
+          {preset.customizable === false ? 'Fixed build · Sold as shown' : 'Starting price · Options available'}
+        </div>
       </div>
 
       <div style={{ padding: '0 20px 24px' }}>
@@ -145,16 +147,22 @@ function PresetPage({ preset, onClose }) {
   const [added, setAdded] = useState(false);
   const total = preset.images.length;
   const isBMW = preset.brand === 'BMW';
+  const isAudi = preset.brand === 'AUDI';
+  const isInfiniti = preset.brand === 'INFINITI';
+  const isFixedPreset = preset.customizable === false;
 
   // BMW pricing: heated +$75, lane assist +$30, airbag upgrade +$75
   // Audi pricing: heated free, lane assist free, airbag upgrade +$75
-  const totalPrice =
-    preset.base_price +
-    (!isBMW && airbagCover ? 25 : 0) +
-    (airbagUpgrade ? 75   : 0) +
-    (heated && isBMW ? 75 : 0) +
-    (laneAssist && isBMW ? 30 : 0) +
-    (m1m2 && isBMW ? 40 : 0);
+  const totalPrice = isFixedPreset
+    ? preset.base_price
+    : (
+        preset.base_price +
+        (isAudi && airbagCover ? 25 : 0) +
+        (airbagUpgrade ? 75 : 0) +
+        (heated && isBMW ? 75 : 0) +
+        (laneAssist && isBMW ? 30 : 0) +
+        (m1m2 && isBMW ? 40 : 0)
+      );
 
   function YesNo({ label, sub, value, onChange }) {
     return (
@@ -177,21 +185,37 @@ function PresetPage({ preset, onClose }) {
 
   const buildItem = () => ({
     name: preset.name,
-    detail: `${preset.brand} · ${badge} Badge · ${preset.features.slice(0, 2).join(' · ')}`,
+    detail: isFixedPreset
+      ? `${preset.brand} · ${preset.features.join(' · ')}`
+      : `${preset.brand} · ${badge} Badge · ${preset.features.slice(0, 2).join(' · ')}`,
     price: totalPrice,
     config: {
       brand: preset.brand,
       presetId: preset.id,
       presetName: preset.name,
-      audiBadge: preset.brand === 'AUDI' ? badge : undefined,
-      bmwBadge:  preset.brand === 'BMW'  ? badge : undefined,
-      m1m2Buttons: m1m2,
-      airbagCompat: airbagCover,
-      airbagUpgrade,
-      heated,
-      laneAssist,
-      customNotes: notes,
+      vehicleYear: preset.vehicleYear || '',
+      vehicleModel: preset.vehicleModel || '',
+      compatibility: preset.compat,
+      audiBadge: isAudi ? badge : undefined,
+      bmwBadge: isBMW ? badge : undefined,
+      m1m2Buttons: isFixedPreset ? false : m1m2,
+
+      // Purple Rain / fixed Infiniti builds are intentionally sold without
+      // airbag, heating, lane-assist or customization options.
+      airbagCompat: isFixedPreset ? false : airbagCover,
+      airbagUpgrade: isFixedPreset ? false : airbagUpgrade,
+      heated: isFixedPreset ? false : heated,
+      laneAssist: isFixedPreset ? false : laneAssist,
+
+      topBottomMat: isInfiniti ? 'Purple Carbon Fiber' : undefined,
+      topBottomCarbonCol: isInfiniti ? 'Purple' : undefined,
+      sideMat: isInfiniti ? 'Alcantara' : undefined,
+      sideCol: isInfiniti ? '#111111' : undefined,
+      stitchColor: isInfiniti ? '#111111' : undefined,
+
+      customNotes: isFixedPreset ? '' : notes,
       isPreset: true,
+      fixedPreset: isFixedPreset,
     },
   });
 
@@ -269,7 +293,7 @@ function PresetPage({ preset, onClose }) {
           <div style={{ fontSize: 14, color: 'var(--t)', lineHeight: 1.7, marginBottom: 24 }}>{preset.desc}</div>
 
           {/* Badge — Audi only */}
-          {!isBMW && (
+          {isAudi && (
             <div style={{ marginBottom: 20 }}>
               <div style={{ fontFamily: 'Rajdhani, sans-serif', fontWeight: 700, fontSize: 13, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 8, color: 'var(--t)' }}>Lower Badge</div>
               <div style={{ display: 'flex', gap: 8 }}>
@@ -288,31 +312,49 @@ function PresetPage({ preset, onClose }) {
             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: 'var(--t)', marginBottom: 6 }}>
               <span>Base Price</span><span style={{ color: 'var(--w)' }}>${preset.base_price.toFixed(2)}</span>
             </div>
-            {airbagCover && !isBMW && <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: 'var(--t)', marginBottom: 6 }}><span>Airbag Cover</span><span style={{ color: 'var(--y)' }}>+$25.00</span></div>}
-            {airbagUpgrade && <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: 'var(--t)', marginBottom: 6 }}><span>Full Airbag Upgrade</span><span style={{ color: 'var(--y)' }}>+$75.00</span></div>}
-            {heated && isBMW && <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: 'var(--t)', marginBottom: 6 }}><span>Heated Steering</span><span style={{ color: 'var(--y)' }}>+$75.00</span></div>}
-            {laneAssist && isBMW && <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: 'var(--t)', marginBottom: 6 }}><span>Lane Assist</span><span style={{ color: 'var(--y)' }}>+$30.00</span></div>}
-            {m1m2 && isBMW && <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: 'var(--t)', marginBottom: 6 }}><span>M1 & M2 Buttons</span><span style={{ color: 'var(--y)' }}>+$40.00</span></div>}
+            {!isFixedPreset && isAudi && airbagCover && <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: 'var(--t)', marginBottom: 6 }}><span>Airbag Cover</span><span style={{ color: 'var(--y)' }}>+$25.00</span></div>}
+            {!isFixedPreset && airbagUpgrade && <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: 'var(--t)', marginBottom: 6 }}><span>Full Airbag Upgrade</span><span style={{ color: 'var(--y)' }}>+$75.00</span></div>}
+            {!isFixedPreset && heated && isBMW && <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: 'var(--t)', marginBottom: 6 }}><span>Heated Steering</span><span style={{ color: 'var(--y)' }}>+$75.00</span></div>}
+            {!isFixedPreset && laneAssist && isBMW && <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: 'var(--t)', marginBottom: 6 }}><span>Lane Assist</span><span style={{ color: 'var(--y)' }}>+$30.00</span></div>}
+            {!isFixedPreset && m1m2 && isBMW && <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: 'var(--t)', marginBottom: 6 }}><span>M1 & M2 Buttons</span><span style={{ color: 'var(--y)' }}>+$40.00</span></div>}
           </div>
 
           {/* Options */}
-          <div style={{ marginBottom: 20 }}>
-            <div style={{ fontFamily: 'Rajdhani, sans-serif', fontWeight: 700, fontSize: 13, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 8, color: 'var(--t)' }}>Options</div>
-            {!isBMW && <YesNo label="Airbag Cover" sub="+$25.00" value={airbagCover} onChange={setAirbagCover} />}
-            <YesNo label={isBMW ? "Full Airbag Unit" : "Full Upgraded Airbag Unit (full airbag not just cover)"} sub="+$75.00" value={airbagUpgrade} onChange={setAirbagUpgrade} />
-            <YesNo label="Heated Steering" sub={isBMW ? '+$75.00' : 'Included'} value={heated} onChange={setHeated} />
-            <YesNo label="Lane Assist Compatible" sub={isBMW ? '+$30.00' : 'Included'} value={laneAssist} onChange={setLaneAssist} />
-            {isBMW && preset.features.some(f => f.includes('M1')) && (
-              <YesNo label="M1 & M2 Buttons" sub="+$40.00" value={m1m2} onChange={setM1m2} />
-            )}
-          </div>
+          {!isFixedPreset ? (
+            <>
+              <div style={{ marginBottom: 20 }}>
+                <div style={{ fontFamily: 'Rajdhani, sans-serif', fontWeight: 700, fontSize: 13, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 8, color: 'var(--t)' }}>Options</div>
+                {isAudi && <YesNo label="Airbag Cover" sub="+$25.00" value={airbagCover} onChange={setAirbagCover} />}
+                <YesNo label={isBMW ? "Full Airbag Unit" : "Full Upgraded Airbag Unit (full airbag not just cover)"} sub="+$75.00" value={airbagUpgrade} onChange={setAirbagUpgrade} />
+                <YesNo label="Heated Steering" sub={isBMW ? '+$75.00' : 'Included'} value={heated} onChange={setHeated} />
+                <YesNo label="Lane Assist Compatible" sub={isBMW ? '+$30.00' : 'Included'} value={laneAssist} onChange={setLaneAssist} />
+                {isBMW && preset.features.some(f => f.includes('M1')) && (
+                  <YesNo label="M1 & M2 Buttons" sub="+$40.00" value={m1m2} onChange={setM1m2} />
+                )}
+              </div>
 
-          {/* Notes */}
-          <div style={{ marginBottom: 24 }}>
-            <label style={{ fontSize: 13, letterSpacing: 2, textTransform: 'uppercase', color: 'var(--t)', display: 'block', marginBottom: 6 }}>Any other configurations not listed?</label>
-            <textarea className="fi" value={notes} onChange={e => setNotes(e.target.value)}
-              placeholder="e.g. specific stitching, custom embroidery..." rows={3} style={{ resize: 'vertical' }} />
-          </div>
+              <div style={{ marginBottom: 24 }}>
+                <label style={{ fontSize: 13, letterSpacing: 2, textTransform: 'uppercase', color: 'var(--t)', display: 'block', marginBottom: 6 }}>Any other configurations not listed?</label>
+                <textarea className="fi" value={notes} onChange={e => setNotes(e.target.value)}
+                  placeholder="e.g. specific stitching, custom embroidery..." rows={3} style={{ resize: 'vertical' }} />
+              </div>
+            </>
+          ) : (
+            <div style={{
+              marginBottom: 24,
+              padding: '16px 18px',
+              border: '1px solid rgba(232,184,0,.28)',
+              background: 'rgba(232,184,0,.05)',
+            }}>
+              <div style={{ fontFamily: 'Orbitron, monospace', fontSize: 10, letterSpacing: 2.5, color: 'var(--y)', marginBottom: 7 }}>
+                FIXED INFINITI PRESET
+              </div>
+              <div style={{ fontSize: 13, lineHeight: 1.7, color: 'var(--t)' }}>
+                Purple Rain is sold exactly as shown. Infiniti customization is not available yet.
+                This build has no airbag, heated-steering, or lane-assist options.
+              </div>
+            </div>
+          )}
 
           {/* Price + buttons */}
           <div style={{ borderTop: '1px solid var(--b)', paddingTop: 20 }}>
@@ -346,14 +388,15 @@ export default function Catalog() {
 
     const presetId = params.get('preset');
     if (presetId) {
-      const allPresets = [...BMW_PRESETS, ...AUDI_PRESETS].filter(Boolean);
+      const allPresets = [...BMW_PRESETS, ...AUDI_PRESETS, ...INFINITI_PRESETS].filter(Boolean);
       const preset = allPresets.find(p => p.id === presetId);
       if (preset) setOpenPreset(preset);
     }
   }, []); // eslint-disable-line
 
-  const showBMW  = filter === 'ALL' || filter === 'BMW';
-  const showAUDI = filter === 'ALL' || filter === 'AUDI';
+  const showBMW      = filter === 'ALL' || filter === 'BMW';
+  const showAUDI     = filter === 'ALL' || filter === 'AUDI';
+  const showINFINITI = filter === 'ALL' || filter === 'INFINITI';
 
   return (
     <div className="catalog-page" style={{
@@ -370,7 +413,7 @@ export default function Catalog() {
       </div>
 
       <div style={{ display: 'flex', gap: 10, padding: '16px 40px', borderBottom: '1px solid var(--b)', flexWrap: 'wrap' }}>
-        {['ALL','BMW','AUDI'].map(f => (
+        {['ALL','BMW','AUDI','INFINITI'].map(f => (
           <button key={f} className={`ob${filter === f ? ' on' : ''}`} style={{ fontSize: 13, padding: '5px 16px' }} onClick={() => setFilter(f)}>{f}</button>
         ))}
       </div>
@@ -378,13 +421,14 @@ export default function Catalog() {
       <ConfigureBanner nav={nav} />
       <div style={{ maxWidth: 1600, margin: '0 auto', width: '100%' }}>
         <div className="catalog-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))', gap: 1, background: 'var(--b)' }}>
-          {showBMW  && BMW_PRESETS.map(p => <PresetCard key={p.id} preset={p} onOpen={setOpenPreset} />)}
-          {showAUDI && AUDI_PRESETS.map(p => <PresetCard key={p.id} preset={p} onOpen={setOpenPreset} />)}
+          {showBMW      && BMW_PRESETS.map(p => <PresetCard key={p.id} preset={p} onOpen={setOpenPreset} />)}
+          {showAUDI     && AUDI_PRESETS.map(p => <PresetCard key={p.id} preset={p} onOpen={setOpenPreset} />)}
+          {showINFINITI && INFINITI_PRESETS.map(p => <PresetCard key={p.id} preset={p} onOpen={setOpenPreset} />)}
         </div>
       </div>
 
       <div className="catalog-trust-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', borderTop: '1px solid var(--b)', background: 'var(--m)', marginTop: 1 }}>
-        {[['🛡','6 Month Warranty','Manufacturer guaranteed'],['⏱','3–4 Week Build','Handcrafted to order'],['🔧','BMW & Audi','Fitment specialists']].map(([icon,title,sub]) => (
+        {[['🛡','6 Month Warranty','Manufacturer guaranteed'],['⏱','3–4 Week Build','Handcrafted to order'],['🔧','BMW, Audi & Infiniti','Fitment specialists']].map(([icon,title,sub]) => (
           <div key={title} style={{ padding: '22px 28px', display: 'flex', alignItems: 'center', gap: 12, borderRight: '1px solid var(--b)' }}>
             <span style={{ fontSize: 22, color: 'var(--y)' }}>{icon}</span>
             <div><div style={{ fontWeight: 700, fontSize: 14, letterSpacing: 1 }}>{title}</div><div style={{ fontSize: 13, color: 'var(--t)' }}>{sub}</div></div>

@@ -194,6 +194,38 @@ export const AUDI_PRESETS = [
 // Alias used by Catalog.jsx
 export const AUDI_PRESETS_FULL = AUDI_PRESETS;
 
+
+// ── Infiniti preset products (catalog-only; customization not available yet) ─
+export const INFINITI_PRESETS = [
+  {
+    id: 'infiniti-purple-rain',
+    brand: 'INFINITI',
+    name: 'PURPLE RAIN',
+    base_price: 399.99,
+    compat: 'Fits Infiniti G25, G35, G37 & G37X (2009–2013)',
+    vehicleYear: '2009–2013',
+    vehicleModel: 'G25 / G35 / G37 / G37X',
+    features: [
+      'Purple Carbon Fiber',
+      'Alcantara Side Grips',
+      'Black Stitching',
+    ],
+    images: [
+      '/infiniti/purple-rain-1.jpg',
+      '/infiniti/purple-rain-2.png',
+      '/infiniti/purple-rain-3.jpg',
+      '/infiniti/purple-rain-4.jpg',
+    ],
+    desc: 'Purple carbon fiber paired with Alcantara side grips and black stitching. Built specifically for Infiniti G25, G35, G37 and G37X models from 2009–2013.',
+    isPreset: true,
+    customizable: false,
+    allowAirbagCover: false,
+    allowAirbagUpgrade: false,
+    allowHeated: false,
+    allowLaneAssist: false,
+  },
+];
+
 // ── BMW Preset products ───────────────────────────────────────────────────────
 export const BMW_PRESETS = [
   {
