@@ -338,20 +338,33 @@ export default function FeaturedWheels() {
           }}
         >
           {wheels.map((wheel) => (
-            <button
-              type="button"
+            <article
               className="featured-wheel-card"
               key={wheel.id}
-              onClick={(event) => openWheel(wheel, event)}
-              aria-label={wheel.readyToShip ? `View ${wheel.brand} ${wheel.name}, ready to ship at $${wheel.base_price.toFixed(2)}` : `View ${wheel.brand} ${wheel.name}, starting at $${wheel.base_price.toFixed(2)}`}
+              aria-label={wheel.readyToShip ? `${wheel.brand} ${wheel.name}, ready to ship at ${wheel.base_price.toFixed(2)}` : `${wheel.brand} ${wheel.name}, starting at ${wheel.base_price.toFixed(2)}`}
             >
-              <div className="featured-wheel-card__image-wrap">
+              <div
+                className="featured-wheel-card__image-wrap"
+                role="link"
+                tabIndex={0}
+                aria-label={`Open ${wheel.name} details`}
+                onClick={(event) => openWheel(wheel, event)}
+                onKeyDown={(event) => {
+                  if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    suppressClickRef.current = false;
+                    nav(wheelUrl(wheel));
+                  }
+                }}
+                style={{ cursor: 'pointer' }}
+              >
                 <img
                   src={wheel.images[0]}
                   alt={`${wheel.brand} ${wheel.name} steering wheel`}
                   className="featured-wheel-card__image"
                   loading="lazy"
                   draggable="false"
+                  style={{ cursor: 'pointer' }}
                 />
 
                 <span className="featured-wheel-card__brand">
@@ -392,7 +405,7 @@ export default function FeaturedWheels() {
                   </div>
                 )}
               </div>
-            </button>
+            </article>
           ))}
         </div>
 

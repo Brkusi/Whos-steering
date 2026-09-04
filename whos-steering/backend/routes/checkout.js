@@ -23,6 +23,7 @@ const READY_TO_SHIP_PRESET_PRICES = Object.freeze({
   'infiniti-gold-rush': { base: 39999 },
   'infiniti-purple-craze': { base: 54999 },
   'bmw-ready-classic-carbon': { base: 39999 },
+  'bmw-red-desire': { base: 39999 },
   'bmw-e-carbone': {
     base: 47999,
     optionKey: 'paddleShifterSpaceInserts',
