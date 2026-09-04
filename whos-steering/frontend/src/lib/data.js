@@ -435,6 +435,17 @@ export const BMW_PRESETS = [
     fixedInfoBody: "Carbon Classic is already built and ready to ship exactly as shown. Buttons and paddle shifters are installed, with classic carbon fiber, a BMW-pattern top stripe, gloss black inlays, and perforated leather sides. Designed for all F-Series BMW's. No airbag is included with this listing.",
     fixedBuildNote: 'Ready to ship · Already built',
     footerMeta: '🛡 6 Month Warranty · Ready to Ship · Already Built',
+    fixedConfig: {
+      topBottomMat: 'Classic Carbon Fiber',
+      topBottomCarbonCol: 'Classic Carbon',
+      sideMat: 'Perforated Leather',
+      sideCol: '#111111',
+      stitchColor: 'BMW Tri-Color',
+      stripe: 'BMW Pattern',
+      inlay: 'Gloss Black',
+      paddleShifters: 'Included',
+      buttons: 'Included',
+    },
   }
   ,
   {
@@ -442,7 +453,7 @@ export const BMW_PRESETS = [
     brand: 'BMW',
     name: 'E CARBONE',
     base_price: 479.99,
-    compat: 'BMW fitment — contact us to confirm your exact model before ordering',
+    compat: 'Fits All E9X BMW Models',
     features: [
       'Carbon Fiber Top & Bottom',
       'Carbon Fiber Inlays',
@@ -456,7 +467,7 @@ export const BMW_PRESETS = [
       '/bmw/e-carbone-3.jpg',
       '/bmw/e-carbone-4.jpg',
     ],
-    desc: "A ready-to-ship BMW wheel built with carbon fiber top and bottom, matching carbon fiber inlays, perforated leather sides, BMW tri-color stitching, and a BMW tri-color 12 o'clock stripe. Choose the wheel as shown for $479.99, or add paddle-shifter space inserts for $499.99. The insert option includes the insert pieces only — paddle shifters are not included.",
+    desc: "A ready-to-ship E9X BMW wheel built with carbon fiber top and bottom, matching carbon fiber inlays, perforated leather sides, BMW tri-color stitching, and a BMW tri-color 12 o'clock stripe. Fits all E9X BMW models. Choose the wheel as shown for $479.99, or add paddle-shifter space inserts for $499.99. The insert option includes the insert pieces only — paddle shifters are not included.",
     isPreset: true,
     customizable: false,
     readyToShip: true,
@@ -467,7 +478,7 @@ export const BMW_PRESETS = [
     statusBadge: 'READY TO SHIP',
     productTypeLabel: 'BMW · READY TO SHIP',
     fixedInfoTitle: 'BUILT & READY TO SHIP',
-    fixedInfoBody: "E Carbone is already built and ready to ship. It features carbon fiber top and bottom, carbon fiber inlays, perforated leather sides, BMW tri-color stitching, and a BMW tri-color 12 o'clock stripe. An optional $20 paddle-shifter space-insert package is available; this includes the inserts only and does not include paddle shifters.",
+    fixedInfoBody: "E Carbone is already built and ready to ship for all E9X BMW models. It features carbon fiber top and bottom, carbon fiber inlays, perforated leather sides, BMW tri-color stitching, and a BMW tri-color 12 o'clock stripe. An optional $20 paddle-shifter space-insert package is available; this includes the inserts only and does not include paddle shifters.",
     fixedBuildNote: 'Ready to ship · Already built',
     footerMeta: '🛡 6 Month Warranty · Ready to Ship · Already Built',
     readyShipOption: {

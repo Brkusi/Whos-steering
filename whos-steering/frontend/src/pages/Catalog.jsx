@@ -71,9 +71,53 @@ function ConfigureBanner({ nav }) {
   );
 }
 
+function buildReadyToShipItem(preset) {
+  return {
+    name: preset.name,
+    detail: [preset.brand, 'Ready to Ship', ...preset.features].join(' · '),
+    price: Number(preset.base_price),
+    config: {
+      brand: preset.brand,
+      presetId: preset.id,
+      presetName: preset.name,
+      vehicleYear: preset.vehicleYear || '',
+      vehicleModel: preset.vehicleModel || '',
+      compatibility: preset.compat,
+      airbagCompat: false,
+      airbagUpgrade: false,
+      heated: false,
+      laneAssist: false,
+      topBottomMat: preset.fixedConfig?.topBottomMat,
+      topBottomCarbonCol: preset.fixedConfig?.topBottomCarbonCol,
+      sideMat: preset.fixedConfig?.sideMat,
+      sideCol: preset.fixedConfig?.sideCol,
+      stitchColor: preset.fixedConfig?.stitchColor,
+      stripeConceptLabel: preset.fixedConfig?.stripe,
+      inlay: preset.fixedConfig?.inlay,
+      paddleShifters: preset.fixedConfig?.paddleShifters || 'Not Included',
+      buttons: preset.fixedConfig?.buttons,
+      paddleShifterSpaceInserts: false,
+      readyToShip: true,
+      isPreset: true,
+      fixedPreset: true,
+      customNotes: '',
+    },
+  };
+}
+
 function PresetCard({ preset, onOpen }) {
+  const { addItem } = useCart();
   const [imgIdx, setImgIdx] = useState(0);
+  const [quickAdded, setQuickAdded] = useState(false);
   const total = preset.images.length;
+
+  const handleQuickAdd = (event) => {
+    event?.stopPropagation();
+    if (!preset.readyToShip) return;
+    addItem(buildReadyToShipItem(preset));
+    setQuickAdded(true);
+    window.setTimeout(() => setQuickAdded(false), 1600);
+  };
 
   return (
     <div style={{ background: 'var(--p)', display: 'flex', flexDirection: 'column', overflow: 'hidden', transition: 'background .2s', minHeight: 480 }}
@@ -135,7 +179,17 @@ function PresetCard({ preset, onOpen }) {
         <button className="btn" style={{ clipPath: 'none', width: '100%' }} onClick={() => onOpen(preset)}>
           VIEW DETAILS
         </button>
-        <div style={{ fontSize: 12, color: 'var(--t)', paddingTop: 10, marginTop: 4, borderTop: '1px solid var(--b)', textAlign: 'center' }}>{preset.readyToShip ? '🛡 6 Month Warranty · Ready to Ship' : '🛡 6 Month Warranty · ⏱ 3–4 Week Build'}</div>
+        {preset.readyToShip && (
+          <button
+            className="btn-outline sm"
+            style={{ clipPath: 'none', width: '100%', marginTop: 8, padding: '12px 16px', fontSize: 12 }}
+            onClick={handleQuickAdd}
+            disabled={quickAdded}
+          >
+            {quickAdded ? '✓ ADDED' : 'ADD TO CART'}
+          </button>
+        )}
+        <div style={{ fontSize: 12, color: 'var(--t)', paddingTop: 10, marginTop: 8, borderTop: '1px solid var(--b)', textAlign: 'center' }}>{preset.readyToShip ? '🛡 6 Month Warranty · Ready to Ship' : '🛡 6 Month Warranty · ⏱ 3–4 Week Build'}</div>
       </div>
     </div>
   );
@@ -446,7 +500,7 @@ function PresetPage({ preset, onClose }) {
             <div style={{ display: 'flex', gap: 10, marginBottom: 12 }}>
               <button className="btn" style={{ clipPath: 'none', flex: 1, fontSize: 12 }} onClick={handleBuyNow}>BUY NOW</button>
               <button className="btn-outline sm" style={{ flex: 1, clipPath: 'none', padding: '13px 20px', fontSize: 13 }} onClick={handleAdd} disabled={added}>
-                {added ? '✓ ADDED' : (preset.readyToShip ? '+ ADD READY-TO-SHIP WHEEL' : '+ ADD TO CART')}
+                {added ? '✓ ADDED' : 'ADD TO CART'}
               </button>
             </div>
             <div style={{ fontSize: 13, color: 'var(--t)', lineHeight: 1.7 }}>{preset.footerMeta || '🛡 6 Month Warranty · ⏱ 3–4 Week Build · Made to Order'}</div>
@@ -473,7 +527,7 @@ export default function Catalog() {
       const preset = allPresets.find(p => p.id === presetId);
       if (preset) setOpenPreset(preset);
     }
-  }, []); // eslint-disable-line
+  }, [params]);
 
   const showBMW      = filter === 'ALL' || filter === 'BMW';
   const showAUDI     = filter === 'ALL' || filter === 'AUDI';

@@ -135,21 +135,37 @@ export default function FeaturedWheels() {
 
   const endDrag = (event) => {
     if (!dragRef.current.active) return;
+    const moved = dragRef.current.moved;
     dragRef.current.active = false;
     setDragging(false);
     railRef.current?.releasePointerCapture?.(event.pointerId);
+
+    // Ignore only the synthetic click that immediately follows a drag.
+    // Do not leave the next real customer click permanently suppressed.
+    if (moved) {
+      window.setTimeout(() => {
+        suppressClickRef.current = false;
+      }, 180);
+    }
   };
+
+  const wheelUrl = (wheel) =>
+    `/catalog?brand=${encodeURIComponent(wheel.brand)}&preset=${encodeURIComponent(wheel.id)}`;
 
   const openWheel = (wheel, event) => {
     if (suppressClickRef.current) {
       event?.preventDefault();
-      suppressClickRef.current = false;
       return;
     }
 
-    nav(
-      `/catalog?brand=${encodeURIComponent(wheel.brand)}&preset=${encodeURIComponent(wheel.id)}`
-    );
+    nav(wheelUrl(wheel));
+  };
+
+  const openWheelFromCta = (wheel, event) => {
+    event?.stopPropagation();
+    event?.preventDefault();
+    suppressClickRef.current = false;
+    nav(wheelUrl(wheel));
   };
 
   return (
@@ -251,6 +267,29 @@ export default function FeaturedWheels() {
         </div>
       )}
 
+      <style>{`
+        .featured-wheel-card__image-wrap {
+          height: clamp(320px, 28vw, 480px) !important;
+          aspect-ratio: auto !important;
+        }
+        .featured-wheel-card__image {
+          width: 100% !important;
+          height: 100% !important;
+          object-fit: cover !important;
+          object-position: center !important;
+        }
+        .featured-wheel-card__view {
+          appearance: none;
+          cursor: pointer;
+        }
+        @media (max-width: 767px) {
+          .featured-wheel-card__image-wrap {
+            height: auto !important;
+            aspect-ratio: 1 / 1 !important;
+          }
+        }
+      `}</style>
+
       <section className="featured-wheels" aria-labelledby="featured-wheels-title">
       <div className="featured-wheels__inner">
         <div className="featured-wheels__top">
@@ -319,9 +358,15 @@ export default function FeaturedWheels() {
                   {wheel.brand}
                 </span>
 
-                <span className="featured-wheel-card__view">
+                <button
+                  type="button"
+                  className="featured-wheel-card__view"
+                  onPointerDown={(event) => event.stopPropagation()}
+                  onClick={(event) => openWheelFromCta(wheel, event)}
+                  aria-label={`${wheel.readyToShip ? 'View wheel' : 'View build'}: ${wheel.name}`}
+                >
                   {wheel.readyToShip ? 'VIEW WHEEL' : 'VIEW BUILD'} <span aria-hidden="true">↗</span>
-                </span>
+                </button>
               </div>
 
               <div className="featured-wheel-card__body">
