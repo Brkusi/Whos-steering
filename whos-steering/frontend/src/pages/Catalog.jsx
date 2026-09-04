@@ -119,7 +119,7 @@ function PresetCard({ preset, onOpen }) {
         </div>
         <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontSize: 28, color: 'var(--y)', marginBottom: 2 }}>${preset.base_price.toFixed(2)}</div>
         <div style={{ fontSize: 12, color: 'var(--t)', marginBottom: 14 }}>
-          {preset.customizable === false ? (preset.fixedBuildNote || 'Fixed build · Sold as shown') : 'Starting price · Options available'}
+          {preset.readyToShip ? 'Already built · Ready to ship' : (preset.customizable === false ? (preset.fixedBuildNote || 'Fixed build · Sold as shown') : 'Starting price · Options available')}
         </div>
       </div>
 
@@ -353,7 +353,7 @@ function PresetPage({ preset, onClose }) {
                 {preset.fixedInfoTitle || 'FIXED INFINITI PRESET'}
               </div>
               <div style={{ fontSize: 13, lineHeight: 1.7, color: 'var(--t)' }}>
-                {preset.fixedInfoBody || 'This wheel is sold exactly as shown. Customization is not available yet.'}
+                {preset.fixedInfoBody || 'This wheel is already built and ready to ship exactly as shown.'}
               </div>
             </div>
           )}

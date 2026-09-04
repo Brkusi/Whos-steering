@@ -177,7 +177,7 @@ export default function FeaturedWheels() {
               className="featured-wheel-card"
               key={wheel.id}
               onClick={(event) => openWheel(wheel, event)}
-              aria-label={`View ${wheel.brand} ${wheel.name}, starting at $${wheel.base_price.toFixed(2)}`}
+              aria-label={wheel.readyToShip ? `View ${wheel.brand} ${wheel.name}, ready to ship at $${wheel.base_price.toFixed(2)}` : `View ${wheel.brand} ${wheel.name}, starting at $${wheel.base_price.toFixed(2)}`}
             >
               <div className="featured-wheel-card__image-wrap">
                 <img
@@ -193,7 +193,7 @@ export default function FeaturedWheels() {
                 </span>
 
                 <span className="featured-wheel-card__view">
-                  VIEW BUILD <span aria-hidden="true">↗</span>
+                  {wheel.readyToShip ? 'VIEW WHEEL' : 'VIEW BUILD'} <span aria-hidden="true">↗</span>
                 </span>
               </div>
 
@@ -204,8 +204,14 @@ export default function FeaturedWheels() {
                   {wheel.compat}
                 </p>
 
+                {wheel.readyToShip && (
+                  <div style={{ fontFamily: 'Orbitron, monospace', fontSize: 9, letterSpacing: 1.3, color: 'var(--y)', marginTop: -6, marginBottom: 8 }}>
+                    ALREADY BUILT · READY TO SHIP
+                  </div>
+                )}
+
                 <div className="featured-wheel-card__price">
-                  <span>FROM</span>
+                  <span>{wheel.readyToShip ? 'PRICE' : 'FROM'}</span>
                   ${wheel.base_price.toFixed(2)}
                 </div>
               </div>
