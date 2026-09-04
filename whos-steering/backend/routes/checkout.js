@@ -9,6 +9,25 @@ const PROMO_CODES = Object.freeze({
     percentOff: 10,
     label: '10% OFF',
   },
+  labor: {
+    code: 'labor',
+    percentOff: 10,
+    label: '10% OFF',
+  },
+});
+
+// Server-side prices for ready-to-ship presets. This prevents someone from
+// changing a ready-to-ship product price in the browser before checkout.
+const READY_TO_SHIP_PRESET_PRICES = Object.freeze({
+  'infiniti-purple-rain': { base: 39999 },
+  'infiniti-gold-rush': { base: 39999 },
+  'infiniti-purple-craze': { base: 54999 },
+  'bmw-ready-classic-carbon': { base: 39999 },
+  'bmw-e-carbone': {
+    base: 47999,
+    optionKey: 'paddleShifterSpaceInserts',
+    optionPrice: 49999,
+  },
 });
 
 const normalizePromoCode = (value) =>
@@ -240,8 +259,20 @@ router.post('/create-intent', async (req, res) => {
       let amountCents;
 
       if (cfg.isPreset) {
-        // Trust frontend price for preset items
-        amountCents = Math.round((item.price || 0) * 100);
+        const readyShipPrice = READY_TO_SHIP_PRESET_PRICES[cfg.presetId];
+
+        if (readyShipPrice) {
+          const selectedOption = readyShipPrice.optionKey
+            ? cfg[readyShipPrice.optionKey] === true
+            : false;
+
+          amountCents = selectedOption && readyShipPrice.optionPrice
+            ? readyShipPrice.optionPrice
+            : readyShipPrice.base;
+        } else {
+          // Legacy/customizable preset products keep their existing pricing path.
+          amountCents = Math.round((item.price || 0) * 100);
+        }
       } else if (cfg.brand) {
         // Recalculate server-side for custom builds
         amountCents = await calcServerPrice(cfg);

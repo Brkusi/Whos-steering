@@ -13,6 +13,8 @@ export default function FeaturedWheels() {
   const [dragging, setDragging] = useState(false);
   const [activeBrand, setActiveBrand] = useState('BMW');
   const [railIndicator, setRailIndicator] = useState({ left: 0, width: 34 });
+  const [showLaborPromo, setShowLaborPromo] = useState(false);
+  const [promoCopied, setPromoCopied] = useState(false);
 
   const wheelsByBrand = useMemo(
     () => ({
@@ -24,6 +26,33 @@ export default function FeaturedWheels() {
   );
 
   const wheels = wheelsByBrand[activeBrand] || [];
+
+  useEffect(() => {
+    let timer;
+    try {
+      const seen = window.sessionStorage.getItem('ws-labor-promo-seen-v1');
+      if (!seen) {
+        timer = window.setTimeout(() => {
+          setShowLaborPromo(true);
+          window.sessionStorage.setItem('ws-labor-promo-seen-v1', '1');
+        }, 650);
+      }
+    } catch {
+      timer = window.setTimeout(() => setShowLaborPromo(true), 650);
+    }
+
+    return () => window.clearTimeout(timer);
+  }, []);
+
+  const copyLaborCode = async () => {
+    try {
+      await navigator.clipboard.writeText('LABOR');
+      setPromoCopied(true);
+      window.setTimeout(() => setPromoCopied(false), 1600);
+    } catch {
+      setPromoCopied(false);
+    }
+  };
 
   useEffect(() => {
     const rail = railRef.current;
@@ -124,7 +153,105 @@ export default function FeaturedWheels() {
   };
 
   return (
-    <section className="featured-wheels" aria-labelledby="featured-wheels-title">
+    <>
+      {showLaborPromo && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label="Labor promo code"
+          onClick={() => setShowLaborPromo(false)}
+          style={{
+            position: 'fixed', inset: 0, zIndex: 9999,
+            display: 'grid', placeItems: 'center', padding: 20,
+            background: 'rgba(0,0,0,.72)', backdropFilter: 'blur(7px)',
+            animation: 'wsPromoFade .28s ease-out both',
+          }}
+        >
+          <style>{`
+            @keyframes wsPromoFade { from { opacity: 0; } to { opacity: 1; } }
+            @keyframes wsPromoDrop {
+              0% { opacity: 0; transform: translateY(-34px) scale(.92) rotate(-1.4deg); }
+              62% { opacity: 1; transform: translateY(7px) scale(1.018) rotate(.35deg); }
+              100% { opacity: 1; transform: translateY(0) scale(1) rotate(0); }
+            }
+            @keyframes wsPromoSweep {
+              0% { transform: translateX(-150%) skewX(-22deg); opacity: 0; }
+              20% { opacity: .75; }
+              55%, 100% { transform: translateX(260%) skewX(-22deg); opacity: 0; }
+            }
+            @keyframes wsPromoPulse {
+              0%,100% { box-shadow: 0 0 0 rgba(232,184,0,0), 0 25px 80px rgba(0,0,0,.65); }
+              50% { box-shadow: 0 0 38px rgba(232,184,0,.22), 0 25px 80px rgba(0,0,0,.65); }
+            }
+          `}</style>
+
+          <div
+            onClick={(event) => event.stopPropagation()}
+            style={{
+              position: 'relative', width: 'min(520px, 94vw)', overflow: 'hidden',
+              background: 'linear-gradient(145deg,#171717 0%,#090909 70%)',
+              border: '1px solid rgba(232,184,0,.55)',
+              animation: 'wsPromoDrop .58s cubic-bezier(.2,.85,.2,1) both, wsPromoPulse 2.6s ease-in-out 1s infinite',
+            }}
+          >
+            <div style={{ position: 'absolute', inset: '0 auto 0 0', width: 7, background: 'var(--y)' }} />
+            <div style={{ position: 'absolute', top: -70, right: -45, width: 190, height: 190, borderRadius: '50%', border: '28px solid rgba(232,184,0,.06)' }} />
+            <div style={{ position: 'absolute', inset: 0, width: '28%', background: 'linear-gradient(90deg,transparent,rgba(255,220,70,.18),transparent)', animation: 'wsPromoSweep 2.2s ease-in-out .4s infinite', pointerEvents: 'none' }} />
+
+            <button
+              type="button"
+              aria-label="Close promotion"
+              onClick={() => setShowLaborPromo(false)}
+              style={{ position: 'absolute', right: 14, top: 12, zIndex: 3, border: 0, background: 'transparent', color: '#aaa', fontSize: 23, cursor: 'pointer' }}
+            >×</button>
+
+            <div style={{ position: 'relative', zIndex: 2, padding: '30px 30px 26px 36px' }}>
+              <div style={{ fontFamily: 'Orbitron, monospace', fontSize: 10, letterSpacing: 3, color: 'var(--y)', marginBottom: 10 }}>
+                LIMITED PROMO
+              </div>
+              <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontStyle: 'italic', fontWeight: 900, fontSize: 'clamp(40px,8vw,66px)', lineHeight: .9, color: '#fff' }}>
+                TAKE <span style={{ color: 'var(--y)' }}>10% OFF</span>
+              </div>
+              <div style={{ fontFamily: 'Rajdhani, sans-serif', fontSize: 15, lineHeight: 1.55, color: '#b7b7b7', marginTop: 14 }}>
+                Use the code below at checkout. Tap it to copy.
+              </div>
+
+              <button
+                type="button"
+                onClick={copyLaborCode}
+                style={{
+                  width: '100%', marginTop: 18, padding: '16px 18px', cursor: 'pointer',
+                  border: '1px dashed rgba(232,184,0,.75)', background: 'rgba(232,184,0,.08)',
+                  color: 'var(--y)', fontFamily: 'Orbitron, monospace', fontWeight: 800,
+                  fontSize: 20, letterSpacing: 6,
+                }}
+              >
+                {promoCopied ? 'COPIED ✓' : 'LABOR'}
+              </button>
+
+              <div style={{ display: 'flex', gap: 10, marginTop: 12 }}>
+                <button
+                  type="button"
+                  className="btn"
+                  onClick={() => { setShowLaborPromo(false); nav('/catalog'); }}
+                  style={{ clipPath: 'none', flex: 1, padding: '13px 16px' }}
+                >
+                  SHOP WHEELS
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowLaborPromo(false)}
+                  style={{ flex: 1, border: '1px solid #333', background: '#0c0c0c', color: '#aaa', cursor: 'pointer', fontFamily: 'Orbitron, monospace', fontSize: 10, letterSpacing: 1.5 }}
+                >
+                  CONTINUE SITE
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <section className="featured-wheels" aria-labelledby="featured-wheels-title">
       <div className="featured-wheels__inner">
         <div className="featured-wheels__top">
           <div>
@@ -211,9 +338,14 @@ export default function FeaturedWheels() {
                 )}
 
                 <div className="featured-wheel-card__price">
-                  <span>{wheel.readyToShip ? 'PRICE' : 'FROM'}</span>
+                  <span>{wheel.readyShipOption ? 'FROM' : (wheel.readyToShip ? 'PRICE' : 'FROM')}</span>
                   ${wheel.base_price.toFixed(2)}
                 </div>
+                {wheel.readyShipOption && (
+                  <div style={{ fontSize: 9, color: 'var(--t)', letterSpacing: 1, marginTop: 4 }}>
+                    ${wheel.readyShipOption.selectedPrice.toFixed(2)} WITH INSERTS · PADDLES NOT INCLUDED
+                  </div>
+                )}
               </div>
             </button>
           ))}
@@ -245,6 +377,7 @@ export default function FeaturedWheels() {
           </div>
         </div>
       </div>
-    </section>
+      </section>
+    </>
   );
 }

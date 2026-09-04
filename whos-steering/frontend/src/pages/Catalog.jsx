@@ -117,10 +117,18 @@ function PresetCard({ preset, onOpen }) {
             <span key={f} style={{ fontSize: 11, padding: '2px 7px', background: 'rgba(232,184,0,.08)', border: '1px solid rgba(232,184,0,.2)', color: 'var(--y)', letterSpacing: 1 }}>{f}</span>
           ))}
         </div>
-        <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontSize: 28, color: 'var(--y)', marginBottom: 2 }}>${preset.base_price.toFixed(2)}</div>
-        <div style={{ fontSize: 12, color: 'var(--t)', marginBottom: 14 }}>
+        <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontSize: 28, color: 'var(--y)', marginBottom: 2 }}>
+          {preset.readyShipOption && <span style={{ fontFamily: 'Orbitron, monospace', fontSize: 9, letterSpacing: 1.5, marginRight: 7 }}>FROM</span>}
+          ${preset.base_price.toFixed(2)}
+        </div>
+        <div style={{ fontSize: 12, color: 'var(--t)', marginBottom: preset.readyShipOption ? 5 : 14 }}>
           {preset.readyToShip ? 'Already built · Ready to ship' : (preset.customizable === false ? (preset.fixedBuildNote || 'Fixed build · Sold as shown') : 'Starting price · Options available')}
         </div>
+        {preset.readyShipOption && (
+          <div style={{ fontSize: 11, color: 'rgba(232,184,0,.82)', marginBottom: 14, letterSpacing: .5 }}>
+            ${preset.readyShipOption.selectedPrice.toFixed(2)} with {preset.readyShipOption.label.toLowerCase()} — inserts only, paddles not included
+          </div>
+        )}
       </div>
 
       <div style={{ padding: '0 20px 24px' }}>
@@ -144,6 +152,7 @@ function PresetPage({ preset, onClose }) {
   const [heated, setHeated] = useState(true);
   const [laneAssist, setLaneAssist] = useState(true);
   const [notes, setNotes] = useState('');
+  const [readyShipOptionSelected, setReadyShipOptionSelected] = useState(false);
   const [added, setAdded] = useState(false);
   const total = preset.images.length;
   const isBMW = preset.brand === 'BMW';
@@ -151,10 +160,14 @@ function PresetPage({ preset, onClose }) {
   const isInfiniti = preset.brand === 'INFINITI';
   const isFixedPreset = preset.customizable === false;
 
+  const readyShipOptionDelta = isFixedPreset && preset.readyShipOption && readyShipOptionSelected
+    ? Number(preset.readyShipOption.priceDelta || 0)
+    : 0;
+
   // BMW pricing: heated +$75, lane assist +$30, airbag upgrade +$75
   // Audi pricing: heated free, lane assist free, airbag upgrade +$75
   const totalPrice = isFixedPreset
-    ? preset.base_price
+    ? preset.base_price + readyShipOptionDelta
     : (
         preset.base_price +
         (isAudi && airbagCover ? 25 : 0) +
@@ -186,9 +199,14 @@ function PresetPage({ preset, onClose }) {
   const buildItem = () => ({
     name: preset.name,
     detail: isFixedPreset
-      ? (preset.readyToShip
-          ? `${preset.brand} · Ready to Ship · ${preset.features.join(' · ')}`
-          : `${preset.brand} · ${preset.features.join(' · ')}`)
+      ? [
+          preset.brand,
+          'Ready to Ship',
+          ...preset.features,
+          ...(preset.readyShipOption && readyShipOptionSelected
+            ? [`${preset.readyShipOption.label} — INSERTS ONLY, PADDLES NOT INCLUDED`]
+            : []),
+        ].join(' · ')
       : `${preset.brand} · ${badge} Badge · ${preset.features.slice(0, 2).join(' · ')}`,
     price: totalPrice,
     config: {
@@ -199,22 +217,28 @@ function PresetPage({ preset, onClose }) {
       vehicleModel: preset.vehicleModel || '',
       compatibility: preset.compat,
       audiBadge: isAudi ? badge : undefined,
-      bmwBadge: isBMW ? badge : undefined,
+      bmwBadge: isBMW && !isFixedPreset ? badge : undefined,
       m1m2Buttons: isFixedPreset ? false : m1m2,
 
-      // Purple Rain / fixed Infiniti builds are intentionally sold without
-      // airbag, heating, lane-assist or customization options.
       airbagCompat: isFixedPreset ? false : airbagCover,
       airbagUpgrade: isFixedPreset ? false : airbagUpgrade,
       heated: isFixedPreset ? false : heated,
       laneAssist: isFixedPreset ? false : laneAssist,
 
-      topBottomMat: isInfiniti ? preset.fixedConfig?.topBottomMat : undefined,
-      topBottomCarbonCol: isInfiniti ? preset.fixedConfig?.topBottomCarbonCol : undefined,
-      sideMat: isInfiniti ? preset.fixedConfig?.sideMat : undefined,
-      sideCol: isInfiniti ? preset.fixedConfig?.sideCol : undefined,
-      stitchColor: isInfiniti ? preset.fixedConfig?.stitchColor : undefined,
-      stripeConceptLabel: isInfiniti ? preset.fixedConfig?.stripe : undefined,
+      topBottomMat: isFixedPreset ? preset.fixedConfig?.topBottomMat : undefined,
+      topBottomCarbonCol: isFixedPreset ? preset.fixedConfig?.topBottomCarbonCol : undefined,
+      sideMat: isFixedPreset ? preset.fixedConfig?.sideMat : undefined,
+      sideCol: isFixedPreset ? preset.fixedConfig?.sideCol : undefined,
+      stitchColor: isFixedPreset ? preset.fixedConfig?.stitchColor : undefined,
+      stripeConceptLabel: isFixedPreset ? preset.fixedConfig?.stripe : undefined,
+      inlay: isFixedPreset ? preset.fixedConfig?.inlay : undefined,
+      paddleShifters: isFixedPreset
+        ? (preset.readyShipOption && readyShipOptionSelected
+            ? 'Space Inserts Only — Paddle Shifters NOT Included'
+            : (preset.fixedConfig?.paddleShifters || 'Not Included'))
+        : undefined,
+      paddleShifterSpaceInserts: Boolean(preset.readyShipOption && readyShipOptionSelected),
+      readyToShip: preset.readyToShip === true,
 
       customNotes: isFixedPreset ? '' : notes,
       isPreset: true,
@@ -320,6 +344,12 @@ function PresetPage({ preset, onClose }) {
             {!isFixedPreset && heated && isBMW && <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: 'var(--t)', marginBottom: 6 }}><span>Heated Steering</span><span style={{ color: 'var(--y)' }}>+$75.00</span></div>}
             {!isFixedPreset && laneAssist && isBMW && <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: 'var(--t)', marginBottom: 6 }}><span>Lane Assist</span><span style={{ color: 'var(--y)' }}>+$30.00</span></div>}
             {!isFixedPreset && m1m2 && isBMW && <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: 'var(--t)', marginBottom: 6 }}><span>M1 & M2 Buttons</span><span style={{ color: 'var(--y)' }}>+$40.00</span></div>}
+            {isFixedPreset && preset.readyShipOption && readyShipOptionSelected && (
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: 'var(--t)', marginBottom: 6 }}>
+                <span>{preset.readyShipOption.label}</span>
+                <span style={{ color: 'var(--y)' }}>+${Number(preset.readyShipOption.priceDelta).toFixed(2)}</span>
+              </div>
+            )}
           </div>
 
           {/* Options */}
@@ -343,19 +373,68 @@ function PresetPage({ preset, onClose }) {
               </div>
             </>
           ) : (
-            <div style={{
-              marginBottom: 24,
-              padding: '16px 18px',
-              border: '1px solid rgba(232,184,0,.28)',
-              background: 'rgba(232,184,0,.05)',
-            }}>
-              <div style={{ fontFamily: 'Orbitron, monospace', fontSize: 10, letterSpacing: 2.5, color: 'var(--y)', marginBottom: 7 }}>
-                {preset.fixedInfoTitle || 'FIXED INFINITI PRESET'}
+            <>
+              {preset.readyShipOption && (
+                <div style={{
+                  marginBottom: 14,
+                  padding: '16px 18px',
+                  border: '1px solid rgba(232,184,0,.45)',
+                  background: 'rgba(232,184,0,.06)',
+                }}>
+                  <div style={{ fontFamily: 'Orbitron, monospace', fontSize: 10, letterSpacing: 2.2, color: 'var(--y)', marginBottom: 8 }}>
+                    OPTIONAL READY-TO-SHIP VARIANT
+                  </div>
+                  <div style={{ fontFamily: 'Rajdhani, sans-serif', fontWeight: 700, fontSize: 16, letterSpacing: 1, color: 'var(--w)', marginBottom: 5 }}>
+                    {preset.readyShipOption.label}
+                  </div>
+                  <div style={{ fontSize: 12, color: '#ffcc33', lineHeight: 1.5, marginBottom: 12, fontWeight: 700 }}>
+                    {preset.readyShipOption.note}
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+                    <button
+                      type="button"
+                      onClick={() => setReadyShipOptionSelected(false)}
+                      style={{
+                        padding: '12px 8px', cursor: 'pointer',
+                        border: `1px solid ${!readyShipOptionSelected ? 'var(--y)' : 'var(--b)'}`,
+                        background: !readyShipOptionSelected ? 'rgba(232,184,0,.12)' : 'transparent',
+                        color: !readyShipOptionSelected ? 'var(--y)' : 'var(--t)',
+                        fontFamily: 'Orbitron, monospace', fontSize: 10, letterSpacing: 1,
+                      }}
+                    >
+                      WITHOUT INSERTS<br />${preset.base_price.toFixed(2)}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setReadyShipOptionSelected(true)}
+                      style={{
+                        padding: '12px 8px', cursor: 'pointer',
+                        border: `1px solid ${readyShipOptionSelected ? 'var(--y)' : 'var(--b)'}`,
+                        background: readyShipOptionSelected ? 'rgba(232,184,0,.12)' : 'transparent',
+                        color: readyShipOptionSelected ? 'var(--y)' : 'var(--t)',
+                        fontFamily: 'Orbitron, monospace', fontSize: 10, letterSpacing: 1,
+                      }}
+                    >
+                      WITH INSERTS<br />${Number(preset.readyShipOption.selectedPrice).toFixed(2)}
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              <div style={{
+                marginBottom: 24,
+                padding: '16px 18px',
+                border: '1px solid rgba(232,184,0,.28)',
+                background: 'rgba(232,184,0,.05)',
+              }}>
+                <div style={{ fontFamily: 'Orbitron, monospace', fontSize: 10, letterSpacing: 2.5, color: 'var(--y)', marginBottom: 7 }}>
+                  {preset.fixedInfoTitle || 'READY TO SHIP'}
+                </div>
+                <div style={{ fontSize: 13, lineHeight: 1.7, color: 'var(--t)' }}>
+                  {preset.fixedInfoBody || 'This wheel is already built and ready to ship exactly as shown.'}
+                </div>
               </div>
-              <div style={{ fontSize: 13, lineHeight: 1.7, color: 'var(--t)' }}>
-                {preset.fixedInfoBody || 'This wheel is already built and ready to ship exactly as shown.'}
-              </div>
-            </div>
+            </>
           )}
 
           {/* Price + buttons */}
@@ -367,7 +446,7 @@ function PresetPage({ preset, onClose }) {
             <div style={{ display: 'flex', gap: 10, marginBottom: 12 }}>
               <button className="btn" style={{ clipPath: 'none', flex: 1, fontSize: 12 }} onClick={handleBuyNow}>BUY NOW</button>
               <button className="btn-outline sm" style={{ flex: 1, clipPath: 'none', padding: '13px 20px', fontSize: 13 }} onClick={handleAdd} disabled={added}>
-                {added ? '✓ ADDED' : '+ ADD TO CART'}
+                {added ? '✓ ADDED' : (preset.readyToShip ? '+ ADD READY-TO-SHIP WHEEL' : '+ ADD TO CART')}
               </button>
             </div>
             <div style={{ fontSize: 13, color: 'var(--t)', lineHeight: 1.7 }}>{preset.footerMeta || '🛡 6 Month Warranty · ⏱ 3–4 Week Build · Made to Order'}</div>
