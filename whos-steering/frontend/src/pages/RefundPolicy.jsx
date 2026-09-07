@@ -5,11 +5,11 @@ export default function RefundPolicy() {
   return (
     <div style={{ paddingTop: 120, minHeight: '100vh', background: 'var(--d)' }}>
       <div style={{ maxWidth: 860, margin: '0 auto', padding: '48px 24px 80px' }}>
-        <div style={{ fontFamily: 'Orbitron, monospace', fontSize: 10, letterSpacing: 4, color: 'var(--y)', marginBottom: 10 }}>LEGAL</div>
+        <div style={{ fontFamily: 'Arial, sans-serif', fontSize: 14, letterSpacing: .6, color: 'var(--y)', marginBottom: 10 }}>LEGAL</div>
         <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 52, marginBottom: 8 }}>RETURN & REFUND POLICY</div>
-        <div style={{ fontSize: 12, color: 'var(--t)', marginBottom: 40, borderBottom: '1px solid var(--b)', paddingBottom: 24 }}>Last updated: August 17, 2026</div>
+        <div style={{ fontSize: 14, color: 'var(--t)', marginBottom: 40, borderBottom: '1px solid var(--b)', paddingBottom: 24 }}>Last updated: August 17, 2026</div>
 
-        <div style={{ padding: '16px 20px', background: 'rgba(232,184,0,.06)', border: '1px solid rgba(232,184,0,.3)', marginBottom: 40, fontSize: 13, color: 'var(--w)', lineHeight: 1.7 }}>
+        <div style={{ padding: '16px 20px', background: 'rgba(232,184,0,.06)', border: '1px solid rgba(232,184,0,.3)', marginBottom: 40, fontSize: 14, color: 'var(--w)', lineHeight: 1.7 }}>
           ⚠️ All Who's Steering products are <strong>custom-built to order</strong>. Because each wheel is individually crafted to your specifications, our return and refund policy reflects the nature of bespoke manufacturing.
         </div>
 
@@ -65,7 +65,7 @@ export default function RefundPolicy() {
 function Legal({ h, children }) {
   return (
     <div style={{ marginBottom: 40 }}>
-      <div style={{ fontFamily: 'Orbitron, monospace', fontSize: 10, letterSpacing: 3, color: 'var(--y)', textTransform: 'uppercase', marginBottom: 12 }}>{h}</div>
+      <div style={{ fontFamily: 'Arial, sans-serif', fontSize: 14, letterSpacing: .6, color: 'var(--y)', textTransform: 'uppercase', marginBottom: 12 }}>{h}</div>
       <div style={{ fontSize: 14, color: 'var(--t)', lineHeight: 1.9 }}>{children}</div>
     </div>
   );

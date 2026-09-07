@@ -41,36 +41,36 @@ function PaymentForm({ total, orderId, email }) {
   return (
     <div>
       {!elementReady && !elementLoadError && (
-        <div style={{ padding: '30px 0', textAlign: 'center', fontSize: 13, color: 'var(--t)', letterSpacing: 1 }}>
+        <div style={{ padding: '30px 0', textAlign: 'center', fontSize: 14, color: 'var(--t)', letterSpacing: 1 }}>
           Loading payment form...
         </div>
       )}
       <div style={{ display: elementReady ? 'block' : 'none' }}>
         <PaymentElement
-          options={{ layout: 'tabs' }}
+          options={{ layout: 'accordion', paymentMethodOrder: ['apple_pay', 'google_pay', 'card', 'paypal', 'klarna'], wallets: { applePay: 'auto', googlePay: 'auto' } }}
           onReady={() => setElementReady(true)}
           onLoadError={(e) => setElementLoadError(e?.error?.message || 'Failed to load payment form.')}
         />
       </div>
       {elementLoadError && (
-        <div style={{ padding: '10px 14px', background: 'rgba(204,51,0,.1)', border: '1px solid #CC3300', color: '#FF5533', fontSize: 12, marginTop: 16 }}>
+        <div style={{ padding: '10px 14px', background: 'rgba(204,51,0,.1)', border: '1px solid #CC3300', color: '#FF5533', fontSize: 14, marginTop: 16 }}>
           {elementLoadError} — please refresh the page. If this keeps happening, the Stripe client secret may have expired; go back and re-enter your shipping info to start a new payment session.
         </div>
       )}
       {error && (
-        <div style={{ padding: '10px 14px', background: 'rgba(204,51,0,.1)', border: '1px solid #CC3300', color: '#FF5533', fontSize: 12, marginTop: 16 }}>
+        <div style={{ padding: '10px 14px', background: 'rgba(204,51,0,.1)', border: '1px solid #CC3300', color: '#FF5533', fontSize: 14, marginTop: 16 }}>
           {error}
         </div>
       )}
       <button
         className="btn"
-        style={{ clipPath: 'none', width: '100%', padding: 18, fontSize: 13, marginTop: 20 }}
+        style={{ clipPath: 'none', width: '100%', padding: 18, fontSize: 14, marginTop: 20 }}
         onClick={handlePay}
         disabled={!stripe || loading || !elementReady}
       >
         {loading ? 'PROCESSING...' : `PAY $${total.toFixed(2)}`}
       </button>
-      <div style={{ fontSize: 11, color: 'var(--t)', textAlign: 'center', marginTop: 12 }}>
+      <div style={{ fontSize: 14, color: 'var(--t)', textAlign: 'center', marginTop: 12 }}>
         🔒 Secured by Stripe · Your card details are never stored
       </div>
     </div>
@@ -98,8 +98,8 @@ function ShippingField({
         htmlFor={`checkout-${fieldKey}`}
         style={{
           display: 'block',
-          fontSize: 10,
-          letterSpacing: 2,
+          fontSize: 14,
+          letterSpacing: .6,
           textTransform: 'uppercase',
           color: 'var(--t)',
           marginBottom: 5,
@@ -110,6 +110,8 @@ function ShippingField({
 
       <input
         id={`checkout-${fieldKey}`}
+        type={fieldKey === 'email' ? 'email' : 'text'}
+        required aria-invalid={!!infoErrors[fieldKey]} aria-describedby={infoErrors[fieldKey] ? `checkout-${fieldKey}-error` : undefined}
         className={`fi${infoErrors[fieldKey] ? ' error' : ''}`}
         value={info[fieldKey]}
         placeholder={placeholder}
@@ -134,7 +136,7 @@ function ShippingField({
       />
 
       {infoErrors[fieldKey] && (
-        <div className="err-msg">Required</div>
+        <div id={`checkout-${fieldKey}-error`} className="err-msg">{typeof infoErrors[fieldKey] === 'string' ? infoErrors[fieldKey] : 'This field is required.'}</div>
       )}
     </div>
   );
@@ -147,6 +149,9 @@ export default function Checkout() {
   const nav = useNavigate();
 
   const [step, setStep] = useState(1);
+  const [provider,setProvider]=useState('stripe');
+  const [paypalAvailable,setPaypalAvailable]=useState(false);
+  useEffect(()=>{apiFetch('/api/paypal/availability').then(r=>setPaypalAvailable(r.enabled)).catch(()=>{});},[]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [clientSecret, setClientSecret] = useState('');
@@ -215,24 +220,26 @@ export default function Checkout() {
 
   const validateInfo = () => {
     const e = {};
-    if (!info.email)    e.email    = true;
-    if (!info.name)     e.name     = true;
-    if (!info.address1) e.address1 = true;
-    if (!info.city)     e.city     = true;
-    if (!info.state)    e.state    = true;
-    if (!info.zip)      e.zip      = true;
+    if (!/^\S+@\S+\.\S+$/.test(info.email.trim())) e.email = 'Enter a valid email address.';
+    if (!info.name.trim())     e.name     = true;
+    if (!info.address1.trim()) e.address1 = true;
+    if (!info.city.trim())     e.city     = true;
+    if (!info.state.trim())    e.state    = true;
+    if (!info.zip.trim())      e.zip      = true;
     setInfoErrors(e);
     return !Object.keys(e).length;
   };
 
   const handleContinue = async () => {
-    if (!validateInfo()) return;
+    if (loading) return;
+    if (!validateInfo()) { setTimeout(() => document.querySelector('[aria-invalid="true"]')?.focus(), 0); return; }
     setLoading(true);
     setError('');
     try {
       const result = await apiFetch('/api/checkout/create-intent', {
         method: 'POST',
         body: JSON.stringify({
+          provider,
           cartItems: items.map(item => ({
             name: item.name,
             detail: item.detail,
@@ -249,6 +256,7 @@ export default function Checkout() {
           promoCode: appliedPromo?.code || '',
         }),
       });
+      if(result.approvalUrl){sessionStorage.setItem('ws_paypal_'+result.orderId,result.checkoutToken);window.location.assign(result.approvalUrl);return;}
       setClientSecret(result.clientSecret);
       setOrderId(result.orderId);
       setPaymentTotal(Number(result.amount));
@@ -265,7 +273,7 @@ export default function Checkout() {
       <div style={{ paddingTop: 0, minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--d)' }}>
         <div style={{ textAlign: 'center', padding: 40 }}>
           <div style={{ fontSize: 48, opacity: .2, marginBottom: 16 }}>🛒</div>
-          <div style={{ color: 'var(--t)', letterSpacing: 2, textTransform: 'uppercase', fontSize: 13, marginBottom: 20 }}>Your cart is empty</div>
+          <div style={{ color: 'var(--t)', letterSpacing: .6, textTransform: 'uppercase', fontSize: 14, marginBottom: 20 }}>Your cart is empty</div>
           <button className="btn" style={{ clipPath: 'none' }} onClick={() => nav('/catalog')}>SHOP CATALOG</button>
         </div>
       </div>
@@ -279,43 +287,30 @@ export default function Checkout() {
       colorBackground: '#1E1E1E',
       colorText: '#F0F0F0',
       colorDanger: '#FF5533',
-      fontFamily: 'Rajdhani, sans-serif',
-      borderRadius: '0px',
+      fontFamily: 'Arial, sans-serif',
+      borderRadius: '6px',
     },
   };
 
   return (
-    <div style={{ paddingTop: 0, minHeight: '100vh', background: 'var(--d)' }}>
-      <div style={{
-        maxWidth: 1100, margin: '0 auto', padding: '40px 24px',
-        display: 'grid',
-        gridTemplateColumns: window.innerWidth < 768 ? '1fr' : '1fr 400px',
-        gap: 32, alignItems: 'start',
-      }}>
+    <div className="checkout-page"><div className="checkout-heading"><p className="eyebrow">Your next drive starts here</p><h1>Checkout</h1><p>Review your build, add your shipping details, and choose how to pay.</p></div>
+      <div className="checkout-layout">
 
         {/* ── Left: form ── */}
-        <div>
+        <div className="checkout-panel">
           {/* Step tabs */}
-          <div style={{ display: 'flex', marginBottom: 32, borderBottom: '1px solid var(--b)' }}>
-            {['Contact & Shipping', 'Payment'].map((label, i) => (
-              <div key={i}
-                style={{ flex: 1, padding: '14px 20px', fontFamily: 'Orbitron, monospace', fontSize: 9, letterSpacing: 2, color: step === i + 1 ? 'var(--y)' : 'var(--t)', borderBottom: step === i + 1 ? '2px solid var(--y)' : '2px solid transparent', cursor: step > i + 1 ? 'pointer' : 'default', transition: 'color .2s' }}
-                onClick={() => step > i + 1 && setStep(i + 1)}>
-                {i + 1}. {label.toUpperCase()}
-              </div>
-            ))}
-          </div>
-
+          <div className="checkout-steps" aria-label="Checkout progress">{['Contact & shipping','Payment'].map((label,i)=><button key={label} aria-current={step===i+1?'step':undefined} disabled={i+1>step} onClick={()=>setStep(i+1)}>{i+1}. {label}</button>)}</div>
+          {step===1 && paypalAvailable && <div className="checkout-providers" role="group" aria-label="Payment provider"><button className={provider==='stripe'?'ob on':'ob'} aria-pressed={provider==='stripe'} onClick={()=>setProvider('stripe')}>Card, wallets & pay later</button><button className={provider==='paypal'?'ob on':'ob'} aria-pressed={provider==='paypal'} onClick={()=>setProvider('paypal')}>PayPal</button></div>}
           {/* Step 1 — info */}
           {step === 1 && (
-            <div>
+            <div className="checkout-step">
               <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 28, marginBottom: 24 }}>CONTACT & SHIPPING</div>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, marginBottom: 24 }}>
                 <ShippingField label="Email" fieldKey="email" placeholder="your@email.com" info={info} setInfo={setInfo} infoErrors={infoErrors} setInfoErrors={setInfoErrors} />
                 <ShippingField label="Full Name" fieldKey="name" placeholder="John Smith" info={info} setInfo={setInfo} infoErrors={infoErrors} setInfoErrors={setInfoErrors} />
                 <ShippingField label="Address" fieldKey="address1" placeholder="123 Main St" info={info} setInfo={setInfo} infoErrors={infoErrors} setInfoErrors={setInfoErrors} />
                 <div style={{ flex: '1 1 100%' }}>
-                  <label style={{ display: 'block', fontSize: 10, letterSpacing: 2, textTransform: 'uppercase', color: 'var(--t)', marginBottom: 5 }}>Apt / Suite</label>
+                  <label style={{ display: 'block', fontSize: 14, letterSpacing: .6, textTransform: 'uppercase', color: 'var(--t)', marginBottom: 5 }}>Apt / Suite</label>
                   <input className="fi" value={info.address2} placeholder="Optional"
                     onChange={e => setInfo(p => ({ ...p, address2: e.target.value }))} style={{ width: '100%' }} />
                 </div>
@@ -323,7 +318,7 @@ export default function Checkout() {
                 <ShippingField label="State" fieldKey="state" placeholder="NY" half info={info} setInfo={setInfo} infoErrors={infoErrors} setInfoErrors={setInfoErrors} />
                 <ShippingField label="ZIP" fieldKey="zip" placeholder="10001" half info={info} setInfo={setInfo} infoErrors={infoErrors} setInfoErrors={setInfoErrors} />
                 <div style={{ flex: '0 0 calc(50% - 5px)' }}>
-                  <label style={{ display: 'block', fontSize: 10, letterSpacing: 2, textTransform: 'uppercase', color: 'var(--t)', marginBottom: 5 }}>Country</label>
+                  <label style={{ display: 'block', fontSize: 14, letterSpacing: .6, textTransform: 'uppercase', color: 'var(--t)', marginBottom: 5 }}>Country</label>
                   <select className="fi" value={info.country} onChange={e => setInfo(p => ({ ...p, country: e.target.value }))} style={{ width: '100%' }}>
                     {[['US','United States'],['CA','Canada'],['GB','United Kingdom'],['AU','Australia'],['DE','Germany'],['FR','France'],['Other','Other']].map(([v,l]) => (
                       <option key={v} value={v}>{l}</option>
@@ -332,22 +327,22 @@ export default function Checkout() {
                 </div>
               </div>
               {error && (
-                <div style={{ padding: '10px 14px', background: 'rgba(204,51,0,.1)', border: '1px solid #CC3300', color: '#FF5533', fontSize: 12, marginBottom: 16 }}>{error}</div>
+                <div style={{ padding: '10px 14px', background: 'rgba(204,51,0,.1)', border: '1px solid #CC3300', color: '#FF5533', fontSize: 14, marginBottom: 16 }}>{error}</div>
               )}
-              <button className="btn" style={{ clipPath: 'none', width: '100%', padding: 18, fontSize: 13 }}
+              <button className="btn" style={{ clipPath: 'none', width: '100%', padding: 18, fontSize: 14 }}
                 onClick={handleContinue} disabled={loading}>
-                {loading ? 'PROCESSING...' : 'CONTINUE TO PAYMENT →'}
+                {loading ? 'Preparing payment…' : provider==='paypal' ? 'Continue with PayPal ↗' : 'Continue to payment →'}
               </button>
             </div>
           )}
 
           {/* Step 2 — Stripe */}
           {step === 2 && clientSecret && (
-            <div>
+            <div className="checkout-step">
               <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 28, marginBottom: 24 }}>PAYMENT</div>
               {!stripePromise ? (
-                <div style={{ padding: '14px 16px', background: 'rgba(204,51,0,.1)', border: '1px solid #CC3300', color: '#FF5533', fontSize: 13, lineHeight: 1.6 }}>
-                  Payment form couldn't load because the Stripe publishable key is missing from this build. Set REACT_APP_STRIPE_PUBLISHABLE_KEY in your Netlify environment variables, then redeploy the site. (REACT_APP_STRIPE_PK is still accepted as a legacy fallback.)
+                <div style={{ padding: '14px 16px', background: 'rgba(204,51,0,.1)', border: '1px solid #CC3300', color: '#FF5533', fontSize: 14, lineHeight: 1.6 }}>
+                  Payments are temporarily unavailable. Your cart is saved for this session. Please try again later or contact our team.
                 </div>
               ) : (
                 <Elements stripe={stripePromise} options={{ clientSecret, appearance: stripeAppearance }}>
@@ -359,13 +354,13 @@ export default function Checkout() {
         </div>
 
         {/* ── Right: order summary ── */}
-        <div style={{ background: 'var(--p)', border: '1px solid var(--b)', padding: 24 }}>
-          <div style={{ fontFamily: 'Orbitron, monospace', fontSize: 10, letterSpacing: 3, color: 'var(--y)', marginBottom: 16 }}>ORDER SUMMARY</div>
+        <div className="checkout-summary">
+          <div style={{ fontFamily: 'Arial, sans-serif', fontSize: 14, letterSpacing: .6, color: 'var(--y)', marginBottom: 16 }}>ORDER SUMMARY</div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 1, marginBottom: 20 }}>
             {items.map(item => (
               <div key={item.cartId} style={{ padding: '14px 0', borderBottom: '1px solid var(--b)' }}>
                 <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 800, fontStyle: 'italic', fontSize: 18 }}>{item.name}</div>
-                {item.detail && <div style={{ fontSize: 11, color: 'var(--t)', marginTop: 2, lineHeight: 1.5 }}>{item.detail}</div>}
+                {item.detail && <div style={{ fontSize: 14, color: 'var(--t)', marginTop: 2, lineHeight: 1.5 }}>{item.detail}</div>}
                 <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontSize: 22, color: 'var(--y)', marginTop: 6 }}>${item.price.toFixed(2)}</div>
               </div>
             ))}
@@ -378,9 +373,9 @@ export default function Checkout() {
             marginBottom: 16,
           }}>
             <div style={{
-              fontFamily: 'Orbitron, monospace',
-              fontSize: 8,
-              letterSpacing: 2,
+              fontFamily: 'Arial, sans-serif',
+              fontSize: 14,
+              letterSpacing: .6,
               color: 'var(--t)',
               marginBottom: 7,
             }}>
@@ -390,7 +385,7 @@ export default function Checkout() {
             <div style={{ display: 'flex', gap: 7 }}>
               <input
                 className="fi"
-                value={promoInput}
+                aria-label="Promo code" aria-label="Promo code" value={promoInput}
                 disabled={step === 2}
                 placeholder="Enter promo code"
                 onChange={(e) => {
@@ -435,7 +430,7 @@ export default function Checkout() {
             {promoMessage && (
               <div style={{
                 marginTop: 7,
-                fontSize: 10,
+                fontSize: 14,
                 lineHeight: 1.5,
                 color: appliedPromo ? '#5DCC73' : '#FF6650',
               }}>
@@ -446,33 +441,33 @@ export default function Checkout() {
 
           <div style={{ borderTop: '1px solid var(--b)', paddingTop: 16 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
-              <span style={{ fontSize: 12, color: 'var(--t)' }}>Subtotal</span>
+              <span style={{ fontSize: 14, color: 'var(--t)' }}>Subtotal</span>
               <span style={{ fontWeight: 700 }}>${total.toFixed(2)}</span>
             </div>
 
             {appliedPromo && (
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
-                <span style={{ fontSize: 12, color: '#5DCC73' }}>
+                <span style={{ fontSize: 14, color: '#5DCC73' }}>
                   Promo ({appliedPromo.code.toUpperCase()} · {appliedPromo.percentOff}%)
                 </span>
-                <span style={{ fontSize: 12, color: '#5DCC73', fontWeight: 800 }}>
+                <span style={{ fontSize: 14, color: '#5DCC73', fontWeight: 800 }}>
                   -${promoDiscount.toFixed(2)}
                 </span>
               </div>
             )}
 
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16 }}>
-              <span style={{ fontSize: 12, color: 'var(--t)' }}>Shipping</span>
-              <span style={{ fontSize: 12, color: '#3DB85A', fontWeight: 700 }}>Confirmed after order</span>
+              <span style={{ fontSize: 14, color: 'var(--t)' }}>Shipping</span>
+              <span style={{ fontSize: 14, color: '#3DB85A', fontWeight: 700 }}>Confirmed after order</span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
-              <span style={{ fontFamily: 'Orbitron, monospace', fontSize: 10, letterSpacing: 2, color: 'var(--t)' }}>TOTAL</span>
+              <span style={{ fontFamily: 'Arial, sans-serif', fontSize: 14, letterSpacing: .6, color: 'var(--t)' }}>TOTAL</span>
               <span style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontSize: 36, color: 'var(--y)' }}>
                 ${(step === 2 && clientSecret ? paymentTotal : displayedTotal).toFixed(2)}
               </span>
             </div>
           </div>
-          <div style={{ marginTop: 20, padding: '12px 0', borderTop: '1px solid var(--b)', fontSize: 11, color: 'var(--t)', lineHeight: 1.9 }}>
+          <div style={{ marginTop: 20, padding: '12px 0', borderTop: '1px solid var(--b)', fontSize: 14, color: 'var(--t)', lineHeight: 1.9 }}>
             🛡 6 Month Warranty<br />
             ⏱ 3–4 Week Build Time<br />
             📦 Made to Order — ships when complete<br />

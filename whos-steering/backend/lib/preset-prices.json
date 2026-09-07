@@ -1,0 +1,89 @@
+{
+  "bmw-touch-of-taste": {
+    "brand": "BMW",
+    "base": 54999,
+    "fixed": false,
+    "option": null
+  },
+  "bmw-m-sport-carbon": {
+    "brand": "BMW",
+    "base": 64999,
+    "fixed": false,
+    "option": null
+  },
+  "bmw-m-stealth": {
+    "brand": "BMW",
+    "base": 59999,
+    "fixed": false,
+    "option": null
+  },
+  "bmw-carbon-crusher": {
+    "brand": "BMW",
+    "base": 44999,
+    "fixed": false,
+    "option": null
+  },
+  "bmw-ready-classic-carbon": {
+    "brand": "BMW",
+    "base": 39999,
+    "fixed": true,
+    "option": null
+  },
+  "bmw-red-desire": {
+    "brand": "BMW",
+    "base": 39999,
+    "fixed": true,
+    "option": null
+  },
+  "bmw-e-carbone": {
+    "brand": "BMW",
+    "base": 47999,
+    "fixed": true,
+    "option": {
+      "key": "paddleShifterSpaceInserts",
+      "price": 49999
+    }
+  },
+  "bmw-classic-m-sport": {
+    "brand": "BMW",
+    "base": 31999,
+    "fixed": false,
+    "option": null
+  },
+  "rs-sig-carbon": {
+    "brand": "AUDI",
+    "base": 72999,
+    "fixed": false,
+    "option": null
+  },
+  "rs-stealth": {
+    "brand": "AUDI",
+    "base": 67999,
+    "fixed": false,
+    "option": null
+  },
+  "audi-flagship-carbon": {
+    "brand": "AUDI",
+    "base": 79999,
+    "fixed": false,
+    "option": null
+  },
+  "infiniti-purple-rain": {
+    "brand": "INFINITI",
+    "base": 39999,
+    "fixed": true,
+    "option": null
+  },
+  "infiniti-purple-craze": {
+    "brand": "INFINITI",
+    "base": 54999,
+    "fixed": true,
+    "option": null
+  },
+  "infiniti-gold-rush": {
+    "brand": "INFINITI",
+    "base": 39999,
+    "fixed": true,
+    "option": null
+  }
+}

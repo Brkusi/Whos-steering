@@ -1,3 +1,4 @@
+import useViewport from '../hooks/useViewport';
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import WheelPreview from '../components/WheelPreview';
@@ -14,9 +15,9 @@ function Sect({ label, value, children, badge }) {
   return (
     <div style={{ padding: '20px 28px', borderBottom: '1px solid var(--b)' }}>
       <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, marginBottom: 12, flexWrap: 'wrap' }}>
-        <span style={{ fontFamily: 'Rajdhani, sans-serif', fontWeight: 700, fontSize: 15, letterSpacing: 2, textTransform: 'uppercase' }}>{label}</span>
-        {badge && <span style={{ background: 'var(--y)', color: '#000', fontFamily: 'Orbitron, monospace', fontSize: 11, fontWeight: 700, padding: '2px 8px', letterSpacing: 2 }}>{badge}</span>}
-        {value && <><span style={{ color: '#444', fontSize: 13 }}>|</span>
+        <span style={{ fontFamily: 'Rajdhani, sans-serif', fontWeight: 700, fontSize: 15, letterSpacing: .6, textTransform: 'uppercase' }}>{label}</span>
+        {badge && <span style={{ background: 'var(--y)', color: '#000', fontFamily: 'Arial, sans-serif', fontSize: 14, fontWeight: 700, padding: '2px 8px', letterSpacing: .6 }}>{badge}</span>}
+        {value && <><span style={{ color: '#444', fontSize: 14 }}>|</span>
         <span style={{ fontFamily: 'Rajdhani, sans-serif', fontWeight: 600, fontSize: 14, color: 'var(--y)', letterSpacing: .5 }}>{value}</span></>}
       </div>
       {children}
@@ -28,7 +29,7 @@ function OptionRow({ options, selected, onSelect }) {
   return (
     <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7 }}>
       {options.map(o => (
-        <button key={o} className={`ob${selected === o ? ' on' : ''}`} onClick={() => onSelect(o)}>{o}</button>
+        <button key={o} aria-pressed={selected === o} className={`ob${selected === o ? ' on' : ''}`} onClick={() => onSelect(o)}>{o}</button>
       ))}
     </div>
   );
@@ -73,12 +74,12 @@ function Toggle({ label, sub, value, onChange }) {
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 0', borderBottom: '1px solid #1A1A1A', flexWrap: 'wrap', gap: 8 }}>
       <div style={{ flex: 1, paddingRight: 12 }}>
         <div style={{ fontFamily: 'Rajdhani, sans-serif', fontWeight: 700, fontSize: 14, letterSpacing: 1, textTransform: 'uppercase' }}>{label}</div>
-        {sub && <div style={{ fontSize: 12, color: 'var(--y)', letterSpacing: .5 }}>{sub}</div>}
+        {sub && <div style={{ fontSize: 14, color: 'var(--y)', letterSpacing: .5 }}>{sub}</div>}
       </div>
       <div style={{ display: 'flex', flexShrink: 0 }}>
         {['YES','NO'].map((v, i) => (
           <button key={v} onClick={() => onChange(v === 'YES')}
-            style={{ padding: '6px 16px', border: '1px solid var(--b)', background: value === (v === 'YES') ? 'var(--y)' : 'transparent', color: value === (v === 'YES') ? '#000' : 'var(--t)', cursor: 'pointer', fontFamily: 'Rajdhani, sans-serif', fontSize: 13, fontWeight: 700, letterSpacing: 1, transition: 'all .2s', borderRight: i === 0 ? 'none' : undefined }}>
+            style={{ padding: '6px 16px', border: '1px solid var(--b)', background: value === (v === 'YES') ? 'var(--y)' : 'transparent', color: value === (v === 'YES') ? '#000' : 'var(--t)', cursor: 'pointer', fontFamily: 'Rajdhani, sans-serif', fontSize: 14, fontWeight: 700, letterSpacing: 1, transition: 'all .2s', borderRight: i === 0 ? 'none' : undefined }}>
             {v}
           </button>
         ))}
@@ -99,7 +100,7 @@ function StripeConcept({ concept, selected, onSelect }) {
         {img
           ? <img src={img} alt={label} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
           : <div style={{ width: '100%', height: '100%', background: '#111', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <span style={{ fontSize: 11, color: '#555' }}>NONE</span>
+              <span style={{ fontSize: 14, color: '#555' }}>NONE</span>
             </div>
         }
         {isSelected && (
@@ -108,7 +109,7 @@ function StripeConcept({ concept, selected, onSelect }) {
           </div>
         )}
       </div>
-      <div style={{ fontSize: 11, color: isSelected ? 'var(--y)' : 'var(--t)', letterSpacing: .5,
+      <div style={{ fontSize: 14, color: isSelected ? 'var(--y)' : 'var(--t)', letterSpacing: .5,
         textAlign: 'center', maxWidth: 80, lineHeight: 1.3 }}>{label}</div>
     </div>
   );
@@ -147,7 +148,7 @@ function CarbonColorGrid({ colors, selected, onSelect }) {
             )}
             {c.rec && starPressed === c.n && (
               <div style={{ position: 'absolute', top: 28, left: 6, background: '#FFD500', color: '#000',
-                fontSize: 10, fontWeight: 700, letterSpacing: .5, padding: '2px 6px', borderRadius: 3,
+                fontSize: 14, fontWeight: 700, letterSpacing: .5, padding: '2px 6px', borderRadius: 3,
                 zIndex: 2, whiteSpace: 'nowrap' }}>
                 Recommended
               </div>
@@ -155,10 +156,10 @@ function CarbonColorGrid({ colors, selected, onSelect }) {
             {isSel && (
               <div style={{ position: 'absolute', top: 6, right: 6, background: 'var(--y)',
                 borderRadius: '50%', width: 18, height: 18, display: 'flex',
-                alignItems: 'center', justifyContent: 'center', fontSize: 12, color: '#000', fontWeight: 700 }}>✓</div>
+                alignItems: 'center', justifyContent: 'center', fontSize: 14, color: '#000', fontWeight: 700 }}>✓</div>
             )}
             <div style={{ padding: '5px 8px', background: '#111',
-              fontSize: 12, color: isSel ? 'var(--y)' : 'var(--t)',
+              fontSize: 14, color: isSel ? 'var(--y)' : 'var(--t)',
               letterSpacing: .5, textAlign: 'center', fontWeight: isSel ? 700 : 400 }}>
               {c.n}
             </div>
@@ -189,7 +190,7 @@ function MatSection({ label, matKey, colKey, carbonColKey, customColKey, cfg, se
   return (
     <Sect label={label} value={mat}>
       {linkedCarbonType && (
-        <div style={{ fontSize: 12, color: 'rgba(232,184,0,.7)', letterSpacing: .5, marginBottom: 10, padding: '6px 10px', background: 'rgba(232,184,0,.06)', border: '1px solid rgba(232,184,0,.2)' }}>
+        <div style={{ fontSize: 14, color: 'rgba(232,184,0,.7)', letterSpacing: .5, marginBottom: 10, padding: '6px 10px', background: 'rgba(232,184,0,.06)', border: '1px solid rgba(232,184,0,.2)' }}>
           ✦ Limited to matching carbon, Alcantara, or Classic Leather based on your other grip selection
         </div>
       )}
@@ -197,13 +198,13 @@ function MatSection({ label, matKey, colKey, carbonColKey, customColKey, cfg, se
         {matList.map(m => (
           <button key={m.n} className={`ob${mat === m.n ? ' on' : ''}`}
             onClick={() => { set(matKey, m.n); set(colKey, null); set(carbonColKey, null); set(customColKey, ''); }}>
-            {m.n}{m.carbon && <span style={{ marginLeft: 6, fontSize: 10, opacity: .75 }}>(+$40)</span>}
+            {m.n}{m.carbon && <span style={{ marginLeft: 6, fontSize: 14, opacity: .75 }}>(+$40)</span>}
           </button>
         ))}
       </div>
       {isCarbon ? (
         <>
-          <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 4, color: 'var(--t)' }}>
+          <div style={{ fontSize: 14, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 4, color: 'var(--t)' }}>
             {carbonLabel} <span className="req">*</span>
           </div>
           <CarbonColorGrid
@@ -221,7 +222,7 @@ function MatSection({ label, matKey, colKey, carbonColKey, customColKey, cfg, se
         </>
       ) : selectedMat?.col ? (
         <>
-          <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 4, color: 'var(--t)' }}>
+          <div style={{ fontSize: 14, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 4, color: 'var(--t)' }}>
             Color <span className="req">*</span>: {cfg[customColKey] ? cfg[customColKey] : colorName(cfg[colKey])}
           </div>
           <ColorGrid colors={COLORS} selected={cfg[colKey]} onSelect={v => { set(colKey, v); set(customColKey, ''); }} />
@@ -302,7 +303,7 @@ function Model3DPreview({ src, alt, height }) {
       {!loaded && (
         <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 16 }}>
           <div style={{ width: 52, height: 52, border: '3px solid rgba(232,184,0,.15)', borderTopColor: 'var(--y)', borderRadius: '50%', animation: 'spin3d 1s linear infinite' }} />
-          <div style={{ fontSize: 13, letterSpacing: 2, color: 'var(--t)', textTransform: 'uppercase' }}>Loading 3D Preview...</div>
+          <div style={{ fontSize: 14, letterSpacing: .6, color: 'var(--t)', textTransform: 'uppercase' }}>Loading 3D Preview...</div>
         </div>
       )}
       <style>{`@keyframes spin3d { to { transform: rotate(360deg); } }`}</style>
@@ -361,7 +362,7 @@ function ConfigProgress({ activeStep, onStep }) {
             <span
               style={{
                 display: 'block',
-                fontFamily: 'Orbitron, monospace',
+                fontFamily: 'Arial, sans-serif',
                 fontSize: 7,
                 fontWeight: 800,
                 letterSpacing: 1.5,
@@ -407,6 +408,7 @@ function ConfigProgress({ activeStep, onStep }) {
 }
 
 export default function Configure() {
+  const viewportWidth = useViewport();
   const [params] = useSearchParams();
   const nav = useNavigate();
   const { addItem, cartOpen } = useCart();
@@ -765,7 +767,7 @@ export default function Configure() {
   });
 
   const isAudi = cfg.brand === 'AUDI';
-  const isMobileViewport = window.innerWidth < 768;
+  const isMobileViewport = viewportWidth < 980;
   const previewMediaMaxHeight = isMobileViewport ? 440 : 'none';
 
   return (
@@ -917,17 +919,17 @@ export default function Configure() {
               />
             </div>
           ) : (
-            <WheelPreview config={cfg} size={Math.min(isMobileViewport ? 360 : 520, window.innerWidth * (isMobileViewport ? 0.74 : 0.46))} />
+            <WheelPreview config={cfg} size={Math.min(isMobileViewport ? 360 : 520, viewportWidth * (isMobileViewport ? 0.74 : 0.46))} />
           )}
           {!isMobileViewport && (
             <div style={{ paddingTop: 8, borderTop: '1px solid var(--b)', width: '100%', textAlign: 'center', flexShrink: 0 }}>
-              <div style={{ fontFamily: 'Orbitron, monospace', fontSize: 12, letterSpacing: 3, color: 'var(--t)', textTransform: 'uppercase', marginBottom: 2 }}>Estimated Total</div>
+              <div style={{ fontFamily: 'Arial, sans-serif', fontSize: 14, letterSpacing: .6, color: 'var(--t)', textTransform: 'uppercase', marginBottom: 2 }}>Estimated Total</div>
               <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontSize: 'clamp(54px,5vw,72px)', color: 'var(--y)', lineHeight: .95, letterSpacing: -1 }}>${price.toFixed(2)}</div>
-              <div style={{ fontSize: 13, color: 'var(--t)', letterSpacing: 1.15, marginTop: 2 }}>Final price confirmed at checkout</div>
+              <div style={{ fontSize: 14, color: 'var(--t)', letterSpacing: 1.15, marginTop: 2 }}>Final price confirmed at checkout</div>
             </div>
           )}
           {!isMobileViewport && (
-            <button className="btn" style={{ width: '100%', clipPath: 'polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%)', padding: 18, fontSize: 13, letterSpacing: 3 }}
+            <button className="btn" style={{ width: '100%', clipPath: 'polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%)', padding: 18, fontSize: 14, letterSpacing: .6 }}
               onClick={() => validate() && setShowReview(true)}>
               + ADD TO CART
             </button>
@@ -964,11 +966,11 @@ export default function Configure() {
             boxShadow: '0 8px 22px rgba(0,0,0,.24)',
           }}>
             <div style={{ padding: '16px 28px 12px', display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
-              <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 28, letterSpacing: 2 }}>CUSTOMIZATION</div>
+              <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 28, letterSpacing: .6 }}>CUSTOMIZATION</div>
               {isAudi && (
-                <span style={{ background: 'rgba(232,184,0,.1)', border: '1px solid var(--y)', color: 'var(--y)', fontFamily: 'Orbitron, monospace', fontSize: 11, fontWeight: 700, padding: '4px 10px', letterSpacing: 2 }}>B9 STYLE</span>
+                <span style={{ background: 'rgba(232,184,0,.1)', border: '1px solid var(--y)', color: 'var(--y)', fontFamily: 'Arial, sans-serif', fontSize: 14, fontWeight: 700, padding: '4px 10px', letterSpacing: .6 }}>B9 STYLE</span>
               )}
-              <div style={{ marginLeft: 'auto', fontFamily: 'Orbitron, monospace', color: 'var(--y)', fontSize: 8, letterSpacing: 1.4 }}>
+              <div style={{ marginLeft: 'auto', fontFamily: 'Arial, sans-serif', color: 'var(--y)', fontSize: 14, letterSpacing: 1.4 }}>
                 {CONFIG_STEPS.findIndex(s => s.id === activeStep) + 1} / {CONFIG_STEPS.length}
               </div>
             </div>
@@ -980,16 +982,16 @@ export default function Configure() {
           <Sect label="Vehicle" value={cfg.vehicleYear && cfg.vehicleModel ? `${cfg.vehicleYear} ${cfg.brand} ${cfg.vehicleModel}` : '—'}>
             <div style={{ display: 'flex', gap: 6, marginBottom: 14 }}>
               {['BMW','AUDI'].map(b => (
-                <button key={b} className={`ob${cfg.brand === b ? ' on' : ''}`} style={{ fontSize: 12, padding: '5px 20px' }} onClick={() => setBrand(b)}>{b}</button>
+                <button key={b} className={`ob${cfg.brand === b ? ' on' : ''}`} style={{ fontSize: 14, padding: '5px 20px' }} onClick={() => setBrand(b)}>{b}</button>
               ))}
             </div>
             {isAudi && (
-              <div style={{ padding: '8px 12px', background: 'rgba(232,184,0,.05)', border: '1px solid rgba(232,184,0,.2)', marginBottom: 12, fontSize: 13, color: 'var(--t)', letterSpacing: 1 }}>
+              <div style={{ padding: '8px 12px', background: 'rgba(232,184,0,.05)', border: '1px solid rgba(232,184,0,.2)', marginBottom: 12, fontSize: 14, color: 'var(--t)', letterSpacing: 1 }}>
                 ✓ Fits 2011+ AUDI All Models
               </div>
             )}
             {!isAudi && (
-              <div style={{ padding: '8px 12px', background: 'rgba(232,184,0,.05)', border: '1px solid rgba(232,184,0,.2)', marginBottom: 12, fontSize: 13, color: 'var(--t)', letterSpacing: 1 }}>
+              <div style={{ padding: '8px 12px', background: 'rgba(232,184,0,.05)', border: '1px solid rgba(232,184,0,.2)', marginBottom: 12, fontSize: 14, color: 'var(--t)', letterSpacing: 1 }}>
                 ✓ {cfg.wheelStyleType === 'F-Series' ? 'Fits F10, F30, E90' : 'Fits F10, F30, G20, G30, G22, G42, G80, G82, G87'}
               </div>
             )}
@@ -1014,8 +1016,8 @@ export default function Configure() {
               <input type="file" accept="image/*" style={{ display: 'none' }} onChange={handlePhoto} />
               {photo ? <img src={photo} alt="wheel" style={{ width: '100%', maxHeight: 120, objectFit: 'cover' }} />
                 : <><div style={{ fontSize: 20, opacity: .4, marginBottom: 3 }}>📷</div>
-                   <div style={{ fontSize: 12, color: 'var(--t)' }}>{photoUploading ? 'Uploading...' : 'Drop or click to upload'}</div>
-                   <div style={{ fontSize: 12, color: '#444', marginTop: 2 }}>JPG / PNG — required for fitment verification</div></>}
+                   <div style={{ fontSize: 14, color: 'var(--t)' }}>{photoUploading ? 'Uploading...' : 'Drop or click to upload'}</div>
+                   <div style={{ fontSize: 14, color: '#444', marginTop: 2 }}>JPG / PNG — required for fitment verification</div></>}
             </label>
             {errors.photo && <div className="err-msg">A photo of your current wheel is required</div>}
           </Sect>
@@ -1029,13 +1031,13 @@ export default function Configure() {
               {(isAudi ? ['B9', 'R8'] : ['G-Series', 'F-Series']).map(style => (
                 <div key={style} onClick={() => set('wheelStyleType', style)}
                   style={{ flex: 1, padding: '14px 12px', border: `2px solid ${cfg.wheelStyleType === style ? 'var(--y)' : 'var(--b)'}`, background: cfg.wheelStyleType === style ? 'rgba(232,184,0,.06)' : 'transparent', cursor: 'pointer', textAlign: 'center', transition: 'all .2s' }}>
-                  <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 28, color: cfg.wheelStyleType === style ? 'var(--y)' : 'var(--w)', letterSpacing: 2 }}>{style} STYLE</div>
-                  <div style={{ fontSize: 12, color: 'var(--t)', marginTop: 4 }}>
+                  <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 28, color: cfg.wheelStyleType === style ? 'var(--y)' : 'var(--w)', letterSpacing: .6 }}>{style} STYLE</div>
+                  <div style={{ fontSize: 14, color: 'var(--t)', marginTop: 4 }}>
                     {isAudi
                       ? (style === 'B9' ? 'Classic flat-bottom sport profile' : 'R8 supercar-inspired round profile')
                       : (style === 'G-Series' ? 'Modern G-chassis flat-bottom sport profile' : 'Classic F-chassis round profile')}
                   </div>
-                  <div style={{ fontSize: 13, color: 'var(--y)', fontWeight: 700, marginTop: 6 }}>
+                  <div style={{ fontSize: 14, color: 'var(--y)', fontWeight: 700, marginTop: 6 }}>
                     {isAudi
                       ? (style === 'B9' ? 'From $699.99' : 'From $799.99')
                       : (style === 'G-Series' ? 'From $549.99' : 'From $449.99')}
@@ -1069,7 +1071,7 @@ export default function Configure() {
                   <img src="/led-display.png" alt={isAudi ? 'LED Display Strip' : 'RPM Gauge'}
                     style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 30%', display: 'block' }} />
                 </div>
-                <div style={{ fontSize: 13, color: 'var(--t)', lineHeight: 1.7 }}>
+                <div style={{ fontSize: 14, color: 'var(--t)', lineHeight: 1.7 }}>
                   Integrated LED RPM shift-light strip with live speed and gear display — embedded directly into the steering wheel, visible without moving your eyes from the road.
                 </div>
               </div>
@@ -1111,10 +1113,10 @@ export default function Configure() {
             </div>
             {cfg.paddleShifters === 'Magnetic' && (
               <div style={{ marginTop: 12 }}>
-                <div style={{ fontSize: 13, color: 'rgba(232,184,0,.7)', letterSpacing: 1, marginBottom: 8, padding: '6px 10px', background: 'rgba(232,184,0,.06)', border: '1px solid rgba(232,184,0,.2)' }}>
+                <div style={{ fontSize: 14, color: 'rgba(232,184,0,.7)', letterSpacing: 1, marginBottom: 8, padding: '6px 10px', background: 'rgba(232,184,0,.06)', border: '1px solid rgba(232,184,0,.2)' }}>
                   ✦ All of our magnetic paddle shifters are carbon fiber
                 </div>
-                <div style={{ fontSize: 13, color: 'var(--t)', letterSpacing: 1, textTransform: 'uppercase', marginBottom: 6 }}>Paddle Length</div>
+                <div style={{ fontSize: 14, color: 'var(--t)', letterSpacing: 1, textTransform: 'uppercase', marginBottom: 6 }}>Paddle Length</div>
                 <OptionRow options={['Short', 'Long']} selected={cfg.paddleLength || 'Short'} onSelect={v => set('paddleLength', v)} />
               </div>
             )}
@@ -1146,7 +1148,7 @@ export default function Configure() {
                 <div style={{ display: 'flex', gap: 6 }}>
                   {['RS','S','R8'].map(b => (
                     <div key={b} className={`ob${cfg.audiBadge === b ? ' on' : ''}`}
-                      style={{ flex: 1, padding: 14, textAlign: 'center', fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontSize: 26, letterSpacing: 3, cursor: 'pointer' }}
+                      style={{ flex: 1, padding: 14, textAlign: 'center', fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontSize: 26, letterSpacing: .6, cursor: 'pointer' }}
                       onClick={() => set('audiBadge', b)}>{b}</div>
                   ))}
                 </div>
@@ -1165,7 +1167,7 @@ export default function Configure() {
                       if (next) set('innerTrimCustomColor', '');
                     }}
                     className={`ob${cfg.innerTrimMatchCarbon ? ' on' : ''}`}
-                    style={{ padding: '10px 14px', marginBottom: 10, textAlign: 'center', cursor: 'pointer', fontSize: 13, fontWeight: 700, letterSpacing: 1, textTransform: 'uppercase' }}>
+                    style={{ padding: '10px 14px', marginBottom: 10, textAlign: 'center', cursor: 'pointer', fontSize: 14, fontWeight: 700, letterSpacing: 1, textTransform: 'uppercase' }}>
                     Match Carbon Fiber Top & Bottom
                   </div>
                 )}
@@ -1186,11 +1188,11 @@ export default function Configure() {
           <div ref={detailsRef} data-step="details" style={{ scrollMarginTop: isMobileViewport ? 205 : 88 }}>
           {/* ── OPTIONS ── */}
           <div style={{ padding: '20px 28px', borderBottom: '1px solid var(--b)' }}>
-            <div style={{ fontFamily: 'Rajdhani, sans-serif', fontWeight: 700, fontSize: 15, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 8 }}>Options</div>
+            <div style={{ fontFamily: 'Rajdhani, sans-serif', fontWeight: 700, fontSize: 15, letterSpacing: .6, textTransform: 'uppercase', marginBottom: 8 }}>Options</div>
             <Toggle
               label="Airbag Cover"
               sub={cfg.brand === 'BMW' && cfg.wheelStyleType === 'F-Series'
-                ? <span style={{ display: 'inline-block', background: 'var(--y)', color: '#000', fontWeight: 800, fontSize: 11, letterSpacing: 1, padding: '2px 8px', borderRadius: 3 }}>FREE</span>
+                ? <span style={{ display: 'inline-block', background: 'var(--y)', color: '#000', fontWeight: 800, fontSize: 14, letterSpacing: 1, padding: '2px 8px', borderRadius: 3 }}>FREE</span>
                 : '+$25.00'}
               value={cfg.airbagCompat}
               onChange={setAirbagCover}
@@ -1222,7 +1224,7 @@ export default function Configure() {
 
             {cfg.airbagCompat && (
               <div style={{ marginTop: 14, paddingTop: 14, borderTop: '1px solid #1A1A1A' }}>
-                <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 8, color: 'var(--t)' }}>Airbag Material <span className="req">*</span></div>
+                <div style={{ fontSize: 14, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 8, color: 'var(--t)' }}>Airbag Material <span className="req">*</span></div>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7, marginBottom: 14 }}>
                   {AIRBAG_MATS.map(m => (
                     <button key={m.n} className={`ob${cfg.airbagMat === m.n ? ' on' : ''}`}
@@ -1234,7 +1236,7 @@ export default function Configure() {
                 {errors.airbagMaterial && <div className="err-msg" style={{ margin: '-6px 0 10px' }}>Please choose an airbag material.</div>}
                 {cfg.airbagMat && (
                   <>
-                    <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 4, color: 'var(--t)' }}>
+                    <div style={{ fontSize: 14, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 4, color: 'var(--t)' }}>
                       Color <span className="req">*</span>: {configuredColor(cfg.airbagCol, cfg.airbagCustomColor)}
                     </div>
                     <ColorGrid colors={COLORS} selected={cfg.airbagCol} onSelect={v => { set('airbagCol', v); set('airbagCustomColor', ''); }} />
@@ -1242,7 +1244,7 @@ export default function Configure() {
                     {errors.airbagColor && <div className="err-msg" style={{ marginTop: 8 }}>Please choose an airbag color.</div>}
                   </>
                 )}
-                <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase', margin: '16px 0 4px', color: 'var(--t)' }}>
+                <div style={{ fontSize: 14, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase', margin: '16px 0 4px', color: 'var(--t)' }}>
                   Airbag Stitch Color <span className="req">*</span>: {configuredColor(cfg.airbagStitchColor, cfg.airbagStitchCustomColor, 'stitch')}
                 </div>
                 <ColorGrid colors={STITCH_COLORS} selected={cfg.airbagStitchColor} onSelect={v => { set('airbagStitchColor', v); set('airbagStitchCustomColor', ''); }} />
@@ -1253,7 +1255,7 @@ export default function Configure() {
 
             {isAudi && cfg.airbagCompat && (
               <div style={{ marginTop: 14, paddingTop: 14, borderTop: '1px solid #1A1A1A' }}>
-                <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 4, color: 'var(--t)' }}>
+                <div style={{ fontSize: 14, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 4, color: 'var(--t)' }}>
                   Audi Logo Color <span className="req">*</span>: {configuredColor(cfg.audiLogoCol, cfg.audiLogoCustomColor)}
                 </div>
                 <ColorGrid colors={COLORS} selected={cfg.audiLogoCol} onSelect={v => { set('audiLogoCol', v); set('audiLogoCustomColor', ''); }} />
@@ -1283,9 +1285,9 @@ export default function Configure() {
             }}>
               <div style={{ textAlign: 'center', marginBottom: 16 }}>
                 <div style={{
-                  fontFamily: 'Orbitron, monospace',
-                  fontSize: 10,
-                  letterSpacing: 3,
+                  fontFamily: 'Arial, sans-serif',
+                  fontSize: 14,
+                  letterSpacing: .6,
                   color: 'var(--t)',
                   textTransform: 'uppercase',
                   marginBottom: 3,
@@ -1309,8 +1311,8 @@ export default function Configure() {
                   width: '100%',
                   clipPath: 'polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%)',
                   padding: 18,
-                  fontSize: 13,
-                  letterSpacing: 3,
+                  fontSize: 14,
+                  letterSpacing: .6,
                 }}
                 onClick={() => validate() && setShowReview(true)}
               >
@@ -1353,7 +1355,7 @@ export default function Configure() {
         >
           <span style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', minWidth: 0 }}>
             <span style={{
-              fontFamily: 'Orbitron, monospace',
+              fontFamily: 'Arial, sans-serif',
               fontSize: 7,
               fontWeight: 800,
               letterSpacing: 1.8,
@@ -1379,7 +1381,7 @@ export default function Configure() {
             alignItems: 'center',
             gap: 8,
             color: 'var(--y)',
-            fontFamily: 'Orbitron, monospace',
+            fontFamily: 'Arial, sans-serif',
             fontSize: 7,
             fontWeight: 800,
             letterSpacing: 1.2,
@@ -1395,11 +1397,11 @@ export default function Configure() {
       {showReview && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,.88)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2000, padding: 20, overflowY: 'auto' }}>
           <div style={{ background: 'var(--p)', border: '1px solid var(--b)', padding: 32, width: 520, maxWidth: '100%', maxHeight: '90vh', overflowY: 'auto' }}>
-            <div style={{ fontFamily: 'Orbitron, monospace', fontSize: 12, letterSpacing: 4, color: 'var(--y)', marginBottom: 4 }}>REVIEW YOUR BUILD</div>
+            <div style={{ fontFamily: 'Arial, sans-serif', fontSize: 14, letterSpacing: .6, color: 'var(--y)', marginBottom: 4 }}>REVIEW YOUR BUILD</div>
             <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 32, marginBottom: 20 }}>LOOKS GOOD?</div>
             {buildSummary().map(([k, v]) => (
               <div key={k} style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #1A1A1A', gap: 10 }}>
-                <span style={{ fontSize: 13, letterSpacing: 1, textTransform: 'uppercase', color: '#666', flexShrink: 0 }}>{k}</span>
+                <span style={{ fontSize: 14, letterSpacing: 1, textTransform: 'uppercase', color: '#666', flexShrink: 0 }}>{k}</span>
                 <span style={{ fontSize: k === 'Est. Price' ? 32 : 13, fontWeight: 900, color: k === 'Est. Price' ? 'var(--y)' : 'var(--w)', textAlign: 'right', fontFamily: k === 'Est. Price' ? '"Barlow Condensed", sans-serif' : 'inherit', letterSpacing: k === 'Est. Price' ? 1 : 'normal' }}>{v}</span>
               </div>
             ))}

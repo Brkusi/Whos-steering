@@ -46,10 +46,10 @@ export default function AnnouncementBar() {
           {/* Duplicate for seamless loop */}
           {[...ITEMS, ...ITEMS].map((item, i) => (
             <span key={i} style={{
-              fontFamily: 'Orbitron, monospace',
-              fontSize: 9,
+              fontFamily: 'Arial, sans-serif',
+              fontSize: 14,
               fontWeight: 700,
-              letterSpacing: 2,
+              letterSpacing: .6,
               color: '#000',
               textTransform: 'uppercase',
               whiteSpace: 'nowrap',

@@ -5,9 +5,9 @@ export default function ShippingPolicy() {
   return (
     <div style={{ paddingTop: 120, minHeight: '100vh', background: 'var(--d)' }}>
       <div style={{ maxWidth: 860, margin: '0 auto', padding: '48px 24px 80px' }}>
-        <div style={{ fontFamily: 'Orbitron, monospace', fontSize: 10, letterSpacing: 4, color: 'var(--y)', marginBottom: 10 }}>LEGAL</div>
+        <div style={{ fontFamily: 'Arial, sans-serif', fontSize: 14, letterSpacing: .6, color: 'var(--y)', marginBottom: 10 }}>LEGAL</div>
         <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 52, marginBottom: 8 }}>SHIPPING POLICY</div>
-        <div style={{ fontSize: 12, color: 'var(--t)', marginBottom: 40, borderBottom: '1px solid var(--b)', paddingBottom: 24 }}>Last updated: June 25, 2026</div>
+        <div style={{ fontSize: 14, color: 'var(--t)', marginBottom: 40, borderBottom: '1px solid var(--b)', paddingBottom: 24 }}>Last updated: June 25, 2026</div>
 
         <Legal h="PRODUCTION & ORDER PROCESSING">
           <p>Every Who's Steering wheel is built by hand to your exact specifications. Production begins within 24 hours of order confirmation and order processing takes place seven days a week.</p>
@@ -44,7 +44,7 @@ export default function ShippingPolicy() {
 function Legal({ h, children }) {
   return (
     <div style={{ marginBottom: 40 }}>
-      <div style={{ fontFamily: 'Orbitron, monospace', fontSize: 10, letterSpacing: 3, color: 'var(--y)', textTransform: 'uppercase', marginBottom: 12 }}>{h}</div>
+      <div style={{ fontFamily: 'Arial, sans-serif', fontSize: 14, letterSpacing: .6, color: 'var(--y)', textTransform: 'uppercase', marginBottom: 12 }}>{h}</div>
       <div style={{ fontSize: 14, color: 'var(--t)', lineHeight: 1.9 }}>{children}</div>
     </div>
   );

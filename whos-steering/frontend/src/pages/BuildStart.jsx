@@ -60,7 +60,7 @@ export default function BuildStart() {
         </div>
 
         <div className="build-start__note">
-          More vehicle brands can be added here later without changing the configurator flow.
+          Not sure about fitment? Contact our team before starting your build.
         </div>
       </section>
     </main>

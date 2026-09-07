@@ -74,24 +74,24 @@ export default function Login() {
         <div style={{ textAlign: 'center', marginBottom: 18 }}>
           <div className="ws-logo" style={{ alignItems: 'center' }}>
             <span className="ws-logo-top" style={{ fontSize: 32 }}>WHO'S</span>
-            <span className="ws-logo-bot" style={{ fontSize: 13, letterSpacing: 3 }}>STEERING</span>
+            <span className="ws-logo-bot" style={{ fontSize: 14, letterSpacing: .6 }}>STEERING</span>
           </div>
         </div>
 
         <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 28, marginBottom: 4 }}>MY ACCOUNT</div>
-        <div style={{ fontSize: 12, color: 'var(--t)', letterSpacing: 1, marginBottom: 20 }}>Sign in or create your account</div>
+        <div style={{ fontSize: 14, color: 'var(--t)', letterSpacing: 1, marginBottom: 20 }}>Sign in or create your account</div>
 
         {/* Tabs */}
         <div style={{ display: 'flex', borderBottom: '1px solid var(--b)', marginBottom: 24 }}>
           {[['signin','Sign In'],['register','Create Account']].map(([key, label]) => (
             <button key={key} onClick={() => { setTab(key); setError(''); }}
-              style={{ flex: 1, padding: '10px 0', background: 'none', border: 'none', borderBottom: tab === key ? '2px solid var(--y)' : '2px solid transparent', color: tab === key ? 'var(--y)' : 'var(--t)', cursor: 'pointer', fontFamily: 'Rajdhani, sans-serif', fontWeight: 700, fontSize: 13, letterSpacing: 2, textTransform: 'uppercase', transition: 'all .2s', marginBottom: -1 }}>
+              style={{ flex: 1, padding: '10px 0', background: 'none', border: 'none', borderBottom: tab === key ? '2px solid var(--y)' : '2px solid transparent', color: tab === key ? 'var(--y)' : 'var(--t)', cursor: 'pointer', fontFamily: 'Rajdhani, sans-serif', fontWeight: 700, fontSize: 14, letterSpacing: .6, textTransform: 'uppercase', transition: 'all .2s', marginBottom: -1 }}>
               {label}
             </button>
           ))}
         </div>
 
-        {error && <div style={{ padding: '10px 14px', background: 'rgba(204,51,0,.1)', border: '1px solid #CC3300', color: '#FF6644', fontSize: 13, marginBottom: 16 }}>{error}</div>}
+        {error && <div style={{ padding: '10px 14px', background: 'rgba(204,51,0,.1)', border: '1px solid #CC3300', color: '#FF6644', fontSize: 14, marginBottom: 16 }}>{error}</div>}
 
         {tab === 'signin' ? (
           <form onSubmit={handleSignIn} style={{ display: 'flex', flexDirection: 'column' }}>
@@ -103,7 +103,7 @@ export default function Login() {
               <label className="fl">Password</label>
               <input className="fi" type="password" value={siPass} onChange={e => setSiPass(e.target.value)} placeholder="••••••••" required />
             </div>
-            <div style={{ fontSize: 11, color: 'var(--t)', textAlign: 'right', marginBottom: 16, cursor: 'pointer', letterSpacing: 1 }}>Forgot password?</div>
+            <div style={{ fontSize: 14, color: 'var(--t)', textAlign: 'right', marginBottom: 16, cursor: 'pointer', letterSpacing: 1 }}>Forgot password?</div>
             <button className="btn" type="submit" disabled={loading} style={{ clipPath: 'none', width: '100%' }}>
               {loading ? <><span className="login-button-spinner" aria-hidden="true" /> SIGNING IN...</> : 'SIGN IN'}
             </button>

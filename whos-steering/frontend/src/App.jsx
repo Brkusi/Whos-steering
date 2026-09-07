@@ -4,6 +4,8 @@ import Nav from './components/Nav';
 import Footer from './components/Footer';
 import BrandLoader from './components/BrandLoader';
 import './index.css';
+import './experience.css';
+import { RouteExperience } from './components/Experience';
 
 import { lazy, Suspense } from 'react';
 const Home              = lazy(() => import('./pages/Home'));
@@ -30,6 +32,9 @@ export default function App() {
       <AuthProvider>
         <CartProvider>
           <Nav />
+          <a className="skip-link" href="#route-content">Skip to content</a>
+          <div id="route-content" tabIndex={-1}>
+          <RouteExperience />
           <Suspense fallback={<BrandLoader />}>
             <Routes>
               <Route path="/"                   element={<Home />} />
@@ -50,8 +55,10 @@ export default function App() {
               <Route path="/shipping"           element={<ShippingPolicy />} />
               <Route path="/refund-policy"      element={<RefundPolicy />} />
               <Route path="/payment-policy"     element={<PaymentPolicy />} />
+              <Route path="*" element={<div className="empty-state"><h1>That page took a wrong turn.</h1><p>Let’s get you back to your next wheel.</p><a className="btn" href="/">Back to the showroom</a></div>} />
             </Routes>
           </Suspense>
+          </div>
           <Footer />
         </CartProvider>
       </AuthProvider>

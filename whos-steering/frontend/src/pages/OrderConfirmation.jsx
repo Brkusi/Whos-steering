@@ -20,6 +20,7 @@ export default function OrderConfirmation() {
 
   const orderId = params.get('orderId');
   const paymentIntent = params.get('payment_intent');
+  const isPaypal=params.get('provider')==='paypal';
 
   const [verification, setVerification] = useState('checking');
   const [paymentStatus, setPaymentStatus] = useState('');
@@ -33,16 +34,16 @@ export default function OrderConfirmation() {
     let timer;
 
     const verify = async (attempt = 0) => {
-      if (!orderId || !paymentIntent) {
+      if (!orderId || (!paymentIntent && !isPaypal)) {
         setVerification('failed');
         setMessage(
-          'We could not verify a completed Stripe payment for this checkout. Your order has not been shown as placed.'
+          'We could not verify a completed payment for this checkout. Your order has not been shown as placed.'
         );
         return;
       }
 
       try {
-        const result = await apiFetch(
+        const result = isPaypal ? await apiFetch('/api/paypal/capture',{method:'POST',body:JSON.stringify({orderId,checkoutToken:sessionStorage.getItem('ws_paypal_'+orderId)})}) : await apiFetch(
           `/api/checkout/verify-payment?orderId=${encodeURIComponent(orderId)}&paymentIntent=${encodeURIComponent(paymentIntent)}`
         );
 
@@ -81,7 +82,7 @@ export default function OrderConfirmation() {
           } else {
             setVerification('processing');
             setMessage(
-              'Stripe is still processing this payment. We will not mark the order as placed until Stripe confirms success.'
+              'Your payment provider is still processing this payment. We will not mark the order as placed until the provider confirms success.'
             );
           }
           return;
@@ -107,7 +108,7 @@ export default function OrderConfirmation() {
       stopped = true
       if (timer) clearTimeout(timer);
     };
-  }, [orderId, paymentIntent]); // eslint-disable-line
+  }, [orderId, paymentIntent, isPaypal]); // eslint-disable-line
 
   const success = verification === 'success';
   const processing = verification === 'processing';
@@ -141,11 +142,11 @@ export default function OrderConfirmation() {
         {verification === 'checking' && (
           <div style={{ textAlign: 'center', padding: '22px 0' }}>
             <div style={{ fontSize: 40, marginBottom: 12 }}>⏳</div>
-            <div style={{ fontFamily: 'Orbitron, monospace', fontSize: 10, letterSpacing: 3, color: 'var(--y)', marginBottom: 8 }}>
+            <div style={{ fontFamily: 'Arial, sans-serif', fontSize: 14, letterSpacing: .6, color: 'var(--y)', marginBottom: 8 }}>
               VERIFYING PAYMENT
             </div>
-            <div style={{ color: 'var(--t)', fontSize: 13, lineHeight: 1.7 }}>
-              Confirming payment directly with Stripe before placing your order...
+            <div style={{ color: 'var(--t)', fontSize: 14, lineHeight: 1.7 }}>
+              Confirming payment with your payment provider before placing your order...
             </div>
           </div>
         )}
@@ -154,7 +155,7 @@ export default function OrderConfirmation() {
           <>
             <div style={{ textAlign: 'center', marginBottom: 32 }}>
               <div style={{ fontSize: 56, marginBottom: 12 }}>✅</div>
-              <div style={{ fontFamily: 'Orbitron, monospace', fontSize: 11, letterSpacing: 4, color: 'var(--y)', marginBottom: 8 }}>
+              <div style={{ fontFamily: 'Arial, sans-serif', fontSize: 14, letterSpacing: .6, color: 'var(--y)', marginBottom: 8 }}>
                 PAYMENT CONFIRMED
               </div>
               <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 44 }}>
@@ -164,15 +165,15 @@ export default function OrderConfirmation() {
 
             <div style={{ borderTop: '1px solid var(--b)', borderBottom: '1px solid var(--b)', padding: '16px 0', marginBottom: 20 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: displayTotal !== null ? 10 : 0 }}>
-                <span style={{ fontSize: 12, color: 'var(--t)', letterSpacing: 1, textTransform: 'uppercase' }}>Order ID</span>
-                <span style={{ fontSize: 12, fontFamily: 'Orbitron, monospace', color: 'var(--y)' }}>
+                <span style={{ fontSize: 14, color: 'var(--t)', letterSpacing: 1, textTransform: 'uppercase' }}>Order ID</span>
+                <span style={{ fontSize: 14, fontFamily: 'Arial, sans-serif', color: 'var(--y)' }}>
                   {orderId?.slice(0, 8).toUpperCase()}
                 </span>
               </div>
 
               {displayTotal !== null && (
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <span style={{ fontSize: 12, color: 'var(--t)', letterSpacing: 1, textTransform: 'uppercase' }}>Total Paid</span>
+                  <span style={{ fontSize: 14, color: 'var(--t)', letterSpacing: 1, textTransform: 'uppercase' }}>Total Paid</span>
                   <span style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontSize: 26, color: 'var(--y)' }}>
                     ${displayTotal.toFixed(2)}
                   </span>
@@ -180,7 +181,7 @@ export default function OrderConfirmation() {
               )}
             </div>
 
-            <div style={{ fontSize: 13, color: 'var(--t)', lineHeight: 1.9, marginBottom: 18 }}>
+            <div style={{ fontSize: 14, color: 'var(--t)', lineHeight: 1.9, marginBottom: 18 }}>
               🛡 Your custom wheel order is confirmed.<br />
               ⏱ Estimated build time: <strong style={{ color: 'var(--w)' }}>3–4 weeks</strong>.<br />
               📧 For inquiries contact <a href="mailto:service@whossteering.com" style={{ color: 'var(--y)', textDecoration: 'none' }}>service@whossteering.com</a>
@@ -192,7 +193,7 @@ export default function OrderConfirmation() {
               border: '1px solid rgba(232,184,0,.35)',
               background: 'rgba(232,184,0,.05)',
               color: 'var(--t)',
-              fontSize: 11,
+              fontSize: 14,
               lineHeight: 1.65,
             }}>
               <strong style={{ color: 'var(--y)' }}>CANCELLATION NOTICE:</strong>{' '}
@@ -222,13 +223,13 @@ export default function OrderConfirmation() {
         {processing && (
           <div style={{ textAlign: 'center' }}>
             <div style={{ fontSize: 50, marginBottom: 12 }}>⏳</div>
-            <div style={{ fontFamily: 'Orbitron, monospace', fontSize: 10, letterSpacing: 3, color: 'var(--y)', marginBottom: 8 }}>
+            <div style={{ fontFamily: 'Arial, sans-serif', fontSize: 14, letterSpacing: .6, color: 'var(--y)', marginBottom: 8 }}>
               PAYMENT PROCESSING
             </div>
             <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 34, marginBottom: 14 }}>
               NOT PLACED YET
             </div>
-            <div style={{ color: 'var(--t)', fontSize: 13, lineHeight: 1.8, marginBottom: 24 }}>
+            <div style={{ color: 'var(--t)', fontSize: 14, lineHeight: 1.8, marginBottom: 24 }}>
               {message}
             </div>
             <button className="btn-outline sm" onClick={() => window.location.reload()}>
@@ -240,13 +241,13 @@ export default function OrderConfirmation() {
         {failed && (
           <div style={{ textAlign: 'center' }}>
             <div style={{ fontSize: 50, marginBottom: 12 }}>✕</div>
-            <div style={{ fontFamily: 'Orbitron, monospace', fontSize: 10, letterSpacing: 3, color: '#FF6650', marginBottom: 8 }}>
+            <div style={{ fontFamily: 'Arial, sans-serif', fontSize: 14, letterSpacing: .6, color: '#FF6650', marginBottom: 8 }}>
               PAYMENT NOT CONFIRMED
             </div>
             <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 34, marginBottom: 14 }}>
               ORDER NOT PLACED
             </div>
-            <div style={{ color: 'var(--t)', fontSize: 13, lineHeight: 1.8, marginBottom: 24 }}>
+            <div style={{ color: 'var(--t)', fontSize: 14, lineHeight: 1.8, marginBottom: 24 }}>
               {message}
             </div>
             <button className="btn" style={{ clipPath: 'none' }} onClick={() => nav('/checkout')}>

@@ -182,8 +182,8 @@ router.get('/admin/stats', adminRequired, async (req, res) => {
         COUNT(*) FILTER (WHERE status = 'paid') AS paid,
         COUNT(*) FILTER (WHERE status = 'in_build') AS in_build,
         COUNT(*) FILTER (WHERE status = 'shipped') AS shipped,
-        COALESCE(SUM(total) FILTER (WHERE status NOT IN ('cancelled','refunded','pending')), 0) AS total_revenue,
-        COALESCE(SUM(total) FILTER (WHERE created_at >= NOW() - INTERVAL '30 days' AND status NOT IN ('cancelled','refunded')), 0) AS revenue_30d
+        (SELECT COALESCE(SUM(GREATEST(amount-COALESCE(refunded_amount,0),0)),0) FROM payments WHERE status='succeeded') AS total_revenue,
+        (SELECT COALESCE(SUM(GREATEST(amount-COALESCE(refunded_amount,0),0)),0) FROM payments WHERE status='succeeded' AND created_at >= NOW()-INTERVAL '30 days') AS revenue_30d
       FROM orders
     `);
     res.json(rows[0]);
@@ -212,6 +212,7 @@ router.post('/:id/cancel', authRequired, async (req, res) => {
          o.guest_email,
          o.status,
          o.total,
+         p.id AS payment_id, p.provider, p.paypal_capture_id, p.paypal_order_id, p.amount, p.refunded_amount,
          p.stripe_payment_intent,
          p.status AS payment_status
        FROM orders o
@@ -261,6 +262,13 @@ router.post('/:id/cancel', authRequired, async (req, res) => {
       });
     }
 
+    if(order.provider==='paypal'){
+      await client.query('ROLLBACK');
+      const payment={id:order.payment_id,order_id:order.id,amount:order.amount,provider:'paypal',paypal_capture_id:order.paypal_capture_id,paypal_order_id:order.paypal_order_id,status:order.payment_status};
+      const response=await require('../lib/paypal-refund').issuePaypalRefund(pool,payment,{requestId:'cancel-'+order.id,amount:Math.round((Number(order.amount)-Number(order.refunded_amount||0))*100),reason:'requested_by_customer',note:'Customer cancellation before processing'},req.user.id,'paid');
+      await pool.query("UPDATE orders SET status='cancelled',updated_at=NOW() WHERE id=$1 AND status='paid'",[order.id]);
+      return res.json({ok:true,orderId:order.id,status:response.refund.status==='COMPLETED'?'refunded':'cancelled',refundId:response.refund.id,refundStatus:response.refund.status,message:'Cancellation and refund submitted to PayPal.'});
+    }
     if (!order.stripe_payment_intent) {
       await client.query('ROLLBACK');
       return res.status(409).json({
@@ -371,7 +379,7 @@ router.get('/:id', authRequired, async (req, res) => {
     );
     if (!rows.length) return res.status(404).json({ error: 'Order not found' });
     const order = rows[0];
-    if (!req.user.isAdmin && order.customer_id !== req.user.id && order.guest_email !== req.user.email) {
+    if (!req.user.isAdmin && !req.user.is_admin && order.customer_id !== req.user.id && order.guest_email !== req.user.email) {
       return res.status(403).json({ error: 'Access denied' });
     }
     res.json(order);
@@ -385,11 +393,14 @@ router.get('/:id', authRequired, async (req, res) => {
 
 // GET /api/orders  — all orders (admin)
 router.get('/', adminRequired, async (req, res) => {
-  const { status, page = 1, limit = 50 } = req.query;
-  const offset = (page - 1) * limit;
-  let whereClause = '';
-  const vals = [limit, offset];
-  if (status) { whereClause = 'WHERE o.status = $3'; vals.push(status); }
+  const { status, search = '' } = req.query;
+  const limit=Math.min(100,Math.max(1,parseInt(req.query.limit,10)||50));
+  const page=Math.max(1,parseInt(req.query.page,10)||1);
+  const vals=[limit,(page-1)*limit];
+  const conditions=[];
+  if(status){vals.push(status);conditions.push('o.status = $'+vals.length);}
+  if(search){vals.push('%'+String(search).replace(/^#/,'').slice(0,150)+'%');conditions.push('(o.id::text ILIKE $'+vals.length+' OR COALESCE(c.email,o.guest_email) ILIKE $'+vals.length+')');}
+  const whereClause=conditions.length?'WHERE '+conditions.join(' AND '):'';
 
   try {
     const { rows } = await pool.query(
@@ -438,6 +449,10 @@ router.patch('/:id/status', adminRequired, async (req, res) => {
       return res.status(404).json({ error: 'Order not found' });
     }
     const previousStatus = beforeRows[0].status;
+    if (status === 'refunded' && previousStatus !== 'refunded') {
+      await client.query('ROLLBACK');
+      return res.status(400).json({ error: 'Issue a refund from the Payment center. Refund status is confirmed by the provider.' });
+    }
 
     let updateQuery, updateVals;
     if (resolvedTracking.number || resolvedTracking.carrier || resolvedTracking.url) {

@@ -1,0 +1,45 @@
+import React, { act } from 'react';
+import { createRoot } from 'react-dom/client';
+import { MemoryRouter } from 'react-router-dom';
+import Home from '../pages/Home';
+import Nav from './Nav';
+import PaymentCenter from './PaymentCenter';
+import { apiFetch } from '../lib/api';
+jest.mock('../context',()=>({useCart:()=>({count:0,items:[],total:0,cartOpen:false,setCartOpen:jest.fn(),removeItem:jest.fn()}),useAuth:()=>({user:null})}));
+jest.mock('../lib/api',()=>({apiFetch:jest.fn()}));
+let container,root;
+beforeEach(()=>{global.IS_REACT_ACT_ENVIRONMENT=true;container=document.createElement('div');document.body.appendChild(container);root=createRoot(container);apiFetch.mockReset();});
+afterEach(()=>{act(()=>root.unmount());container.remove();});
+const render=async component=>{await act(async()=>{root.render(<MemoryRouter>{component}</MemoryRouter>);});};
+test('homepage reuses original wheel artwork and selectable real material samples',async()=>{
+  await render(<Home/>);
+  expect(container.querySelector('.showroom-wheel').getAttribute('src')).toContain('hero-wheel-highlighted.webp');
+  expect(container.querySelector('.site-logo')).toBeNull();
+  expect(container.querySelector('a[href="/build"]')).not.toBeNull();
+  const forged=[...container.querySelectorAll('.material-swatches button')][1];
+  act(()=>forged.click());
+  expect(forged.getAttribute('aria-pressed')).toBe('true');
+  expect(container.querySelector('.material-visual img').getAttribute('src')).toBe('/forged/forged-classic.jpeg');
+  expect(container.querySelector('.inline-offer').textContent).toContain('LABOR');
+  expect(container.querySelector('.labor-promo-overlay')).toBeNull();
+});
+test('mobile navigation toggles and Escape closes it while retaining the actual logo',async()=>{
+  await render(<Nav/>);
+  expect(container.querySelector('.site-logo img').getAttribute('src')).toBe('/ws-logo.png');
+  const toggle=container.querySelector('.menu-toggle');
+  act(()=>toggle.click());expect(toggle.getAttribute('aria-expanded')).toBe('true');
+  act(()=>toggle.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',bubbles:true})));
+  expect(toggle.getAttribute('aria-expanded')).toBe('false');
+  expect(container.querySelector('#mobile-menu')).toBeNull();
+  expect(container.querySelector('.cart-panel').hasAttribute('inert')).toBe(true);
+});
+test('payment center reads balances without issuing a refund and shows provider failures',async()=>{
+  apiFetch.mockResolvedValueOnce({payments:[{id:'payment',order_id:'12345678',email:'example@test.invalid',amount:'100.00',currency:'usd',status:'succeeded',created_at:'2026-09-07'}],hasMore:false});
+  await render(<PaymentCenter/>);
+  apiFetch.mockRejectedValueOnce(new Error('Provider unavailable'));
+  const view=[...container.querySelectorAll('button')].find(b=>b.textContent==='View payment');
+  await act(async()=>view.click());
+  expect(container.textContent).toContain('Provider unavailable');
+  expect(apiFetch.mock.calls.every(([,options])=>!options?.method)).toBe(true);
+  expect(container.querySelector('[role="dialog"]')).not.toBeNull();
+});
