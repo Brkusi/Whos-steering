@@ -2,6 +2,7 @@ import React, { act } from 'react';
 import { createRoot } from 'react-dom/client';
 import { MemoryRouter } from 'react-router-dom';
 import Home from '../pages/Home';
+import Login from '../pages/Login';
 import Nav from './Nav';
 import PaymentCenter from './PaymentCenter';
 import { apiFetch } from '../lib/api';
@@ -11,15 +12,14 @@ let container,root;
 beforeEach(()=>{global.IS_REACT_ACT_ENVIRONMENT=true;container=document.createElement('div');document.body.appendChild(container);root=createRoot(container);apiFetch.mockReset();});
 afterEach(()=>{act(()=>root.unmount());container.remove();});
 const render=async component=>{await act(async()=>{root.render(<MemoryRouter>{component}</MemoryRouter>);});};
-test('homepage reuses original wheel artwork and selectable real material samples',async()=>{
+test('homepage restores original artwork and keeps custom and catalog cards',async()=>{
   await render(<Home/>);
-  expect(container.querySelector('.showroom-wheel').getAttribute('src')).toContain('hero-wheel-highlighted.webp');
+  expect(container.querySelector('.ws-wheel-image').getAttribute('src')).toContain('hero-wheel-highlighted.webp');
   expect(container.querySelector('.site-logo')).toBeNull();
   expect(container.querySelector('a[href="/build"]')).not.toBeNull();
-  const forged=[...container.querySelectorAll('.material-swatches button')][1];
-  act(()=>forged.click());
-  expect(forged.getAttribute('aria-pressed')).toBe('true');
-  expect(container.querySelector('.material-visual img').getAttribute('src')).toBe('/forged/forged-classic.jpeg');
+  expect(container.querySelectorAll('.path-card').length).toBe(2);
+  expect(container.textContent).toContain('EXPLORE WHEELS');
+  expect(container.textContent).not.toContain('Preconfigured');
   expect(container.querySelector('.inline-offer').textContent).toContain('LABOR');
   expect(container.querySelector('.labor-promo-overlay')).toBeNull();
 });
@@ -42,4 +42,18 @@ test('payment center reads balances without issuing a refund and shows provider 
   expect(container.textContent).toContain('Provider unavailable');
   expect(apiFetch.mock.calls.every(([,options])=>!options?.method)).toBe(true);
   expect(container.querySelector('[role="dialog"]')).not.toBeNull();
+});
+
+test('account forms offer browser password saving and appropriate autocomplete',async()=>{
+  await render(<Login/>);
+  expect(container.querySelector('#account-password').autocomplete).toBe('current-password');
+  const save=container.querySelector('input[type="checkbox"]');
+  expect(save.checked).toBe(false);
+  act(()=>save.click()); expect(save.checked).toBe(true);
+  act(()=>container.querySelector('[aria-label="Show password"]').click());
+  expect(container.querySelector('#account-password').type).toBe('text');
+  act(()=>[...container.querySelectorAll('.auth-tabs button')][1].click());
+  expect(container.querySelector('#account-password').autocomplete).toBe('new-password');
+  expect(container.querySelector('#account-password').minLength).toBe(8);
+  expect(container.querySelector('#confirm-password')).not.toBeNull();
 });

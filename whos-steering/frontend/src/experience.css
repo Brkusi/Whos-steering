@@ -516,3 +516,11 @@ body[data-route=configure] .ob.on {
     transform: none!important;
   }
 }
+
+.site-header-original { position:sticky; }
+.site-header-original > .site-logo { position:absolute; left:50%; transform:translateX(-50%); }
+.site-header-original > .desktop-links { margin-right:auto; }
+.site-header-original a { text-transform:uppercase; font-weight:700; letter-spacing:.07em; }
+.site-header-original .account-link.active { color:var(--y); box-shadow:0 2px var(--y); }
+@media(max-width:1000px) { .site-header-original { gap:14px; padding:0 20px; } .site-header-original .desktop-links { gap:16px; } .site-header-original a { font-size:12px; } }
+@media(max-width:780px) { .site-header-original > .site-logo { position:static; transform:none; } .site-header-original .header-actions { margin-left:auto; } }

@@ -67,7 +67,7 @@ export default function Contact() {
   // ── Success screen ──────────────────────────────────────────────────────────
   if (sent) {
     return (
-      <div style={{ paddingTop: 120, minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'radial-gradient(ellipse at 30% 50%, rgba(232,184,0,.06) 0%, transparent 60%), var(--d)' }}>
+      <div style={{ paddingTop: 0, minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'radial-gradient(ellipse at 30% 50%, rgba(232,184,0,.06) 0%, transparent 60%), var(--d)' }}>
         <div style={{ maxWidth: 520, width: '100%', padding: 52, background: 'var(--p)', border: '1px solid var(--b)', margin: '0 20px', textAlign: 'center' }}>
           <div style={{ fontSize: 64, marginBottom: 16 }}>✅</div>
           <div style={{ fontFamily: 'Arial, sans-serif', fontSize: 14, letterSpacing: .6, color: 'var(--y)', marginBottom: 10 }}>MESSAGE SENT</div>
@@ -91,7 +91,7 @@ export default function Contact() {
   }
 
   return (
-    <div style={{ paddingTop: 120, minHeight: '100vh' }}>
+    <div style={{ paddingTop: 0, minHeight: '100vh' }}>
       <div style={{ padding: '50px 40px 32px', borderBottom: '1px solid var(--b)', background: 'linear-gradient(180deg,rgba(232,184,0,.04) 0%,transparent 100%)' }}>
         <div style={{ fontFamily: 'Arial, sans-serif', fontSize: 14, letterSpacing: .6, color: 'var(--y)', marginBottom: 8 }}>Get In Touch</div>
         <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 52, letterSpacing: .6 }}>MESSAGE US</div>

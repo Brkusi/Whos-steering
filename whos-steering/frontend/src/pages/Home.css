@@ -1,161 +1,965 @@
+.ws-home {
+  --ws-yellow: var(--y, #e8b800);
+  --ws-border: var(--b, rgba(255, 255, 255, 0.12));
+  --ws-muted: var(--t, #888);
 
-.showroom {
+  width: 100%;
+  overflow-x: hidden;
+  background: #050505;
+  color: #fff;
+}
+
+.ws-home *,
+.ws-home *::before,
+.ws-home *::after {
+  box-sizing: border-box;
+}
+
+/* =========================================================
+   HERO
+   ========================================================= */
+
+.ws-hero {
+  position: relative;
+  width: 100%;
   overflow: hidden;
-  background: #0b0c0d;
+  background: #050505;
 }
-.eyebrow {
-  font-size: 14px;
-  font-weight: 700;
-  letter-spacing: .12em;
-  text-transform: uppercase;
-  color: var(--y);
-  margin-bottom: 18px;
-}
-.showroom h1,.showroom h2,.showroom h3 {
-  font-family: Arial,sans-serif;
-  font-style: normal;
-  letter-spacing: -.045em;
-  line-height: 1.08;
-}
-.showroom h2 {
-  font-size: clamp(30px,3.4vw,48px);
-}
-.showroom h3 {
-  font-size: clamp(25px,2.7vw,38px);
-}
-.showroom p {
-  line-height: 1.65;
-}
-.showroom-hero {
-  min-height: 690px;
-  max-height: 980px;
-  height: calc(100svh - 120px);
+
+/*
+  THIS IS THE IMPORTANT CHANGE.
+
+  Desktop is now one 1672×739 design canvas.
+  The canvas width is the browser width.
+  Its height is calculated automatically from the SAME ratio.
+
+  Therefore:
+  background scales 10% -> wheel scales 10%
+  background scales 25% -> wheel scales 25%
+
+  They can no longer drift independently.
+*/
+.ws-stage {
   position: relative;
-  display: grid;
-  grid-template-columns: 1fr 1.12fr;
-  align-items: center;
-  padding: 64px max(5vw,24px);
-  background: radial-gradient(ellipse at 76% 46%,#352c142e,transparent 55%),#090a0b;
-  border-bottom: 1px solid #343126;
+  width: 100%;
+  overflow: hidden;
+  isolation: isolate;
 }
-.showroom-grid {
+
+.ws-stage-desktop {
+  aspect-ratio: 1672 / 739;
+}
+
+/* =========================================================
+   DESKTOP BACKGROUND
+   ========================================================= */
+
+.ws-stage-bg {
   position: absolute;
+  z-index: 0;
   inset: 0;
-  background-image: linear-gradient(#ffffff03 1px,transparent 1px),linear-gradient(90deg,#ffffff03 1px,transparent 1px);
-  background-size: 64px 64px;
-  mask-image: linear-gradient(90deg,transparent,#000);
-}
-.showroom-wordmark {
-  position: absolute;
-  top: 20px;
-  left: 4%;
-  font-size: clamp(80px,14vw,230px);
-  font-weight: 900;
-  letter-spacing: -.07em;
-  color: transparent;
-  -webkit-text-stroke: 1px #ffffff09;
-  white-space: nowrap;
+
+  width: 100%;
+  height: 100%;
+
+  display: block;
+
+  /*
+    hero-base itself is taller than the design stage.
+    This crop is now FIXED INSIDE THE STAGE, so it scales
+    together with every other layer.
+  */
+  object-fit: cover;
+  object-position: center 67%;
+
   pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
 }
-.showroom-copy {
-  position: relative;
-  z-index: 2;
-  animation: showroom-enter .8s ease both;
-}
-.showroom h1 {
-  font-size: clamp(40px,4.9vw,76px);
-  font-weight: 750;
-  margin: 22px 0;
-}
-.showroom h1 em {
-  color: var(--y);
-  font-style: normal;
-}
-.showroom-intro {
-  font-size: clamp(16px,1.3vw,19px);
-  color: #b6b6b9;
-  margin: 24px 0 30px;
-}
-.showroom-actions {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-.showroom-fitment {
-  display: flex;
-  align-items: center;
-  gap: 22px;
-  margin-top: 40px;
-  font-size: 14px;
-}
-.showroom-fitment>span {
-  color: #a5a5a8;
-}
-.showroom-fitment a {
-  border-bottom: 1px solid #5b5131;
-  padding: 8px 0;
-}
-.showroom-stage {
-  position: relative;
-  min-width: 0;
-  display: grid;
-  place-items: center;
-  align-self: stretch;
-}
-.showroom-wheel {
-  position: relative;
-  width: 100%;
-  max-width: 610px;
-  max-height: 620px;
-  object-fit: contain;
-  filter: drop-shadow(0 28px 35px #000);
-  animation: wheel-arrive 1.2s cubic-bezier(.2,.7,.2,1) both;
-}
-.showroom-orbit {
-  position: absolute;
-  width: 100%;
-  aspect-ratio: 1;
-  border: 1px solid #e8b8001c;
-  border-radius: 50%;
-  box-shadow: 0 0 100px #e8b8000c,inset 0 0 100px #e8b80005;
-}
-.showroom-orbit:after {
+
+.ws-stage-desktop::after {
   content: '';
   position: absolute;
-  inset: 8%;
-  border: 1px dashed #e8b80020;
-  border-radius: 50%;
-  animation: orbit-arrive 3s ease both;
+  z-index: 1;
+  inset: 0;
+  pointer-events: none;
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(0, 0, 0, 0.16) 0%,
+      rgba(0, 0, 0, 0.06) 42%,
+      rgba(0, 0, 0, 0.01) 68%,
+      rgba(0, 0, 0, 0.10) 100%
+    );
 }
-.showroom-caption {
+
+.ws-stage-carbon {
   position: absolute;
-  bottom: -8px;
-  right: 0;
+  z-index: 2;
+
+  left: 0;
+  bottom: 0;
+
+  width: 49.05%;
+  height: auto;
+
+  display: block;
+
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* =========================================================
+   DESKTOP COPY
+   All values are percentages of the SAME stage.
+   ========================================================= */
+
+.ws-stage-copy {
+  position: absolute;
+  z-index: 6;
+
+  left: 7.35%;
+  top: 19.2%;
+
+  width: 39%;
+
+  pointer-events: auto;
+}
+
+.ws-stage-line {
+  width: 49%;
+  height: max(1px, 0.12vw);
+
+  margin-left: 3.5%;
+  margin-bottom: 5.5%;
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(232, 184, 0, 0) 0%,
+      #e8b800 8%,
+      #f5c700 78%,
+      rgba(232, 184, 0, 0) 100%
+    );
+
+  box-shadow:
+    0 0 12px rgba(232, 184, 0, 0.18);
+}
+
+.ws-stage-title {
+  margin: 0;
+
   display: flex;
   flex-direction: column;
-  padding: 14px 0 14px 20px;
-  border-left: 2px solid var(--y);
-  font-size: 14px;
-  color: #a6a6aa;
-  background: #090a0bd9;
+  align-items: flex-start;
+
+  font-family:
+    "Barlow Condensed",
+    "Arial Narrow",
+    Impact,
+    sans-serif;
+
+  /*
+    vw is okay here because the WHOLE STAGE is width-scaled.
+    It now uses the same scale factor as the background/wheel.
+  */
+  font-size: 5.05vw;
+  line-height: 0.87;
+
+  font-style: italic;
+  font-weight: 900;
+
+  letter-spacing: -0.025em;
+  text-transform: uppercase;
+
+  filter:
+    drop-shadow(
+      0 8px 18px rgba(0, 0, 0, 0.62)
+    );
 }
-.showroom-caption .eyebrow {
-  font-size: 14px;
-  margin-bottom: 5px;
+
+.ws-stage-title > span {
+  display: block;
+  white-space: nowrap;
 }
-.showroom-scroll {
-  position: absolute;
-  bottom: 25px;
-  left: 5vw;
-  font-size: 14px;
-  color: #b9b9bc;
+
+.ws-stage-title > span + span {
+  margin-top: 2.8%;
+}
+
+.ws-stage-title-yellow {
+  background:
+    linear-gradient(
+      180deg,
+      #ffd524 0%,
+      #f0bc00 54%,
+      #dc9f00 100%
+    );
+
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.ws-stage-title-white {
+  background:
+    linear-gradient(
+      180deg,
+      #ffffff 0%,
+      #f3f3f3 55%,
+      #d3d3d3 100%
+    );
+
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.ws-stage-subtitle {
+  margin: 7.2% 0 0;
+
   display: flex;
-  gap: 35px;
+  flex-direction: column;
+
+  font-family:
+    Orbitron,
+    sans-serif;
+
+  font-size: 0.74vw;
+  line-height: 2.25;
+  font-weight: 500;
+
+  letter-spacing: 0.33em;
+
+  color:
+    rgba(238, 238, 238, 0.76);
+
+  text-transform: uppercase;
+}
+
+.ws-stage-subtitle span {
+  display: block;
+  white-space: nowrap;
+}
+
+.ws-stage-actions {
+  width: 83%;
+
+  margin-top: 3.8%;
+
+  display: grid;
+  grid-template-columns: 0.96fr 1.04fr;
+
+  gap: 2.3%;
+}
+
+.ws-stage-btn {
+  appearance: none;
+
+  width: 100%;
+  height: 3.05vw;
+
+  padding: 0 1.3vw;
+
+  border-radius: 0;
+
+  cursor: pointer;
+
+  font-family:
+    Orbitron,
+    sans-serif;
+
+  font-size: 0.62vw;
+  font-weight: 800;
+
+  letter-spacing: 0.17em;
+  white-space: nowrap;
+
+  transition:
+    transform 160ms ease,
+    filter 160ms ease;
+}
+
+.ws-stage-btn:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.08);
+}
+
+.ws-stage-btn:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 3px;
+}
+
+.ws-stage-btn-primary {
+  border: 1px solid #e8b800;
+
+  color: #070707;
+
+  background:
+    linear-gradient(
+      90deg,
+      #efbb00 0%,
+      #ffd21a 100%
+    );
+
+  clip-path:
+    polygon(
+      4% 0,
+      100% 0,
+      96% 100%,
+      0 100%
+    );
+}
+
+.ws-stage-btn-secondary {
+  border:
+    1px solid rgba(232, 184, 0, 0.74);
+
+  color: #e9b900;
+
+  background:
+    rgba(4, 4, 4, 0.78);
+
+  clip-path:
+    polygon(
+      4% 0,
+      100% 0,
+      96% 100%,
+      0 100%
+    );
+}
+
+/* =========================================================
+   DESKTOP WHEEL
+
+   NO vw/vh mix.
+   Position and size are percentages of the SAME stage.
+
+   If you move the background by scaling the stage, this
+   exact wheel position scales with it automatically.
+   ========================================================= */
+
+.ws-stage-wheel {
+  position: absolute;
+  z-index: 5;
+
+  /*
+    Desktop wheel fit fix:
+    size from the shared hero stage HEIGHT so the
+    entire wheel remains visible on desktop.
+  */
+  right: 8%;
+  left: auto;
+
+  top: 53%;
+  transform: translateY(-50%);
+
+  height: 90%;
+  width: auto;
+
+  aspect-ratio: 1031 / 988;
+
+  pointer-events: none;
+}
+
+.ws-wheel-glow {
+  position: absolute;
+
+  left: 6%;
+  right: 6%;
+  top: 7%;
+  bottom: 0;
+
+  border-radius: 48%;
+
+  background:
+    radial-gradient(
+      ellipse at 50% 73%,
+      rgba(255, 194, 0, 0.26) 0%,
+      rgba(232, 184, 0, 0.10) 38%,
+      rgba(232, 184, 0, 0) 72%
+    );
+
+  filter: blur(18px);
+}
+
+.ws-wheel-image {
+  position: relative;
+  z-index: 2;
+
+  display: block;
+
+  width: 100%;
+  height: 100%;
+
+  object-fit: contain;
+
+  user-select: none;
+  pointer-events: none;
+  -webkit-user-drag: none;
+
+  filter:
+    drop-shadow(
+      0 30px 28px rgba(0, 0, 0, 0.64)
+    )
+    drop-shadow(
+      0 0 9px rgba(232, 184, 0, 0.07)
+    );
+}
+
+/* =========================================================
+   MOBILE STAGE
+   Same principle, separate portrait reference ratio.
+   ========================================================= */
+
+.ws-stage-mobile {
+  display: none;
+}
+
+/* =========================================================
+   BRAND STRIP
+   ========================================================= */
+
+.ws-brand-strip {
+  position: relative;
+  z-index: 20;
+
+  width: 100%;
+  min-height: 80px;
+
+  display: grid;
+  grid-template-columns:
+    repeat(3, minmax(0, 1fr));
+
+  border-top:
+    1px solid var(--ws-border);
+
+  border-bottom:
+    1px solid var(--ws-border);
+
+  background: #121212;
+}
+
+.ws-brand-card {
+  appearance: none;
+
+  min-width: 0;
+  min-height: 80px;
+
+  padding:
+    13px
+    clamp(14px, 1.8vw, 28px);
+
+  display: flex;
+  align-items: center;
+
+  gap: 12px;
+
+  border: 0;
+
+  border-right:
+    1px solid var(--ws-border);
+
+  background: #121212;
+  color: #fff;
+
+  text-align: left;
+  cursor: pointer;
+}
+
+.ws-brand-card:last-child {
+  border-right: 0;
+}
+
+.ws-brand-card:hover {
+  background: #1b1b1b;
+}
+
+.ws-brand-copy {
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.ws-brand-name {
+  font-family:
+    "Barlow Condensed",
+    Impact,
+    sans-serif;
+
+  font-size:
+    clamp(18px, 1.4vw, 25px);
+
+  line-height: 1;
+
+  font-style: italic;
+  font-weight: 900;
+
+  letter-spacing: 0.04em;
+}
+
+.ws-brand-tag {
+  margin-top: 4px;
+
+  overflow: hidden;
+
+  color: var(--ws-muted);
+
+  font-size:
+    clamp(7px, 0.6vw, 10px);
+
+  letter-spacing: 0.12em;
+
+  text-transform: uppercase;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ws-brand-badge {
+  flex-shrink: 0;
+  margin-left: auto;
+
+  padding: 5px 8px;
+
+  background: var(--ws-yellow);
+  color: #000;
+
+  font-family:
+    Orbitron,
+    monospace;
+
+  font-size:
+    clamp(7px, 0.55vw, 9px);
+
+  line-height: 1;
+  font-weight: 800;
+
+  letter-spacing: 0.08em;
+}
+
+/* =========================================================
+   MATERIALS
+   ========================================================= */
+
+.ws-materials {
+  background: var(--m, #111);
+
+  border-bottom:
+    1px solid var(--ws-border);
+}
+
+.ws-materials-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+
+  padding:
+    clamp(40px, 6vw, 64px)
+    clamp(20px, 5vw, 40px);
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      auto-fit,
+      minmax(280px, 1fr)
+    );
+
+  gap:
+    clamp(32px, 5vw, 60px);
+
   align-items: center;
 }
-.showroom-scroll span {
-  color: var(--y);
-  font-size: 24px;
+
+.ws-materials-eyebrow {
+  margin-bottom: 10px;
+
+  color: var(--ws-yellow);
+
+  font-family:
+    Orbitron,
+    monospace;
+
+  font-size: 9px;
+
+  letter-spacing: 4px;
+  text-transform: uppercase;
+}
+
+.ws-materials-title {
+  margin: 0 0 16px;
+
+  font-family:
+    "Barlow Condensed",
+    Impact,
+    sans-serif;
+
+  font-size:
+    clamp(32px, 5vw, 44px);
+
+  line-height: 1;
+
+  font-style: italic;
+  font-weight: 900;
+}
+
+.ws-materials-title span {
+  color: var(--ws-yellow);
+}
+
+.ws-materials-intro {
+  margin: 0;
+
+  color: var(--ws-muted);
+
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.ws-material-item {
+  display: flex;
+  align-items: flex-start;
+
+  gap: 14px;
+
+  margin-bottom: 16px;
+
+  color: var(--ws-muted);
+
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.ws-material-icon {
+  width: 20px;
+  height: 20px;
+
+  margin-top: 1px;
+  flex-shrink: 0;
+
+  display: grid;
+  place-items: center;
+
+  border:
+    1px solid rgba(232, 184, 0, 0.3);
+
+  background:
+    rgba(232, 184, 0, 0.1);
+}
+
+.ws-material-icon > span {
+  width: 6px;
+  height: 6px;
+
+  background: var(--ws-yellow);
+}
+
+/* =========================================================
+   MOBILE
+   941×1282 reference stage from the approved mobile layout.
+   ========================================================= */
+
+@media (max-width: 760px) {
+  .ws-stage-desktop {
+    display: none;
+  }
+
+  .ws-stage-mobile {
+    position: relative;
+    display: block;
+
+    width: 100%;
+
+    /*
+      Every mobile element now shares this one scale.
+    */
+    aspect-ratio: 941 / 1282;
+
+    overflow: hidden;
+  }
+
+  .ws-mobile-bg {
+    position: absolute;
+    z-index: 0;
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+    object-position: 62% center;
+
+    pointer-events: none;
+    user-select: none;
+    -webkit-user-drag: none;
+  }
+
+  .ws-stage-mobile::after {
+    content: '';
+    position: absolute;
+    z-index: 1;
+    inset: 0;
+    pointer-events: none;
+
+    background:
+      linear-gradient(
+        180deg,
+        rgba(0, 0, 0, 0.22) 0%,
+        rgba(0, 0, 0, 0.03) 43%,
+        rgba(0, 0, 0, 0.18) 100%
+      );
+  }
+
+  .ws-mobile-copy {
+    position: absolute;
+    z-index: 5;
+
+    left: 6.1%;
+    top: 3.8%;
+
+    width: 87%;
+  }
+
+  .ws-mobile-title {
+    margin: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    font-family:
+      "Barlow Condensed",
+      "Arial Narrow",
+      Impact,
+      sans-serif;
+
+    font-size: 14.0vw;
+    line-height: 0.87;
+
+    font-style: italic;
+    font-weight: 900;
+
+    letter-spacing: -0.025em;
+    text-transform: uppercase;
+
+    filter:
+      drop-shadow(
+        0 7px 14px rgba(0, 0, 0, 0.66)
+      );
+  }
+
+  .ws-mobile-title span {
+    display: block;
+
+    background:
+      linear-gradient(
+        180deg,
+        #ffd524 0%,
+        #edb900 100%
+      );
+
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .ws-mobile-title strong {
+    display: block;
+
+    margin-top: 2.1%;
+
+    font: inherit;
+
+    background:
+      linear-gradient(
+        180deg,
+        #ffffff 0%,
+        #d7d7d7 100%
+      );
+
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .ws-mobile-subtitle {
+    margin: 5.2% 0 0;
+
+    display: flex;
+    flex-direction: column;
+
+    font-family:
+      Orbitron,
+      sans-serif;
+
+    font-size: 2.05vw;
+    line-height: 2;
+
+    font-weight: 500;
+
+    letter-spacing: 0.29em;
+
+    color:
+      rgba(240, 240, 240, 0.80);
+
+    text-transform: uppercase;
+  }
+
+  .ws-mobile-subtitle span {
+    display: block;
+    white-space: nowrap;
+  }
+
+  /*
+    Mobile wheel position is also % of the mobile stage.
+    It no longer depends on viewport height at all.
+  */
+  .ws-mobile-wheel {
+    position: absolute;
+    z-index: 4;
+
+    left: 5.2%;
+    top: 26.0%;
+
+    width: 89.6%;
+
+    aspect-ratio: 1031 / 988;
+  }
+
+  .ws-wheel-glow-mobile {
+    opacity: 0.9;
+  }
+
+  .ws-mobile-actions {
+    position: absolute;
+    z-index: 8;
+
+    left: 18%;
+    bottom: 4.1%;
+
+    width: 64%;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 1.6vw;
+  }
+
+  .ws-mobile-btn {
+    appearance: none;
+
+    width: 100%;
+    height: 12.2vw;
+
+    border-radius: 0;
+
+    cursor: pointer;
+
+    font-family:
+      Orbitron,
+      sans-serif;
+
+    font-size: 2.55vw;
+    font-weight: 800;
+
+    letter-spacing: 0.18em;
+
+    clip-path:
+      polygon(
+        4% 0,
+        100% 0,
+        96% 100%,
+        0 100%
+      );
+  }
+
+  .ws-mobile-btn-primary {
+    border:
+      1px solid #e8b800;
+
+    color: #080808;
+
+    background:
+      linear-gradient(
+        90deg,
+        #efbb00 0%,
+        #ffd21a 100%
+      );
+  }
+
+  .ws-mobile-btn-secondary {
+    border:
+      1px solid
+      rgba(232, 184, 0, 0.92);
+
+    color: #e8b800;
+
+    background:
+      rgba(5, 5, 5, 0.95);
+  }
+
+  .ws-brand-strip {
+    min-height: 112px;
+  }
+
+  .ws-brand-card {
+    min-height: 112px;
+
+    padding:
+      15px
+      10px
+      13px;
+
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+
+    gap: 0;
+  }
+
+  .ws-brand-name {
+    font-size:
+      clamp(17px, 4.8vw, 23px);
+  }
+
+  .ws-brand-tag {
+    width: 100%;
+    margin-top: 5px;
+
+    font-size:
+      clamp(6px, 1.75vw, 9px);
+  }
+
+  .ws-brand-badge {
+    margin: 9px 0 0;
+
+    padding: 5px 6px;
+
+    font-size:
+      clamp(6px, 1.75vw, 8px);
+  }
+}
+
+/* =========================================================
+   VERY WIDE DESKTOP
+
+   No different wheel position here.
+   That is intentional. The whole stage simply scales.
+   ========================================================= */
+
+@media (min-width: 1800px) {
+  .ws-stage-title {
+    font-size: 5.05vw;
+  }
+
+  .ws-stage-subtitle {
+    font-size: 0.74vw;
+  }
+
+  .ws-stage-btn {
+    font-size: 0.62vw;
+  }
 }
 .showroom-paths,.showroom-process,.showroom-help {
   max-width: 1440px;
@@ -230,261 +1034,12 @@
 .text-link:hover b {
   transform: translate(3px,-3px);
 }
-.material-studio {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  max-width: 1320px;
-  margin: 0 auto 32px;
-  border: 1px solid #333438;
-  background: #121315;
-  border-radius: 12px;
-  overflow: hidden;
-}
-.material-visual {
-  position: relative;
-  min-height: 460px;
-  overflow: hidden;
-}
-.material-visual>img {
-  height: 100%;
-  width: 100%;
-  object-fit: cover;
-  position: absolute;
-  animation: material-enter .5s ease;
-}
-.material-visual>span {
-  position: absolute;
-  bottom: 24px;
-  left: 24px;
-  background: #090a0be8;
-  padding: 8px 15px;
-  font-size: 14px;
-  border-left: 2px solid var(--y);
-}
-.material-copy {
-  padding: 48px;
-}
-.material-copy>p:not(.eyebrow) {
-  color: #b1b1b5;
-  margin: 20px 0;
-}
-.material-swatches {
-  display: flex;
-  gap: 12px;
-  margin: 30px 0;
-}
-.material-swatches button {
-  color: #c8c8ca;
-  background: transparent;
-  border: 1px solid transparent;
-  padding: 9px;
-  border-radius: 8px;
-  flex: 1;
-  text-align: center;
-  font-size: 14px;
-  cursor: pointer;
-}
-.material-swatches img {
-  width: 54px;
-  height: 54px;
-  object-fit: cover;
-  border-radius: 50%;
-  display: block;
-  margin: 0 auto 12px;
-}
-.material-swatches button[aria-pressed=true] {
-  border-color: var(--y);
-  background: #e8b80008;
-  color: var(--y);
-}
-.material-description {
-  min-height: 54px;
-  font-size: 14px;
-}
-.showroom-featured {
-  border-block: 1px solid #252629;
-  margin-top: 80px;
-}
-.process-grid {
-  display: grid;
-  grid-template-columns: repeat(3,1fr);
-  gap: 30px;
-}
-.process-grid article {
-  border-top: 1px solid #44402f;
-  padding-top: 24px;
-}
-.process-grid article>span {
-  color: var(--y);
-  font-size: 14px;
-}
-.process-grid h3 {
-  font-size: 23px;
-  margin: 24px 0 15px;
-}
-.process-grid p {
-  color: #ababaf;
-  font-size: 16px;
-}
-.showroom-help {
-  padding-top: 45px;
-  padding-bottom: 65px;
-  border-top: 1px solid #333438;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 24px;
-}
-.showroom-help p:not(.eyebrow) {
-  color: #b1b1b5;
-  margin-top: 15px;
-}
-.showroom-help h2 {
-  font-size: 32px;
-}
-@keyframes showroom-enter {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-@keyframes wheel-arrive {
-  from {
-    opacity: 0;
-    transform: translateY(24px) rotate(-5deg);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-@keyframes orbit-arrive {
-  from {
-    opacity: 0;
-    transform: rotate(-35deg);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-@keyframes material-enter {
-  from {
-    opacity: .5;
-    transform: scale(1.035);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-@media(max-width:1000px) {
-  .showroom-hero {
-    min-height: 600px;
-  }
-  .showroom-caption {
-    display: none;
-  }
-  .material-studio {
-    margin-inline: 24px;
-  }
-  .material-copy {
-    padding: 30px;
-  }
-  .path-card {
-    padding: 24px;
-  }
-  .showroom-fitment {
-    gap: 15px;
-  }
-  .showroom h1 {
-    font-size: clamp(38px,5.5vw,65px);
-  }
-}
-@media(max-width:700px) {
-  .showroom-hero {
-    height: auto;
-    max-height: none;
-    min-height: 0;
-    grid-template-columns: 1fr;
-    padding: 42px 24px 62px;
-  }
-  .showroom-copy {
-    max-width: 100%;
-  }
-  .showroom h1 {
-    font-size: clamp(36px,9vw,60px);
-  }
-  .showroom-intro br {
-    display: none;
-  }
-  .showroom-actions .btn,.showroom-actions .btn-outline {
-    flex: 1;
-    padding-inline: 16px;
-    text-align: center;
-  }
-  .showroom-stage {
-    height: 350px;
-    grid-row: 2;
-    margin-top: 20px;
-  }
-  .showroom-wheel {
-    height: 100%;
-    width: 100%;
-  }
-  .showroom-orbit {
-    width: 320px;
-    max-width: 100%;
-  }
-  .showroom-fitment {
-    margin-top: 20px;
-  }
-  .showroom-scroll {
-    left: 24px;
-    bottom: 14px;
-  }
-  .showroom-wordmark {
-    font-size: 100px;
-  }
-  .section-heading {
-    display: block;
-  }
-  .section-heading>p,.section-heading>a {
-    margin-top: 20px;
-  }
-  .path-grid,.material-studio,.process-grid {
-    grid-template-columns: 1fr;
-  }
-  .showroom-paths,.showroom-process {
-    padding: 55px 24px;
-  }
-  .path-card {
-    min-height: 350px;
-  }
-  .material-visual {
-    min-height: 240px;
-  }
-  .material-copy {
-    padding: 26px;
-  }
-  .material-swatches {
-    gap: 4px;
-  }
-  .material-swatches button {
-    padding: 7px 3px;
-  }
-  .showroom-help {
-    display: block;
-    padding: 35px 24px;
-  }
-  .showroom-help>a {
-    margin-top: 24px;
-  }
-  .showroom-featured {
-    margin-top: 50px;
-  }
-}
+
+.showroom-paths .eyebrow { color:var(--y); font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:.12em; }
+.showroom-paths h2 { font:700 clamp(28px,3vw,42px)/1.1 Arial,sans-serif; margin:16px 0 0; }
+.showroom-paths h3 { font:700 clamp(25px,2.5vw,34px)/1.1 Arial,sans-serif; margin:8px 0 0; }
+.ws-wheel-image { animation: wheel-arrive 1.4s cubic-bezier(.2,.7,.2,1) both; transform-origin:50% 50%; transition:rotate .8s ease; }
+.ws-hero:hover .ws-wheel-image { rotate:3deg; }
+@keyframes wheel-arrive { from { opacity:0; transform:translateY(22px) rotate(-9deg); } to { opacity:1; transform:translateY(0) rotate(0); } }
+@media(max-width:700px) { .showroom-paths { padding:48px 20px; } .showroom-paths .section-heading { display:block; } .path-grid { grid-template-columns:1fr; } .path-card { min-height:350px; padding:26px; } }
+@media(prefers-reduced-motion:reduce) { .ws-wheel-image { animation:none; transition:none; } .ws-hero:hover .ws-wheel-image { rotate:none; } }
