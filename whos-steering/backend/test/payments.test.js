@@ -59,3 +59,45 @@ test('refund route uses admin middleware and retries reuse an existing Stripe re
   await routes['POST /:id/refunds']({params:{id:'payment'},body,user:{id:'admin'}},res);assert.equal(calls,0);assert.equal(result.refund.id,'re_existing');
   await routes['POST /:id/refunds']({params:{id:'payment'},body:{...body,amount:2000},user:{id:'admin'}},res);assert.equal(res.statusCode,409);assert.equal(calls,0);
 });
+
+test('refund setup failures return an error response and release acquired connections', async () => {
+  for (const failure of ['lookup', 'missing', 'connect', 'begin-and-rollback']) {
+    const routes = {};
+    let released = 0;
+    let providerCalls = 0;
+    const client = {
+      query: async () => { throw new Error('Database unavailable'); },
+      release: () => { released++; }
+    };
+    const pool = {
+      query: async () => {
+        if (failure === 'lookup') throw new Error('Lookup failed');
+        return { rows: failure === 'missing' ? [] : [{ provider: 'stripe' }] };
+      },
+      connect: async () => {
+        if (failure === 'connect') throw new Error('Connection failed');
+        return client;
+      }
+    };
+    const module = { exports: {} };
+    vm.runInNewContext(fs.readFileSync(require.resolve('../routes/payments'), 'utf8'), {
+      module, exports: module.exports, process, console: { error() {} },
+      require: name => ({
+        express: { Router: () => ({ use() {}, get() {}, post: (path, handler) => { routes[path] = handler; } }) },
+        '../db/pool': pool,
+        '../middleware/auth': { adminRequired() {} },
+        '../lib/refunds': { validateRefund, paymentSnapshot, syncRefunds },
+        stripe: () => ({ refunds: { create() { providerCalls++; } } })
+      })[name]
+    });
+    const res = { status(code) { this.statusCode = code; return this; }, json(body) { this.body = body; return this; } };
+    await routes['/:id/refunds']({
+      params: { id: 'payment' }, user: { id: 'admin' },
+      body: { amount: 1000, reason: 'requested_by_customer', note: 'Customer request', requestId: '12345678-1234-1234-1234-123456789012' }
+    }, res);
+    assert.equal(res.statusCode, failure === 'missing' ? 404 : 502, failure);
+    assert.equal(typeof res.body.error, 'string');
+    assert.equal(released, failure === 'begin-and-rollback' ? 1 : 0, failure);
+    assert.equal(providerCalls, 0, failure);
+  }
+});

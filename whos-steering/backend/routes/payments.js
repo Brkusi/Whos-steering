@@ -43,7 +43,7 @@ router.get('/:id', async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(502).json({
-      error: 'Unable to verify the current payment with Stripe. Please retry.'
+      error: 'Unable to verify the current payment with its provider. Please retry.'
     });
   }
 });
@@ -55,22 +55,24 @@ router.post('/:id/refunds', async (req, res) => {
       error: err.message
     });
   }
-  const {
-    rows: providerRows
-  } = await pool.query('SELECT * FROM payments WHERE id=$1', [req.params.id]);
-  if (providerRows[0]?.provider === 'paypal') {
-    try {
-      return res.json(await require('../lib/paypal-refund').issuePaypalRefund(pool, providerRows[0], req.body, req.user.id));
-    } catch (err) {
-      console.error(err);
-      return res.status(502).json({
-        error: err.message || 'Unable to confirm the PayPal refund. Retry the same request.'
-      });
-    }
-  }
-  const stripe = stripeClient();
-  const client = await pool.connect();
+  let client;
   try {
+    const {
+      rows: providerRows
+    } = await pool.query('SELECT * FROM payments WHERE id=$1', [req.params.id]);
+    if (!providerRows.length) return res.status(404).json({ error: 'Payment not found.' });
+    if (providerRows[0].provider === 'paypal') {
+      try {
+        return res.json(await require('../lib/paypal-refund').issuePaypalRefund(pool, providerRows[0], req.body, req.user.id));
+      } catch (err) {
+        console.error(err);
+        return res.status(502).json({
+          error: err.message || 'Unable to confirm the PayPal refund. Retry the same request.'
+        });
+      }
+    }
+    const stripe = stripeClient();
+    client = await pool.connect();
     await client.query('BEGIN');
     // Same order lock as customer cancellation. Concurrent requests cannot spend the same balance.
     const {
@@ -127,13 +129,19 @@ router.post('/:id/refunds', async (req, res) => {
       payment: updated
     });
   } catch (err) {
-    await client.query('ROLLBACK');
+    if (client) {
+      try {
+        await client.query('ROLLBACK');
+      } catch (rollbackError) {
+        console.error('Admin refund rollback failed', rollbackError);
+      }
+    }
     console.error('Admin refund failed', err);
     res.status(502).json({
       error: 'Unable to confirm the refund result. Retry this same request to safely recover its status.'
     });
   } finally {
-    client.release();
+    client?.release();
   }
 });
 module.exports = router;
