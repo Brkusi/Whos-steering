@@ -961,3 +961,85 @@
     font-size: 0.62vw;
   }
 }
+.showroom-paths,.showroom-process,.showroom-help {
+  max-width: 1440px;
+  margin: auto;
+  padding: 88px max(5vw,24px);
+}
+.section-heading {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 35px;
+}
+.section-heading>p {
+  color: #a8a8ac;
+  font-size: 16px;
+}
+.path-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 1fr;
+  gap: 24px;
+}
+.path-card {
+  min-height: 410px;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid #333438;
+  border-radius: 12px;
+  background: #131416;
+  display: flex;
+  align-items: end;
+  padding: 34px;
+}
+.path-card>img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: right;
+  transition: transform .7s;
+}
+.path-card:after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg,#070809ed 0%,#070809b8 44%,#07080922),linear-gradient(0deg,#070809b0,transparent);
+}
+.path-card>div {
+  position: relative;
+  z-index: 1;
+  max-width: 290px;
+}
+.path-card p {
+  color: #bbb;
+  margin: 18px 0 24px;
+}
+.path-card:hover>img {
+  transform: scale(1.035);
+}
+.text-link {
+  color: var(--y);
+  font-weight: 650;
+  display: inline-flex;
+  align-items: center;
+  gap: 28px;
+  font-size: 15px;
+}
+.text-link b {
+  transition: transform .25s;
+}
+.text-link:hover b {
+  transform: translate(3px,-3px);
+}
+
+.showroom-paths .eyebrow { color:var(--y); font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:.12em; }
+.showroom-paths h2 { font:700 clamp(28px,3vw,42px)/1.1 Arial,sans-serif; margin:16px 0 0; }
+.showroom-paths h3 { font:700 clamp(25px,2.5vw,34px)/1.1 Arial,sans-serif; margin:8px 0 0; }
+.ws-wheel-image { animation: wheel-arrive 1.4s cubic-bezier(.2,.7,.2,1) both; transform-origin:50% 50%; transition:rotate .8s ease; }
+.ws-hero:hover .ws-wheel-image { rotate:3deg; }
+@keyframes wheel-arrive { from { opacity:0; transform:translateY(22px) rotate(-9deg); } to { opacity:1; transform:translateY(0) rotate(0); } }
+@media(max-width:700px) { .showroom-paths { padding:48px 20px; } .showroom-paths .section-heading { display:block; } .path-grid { grid-template-columns:1fr; } .path-card { min-height:350px; padding:26px; } }
+@media(prefers-reduced-motion:reduce) { .ws-wheel-image { animation:none; transition:none; } .ws-hero:hover .ws-wheel-image { rotate:none; } }

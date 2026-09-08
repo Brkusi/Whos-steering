@@ -214,7 +214,11 @@ router.get('/verify-payment', async (req, res) => {
 // POST /api/checkout/create-intent
 router.post('/create-intent', async (req, res) => {
   const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
-  const { cartItems, customer, shippingAddress, promoCode } = req.body;
+  const { cartItems, customer, shippingAddress, promoCode, provider = 'stripe' } = req.body;
+  if(!['stripe','paypal'].includes(provider)) return res.status(400).json({error:'Invalid payment provider.'});
+  if(provider==='paypal' && !require('../lib/paypal').enabled()) return res.status(503).json({error:'PayPal is not available.'});
+  if(!Array.isArray(cartItems)||!cartItems.length||cartItems.length>30||cartItems.some(i=>!Number.isInteger(i.quantity||1)||(i.quantity||1)<1||(i.quantity||1)>10))return res.status(400).json({error:'Your cart is invalid. Please review it.'});
+  if(!/^\S+@\S+\.\S+$/.test(customer?.email||''))return res.status(400).json({error:'Enter a valid email address.'});
 
   if (!customer?.email) {
     return res.status(400).json({ error: 'Missing customer email' });
@@ -260,25 +264,17 @@ router.post('/create-intent', async (req, res) => {
       let amountCents;
 
       if (cfg.isPreset) {
-        const readyShipPrice = READY_TO_SHIP_PRESET_PRICES[cfg.presetId];
-
-        if (readyShipPrice) {
-          const selectedOption = readyShipPrice.optionKey
-            ? cfg[readyShipPrice.optionKey] === true
-            : false;
-
-          amountCents = selectedOption && readyShipPrice.optionPrice
-            ? readyShipPrice.optionPrice
-            : readyShipPrice.base;
-        } else {
-          // Legacy/customizable preset products keep their existing pricing path.
-          amountCents = Math.round((item.price || 0) * 100);
-        }
+        amountCents = require('../lib/preset-pricing').presetPrice(cfg);
+      } else if (cfg.productId) {
+        const { rows } = await client.query('SELECT base_price,brand FROM products WHERE id=$1 AND is_active=TRUE',[cfg.productId]);
+        if (!rows.length) throw new Error('Product unavailable.');
+        cfg.brand=rows[0].brand;
+        amountCents=Math.round(Number(rows[0].base_price)*100);
       } else if (cfg.brand) {
         // Recalculate server-side for custom builds
         amountCents = await calcServerPrice(cfg);
       } else {
-        amountCents = Math.round((item.price || 0) * 100);
+        throw new Error('Unrecognized cart item.');
       }
 
       totalCents += amountCents * (item.quantity || 1);
@@ -374,6 +370,14 @@ router.post('/create-intent', async (req, res) => {
       );
     }
 
+    if(provider==='paypal'){
+      const paypalOrder=await require('../lib/paypal').createOrder(orderId,totalDollars,shippingAddress);
+      await client.query("INSERT INTO payments(order_id,provider,paypal_order_id,amount,status) VALUES($1,'paypal',$2,$3,'requires_payment_method')",[orderId,paypalOrder.id,totalDollars]);
+      await client.query("INSERT INTO order_status_history(order_id,to_status,note) VALUES($1,'pending','Order created for PayPal checkout')",[orderId]);
+      await client.query('COMMIT');
+      const checkoutToken=require('jsonwebtoken').sign({scope:'paypal-checkout',orderId},process.env.JWT_SECRET,{expiresIn:'24h'});
+      return res.json({orderId,approvalUrl:paypalOrder.approvalUrl,checkoutToken,amount:totalDollars});
+    }
     const paymentIntent = await stripe.paymentIntents.create({
       amount: totalCents,
       currency: 'usd',

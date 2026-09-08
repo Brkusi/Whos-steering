@@ -96,5 +96,5 @@
 
 @media (max-width: 420px) {
   .account-hero__actions { grid-template-columns: 1fr; }
-  .account-order-status { max-width: 125px; font-size: 8px !important; }
+  .account-order-status { max-width: 125px; font-size: 14px !important; }
 }

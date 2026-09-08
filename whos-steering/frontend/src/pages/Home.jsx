@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import './Home.css';
 import FeaturedWheels from '../components/FeaturedWheels';
 
@@ -175,6 +175,11 @@ export default function Home() {
           </button>
         ))}
       </section>
+
+    <section className="showroom-paths reveal" id="discover" aria-labelledby="paths-title"><div className="section-heading"><div><p className="eyebrow">Your wheel. Your way.</p><h2 id="paths-title">Two ways to make it yours.</h2></div><p>Start with your own vision.<br />Or find a build that already feels right.</p></div><div className="path-grid">
+      <Link to="/build" className="path-card"><img src="/BMW_PRESET_1.png" alt="BMW steering wheel with carbon trim" loading="lazy" /><div><span className="eyebrow">01 / Custom made</span><h3>Every detail.<br />Your decision.</h3><p>Choose your vehicle, materials, stitching, and finishing touches.</p><span className="text-link">Start your custom build <b>↗</b></span></div></Link>
+      <Link to="/catalog" className="path-card"><img src="/PRESET_1.png" alt="Catalog Audi-style steering wheel" loading="lazy" /><div><span className="eyebrow">02 / Catalog</span><h3>Find your<br />signature style.</h3><p>Explore our existing wheel designs and their available options.</p><span className="text-link">Explore wheels <b>↗</b></span></div></Link>
+    </div></section>
 
       <FeaturedWheels />
 

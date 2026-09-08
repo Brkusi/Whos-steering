@@ -33,7 +33,7 @@
   margin-bottom: 9px;
   color: var(--fw-yellow);
   font-family: Orbitron, monospace;
-  font-size: 9px;
+  font-size: 14px;
   font-weight: 700;
   letter-spacing: 0.38em;
   text-transform: uppercase;
@@ -67,7 +67,7 @@
   color: var(--fw-yellow);
   cursor: pointer;
   font-family: Orbitron, monospace;
-  font-size: 9px;
+  font-size: 14px;
   font-weight: 700;
   letter-spacing: 0.18em;
   white-space: nowrap;
@@ -237,7 +237,7 @@
   background: var(--fw-yellow);
   color: #050505;
   font-family: Orbitron, monospace;
-  font-size: 8px;
+  font-size: 14px;
   font-weight: 900;
   letter-spacing: 0.12em;
 }
@@ -252,7 +252,7 @@
   border: 1px solid rgba(232, 184, 0, 0.45);
   color: var(--fw-yellow);
   font-family: Orbitron, monospace;
-  font-size: 7px;
+  font-size: 14px;
   font-weight: 700;
   letter-spacing: 0.12em;
   opacity: 0;
@@ -293,7 +293,7 @@
   margin: 0 0 6px;
   color: var(--fw-muted);
   font-family: Rajdhani, sans-serif;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 600;
   line-height: 1.35;
   letter-spacing: 0.04em;
@@ -396,7 +396,7 @@
 
   .featured-wheels__view-all {
     margin-top: 3px;
-    font-size: 7px;
+    font-size: 14px;
   }
 
   .featured-wheels__tabs {

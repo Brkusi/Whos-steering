@@ -67,14 +67,14 @@ export default function Contact() {
   // ── Success screen ──────────────────────────────────────────────────────────
   if (sent) {
     return (
-      <div style={{ paddingTop: 120, minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'radial-gradient(ellipse at 30% 50%, rgba(232,184,0,.06) 0%, transparent 60%), var(--d)' }}>
+      <div style={{ paddingTop: 0, minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'radial-gradient(ellipse at 30% 50%, rgba(232,184,0,.06) 0%, transparent 60%), var(--d)' }}>
         <div style={{ maxWidth: 520, width: '100%', padding: 52, background: 'var(--p)', border: '1px solid var(--b)', margin: '0 20px', textAlign: 'center' }}>
           <div style={{ fontSize: 64, marginBottom: 16 }}>✅</div>
-          <div style={{ fontFamily: 'Orbitron, monospace', fontSize: 10, letterSpacing: 4, color: 'var(--y)', marginBottom: 10 }}>MESSAGE SENT</div>
+          <div style={{ fontFamily: 'Arial, sans-serif', fontSize: 14, letterSpacing: .6, color: 'var(--y)', marginBottom: 10 }}>MESSAGE SENT</div>
           <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 44, marginBottom: 16 }}>WE'LL BE IN TOUCH!</div>
           <div style={{ fontSize: 14, color: 'var(--t)', lineHeight: 1.9, marginBottom: 28 }}>
             Your message has been delivered to<br />
-            <span style={{ fontFamily: 'Orbitron, monospace', fontSize: 11, color: 'var(--y)', letterSpacing: 2 }}>service@whossteering.com</span><br /><br />
+            <span style={{ fontFamily: 'Arial, sans-serif', fontSize: 14, color: 'var(--y)', letterSpacing: .6 }}>service@whossteering.com</span><br /><br />
             We typically respond within <strong style={{ color: 'var(--w)' }}>24 hours</strong>.<br />
             In the meantime, feel free to browse our catalog.
           </div>
@@ -91,10 +91,10 @@ export default function Contact() {
   }
 
   return (
-    <div style={{ paddingTop: 120, minHeight: '100vh' }}>
+    <div style={{ paddingTop: 0, minHeight: '100vh' }}>
       <div style={{ padding: '50px 40px 32px', borderBottom: '1px solid var(--b)', background: 'linear-gradient(180deg,rgba(232,184,0,.04) 0%,transparent 100%)' }}>
-        <div style={{ fontFamily: 'Orbitron, monospace', fontSize: 10, letterSpacing: 4, color: 'var(--y)', marginBottom: 8 }}>Get In Touch</div>
-        <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 52, letterSpacing: 2 }}>MESSAGE US</div>
+        <div style={{ fontFamily: 'Arial, sans-serif', fontSize: 14, letterSpacing: .6, color: 'var(--y)', marginBottom: 8 }}>Get In Touch</div>
+        <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 52, letterSpacing: .6 }}>MESSAGE US</div>
       </div>
 
       <div style={{ padding: '48px 40px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 60, maxWidth: 1100, margin: '0 auto' }}>
@@ -113,11 +113,11 @@ export default function Contact() {
             </div>
           ))}
           <div style={{ borderTop: '1px solid var(--b)', paddingTop: 20, marginTop: 8 }}>
-            <div style={{ fontFamily: 'Orbitron, monospace', fontSize: 9, letterSpacing: 3, color: 'var(--y)', textTransform: 'uppercase', marginBottom: 12 }}>Materials & Craftsmanship</div>
+            <div style={{ fontFamily: 'Arial, sans-serif', fontSize: 14, letterSpacing: .6, color: 'var(--y)', textTransform: 'uppercase', marginBottom: 12 }}>Materials & Craftsmanship</div>
             {['Carbon fibre base engineered for superior strength, weave consistency, and surface finish','High quality leather selected for luxury feel, durability, and long-term wear','Advanced 3D modelling for precise fitment and OEM-correct ergonomics','Hand stitching by skilled craftsmen for a tailored, premium finish','Environmentally conscious production processes implemented where possible','Secure protective packaging to safeguard premium materials during transport','Strict quality control standards throughout the entire build process'].map(item => (
               <div key={item} style={{ display: 'flex', alignItems: 'flex-start', gap: 10, marginBottom: 10 }}>
                 <div style={{ width: 5, height: 5, background: 'var(--y)', flexShrink: 0, marginTop: 6 }} />
-                <span style={{ fontSize: 12, color: 'var(--t)', lineHeight: 1.6 }}>{item}</span>
+                <span style={{ fontSize: 14, color: 'var(--t)', lineHeight: 1.6 }}>{item}</span>
               </div>
             ))}
           </div>
@@ -147,7 +147,7 @@ export default function Contact() {
             </div>
 
             {sendError && (
-              <div style={{ padding: '10px 14px', background: 'rgba(204,51,0,.1)', border: '1px solid #CC3300', color: '#FF6644', fontSize: 13, lineHeight: 1.5 }}>
+              <div style={{ padding: '10px 14px', background: 'rgba(204,51,0,.1)', border: '1px solid #CC3300', color: '#FF6644', fontSize: 14, lineHeight: 1.5 }}>
                 {sendError}
               </div>
             )}
@@ -155,7 +155,7 @@ export default function Contact() {
             <button className="btn" style={{ clipPath: 'none', alignSelf: 'flex-start' }} onClick={handleSend} disabled={sending}>
               {sending ? 'SENDING...' : 'SEND MESSAGE ✉'}
             </button>
-            <div style={{ fontSize: 11, color: '#444', letterSpacing: 1 }}>
+            <div style={{ fontSize: 14, color: '#444', letterSpacing: 1 }}>
               All inquiries go directly to <span style={{ color: 'var(--t)' }}>service@whossteering.com</span>
             </div>
           </div>

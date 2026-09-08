@@ -47,8 +47,8 @@ function ConfigDetail({ config }) {
     <div className="account-config-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2px 20px', marginTop: 12 }}>
       {rows.map(([label, value]) => (
         <div key={label} style={{ display: 'flex', justifyContent: 'space-between', padding: '5px 0', borderBottom: '1px solid #1A1A1A', gap: 8 }}>
-          <span style={{ fontSize: 11, color: 'var(--t)', letterSpacing: 1, textTransform: 'uppercase', flexShrink: 0 }}>{label}</span>
-          <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--w)', textAlign: 'right' }}>{value || '—'}</span>
+          <span style={{ fontSize: 14, color: 'var(--t)', letterSpacing: 1, textTransform: 'uppercase', flexShrink: 0 }}>{label}</span>
+          <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--w)', textAlign: 'right' }}>{value || '—'}</span>
         </div>
       ))}
     </div>
@@ -117,7 +117,7 @@ export default function Account() {
   };
 
   if (authLoading) return (
-    <div style={{ paddingTop: 88, display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', color: 'var(--y)', fontFamily: 'Orbitron, monospace', letterSpacing: 4 }}>LOADING...</div>
+    <div style={{ paddingTop: 88, display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', color: 'var(--y)', fontFamily: 'Arial, sans-serif', letterSpacing: .6 }}>LOADING...</div>
   );
   if (!user) return null;
 
@@ -126,11 +126,11 @@ export default function Account() {
       {/* Header */}
       <div className="account-hero" style={{ padding: '50px 40px 32px', borderBottom: '1px solid var(--b)', background: 'linear-gradient(180deg, rgba(232,184,0,.04) 0%, transparent 100%)', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: 16 }}>
         <div>
-          <div style={{ fontFamily: 'Orbitron, monospace', fontSize: 10, letterSpacing: 4, color: 'var(--y)', marginBottom: 8 }}>Welcome Back</div>
+          <div style={{ fontFamily: 'Arial, sans-serif', fontSize: 14, letterSpacing: .6, color: 'var(--y)', marginBottom: 8 }}>Welcome Back</div>
           <div className="account-hero__name" style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 48 }}>
             {user.first_name ? `${user.first_name} ${user.last_name || ''}`.trim() : user.email}
           </div>
-          <div style={{ fontSize: 12, color: 'var(--t)', marginTop: 4 }}>{user.email}</div>
+          <div style={{ fontSize: 14, color: 'var(--t)', marginTop: 4 }}>{user.email}</div>
         </div>
         <div className="account-hero__actions" style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
           {user.is_admin && (
@@ -155,18 +155,18 @@ export default function Account() {
             color: cancelMessage.toLowerCase().includes('unable') || cancelMessage.toLowerCase().includes('cannot')
               ? '#FF6650'
               : '#5DCC73',
-            fontSize: 12,
+            fontSize: 14,
           }}>
             {cancelMessage}
           </div>
         )}
 
         {ordersLoading ? (
-          <div style={{ color: 'var(--t)', fontFamily: 'Orbitron, monospace', letterSpacing: 3, fontSize: 11 }}>LOADING ORDERS...</div>
+          <div style={{ color: 'var(--t)', fontFamily: 'Arial, sans-serif', letterSpacing: .6, fontSize: 14 }}>LOADING ORDERS...</div>
         ) : orders.length === 0 ? (
           <div style={{ padding: '60px 0', textAlign: 'center' }}>
             <div style={{ fontSize: 48, opacity: .2, marginBottom: 16 }}>🛞</div>
-            <div style={{ color: 'var(--t)', letterSpacing: 2, textTransform: 'uppercase', fontSize: 13, marginBottom: 20 }}>No orders yet</div>
+            <div style={{ color: 'var(--t)', letterSpacing: .6, textTransform: 'uppercase', fontSize: 14, marginBottom: 20 }}>No orders yet</div>
             <Link to="/build"><button className="btn" style={{ clipPath: 'none' }}>BUILD YOUR FIRST WHEEL</button></Link>
           </div>
         ) : (
@@ -184,10 +184,10 @@ export default function Account() {
                     onMouseEnter={e => e.currentTarget.style.background = '#242424'}
                     onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
                     <div className="account-order-meta" style={{ flex: 1, minWidth: 180 }}>
-                      <div style={{ fontFamily: 'Orbitron, monospace', fontSize: 10, color: 'var(--y)', letterSpacing: 2 }}>#{order.id.slice(0, 8).toUpperCase()}</div>
-                      <div style={{ fontSize: 12, color: 'var(--t)', marginTop: 2 }}>{new Date(order.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</div>
+                      <div style={{ fontFamily: 'Arial, sans-serif', fontSize: 14, color: 'var(--y)', letterSpacing: .6 }}>#{order.id.slice(0, 8).toUpperCase()}</div>
+                      <div style={{ fontSize: 14, color: 'var(--t)', marginTop: 2 }}>{new Date(order.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</div>
                     </div>
-                    <span className="account-order-status" style={{ display: 'inline-block', padding: '4px 12px', fontSize: 10, letterSpacing: 1, fontWeight: 700, textTransform: 'uppercase', background: `${STATUS_COLORS[order.status]}22`, color: STATUS_COLORS[order.status], border: `1px solid ${STATUS_COLORS[order.status]}66` }}>
+                    <span className="account-order-status" style={{ display: 'inline-block', padding: '4px 12px', fontSize: 14, letterSpacing: 1, fontWeight: 700, textTransform: 'uppercase', background: `${STATUS_COLORS[order.status]}22`, color: STATUS_COLORS[order.status], border: `1px solid ${STATUS_COLORS[order.status]}66` }}>
                       {STATUS_LABEL[order.status] || order.status}
                     </span>
                     <div className="account-order-total" style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontSize: 24, color: 'var(--y)', minWidth: 90, textAlign: 'right' }}>
@@ -203,7 +203,7 @@ export default function Account() {
                       {/* Wheel photos */}
                       {photos.length > 0 && (
                         <div style={{ marginTop: 20, marginBottom: 20 }}>
-                          <div style={{ fontSize: 11, letterSpacing: 2, textTransform: 'uppercase', color: 'var(--t)', marginBottom: 10 }}>
+                          <div style={{ fontSize: 14, letterSpacing: .6, textTransform: 'uppercase', color: 'var(--t)', marginBottom: 10 }}>
                             Your Submitted Wheel Photo{photos.length > 1 ? 's' : ''}
                           </div>
                           <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
@@ -233,17 +233,17 @@ export default function Account() {
                       {/* Status timeline */}
                       {order.status_history && order.status_history.filter(Boolean).length > 0 && (
                         <div style={{ marginTop: 16 }}>
-                          <div style={{ fontSize: 11, letterSpacing: 2, textTransform: 'uppercase', color: 'var(--t)', marginBottom: 10 }}>Order Timeline</div>
+                          <div style={{ fontSize: 14, letterSpacing: .6, textTransform: 'uppercase', color: 'var(--t)', marginBottom: 10 }}>Order Timeline</div>
                           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                             {order.status_history.filter(Boolean).map((h, i) => (
-                              <div key={i} style={{ display: 'flex', gap: 12, alignItems: 'flex-start', fontSize: 12 }}>
+                              <div key={i} style={{ display: 'flex', gap: 12, alignItems: 'flex-start', fontSize: 14 }}>
                                 <div style={{ width: 8, height: 8, borderRadius: '50%', background: STATUS_COLORS[h.to_status] || '#888', marginTop: 4, flexShrink: 0 }} />
                                 <div>
                                   <span style={{ color: STATUS_COLORS[h.to_status] || '#888', fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1 }}>
                                     {STATUS_LABEL[h.to_status] || h.to_status}
                                   </span>
                                   {h.note && <span style={{ color: 'var(--t)', marginLeft: 8 }}>— {h.note}</span>}
-                                  <div style={{ color: '#555', fontSize: 10, marginTop: 1 }}>{new Date(h.created_at).toLocaleString()}</div>
+                                  <div style={{ color: '#555', fontSize: 14, marginTop: 1 }}>{new Date(h.created_at).toLocaleString()}</div>
                                 </div>
                               </div>
                             ))}
@@ -253,8 +253,8 @@ export default function Account() {
 
                       {/* Shipping */}
                       {order.shipping_address1 && (
-                        <div style={{ marginTop: 16, fontSize: 12, color: 'var(--t)', borderTop: '1px solid var(--b)', paddingTop: 12 }}>
-                          <div style={{ fontSize: 11, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 4, color: '#555' }}>Shipping To</div>
+                        <div style={{ marginTop: 16, fontSize: 14, color: 'var(--t)', borderTop: '1px solid var(--b)', paddingTop: 12 }}>
+                          <div style={{ fontSize: 14, letterSpacing: .6, textTransform: 'uppercase', marginBottom: 4, color: '#555' }}>Shipping To</div>
                           <div>{order.shipping_name}</div>
                           <div>{order.shipping_address1}</div>
                           <div>{order.shipping_city}, {order.shipping_state} {order.shipping_zip}</div>
@@ -265,7 +265,7 @@ export default function Account() {
                       <div style={{ marginTop: 18, borderTop: '1px solid var(--b)', paddingTop: 16 }}>
                         {order.status === 'paid' ? (
                           <div className="account-cancel-row" style={{ display: 'flex', justifyContent: 'space-between', gap: 16, alignItems: 'center', flexWrap: 'wrap' }}>
-                            <div style={{ maxWidth: 560, color: 'var(--t)', fontSize: 11, lineHeight: 1.6 }}>
+                            <div style={{ maxWidth: 560, color: 'var(--t)', fontSize: 14, lineHeight: 1.6 }}>
                               Need to cancel? You can cancel now because processing has not started.
                               A refund will be initiated to your original payment method.
                             </div>
@@ -284,7 +284,7 @@ export default function Account() {
                             </button>
                           </div>
                         ) : ['in_build', 'quality_check', 'shipped', 'delivered'].includes(order.status) ? (
-                          <div style={{ color: '#E8B800', fontSize: 11, lineHeight: 1.6, letterSpacing: .4 }}>
+                          <div style={{ color: '#E8B800', fontSize: 14, lineHeight: 1.6, letterSpacing: .4 }}>
                             CANCELLATION CLOSED — order processing has started.
                           </div>
                         ) : null}

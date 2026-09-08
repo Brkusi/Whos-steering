@@ -70,41 +70,12 @@ app.post('/api/checkout/webhook',
         );
       }
 
-      if (event.type === 'charge.refunded') {
-        const charge = event.data.object;
-
-        const { rows: paymentRows } = await pool.query(
-          `UPDATE payments
-           SET refunded_amount = $1,
-               refund_reason = COALESCE(refund_reason, 'requested_by_customer'),
-               updated_at = NOW()
-           WHERE stripe_charge_id = $2
-           RETURNING order_id`,
-          [(charge.amount_refunded / 100).toFixed(2), charge.id]
-        );
-
-        if (paymentRows.length) {
-          const orderId = paymentRows[0].order_id;
-
-          const { rows: orderRows } = await pool.query(
-            `UPDATE orders
-             SET status = 'refunded', updated_at = NOW()
-             WHERE id = $1
-               AND status IN ('paid','cancelled')
-             RETURNING id, status`,
-            [orderId]
-          );
-
-          if (orderRows.length) {
-            await pool.query(
-              `INSERT INTO order_status_history
-                (order_id, from_status, to_status, note)
-               VALUES ($1,'cancelled','refunded','Stripe confirmed the refund')`,
-              [orderId]
-            );
-          }
-        }
+      if (['charge.refunded','refund.created','refund.updated','refund.failed','charge.refund.updated'].includes(event.type)) {
+        const object=event.data.object;
+        const piId=object.payment_intent || (object.charge ? (await stripe.charges.retrieve(object.charge)).payment_intent : null);
+        if(piId){const client=await pool.connect();try{await client.query('BEGIN');await require('./lib/refunds').syncRefunds(client,stripe,piId);await client.query('COMMIT');}catch(err){await client.query('ROLLBACK');throw err;}finally{client.release();}}
       }
+
     } catch (err) {
       console.error('Webhook handler error:', err);
       return res.status(500).json({ error: 'Webhook processing failed' });
@@ -129,6 +100,8 @@ app.use('/api/auth',     require('./routes/auth'));
 app.use('/api/products', require('./routes/products'));
 app.use('/api/checkout', require('./routes/checkout'));
 app.use('/api/orders',   require('./routes/orders'));
+app.use('/api/payments', require('./routes/payments'));
+app.use('/api/paypal', require('./routes/paypal'));
 app.use('/api/upload',   require('./routes/upload'));
 
 // ── Health check ──────────────────────────────────────────────

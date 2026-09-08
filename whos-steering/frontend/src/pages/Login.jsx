@@ -9,6 +9,8 @@ export default function Login() {
   const [tab, setTab] = useState('signin');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [savePassword, setSavePassword] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [showLongLoading, setShowLongLoading] = useState(false);
 
   // Sign in fields
@@ -43,6 +45,9 @@ export default function Login() {
     setError(''); setLoading(true);
     try {
       await login(siEmail, siPass);
+      if (savePassword && window.PasswordCredential && navigator.credentials?.store) {
+        try { await navigator.credentials.store(new window.PasswordCredential({ id: siEmail, password: siPass })); } catch { /* Browser saving is optional; authentication has succeeded. */ }
+      }
       nav('/account', { replace: true });
     } catch (err) {
       setError(err.message);
@@ -65,89 +70,43 @@ export default function Login() {
     }
   };
 
-  const inputStyle = { marginBottom: 14 };
-
   return (
-    <div style={{ paddingTop: 88, display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', background: 'radial-gradient(ellipse at 30% 50%, rgba(232,184,0,.05) 0%, transparent 60%), var(--d)' }}>
-      <div className="login-card" aria-busy={loading} style={{ width: 400, maxWidth: '100%', padding: 40, background: 'var(--p)', border: '1px solid var(--b)', margin: '0 16px' }}>
-
-        <div style={{ textAlign: 'center', marginBottom: 18 }}>
-          <div className="ws-logo" style={{ alignItems: 'center' }}>
-            <span className="ws-logo-top" style={{ fontSize: 32 }}>WHO'S</span>
-            <span className="ws-logo-bot" style={{ fontSize: 13, letterSpacing: 3 }}>STEERING</span>
+    <main className="auth-page">
+      <section className="auth-shell" aria-label="Your account">
+        <aside className="auth-story">
+          <Link to="/" aria-label="Who's Steering home"><img className="auth-logo" src="/ws-logo.png" alt="Who's Steering" /></Link>
+          <p className="auth-eyebrow">YOUR WHEEL. YOUR WAY.</p>
+          <h1>Your next drive<br /><span>starts here.</span></h1>
+          <p>Keep your builds, orders and every detail in one place.</p>
+          <img className="auth-wheel" src="/BMW_PRESET_1.png" alt="BMW steering wheel with carbon trim" />
+          <Link className="auth-explore" to="/catalog">EXPLORE WHEELS ↗</Link>
+        </aside>
+        <div className="login-card" aria-busy={loading}>
+          <p className="auth-eyebrow">MY ACCOUNT</p>
+          <h2>{tab === 'signin' ? 'Welcome back.' : 'Make it yours.'}</h2>
+          <p className="auth-subtitle">{tab === 'signin' ? 'Sign in to pick up where you left off.' : 'Create an account for your next custom build.'}</p>
+          <div className="auth-tabs" aria-label="Account options">
+            {[['signin','Sign in'],['register','Create account']].map(([key,label]) => <button type="button" key={key} disabled={loading} aria-pressed={tab === key} onClick={() => { setTab(key); setError(''); setShowPassword(false); }}>{label}</button>)}
           </div>
-        </div>
-
-        <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 28, marginBottom: 4 }}>MY ACCOUNT</div>
-        <div style={{ fontSize: 12, color: 'var(--t)', letterSpacing: 1, marginBottom: 20 }}>Sign in or create your account</div>
-
-        {/* Tabs */}
-        <div style={{ display: 'flex', borderBottom: '1px solid var(--b)', marginBottom: 24 }}>
-          {[['signin','Sign In'],['register','Create Account']].map(([key, label]) => (
-            <button key={key} onClick={() => { setTab(key); setError(''); }}
-              style={{ flex: 1, padding: '10px 0', background: 'none', border: 'none', borderBottom: tab === key ? '2px solid var(--y)' : '2px solid transparent', color: tab === key ? 'var(--y)' : 'var(--t)', cursor: 'pointer', fontFamily: 'Rajdhani, sans-serif', fontWeight: 700, fontSize: 13, letterSpacing: 2, textTransform: 'uppercase', transition: 'all .2s', marginBottom: -1 }}>
-              {label}
-            </button>
-          ))}
-        </div>
-
-        {error && <div style={{ padding: '10px 14px', background: 'rgba(204,51,0,.1)', border: '1px solid #CC3300', color: '#FF6644', fontSize: 13, marginBottom: 16 }}>{error}</div>}
-
-        {tab === 'signin' ? (
-          <form onSubmit={handleSignIn} style={{ display: 'flex', flexDirection: 'column' }}>
-            <div style={inputStyle}>
-              <label className="fl">Email</label>
-              <input className="fi" type="email" value={siEmail} onChange={e => setSiEmail(e.target.value)} placeholder="your@email.com" required />
-            </div>
-            <div style={inputStyle}>
-              <label className="fl">Password</label>
-              <input className="fi" type="password" value={siPass} onChange={e => setSiPass(e.target.value)} placeholder="••••••••" required />
-            </div>
-            <div style={{ fontSize: 11, color: 'var(--t)', textAlign: 'right', marginBottom: 16, cursor: 'pointer', letterSpacing: 1 }}>Forgot password?</div>
-            <button className="btn" type="submit" disabled={loading} style={{ clipPath: 'none', width: '100%' }}>
-              {loading ? <><span className="login-button-spinner" aria-hidden="true" /> SIGNING IN...</> : 'SIGN IN'}
-            </button>
+          {error && <div className="auth-error" role="alert">{error}</div>}
+          <form onSubmit={tab === 'signin' ? handleSignIn : handleRegister}>
+            <fieldset disabled={loading}>
+              {tab === 'register' && <div className="auth-names">
+                <div><label htmlFor="first-name">First name</label><input className="fi" id="first-name" name="given-name" autoComplete="given-name" value={caFirst} onChange={e => setCaFirst(e.target.value)} placeholder="First name" /></div>
+                <div><label htmlFor="last-name">Last name</label><input className="fi" id="last-name" name="family-name" autoComplete="family-name" value={caLast} onChange={e => setCaLast(e.target.value)} placeholder="Last name" /></div>
+              </div>}
+              <label htmlFor="account-email">Email address</label>
+              <input className="fi" id="account-email" name="username" type="email" autoComplete="username" required value={tab === 'signin' ? siEmail : caEmail} onChange={e => tab === 'signin' ? setSiEmail(e.target.value) : setCaEmail(e.target.value)} placeholder="you@example.com" />
+              <label htmlFor="account-password">Password</label>
+              <div className="auth-password"><input className="fi" id="account-password" name="password" type={showPassword ? 'text' : 'password'} autoComplete={tab === 'signin' ? 'current-password' : 'new-password'} required minLength={tab === 'register' ? 8 : undefined} value={tab === 'signin' ? siPass : caPass} onChange={e => tab === 'signin' ? setSiPass(e.target.value) : setCaPass(e.target.value)} aria-describedby={tab === 'register' ? 'password-help' : undefined} /><button type="button" aria-label={showPassword ? 'Hide password' : 'Show password'} aria-pressed={showPassword} onClick={() => setShowPassword(!showPassword)}>{showPassword ? 'Hide' : 'Show'}</button></div>
+              {tab === 'signin' ? <div className="auth-save"><label><input type="checkbox" checked={savePassword} onChange={e => setSavePassword(e.target.checked)} /> Save password</label><small>Uses your browser’s password manager.</small></div> : <><small id="password-help">Use at least 8 characters.</small><label htmlFor="confirm-password">Confirm password</label><input className="fi" id="confirm-password" name="confirm-password" type={showPassword ? 'text' : 'password'} autoComplete="new-password" required minLength={8} value={caPass2} onChange={e => setCaPass2(e.target.value)} /></>}
+              <button className="btn auth-submit" type="submit" disabled={loading}>{loading ? 'Connecting…' : tab === 'signin' ? 'SIGN IN →' : 'CREATE ACCOUNT →'}</button>
+            </fieldset>
           </form>
-        ) : (
-          <form onSubmit={handleRegister} style={{ display: 'flex', flexDirection: 'column' }}>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 14 }}>
-              <div>
-                <label className="fl">First Name</label>
-                <input className="fi" type="text" value={caFirst} onChange={e => setCaFirst(e.target.value)} placeholder="First" />
-              </div>
-              <div>
-                <label className="fl">Last Name</label>
-                <input className="fi" type="text" value={caLast} onChange={e => setCaLast(e.target.value)} placeholder="Last" />
-              </div>
-            </div>
-            <div style={inputStyle}>
-              <label className="fl">Email <span className="req">*</span></label>
-              <input className="fi" type="email" value={caEmail} onChange={e => setCaEmail(e.target.value)} placeholder="your@email.com" required />
-            </div>
-            <div style={inputStyle}>
-              <label className="fl">Password <span className="req">*</span></label>
-              <input className="fi" type="password" value={caPass} onChange={e => setCaPass(e.target.value)} placeholder="Min 8 characters" required />
-            </div>
-            <div style={inputStyle}>
-              <label className="fl">Confirm Password <span className="req">*</span></label>
-              <input className="fi" type="password" value={caPass2} onChange={e => setCaPass2(e.target.value)} placeholder="••••••••" required />
-            </div>
-            <button className="btn" type="submit" disabled={loading} style={{ clipPath: 'none', width: '100%', marginTop: 4 }}>
-              {loading ? <><span className="login-button-spinner" aria-hidden="true" /> CREATING ACCOUNT...</> : 'CREATE ACCOUNT'}
-            </button>
-          </form>
-        )}
-      </div>
-
-      {showLongLoading && (
-        <div className="login-wait-overlay" role="status" aria-live="polite">
-          <div className="login-wait-panel">
-            <div className="login-wait-spinner" aria-hidden="true"><span>→</span></div>
-            <div className="login-wait-title">{tab === 'signin' ? 'SIGNING YOU IN' : 'CREATING YOUR ACCOUNT'}</div>
-            <div className="login-wait-copy">Securely connecting to your account…</div>
-          </div>
+          {showLongLoading && <p className="auth-status" role="status">Securely connecting to your account…</p>}
+          <p className="auth-help">Need help signing in? <Link to="/contact">Contact us ↗</Link></p>
         </div>
-      )}
-    </div>
+      </section>
+    </main>
   );
 }
