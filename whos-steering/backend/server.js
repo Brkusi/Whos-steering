@@ -6,6 +6,8 @@ const rateLimit = require('express-rate-limit');
 const pool    = require('./db/pool');
 
 const app = express();
+// Render forwards client addresses through its edge proxy.
+if (process.env.RENDER) app.set('trust proxy', 1);
 
 // ── CORS ──────────────────────────────────────────────────────
 app.use(cors());
