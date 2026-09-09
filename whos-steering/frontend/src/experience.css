@@ -268,7 +268,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
   transition: transform .5s;
 }
 .featured-wheel-card:hover img {
-  transform: scale(1.025);
+  transform: none;
 }
 .checkout-layout {
   display: grid;
@@ -363,8 +363,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
   animation: surface-enter .2s ease;
 }
 .ticker-track {
-  animation-iteration-count: 1!important;
-  animation-fill-mode: forwards;
+  animation-iteration-count: infinite;
 }
 .ticker-track span {
   font-family: Arial,sans-serif!important;

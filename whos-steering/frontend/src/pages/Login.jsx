@@ -78,7 +78,6 @@ export default function Login() {
           <p className="auth-eyebrow">YOUR WHEEL. YOUR WAY.</p>
           <h1>Your next drive<br /><span>starts here.</span></h1>
           <p>Keep your builds, orders and every detail in one place.</p>
-          <img className="auth-wheel" src="/BMW_PRESET_1.png" alt="BMW steering wheel with carbon trim" />
           <Link className="auth-explore" to="/catalog">EXPLORE WHEELS ↗</Link>
         </aside>
         <div className="login-card" aria-busy={loading}>

@@ -992,7 +992,7 @@ export default function Configure() {
             )}
             {!isAudi && (
               <div style={{ padding: '8px 12px', background: 'rgba(232,184,0,.05)', border: '1px solid rgba(232,184,0,.2)', marginBottom: 12, fontSize: 14, color: 'var(--t)', letterSpacing: 1 }}>
-                ✓ {cfg.wheelStyleType === 'F-Series' ? 'Fits F10, F30, E90' : 'Fits F10, F30, G20, G30, G22, G42, G80, G82, G87'}
+                ✓ {cfg.wheelStyleType === 'F-Series' ? 'Fits F10, F30, F80, E90' : 'Fits F10, F30, F80, G20, G30, G22, G42, G80, G82, G87'}
               </div>
             )}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 12 }}>

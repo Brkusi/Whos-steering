@@ -1,4 +1,3 @@
-import { useEffect, useRef } from 'react';
 
 const ITEMS = [
   '⚡ Handcrafted to your exact specification',
@@ -12,7 +11,6 @@ const ITEMS = [
 ];
 
 export default function AnnouncementBar() {
-  const trackRef = useRef(null);
 
   // CSS animation via a <style> tag — no extra dependencies
   return (
@@ -27,9 +25,6 @@ export default function AnnouncementBar() {
           width: max-content;
           animation: ticker 38s linear infinite;
         }
-        .ticker-track:hover {
-          animation-play-state: paused;
-        }
       `}</style>
 
       <div style={{
@@ -42,7 +37,7 @@ export default function AnnouncementBar() {
         <div style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: 60, background: 'linear-gradient(to right, var(--y), transparent)', zIndex: 2, pointerEvents: 'none' }} />
         <div style={{ position: 'absolute', right: 0, top: 0, bottom: 0, width: 60, background: 'linear-gradient(to left, var(--y), transparent)', zIndex: 2, pointerEvents: 'none' }} />
 
-        <div className="ticker-track" ref={trackRef}>
+        <div className="ticker-track">
           {/* Duplicate for seamless loop */}
           {[...ITEMS, ...ITEMS].map((item, i) => (
             <span key={i} style={{

@@ -52,7 +52,7 @@ function ConfigureBanner({ nav }) {
       borderBottom: '1px solid var(--b)',
     }}>
       <div style={{ fontFamily: 'Arial, sans-serif', fontSize: 14, letterSpacing: .6, color: 'rgba(232,184,0,.6)', textTransform: 'uppercase', marginBottom: 4 }}>Want something fully custom?</div>
-      <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 18, color: 'var(--w)', marginBottom: 12 }}>BUILD YOUR OWN — Every material, color, stripe &amp; stitch</div>
+      <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 700, fontStyle: 'italic', fontSize: 18, color: 'var(--w)', marginBottom: 12 }}>BUILD YOUR OWN — Every material, color, stripe &amp; stitch</div>
       <div className="catalog-config-actions" style={{ display: 'flex', gap: 8 }}>
         <button style={btnStyle}
           onClick={() => nav('/configure?brand=BMW')}

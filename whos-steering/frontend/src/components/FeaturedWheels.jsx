@@ -162,7 +162,7 @@ export default function FeaturedWheels() {
         .featured-wheel-card__image {
           width: 100% !important;
           height: 100% !important;
-          object-fit: cover !important;
+          object-fit: contain !important;
           object-position: center !important;
         }
         .featured-wheel-card__view {
