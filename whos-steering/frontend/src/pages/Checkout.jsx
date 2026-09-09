@@ -1,3 +1,4 @@
+import SalesTools, {trackSales} from '../components/SalesTools';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { loadStripe } from '@stripe/stripe-js';
@@ -144,6 +145,9 @@ function ShippingField({
 
 // ── Main Checkout page ────────────────────────────────────────────────────────
 export default function Checkout() {
+  const [recoveryConsent,setRecoveryConsent]=useState(false);
+  const [recoveryAvailable,setRecoveryAvailable]=useState(false);
+  useEffect(()=>{trackSales('checkout_started');apiFetch('/api/sales/status').then(s=>setRecoveryAvailable(s.recovery)).catch(()=>{});},[]);
   const { items, total } = useCart();
   const { user } = useAuth();
   const nav = useNavigate();
@@ -240,6 +244,8 @@ export default function Checkout() {
         method: 'POST',
         body: JSON.stringify({
           provider,
+          recoveryConsent,
+          salesSource: sessionStorage.getItem('ws_sales_source') || null,
           cartItems: items.map(item => ({
             name: item.name,
             detail: item.detail,
@@ -296,6 +302,7 @@ export default function Checkout() {
     <div className="checkout-page"><div className="checkout-heading"><p className="eyebrow">Your next drive starts here</p><h1>Checkout</h1><p>Review your build, add your shipping details, and choose how to pay.</p></div>
       <div className="checkout-layout">
 
+
         {/* ── Left: form ── */}
         <div className="checkout-panel">
           {/* Step tabs */}
@@ -326,6 +333,7 @@ export default function Checkout() {
                   </select>
                 </div>
               </div>
+              {recoveryAvailable && <label className="sales-consent" style={{display:'flex',gap:10,marginBottom:20}}><input type="checkbox" checked={recoveryConsent} onChange={e=>setRecoveryConsent(e.target.checked)}/>Email me a saved-cart link and up to three reminders if I don’t finish checkout. Unsubscribe anytime.</label>}
               {error && (
                 <div style={{ padding: '10px 14px', background: 'rgba(204,51,0,.1)', border: '1px solid #CC3300', color: '#FF5533', fontSize: 14, marginBottom: 16 }}>{error}</div>
               )}
@@ -336,6 +344,7 @@ export default function Checkout() {
             </div>
           )}
 
+          <SalesTools items={items} />
           {/* Step 2 — Stripe */}
           {step === 2 && clientSecret && (
             <div className="checkout-step">

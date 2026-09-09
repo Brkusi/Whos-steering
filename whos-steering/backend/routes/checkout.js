@@ -355,6 +355,11 @@ router.post('/create-intent', async (req, res) => {
       ]
     );
     const orderId = orderRows[0].id;
+    if (/^[a-f0-9]{64}$/.test(req.body.salesSource || '')) {
+      await client.query(`INSERT INTO sales_attributions(order_id,lead_id)
+        SELECT $1,id FROM sales_leads WHERE id=$2 AND lower(email)=lower($3) AND expires_at>now() AND kind IN ('build','checkout')
+        ON CONFLICT DO NOTHING`, [orderId,req.body.salesSource,customer.email.trim()]);
+    }
 
     for (const sc of savedConfigs) {
       await client.query(
@@ -375,6 +380,7 @@ router.post('/create-intent', async (req, res) => {
       await client.query("INSERT INTO payments(order_id,provider,paypal_order_id,amount,status) VALUES($1,'paypal',$2,$3,'requires_payment_method')",[orderId,paypalOrder.id,totalDollars]);
       await client.query("INSERT INTO order_status_history(order_id,to_status,note) VALUES($1,'pending','Order created for PayPal checkout')",[orderId]);
       await client.query('COMMIT');
+      if(req.body.recoveryConsent===true)require('../lib/sales').captureCheckout(customer.email,cartItems.map(i=>({...i,price:Number(i.price)||0}))).catch(e=>console.error('Checkout recovery capture failed:',e.message));
       const checkoutToken=require('jsonwebtoken').sign({scope:'paypal-checkout',orderId},process.env.JWT_SECRET,{expiresIn:'24h'});
       return res.json({orderId,approvalUrl:paypalOrder.approvalUrl,checkoutToken,amount:totalDollars});
     }
@@ -410,6 +416,7 @@ router.post('/create-intent', async (req, res) => {
     );
 
     await client.query('COMMIT');
+    if(req.body.recoveryConsent===true)require('../lib/sales').captureCheckout(customer.email,cartItems.map(i=>({...i,price:Number(i.price)||0}))).catch(e=>console.error('Checkout recovery capture failed:',e.message));
     res.json({
       clientSecret: paymentIntent.client_secret,
       orderId,

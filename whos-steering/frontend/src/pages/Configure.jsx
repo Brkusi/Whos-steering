@@ -1,3 +1,4 @@
+import SalesTools, {trackSales} from '../components/SalesTools';
 import useViewport from '../hooks/useViewport';
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
@@ -433,6 +434,11 @@ export default function Configure() {
     brand: initBrand,
     wheelStyleType: initBrand === 'BMW' ? 'G-Series' : 'B9',
   });
+
+  useEffect(() => {
+    trackSales('configure_started');
+    try { const saved = sessionStorage.getItem('ws_restore_build'); if(saved){setCfg({...DEFAULT_CONFIG,...JSON.parse(saved)});sessionStorage.removeItem('ws_restore_build');} } catch {}
+  }, []);
 
   const set = useCallback((key, val) => {
     setCfg(prev => ({ ...prev, [key]: val }));
@@ -1276,6 +1282,7 @@ export default function Configure() {
               placeholder="e.g. specific stitching pattern, custom embroidery, unique material combination..." rows={4} style={{ resize: 'vertical', marginTop: 4 }} />
           </div>
 
+          <div style={{padding: "0 24px"}}><SalesTools config={cfg} /></div>
           {/* Mobile checkout CTA stays LAST, after every customization option */}
           {isMobileViewport && (
             <div style={{

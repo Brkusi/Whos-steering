@@ -96,6 +96,7 @@ app.use('/api/auth/', rateLimit({ windowMs: 15 * 60 * 1000, max: 20  }));
 app.use('/api/orders/track', rateLimit({ windowMs: 15 * 60 * 1000, max: 30 }));
 
 // ── Routes ────────────────────────────────────────────────────
+app.use('/api/sales', require('./routes/sales'));
 app.use('/api/auth',     require('./routes/auth'));
 app.use('/api/products', require('./routes/products'));
 app.use('/api/checkout', require('./routes/checkout'));
@@ -114,4 +115,6 @@ app.use((err, req, res, next) => {
 });
 
 const PORT = process.env.PORT || 3001;
-app.listen(PORT, () => console.log(`Who's Steering API running on :${PORT}`));
+require('./lib/sales').initialize().then(() => {
+  app.listen(PORT, () => console.log(`Who's Steering API running on :${PORT}`));
+}).catch(err => { console.error('Sales schema initialization failed:', err.message); process.exit(1); });

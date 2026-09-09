@@ -33,6 +33,10 @@ export default function PrivacyPolicy() {
           <p>We may also disclose your information if required by law or to protect our legal rights.</p>
         </Legal>
 
+        <Legal h="SAVED BUILDS & FITMENT REQUESTS">
+          <p>When you save a build, we store your email and wheel selections for 30 days and provide a private return link. Fitment inquiries include your vehicle details and uploaded wheel photo so our team can reply. Keep saved-build links private.</p>
+          <p>If you opt in, we may send up to three build reminders through our email provider. You can unsubscribe using the link in each reminder. We also count configuration starts, checkout starts, and resumed builds using a random browser-session identifier, retained for up to 90 days. We do not send your contact details to advertising networks through this feature.</p>
+        </Legal>
         <Legal h="DATA RETENTION">
           <p>We retain your personal information for as long as necessary to fulfill the purposes outlined in this policy, including fulfilling orders, resolving disputes, and complying with legal obligations. You may request deletion of your data by contacting us directly.</p>
         </Legal>

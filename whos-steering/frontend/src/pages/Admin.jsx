@@ -1,3 +1,4 @@
+import SalesCenter from '../components/SalesCenter';
 import { useState, useEffect, useRef } from 'react';
 import PaymentCenter from '../components/PaymentCenter';
 import { useDialog } from '../components/Experience';
@@ -554,8 +555,8 @@ export default function AdminDashboard() {
     }
   };
   if (authLoading || !isAdmin) return <div className="empty-state" role="status">Checking admin access…</div>;
-  return <div className="dashboard-layout"><aside className="dashboard-sidebar"><p className="eyebrow">Workspace</p><nav aria-label="Admin navigation">{[['overview', '◫', 'Overview'], ['orders', '▤', 'Orders'], ['payments', '↗', 'Payments & refunds']].map(([id, icon, label]) => <button key={id} className={section === id ? 'active' : ''} aria-current={section === id ? 'page' : undefined} onClick={() => setSection(id)}><span aria-hidden="true">{icon}</span>{label}</button>)}</nav><div className="dashboard-sidebar-bottom"><span>Who's Steering</span><small>Admin workspace</small><button onClick={() => nav('/')}>View storefront ↗</button></div></aside><main className="dashboard-main">
-    {section === 'payments' ? <PaymentCenter /> : <><div className="dashboard-heading"><div><p className="eyebrow">Who's Steering / Admin</p><h1>{section === 'overview' ? 'Your workshop, at a glance.' : 'Order management'}</h1><p>Follow every build from checkout to delivery.</p></div><button className="btn-outline" disabled={loading} onClick={() => setRevision(r => r + 1)}>Refresh</button></div>
+  return <div className="dashboard-layout"><aside className="dashboard-sidebar"><p className="eyebrow">Workspace</p><nav aria-label="Admin navigation">{[['overview', '◫', 'Overview'], ['orders', '▤', 'Orders'], ['payments', '↗', 'Payments & refunds'], ['sales', '◎', 'Sales & fitment']].map(([id, icon, label]) => <button key={id} className={section === id ? 'active' : ''} aria-current={section === id ? 'page' : undefined} onClick={() => setSection(id)}><span aria-hidden="true">{icon}</span>{label}</button>)}</nav><div className="dashboard-sidebar-bottom"><span>Who's Steering</span><small>Admin workspace</small><button onClick={() => nav('/')}>View storefront ↗</button></div></aside><main className="dashboard-main">
+    {section === 'sales' ? <SalesCenter /> : section === 'payments' ? <PaymentCenter /> : <><div className="dashboard-heading"><div><p className="eyebrow">Who's Steering / Admin</p><h1>{section === 'overview' ? 'Your workshop, at a glance.' : 'Order management'}</h1><p>Follow every build from checkout to delivery.</p></div><button className="btn-outline" disabled={loading} onClick={() => setRevision(r => r + 1)}>Refresh</button></div>
     {section === 'overview' && stats && <div className="dashboard-stats">{[['Total orders', stats.total_orders], ['Paid', stats.paid], ['In build', stats.in_build], ['Shipped', stats.shipped], ['Net collected', `$${Number(stats.total_revenue || 0).toLocaleString('en-US', {
             minimumFractionDigits: 2
           })}`], ['Last 30 days', `$${Number(stats.revenue_30d || 0).toLocaleString('en-US', {

@@ -8,6 +8,7 @@ import './experience.css';
 import { RouteExperience } from './components/Experience';
 
 import { lazy, Suspense } from 'react';
+const ResumeBuild = lazy(() => import('./pages/ResumeBuild'));
 const Home              = lazy(() => import('./pages/Home'));
 const Catalog           = lazy(() => import('./pages/Catalog'));
 const Product           = lazy(() => import('./pages/Product'));
@@ -43,6 +44,8 @@ export default function App() {
               <Route path="/build"              element={<BuildStart />} />
               <Route path="/configure"          element={<Configure />} />
               <Route path="/track-order"        element={<TrackOrder />} />
+              <Route path="/resume" element={<ResumeBuild />} />
+              <Route path="/unsubscribe" element={<ResumeBuild unsubscribe />} />
               <Route path="/checkout"           element={<Checkout />} />
               <Route path="/order-confirmation" element={<OrderConfirmation />} />
               <Route path="/login"              element={<Login />} />
