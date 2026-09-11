@@ -95,7 +95,7 @@ export const MATS = [
 
 // Top & Bottom only — no Perforated Leather
 export const TOP_BOTTOM_MATS = [
-  { n: 'Classic Leather',     d: '#5C3A1E', col: true,  carbon: false  },
+  { n: 'Smooth Leather',     d: '#5C3A1E', col: true,  carbon: false  },
   { n: 'Classic Carbon',      d: '#111111', col: false, carbon: true,  cType: 'classic'   },
   { n: 'Forged Carbon',       d: '#1A1F28', col: false, carbon: true,  cType: 'forged'    },
   { n: 'Honeycomb Carbon',    d: '#0A0A0A', col: false, carbon: true,  cType: 'honeycomb' },
@@ -104,7 +104,7 @@ export const TOP_BOTTOM_MATS = [
 
 // Sides — no carbon options, Perforated included
 export const SIDE_MATS = [
-  { n: 'Classic Leather',     d: '#5C3A1E', col: true,  carbon: false  },
+  { n: 'Smooth Leather',     d: '#5C3A1E', col: true,  carbon: false  },
   { n: 'Perforated Leather',  d: '#4A2E15', col: true,  carbon: false  },
   { n: 'Alcantara',           d: '#3A3A3A', col: true,  carbon: false  },
 ];
@@ -127,7 +127,7 @@ export const TRIS = {
 export const DEFAULT_CONFIG = {
   brand: 'BMW', vehicleYear: '', vehicleModel: '',
   wheelStyle: 'Standard', paddleShifters: 'Standard', paddleLength: 'Short',
-  topBottomMat: 'Classic Leather', topBottomCol: null, topBottomCarbonCol: null, topBottomCustomColor: '',
+  topBottomMat: 'Smooth Leather', topBottomCol: null, topBottomCarbonCol: null, topBottomCustomColor: '',
   wheelStyleType: 'B9',
   startStopButtons: false,
   ledDisplay: false,

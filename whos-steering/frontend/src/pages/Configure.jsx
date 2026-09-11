@@ -176,10 +176,10 @@ function MatSection({ label, matKey, colKey, carbonColKey, customColKey, cfg, se
   const fullList = matsOverride || MATS;
 
   // If a linked material (e.g. Top/Bottom) has a carbon type selected, restrict
-  // this section's options to: the same carbon type, Alcantara, or Classic Leather.
+  // this section's options to: the same carbon type, Alcantara, or Smooth Leather.
   const linkedCarbonType = linkedMat?.carbon ? linkedMat.cType : null;
   const matList = linkedCarbonType
-    ? fullList.filter(m => (m.carbon && m.cType === linkedCarbonType) || m.n === 'Alcantara' || m.n === 'Classic Leather')
+    ? fullList.filter(m => (m.carbon && m.cType === linkedCarbonType) || m.n === 'Alcantara' || m.n === 'Smooth Leather')
     : fullList;
 
   const selectedMat = matList.find(m => m.n === mat);
@@ -192,7 +192,7 @@ function MatSection({ label, matKey, colKey, carbonColKey, customColKey, cfg, se
     <Sect label={label} value={mat}>
       {linkedCarbonType && (
         <div style={{ fontSize: 14, color: 'rgba(232,184,0,.7)', letterSpacing: .5, marginBottom: 10, padding: '6px 10px', background: 'rgba(232,184,0,.06)', border: '1px solid rgba(232,184,0,.2)' }}>
-          ✦ Limited to matching carbon, Alcantara, or Classic Leather based on your other grip selection
+          ✦ Limited to matching carbon, Alcantara, or Smooth Leather based on your other grip selection
         </div>
       )}
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7, marginBottom: 14 }}>
