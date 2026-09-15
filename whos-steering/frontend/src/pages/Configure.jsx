@@ -1,6 +1,6 @@
 import SalesTools, {trackSales} from '../components/SalesTools';
 import useViewport from '../hooks/useViewport';
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, lazy, Suspense } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import WheelPreview from '../components/WheelPreview';
 import {
@@ -11,6 +11,8 @@ import {
 } from '../lib/data';
 import { calcPrice, apiFetch } from '../lib/api';
 import { useCart } from '../context';
+
+const AudiB9Preview = lazy(() => import('../components/B9ModelPreview'));
 
 function Sect({ label, value, children, badge }) {
   return (
@@ -492,23 +494,18 @@ export default function Configure() {
 
     if (!tracked.length || typeof IntersectionObserver === 'undefined') return;
 
-    const isMobileViewport = window.innerWidth < 768;
+    const isMobileViewport = viewportWidth < 980;
+    const hasPinnedPreview = isMobileViewport && cfg.brand === 'AUDI' && cfg.wheelStyleType === 'B9';
 
     const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries
-          .filter(entry => entry.isIntersecting)
-          .sort((a, b) => {
-            const targetY = isMobileViewport ? 210 : 175;
-            return Math.abs(a.boundingClientRect.top - targetY) - Math.abs(b.boundingClientRect.top - targetY);
-          });
-
-        const step = visible[0]?.target?.dataset?.step;
-        if (step) setActiveStep(step);
+      () => {
+        const targetY = hasPinnedPreview ? (viewportWidth < 780 ? 108 : 120) + 420 : isMobileViewport ? 210 : (optionsRef.current?.getBoundingClientRect().top || 0) + 120;
+        const current = tracked.filter(node => node.getBoundingClientRect().top <= targetY + 30).pop() || tracked[0];
+        if (current?.dataset?.step) setActiveStep(current.dataset.step);
       },
       {
         root: isMobileViewport ? null : optionsRef.current,
-        rootMargin: isMobileViewport
+        rootMargin: hasPinnedPreview ? '-530px 0px -10% 0px' : isMobileViewport
           ? '-180px 0px -52% 0px'
           : '-145px 0px -52% 0px',
         threshold: [0, 0.01, 0.1, 0.25],
@@ -517,7 +514,7 @@ export default function Configure() {
 
     tracked.forEach(node => observer.observe(node));
     return () => observer.disconnect();
-  }, []);
+  }, [viewportWidth, cfg.brand, cfg.wheelStyleType]);
 
   const scrollToStep = (step) => {
     const targets = {
@@ -775,6 +772,10 @@ export default function Configure() {
   const isAudi = cfg.brand === 'AUDI';
   const isMobileViewport = viewportWidth < 980;
   const previewMediaMaxHeight = isMobileViewport ? 440 : 'none';
+  const mobile3D = isMobileViewport && isAudi && cfg.wheelStyleType === 'B9';
+  // The document already contributes 140px of scroll padding.
+  const mobilePreviewTop = viewportWidth < 780 ? 108 : 120;
+  const stepScrollMargin = mobile3D ? mobilePreviewTop + 280 : isMobileViewport ? 205 : 88;
 
   return (
     <div style={{
@@ -794,8 +795,9 @@ export default function Configure() {
 
         {/* LEFT: Preview */}
         <div style={{
-          position: 'relative',
-          top: 0,
+          position: mobile3D ? 'sticky' : 'relative',
+          top: mobile3D ? mobilePreviewTop : 0,
+          zIndex: mobile3D ? 29 : undefined,
           height: isMobileViewport ? 'auto' : '100%',
           minHeight: 0,
           background: '#111',
@@ -867,34 +869,9 @@ export default function Configure() {
               />
             </div>
           ) : isAudi && cfg.wheelStyleType === 'B9' ? (
-            <div style={{
-              position: 'relative',
-              width: '100%',
-              maxWidth: 'none',
-              margin: 0,
-              aspectRatio: isMobileViewport ? 'auto' : 'auto',
-              height: isMobileViewport ? 'auto' : 'calc(100vh - 292px)',
-              maxHeight: isMobileViewport ? 'none' : previewMediaMaxHeight,
-              flex: isMobileViewport ? 'none' : '1 1 auto',
-              minHeight: 0,
-              overflow: isMobileViewport ? 'visible' : 'hidden',
-            }}>
-              <img
-                src="/b9-reference.png"
-                alt="Audi B9 Steering Wheel customization options"
-                style={{
-                  position: isMobileViewport ? 'relative' : 'absolute',
-                  inset: isMobileViewport ? 'auto' : 0,
-                  width: '100%',
-                  height: isMobileViewport ? 'auto' : '100%',
-                  objectFit: 'contain',
-                  objectPosition: 'center',
-                  display: 'block',
-                  transform: isMobileViewport ? 'none' : 'scale(0.985)',
-                  transformOrigin: 'center',
-                }}
-              />
-            </div>
+            <Suspense fallback={<div style={{ padding: 40, textAlign: 'center' }} role="status">Loading 3D preview…</div>}>
+              <AudiB9Preview config={cfg} />
+            </Suspense>
           ) : isAudi && cfg.wheelStyleType === 'R8' ? (
             <div style={{
               position: 'relative',
@@ -964,7 +941,7 @@ export default function Configure() {
               BELOW the 120px site header, so desktop must stick at 0.
               Mobile scrolls in the page viewport, so it still needs 120px.
             */
-            top: isMobileViewport ? 120 : 0,
+            top: mobile3D ? mobilePreviewTop + 300 : isMobileViewport ? 120 : 0,
 
             zIndex: 30,
             background: 'var(--d)',
@@ -984,7 +961,7 @@ export default function Configure() {
           </div>
 
           {/* Vehicle */}
-          <div ref={vehicleRef} data-step="vehicle" style={{ scrollMarginTop: isMobileViewport ? 205 : 88 }}>
+          <div ref={vehicleRef} data-step="vehicle" style={{ scrollMarginTop: stepScrollMargin }}>
           <Sect label="Vehicle" value={cfg.vehicleYear && cfg.vehicleModel ? `${cfg.vehicleYear} ${cfg.brand} ${cfg.vehicleModel}` : '—'}>
             <div style={{ display: 'flex', gap: 6, marginBottom: 14 }}>
               {['BMW','AUDI'].map(b => (
@@ -1030,7 +1007,7 @@ export default function Configure() {
           </div>
 
           {/* Style */}
-          <div ref={styleRef} data-step="style" style={{ scrollMarginTop: isMobileViewport ? 205 : 88 }}>
+          <div ref={styleRef} data-step="style" style={{ scrollMarginTop: stepScrollMargin }}>
           {/* Wheel Style Type */}
           <Sect label="Wheel Style Type" value={cfg.wheelStyleType}>
             <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
@@ -1131,7 +1108,7 @@ export default function Configure() {
           </div>
 
           {/* Materials */}
-          <div ref={materialsRef} data-step="materials" style={{ scrollMarginTop: isMobileViewport ? 205 : 88 }}>
+          <div ref={materialsRef} data-step="materials" style={{ scrollMarginTop: stepScrollMargin }}>
           {/* Top/Bottom Mat */}
           <MatSection label="Top & Bottom Grip Material"
             matKey="topBottomMat" colKey="topBottomCol"
@@ -1191,7 +1168,7 @@ export default function Configure() {
           </div>
 
           {/* Details */}
-          <div ref={detailsRef} data-step="details" style={{ scrollMarginTop: isMobileViewport ? 205 : 88 }}>
+          <div ref={detailsRef} data-step="details" style={{ scrollMarginTop: stepScrollMargin }}>
           {/* ── OPTIONS ── */}
           <div style={{ padding: '20px 28px', borderBottom: '1px solid var(--b)' }}>
             <div style={{ fontFamily: 'Rajdhani, sans-serif', fontWeight: 700, fontSize: 15, letterSpacing: .6, textTransform: 'uppercase', marginBottom: 8 }}>Options</div>
@@ -1274,7 +1251,7 @@ export default function Configure() {
           </div>
 
           {/* Review / final checkout */}
-          <div ref={reviewRef} data-step="review" style={{ scrollMarginTop: isMobileViewport ? 205 : 88 }}>
+          <div ref={reviewRef} data-step="review" style={{ scrollMarginTop: stepScrollMargin }}>
           {/* Custom Notes */}
           <div style={{ padding: '20px 28px', borderBottom: '1px solid var(--b)' }}>
             <label className="fl" style={{ marginBottom: 8 }}>Let us know if there are any other configurations you would like that have not been listed</label>

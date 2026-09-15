@@ -1,0 +1,379 @@
+[
+  {
+    "node": 0,
+    "mesh": 0,
+    "name": "Comfort Body Alcantara",
+    "group": "Top & bottom rim",
+    "ids": [
+      "comfort_body_alcantara"
+    ]
+  },
+  {
+    "node": 1,
+    "mesh": 1,
+    "name": "Comfort Body Carbon Fiber",
+    "group": "Top & bottom rim",
+    "ids": [
+      "comfort_body_carbon_fiber"
+    ]
+  },
+  {
+    "node": 2,
+    "mesh": 2,
+    "name": "Comfort Body Forged Carbon Fiber",
+    "group": "Top & bottom rim",
+    "ids": [
+      "comfort_body_forged_carbon_fiber"
+    ]
+  },
+  {
+    "node": 3,
+    "mesh": 3,
+    "name": "Comfort Body Leather",
+    "group": "Top & bottom rim",
+    "ids": [
+      "comfort_body_leather"
+    ]
+  },
+  {
+    "node": 4,
+    "mesh": 4,
+    "name": "Comfort Body Leather perforado",
+    "group": "Top & bottom rim",
+    "ids": [
+      "comfort_body_leather_perforado"
+    ]
+  },
+  {
+    "node": 5,
+    "mesh": 5,
+    "name": "Comfort Handle Alcantaraa",
+    "group": "Side grips & spokes",
+    "ids": [
+      "comfort_handle_alcantaraa"
+    ]
+  },
+  {
+    "node": 6,
+    "mesh": 6,
+    "name": "Comfort Handle Carbon Fiber",
+    "group": "Side grips & spokes",
+    "ids": [
+      "comfort_handle_carbon_fiber"
+    ]
+  },
+  {
+    "node": 7,
+    "mesh": 7,
+    "name": "Comfort Handle Forged Carbon Fiber",
+    "group": "Side grips & spokes",
+    "ids": [
+      "comfort_handle_forged_carbon_fiber"
+    ]
+  },
+  {
+    "node": 8,
+    "mesh": 8,
+    "name": "Comfort Handle Leather",
+    "group": "Side grips & spokes",
+    "ids": [
+      "comfort_handle_leather"
+    ]
+  },
+  {
+    "node": 9,
+    "mesh": 9,
+    "name": "Comfort Handle Leather perforado",
+    "group": "Side grips & spokes",
+    "ids": [
+      "comfort_handle_leather_perforado"
+    ]
+  },
+  {
+    "node": 10,
+    "mesh": 10,
+    "name": "Stitching Comfort",
+    "group": "Stitching",
+    "ids": [
+      "stitching_comfort"
+    ]
+  },
+  {
+    "node": 12,
+    "mesh": 11,
+    "name": "Marco cover inferior",
+    "group": "Decorative trim",
+    "ids": [
+      "marco_cover_inferior"
+    ]
+  },
+  {
+    "node": 13,
+    "mesh": 12,
+    "name": "Cover inferior",
+    "group": "Lower insert",
+    "ids": [
+      "cover_inferior"
+    ]
+  },
+  {
+    "node": 14,
+    "mesh": 13,
+    "name": "Sport Body Alcantara",
+    "group": "Top & bottom rim",
+    "ids": [
+      "sport_body_alcantara"
+    ]
+  },
+  {
+    "node": 15,
+    "mesh": 14,
+    "name": "Sport Body Carbon Fiber",
+    "group": "Top & bottom rim",
+    "ids": [
+      "sport_body_carbon_fiber"
+    ]
+  },
+  {
+    "node": 16,
+    "mesh": 15,
+    "name": "Sport Body Forged Carbon Fiber",
+    "group": "Top & bottom rim",
+    "ids": [
+      "sport_body_forged_carbon_fiber"
+    ]
+  },
+  {
+    "node": 17,
+    "mesh": 16,
+    "name": "Sport Body Leather",
+    "group": "Top & bottom rim",
+    "ids": [
+      "sport_body_leather"
+    ]
+  },
+  {
+    "node": 18,
+    "mesh": 17,
+    "name": "Sport Body Leather Perforado",
+    "group": "Top & bottom rim",
+    "ids": [
+      "sport_body_leather_perforado"
+    ]
+  },
+  {
+    "node": 19,
+    "mesh": 18,
+    "name": "Top Stripe",
+    "group": "Top stripe",
+    "ids": [
+      "torus007",
+      "torus007_1",
+      "torus007_2"
+    ]
+  },
+  {
+    "node": 20,
+    "mesh": 19,
+    "name": "Top Stripe Alemania",
+    "group": "Top stripe",
+    "ids": [
+      "torus019",
+      "torus019_1",
+      "torus019_2"
+    ]
+  },
+  {
+    "node": 22,
+    "mesh": 20,
+    "name": "Logo RS",
+    "group": "Bottom badge",
+    "ids": [
+      "rs_vertex",
+      "rs_vertex_1",
+      "rs_vertex_2"
+    ]
+  },
+  {
+    "node": 23,
+    "mesh": 21,
+    "name": "Logo S",
+    "group": "Bottom badge",
+    "ids": [
+      "logo_s_vertex",
+      "logo_s_vertex_1",
+      "logo_s_vertex_2"
+    ]
+  },
+  {
+    "node": 24,
+    "mesh": 22,
+    "name": "Cylinder",
+    "group": "Buttons & controls",
+    "ids": [
+      "cylinder"
+    ]
+  },
+  {
+    "node": 25,
+    "mesh": 23,
+    "name": "Cylinder.001",
+    "group": "Buttons & controls",
+    "ids": [
+      "cylinder001"
+    ]
+  },
+  {
+    "node": 26,
+    "mesh": 24,
+    "name": "Plane.002",
+    "group": "Decorative trim",
+    "ids": [
+      "plane002"
+    ]
+  },
+  {
+    "node": 27,
+    "mesh": 25,
+    "name": "Plane.003",
+    "group": "Buttons & controls",
+    "ids": [
+      "plane003"
+    ]
+  },
+  {
+    "node": 28,
+    "mesh": 26,
+    "name": "Plane.005",
+    "group": "Decorative trim",
+    "ids": [
+      "plane005"
+    ]
+  },
+  {
+    "node": 29,
+    "mesh": 27,
+    "name": "Plane.006",
+    "group": "Buttons & controls",
+    "ids": [
+      "plane006"
+    ]
+  },
+  {
+    "node": 30,
+    "mesh": 28,
+    "name": "Plane.001",
+    "group": "Buttons & controls",
+    "ids": [
+      "plane001"
+    ]
+  },
+  {
+    "node": 31,
+    "mesh": 29,
+    "name": "Plane.004",
+    "group": "Buttons & controls",
+    "ids": [
+      "plane004"
+    ]
+  },
+  {
+    "node": 33,
+    "mesh": 30,
+    "name": "Sport Handle Leather Perforado",
+    "group": "Side grips & spokes",
+    "ids": [
+      "sport_handle_leather_perforado"
+    ]
+  },
+  {
+    "node": 34,
+    "mesh": 31,
+    "name": "Sport Stitching",
+    "group": "Stitching",
+    "ids": [
+      "sport_stitching"
+    ]
+  },
+  {
+    "node": 36,
+    "mesh": 32,
+    "name": "Sport Handle Alcantara",
+    "group": "Side grips & spokes",
+    "ids": [
+      "sport_handle_alcantara"
+    ]
+  },
+  {
+    "node": 37,
+    "mesh": 33,
+    "name": "Sport Handle Leather",
+    "group": "Side grips & spokes",
+    "ids": [
+      "sport_handle_leather"
+    ]
+  },
+  {
+    "node": 38,
+    "mesh": 34,
+    "name": "Airbag Stitching 1",
+    "group": "Stitching",
+    "ids": [
+      "airbag_stitching_1"
+    ]
+  },
+  {
+    "node": 39,
+    "mesh": 35,
+    "name": "Airbag Stitching 2",
+    "group": "Stitching",
+    "ids": [
+      "airbag_stitching_2"
+    ]
+  },
+  {
+    "node": 40,
+    "mesh": 36,
+    "name": "Center Logo",
+    "group": "Decorative trim",
+    "ids": [
+      "center_logo"
+    ]
+  },
+  {
+    "node": 41,
+    "mesh": 37,
+    "name": "Chrome ring",
+    "group": "Decorative trim",
+    "ids": [
+      "chrome_ring"
+    ]
+  },
+  {
+    "node": 42,
+    "mesh": 38,
+    "name": "Airbag Leather",
+    "group": "Airbag cover",
+    "ids": [
+      "airbag_leather"
+    ]
+  },
+  {
+    "node": 43,
+    "mesh": 39,
+    "name": "Airbag Back",
+    "group": "Rear hub",
+    "ids": [
+      "airbag_back"
+    ]
+  },
+  {
+    "node": 44,
+    "mesh": 40,
+    "name": "Airbag Alcantara",
+    "group": "Airbag cover",
+    "ids": [
+      "airbag_alcantara"
+    ]
+  }
+]
