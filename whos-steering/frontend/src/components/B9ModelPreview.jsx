@@ -54,7 +54,7 @@ export default function B9ModelPreview({config}) {
   },[]);
   useEffect(()=>{runtime.current?.update(appearance);});
   return <section className="wheel3d" aria-label="Audi B9 live design preview">
-    <div className="wheel3d-heading"><span>AUDI B9</span><span className="wheel3d-live">{ready&&!error?'LIVE 3D':'3D PREVIEW'}</span></div>
+    <div className="wheel3d-heading"><span className="wheel3d-live">{ready&&!error?'LIVE 3D':'3D PREVIEW'}</span></div>
     <div className="wheel3d-stage" ref={mount}/>
     {error?<div className="wheel3d-fallback"><img src="/b9-reference.png" alt="Audi B9 wheel reference"/><p>3D isn’t available in this browser. Your selections are still saved below.</p></div>:!ready&&<p role="status" className="wheel3d-loading">Preparing your wheel…</p>}
     <p className="wheel3d-hint">Drag to rotate · Pinch or scroll to zoom</p>
