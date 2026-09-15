@@ -378,7 +378,7 @@ function PresetPage({ preset, onClose }) {
             <div style={{ marginBottom: 20 }}>
               <div style={{ fontFamily: 'Rajdhani, sans-serif', fontWeight: 700, fontSize: 14, letterSpacing: .6, textTransform: 'uppercase', marginBottom: 8, color: 'var(--t)' }}>Lower Badge</div>
               <div style={{ display: 'flex', gap: 8 }}>
-                {['RS','S','R8'].map(b => (
+                {['RS','S'].map(b => (
                   <button key={b} onClick={() => setBadge(b)}
                     style={{ flex: 1, padding: 14, border: `1px solid ${badge === b ? 'var(--y)' : 'var(--b)'}`, background: badge === b ? 'rgba(232,184,0,.08)' : 'transparent', color: badge === b ? 'var(--y)' : 'var(--t)', cursor: 'pointer', fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontSize: 24, letterSpacing: .6, transition: 'all .2s' }}>
                     {b}

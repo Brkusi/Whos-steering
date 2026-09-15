@@ -9,11 +9,6 @@ const PROMO_CODES = Object.freeze({
     percentOff: 10,
     label: '10% OFF',
   },
-  labor: {
-    code: 'labor',
-    percentOff: 10,
-    label: '10% OFF',
-  },
 });
 
 // Server-side prices for ready-to-ship presets. This prevents someone from
@@ -76,7 +71,7 @@ function validateRequiredColors(cfg) {
       missing.push('Plastic Trim Color');
     }
 
-    if (!cfg.innerTrimMatchCarbon && !(cfg.innerTrimCol || hasText(cfg.innerTrimCustomColor))) {
+    if (!(cfg.innerTrimCol || hasText(cfg.innerTrimCustomColor))) {
       missing.push('Inner Trim Color');
     }
   }
@@ -225,7 +220,14 @@ router.post('/create-intent', async (req, res) => {
   }
 
   for (const item of cartItems || []) {
-    const missingColors = validateRequiredColors(item.config || {});
+    const cfg = item.config || {};
+    if (cfg.brand === 'AUDI' && cfg.audiBadge === 'R8' && (cfg.isPreset || cfg.wheelStyleType !== 'R8')) {
+      return res.status(400).json({error: 'Please choose RS or S for the lower badge.'});
+    }
+    if (cfg.innerTrimMatchCarbon) {
+      return res.status(400).json({error: 'Please choose an inner trim color.'});
+    }
+    const missingColors = validateRequiredColors(cfg);
     if (missingColors.length) {
       return res.status(400).json({
         error: `Please choose all required color options: ${missingColors.join(', ')}`,
@@ -306,7 +308,7 @@ router.post('/create-intent', async (req, res) => {
           cfg.laneAssist !== false,
           cfg.audiBadge || cfg.audi_badge || null,
           cfg.plasticTrimCol || cfg.outerTrimCol || cfg.outer_trim_col || null,
-          cfg.innerTrimMatchCarbon ? 'MATCH_CARBON' : (cfg.innerTrimCol || cfg.inner_trim_col || null),
+          cfg.innerTrimCol || cfg.inner_trim_col || null,
           cfg.photoUrl || cfg.photo_url || null,
           (amountCents / 100).toFixed(2),
           cfg,

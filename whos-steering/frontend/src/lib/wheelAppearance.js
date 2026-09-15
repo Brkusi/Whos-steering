@@ -22,13 +22,13 @@ export function wheelAppearance(cfg, parseColor) {
     stitch: color(cfg.stitchCustomColor || cfg.stitchColor, '#696969'),
     trim: color(cfg.plasticTrimCustomColor || cfg.plasticTrimCol, '#252525'),
     innerTrim: color(cfg.innerTrimCustomColor || cfg.innerTrimCol, '#81868c'),
-    innerCarbon: !!cfg.innerTrimMatchCarbon && topMat.includes('Carbon'),
+    innerCarbon: false,
     // No cover upgrade means an OEM-looking cover in the visualization.
     // A visual cover does not imply inclusion of the airbag module in an order.
     airbag: { material: cfg.airbagCompat ? cfg.airbagMat || 'Smooth Leather' : 'Smooth Leather', color: cfg.airbagCompat ? color(cfg.airbagCustomColor || cfg.airbagCol, '#292929') : '#292929' },
     airbagStitch: cfg.airbagCompat ? color(cfg.airbagStitchCustomColor || cfg.airbagStitchColor, '#555555') : '#555555',
     logo: cfg.airbagCompat ? color(cfg.audiLogoCustomColor || cfg.audiLogoCol, '#c5c9ce') : '#c5c9ce',
-    badge: cfg.audiBadge || 'RS', led: !!cfg.ledDisplay,
+    badge: cfg.audiBadge === 'R8' && cfg.wheelStyleType !== 'R8' ? 'RS' : cfg.audiBadge || 'RS', led: !!cfg.ledDisplay,
     magnetic: cfg.paddleShifters === 'Magnetic', longPaddles: cfg.paddleLength === 'Long',
     unresolved: [...new Set(unresolved)],
   };

@@ -20,7 +20,7 @@ test('homepage restores original artwork and keeps custom and catalog cards',asy
   expect(container.querySelectorAll('.path-card').length).toBe(2);
   expect(container.textContent).toContain('EXPLORE WHEELS');
   expect(container.textContent).not.toContain('Preconfigured');
-  expect(container.querySelector('.inline-offer').textContent).toContain('LABOR');
+  expect(container.textContent).not.toMatch(/labor day|copy labor/i);
   expect(container.querySelector('.labor-promo-overlay')).toBeNull();
 });
 test('mobile navigation toggles and Escape closes it while retaining the actual logo',async()=>{

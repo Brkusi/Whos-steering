@@ -13,7 +13,6 @@ export default function FeaturedWheels() {
   const [dragging, setDragging] = useState(false);
   const [activeBrand, setActiveBrand] = useState('BMW');
   const [railIndicator, setRailIndicator] = useState({ left: 0, width: 34 });
-  const [promoCopied, setPromoCopied] = useState(false);
 
   const wheelsByBrand = useMemo(
     () => ({
@@ -25,16 +24,6 @@ export default function FeaturedWheels() {
   );
 
   const wheels = wheelsByBrand[activeBrand] || [];
-
-  const copyLaborCode = async () => {
-    try {
-      await navigator.clipboard.writeText('LABOR');
-      setPromoCopied(true);
-      window.setTimeout(() => setPromoCopied(false), 1600);
-    } catch {
-      setPromoCopied(false);
-    }
-  };
 
   useEffect(() => {
     const rail = railRef.current;
@@ -178,7 +167,6 @@ export default function FeaturedWheels() {
       `}</style>
 
       <section className="featured-wheels" aria-labelledby="featured-wheels-title">
-      <aside className="inline-offer"><div><strong>Labor Day offer · 10% off</strong><p>Use code LABOR at checkout.</p></div><button className="btn-outline sm" onClick={copyLaborCode}>{promoCopied ? 'Copied!' : 'Copy LABOR code'}</button></aside>
       <div className="featured-wheels__inner">
         <div className="featured-wheels__top">
           <div>

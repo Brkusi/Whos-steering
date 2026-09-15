@@ -410,6 +410,10 @@ function ConfigProgress({ activeStep, onStep }) {
   );
 }
 
+function currentWheelOptions(config) {
+  return {...config, innerTrimMatchCarbon: false, audiBadge: config.audiBadge === 'R8' && config.wheelStyleType !== 'R8' ? 'RS' : config.audiBadge};
+}
+
 export default function Configure() {
   const viewportWidth = useViewport();
   const [params] = useSearchParams();
@@ -439,11 +443,11 @@ export default function Configure() {
 
   useEffect(() => {
     trackSales('configure_started');
-    try { const saved = sessionStorage.getItem('ws_restore_build'); if(saved){setCfg({...DEFAULT_CONFIG,...JSON.parse(saved)});sessionStorage.removeItem('ws_restore_build');} } catch {}
+    try { const saved = sessionStorage.getItem('ws_restore_build'); if(saved){setCfg(currentWheelOptions({...DEFAULT_CONFIG,...JSON.parse(saved)}));sessionStorage.removeItem('ws_restore_build');} } catch {}
   }, []);
 
   const set = useCallback((key, val) => {
-    setCfg(prev => ({ ...prev, [key]: val }));
+    setCfg(prev => currentWheelOptions({ ...prev, [key]: val }));
 
     const errorMap = {
       topBottomCol: 'topBottomColor',
@@ -461,7 +465,6 @@ export default function Configure() {
       plasticTrimCustomColor: 'plasticTrimColor',
       innerTrimCol: 'innerTrimColor',
       innerTrimCustomColor: 'innerTrimColor',
-      innerTrimMatchCarbon: 'innerTrimColor',
 
       airbagMat: 'airbagMaterial',
       airbagCol: 'airbagColor',
@@ -533,7 +536,6 @@ export default function Configure() {
   };
 
   const price = calcPrice(cfg, rules);
-  const isCarbonTopBottom = !!(cfg.topBottomMat && cfg.topBottomMat.toLowerCase().includes('carbon'));
 
   const setBrand = (brand) => {
     setCfg({ ...DEFAULT_CONFIG, brand, wheelStyleType: brand === 'BMW' ? 'G-Series' : 'B9' });
@@ -625,7 +627,7 @@ export default function Configure() {
         e.plasticTrimColor = true;
       }
 
-      if (!cfg.innerTrimMatchCarbon && !cfg.innerTrimCol && !textValue(cfg.innerTrimCustomColor)) {
+      if (!cfg.innerTrimCol && !textValue(cfg.innerTrimCustomColor)) {
         e.innerTrimColor = true;
       }
     }
@@ -725,9 +727,7 @@ export default function Configure() {
         : null,
       cfg.brand === 'AUDI'
         ? ['Inner Trim Color',
-            cfg.innerTrimMatchCarbon
-              ? 'Match Carbon Fiber Top & Bottom'
-              : configuredColor(cfg.innerTrimCol, cfg.innerTrimCustomColor)]
+            configuredColor(cfg.innerTrimCol, cfg.innerTrimCustomColor)]
         : null,
 
       ['Airbag Cover',
@@ -1129,7 +1129,7 @@ export default function Configure() {
             <>
               <Sect label="Lower Badge" value={cfg.audiBadge}>
                 <div style={{ display: 'flex', gap: 6 }}>
-                  {['RS','S','R8'].map(b => (
+                  {(cfg.wheelStyleType === 'R8' ? ['RS','S','R8'] : ['RS','S']).map(b => (
                     <div key={b} className={`ob${cfg.audiBadge === b ? ' on' : ''}`}
                       style={{ flex: 1, padding: 14, textAlign: 'center', fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontSize: 26, letterSpacing: .6, cursor: 'pointer' }}
                       onClick={() => set('audiBadge', b)}>{b}</div>
@@ -1141,26 +1141,10 @@ export default function Configure() {
                 <CustomColorInput label="Type Any Color:" value={cfg.plasticTrimCustomColor || ''} onChange={v => { set('plasticTrimCustomColor', v); set('plasticTrimCol', null); }} />
                 {errors.plasticTrimColor && <div className="err-msg" style={{ marginTop: 8 }}>Please choose a plastic trim color.</div>}
               </Sect>
-              <Sect label="Inner Trim Color *" value={cfg.innerTrimMatchCarbon ? 'Match Carbon Fiber' : configuredColor(cfg.innerTrimCol, cfg.innerTrimCustomColor)}>
-                {isCarbonTopBottom && (
-                  <div onClick={() => {
-                      const next = !cfg.innerTrimMatchCarbon;
-                      set('innerTrimMatchCarbon', next);
-                      set('innerTrimCol', null);
-                      if (next) set('innerTrimCustomColor', '');
-                    }}
-                    className={`ob${cfg.innerTrimMatchCarbon ? ' on' : ''}`}
-                    style={{ padding: '10px 14px', marginBottom: 10, textAlign: 'center', cursor: 'pointer', fontSize: 14, fontWeight: 700, letterSpacing: 1, textTransform: 'uppercase' }}>
-                    Match Carbon Fiber Top & Bottom
-                  </div>
-                )}
-                {!cfg.innerTrimMatchCarbon && (
-                  <>
-                    <ColorGrid colors={COLORS} selected={cfg.innerTrimCol} onSelect={v => { set('innerTrimCol', v); set('innerTrimCustomColor', ''); }} />
-                    <CustomColorInput label="Type Any Color:" value={cfg.innerTrimCustomColor || ''} onChange={v => { set('innerTrimCustomColor', v); set('innerTrimCol', null); }} />
-                  </>
-                )}
-                {errors.innerTrimColor && <div className="err-msg" style={{ marginTop: 8 }}>Please choose an inner trim color or select Match Carbon Fiber.</div>}
+              <Sect label="Inner Trim Color *" value={configuredColor(cfg.innerTrimCol, cfg.innerTrimCustomColor)}>
+                <ColorGrid colors={COLORS} selected={cfg.innerTrimCol} onSelect={v => { set('innerTrimCol', v); set('innerTrimCustomColor', ''); }} />
+                <CustomColorInput label="Type Any Color:" value={cfg.innerTrimCustomColor || ''} onChange={v => { set('innerTrimCustomColor', v); set('innerTrimCol', null); }} />
+                {errors.innerTrimColor && <div className="err-msg" style={{ marginTop: 8 }}>Please choose an inner trim color.</div>}
               </Sect>
             </>
           )}

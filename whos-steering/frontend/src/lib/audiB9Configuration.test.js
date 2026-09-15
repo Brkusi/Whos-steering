@@ -36,9 +36,9 @@ test('disabled cover options cannot leak stale cover colors or material into pre
 test('restored carbon/custom selections keep precedence and do not alter pricing fields',()=>{
   const cfg={...DEFAULT_CONFIG,topBottomMat:'Classic Carbon',topBottomCarbonCol:'#6E0000',topBottomCol:'#ffffff',topBottomCustomColor:'#abcdef',innerTrimMatchCarbon:true,airbagUpgrade:true,heated:true,laneAssist:true};
   const before=JSON.stringify(cfg),a=audiB9Configuration(cfg,parse);
-  expect(a.top.color).toBe('#abcdef');expect(a.innerCarbon).toBe(true);expect(JSON.stringify(cfg)).toBe(before);
+  expect(a.top.color).toBe('#abcdef');expect(a.innerCarbon).toBe(false);expect(JSON.stringify(cfg)).toBe(before);
 });
-test('RS and S use their source meshes and R8 does not leave an RS badge underneath',()=>{
+test('RS and S use source meshes and retired B9 R8 selections resolve to RS',()=>{
   expect(audiB9Parts(configure({audiBadge:'RS'})).badge).toBe(22);expect(audiB9Parts(configure({audiBadge:'S'})).badge).toBe(23);
-  const r8=audiB9Parts(configure({audiBadge:'R8'}));expect(r8.visible.has(22)).toBe(false);expect(r8.visible.has(23)).toBe(false);
+  const r8=audiB9Parts(configure({audiBadge:'R8'}));expect(r8.visible.has(22)).toBe(true);expect(r8.visible.has(23)).toBe(false);
 });

@@ -50,14 +50,6 @@ export async function loadAudiB9(signal) {
     const object = nodes.get(part.node);
     if (!object) throw new Error(`Missing source part ${part.name}`);
     const primitives = object.isMesh ? [object] : object.children.filter(child => child.isMesh);
-    // The untextured insert has no UVs in the source. Add planar UVs only for
-    // the existing Match Carbon Fiber option; positions and normals are intact.
-    if (part.node === 13) primitives.forEach(mesh => {
-      if (mesh.geometry.attributes.uv) return;
-      const position=mesh.geometry.attributes.position, uv=new Float32Array(position.count*2), point=new THREE.Vector3();
-      for(let i=0;i<position.count;i++){point.fromBufferAttribute(position,i).applyMatrix4(mesh.matrixWorld);uv[i*2]=point.x*4;uv[i*2+1]=point.y*4;}
-      mesh.geometry.setAttribute('uv',new THREE.BufferAttribute(uv,2));
-    });
     const originals = primitives.map(mesh => {
       originalMaterials.add(mesh.material);
       const original = mesh.material.clone(); original.emissiveIntensity = 1;
@@ -105,12 +97,9 @@ export async function loadAudiB9(signal) {
     [38,39].forEach(n => paint(n, appearance.coverStitchSelected ? appearance.airbagStitch : '#080808'));
     [12,26,28,41].forEach(n => paint(n, appearance.trimColorSelected ? appearance.trim : '#080808'));
     paint(40, appearance.logoColorSelected ? appearance.logo : '#080808');
-    if (appearance.innerCarbon) {
-      const carbon = byNode.get(selection.top).primitives[0].material;
-      byNode.get(13).primitives.forEach(mesh => {mesh.material.copy(carbon); mesh.material.visible = true; mesh.material.needsUpdate = true;});
-    } else if (appearance.innerColorSelected) paint(13, appearance.innerTrim);
+    if (appearance.innerColorSelected) paint(13, appearance.innerTrim);
     if (selection.stripe !== null) byNode.get(selection.stripe).primitives.forEach((mesh,i) => mesh.material.color.set(appearance.stripes.length === 1 ? appearance.stripes[0] : appearance.stripes[i]));
-    extras.update(appearance);
+    extras.update(appearance, selection.side);
   }
   function dispose() {
     extras.dispose();
