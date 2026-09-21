@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const pool = require('../db/pool');
 const { authRequired, adminRequired } = require('../middleware/auth');
+const { sanitizeText, safeHttpUrl } = require('../lib/security');
 
 
 const TRACKABLE_STATUSES = ['paid', 'in_build', 'quality_check', 'shipped', 'delivered'];
@@ -175,6 +176,10 @@ router.get('/my', authRequired, async (req, res) => {
 
 // GET /api/orders/admin/stats  — dashboard stats (must be before /:id)
 router.get('/admin/stats', adminRequired, async (req, res) => {
+  const days = Number(req.query.days || 30);
+  if (!Number.isInteger(days) || days < 30 || days > 240 || days % 30 !== 0) {
+    return res.status(400).json({ error: 'Days must be a 30-day increment from 30 through 240' });
+  }
   try {
     const { rows } = await pool.query(`
       SELECT
@@ -183,10 +188,10 @@ router.get('/admin/stats', adminRequired, async (req, res) => {
         COUNT(*) FILTER (WHERE status = 'in_build') AS in_build,
         COUNT(*) FILTER (WHERE status = 'shipped') AS shipped,
         (SELECT COALESCE(SUM(GREATEST(amount-COALESCE(refunded_amount,0),0)),0) FROM payments WHERE status='succeeded') AS total_revenue,
-        (SELECT COALESCE(SUM(GREATEST(amount-COALESCE(refunded_amount,0),0)),0) FROM payments WHERE status='succeeded' AND created_at >= NOW()-INTERVAL '30 days') AS revenue_30d
+        (SELECT COALESCE(SUM(GREATEST(amount-COALESCE(refunded_amount,0),0)),0) FROM payments WHERE status='succeeded' AND created_at >= NOW()-($1 * INTERVAL '1 day')) AS revenue_period
       FROM orders
-    `);
-    res.json(rows[0]);
+    `, [days]);
+    res.json({ ...rows[0], period_days: days });
   } catch (err) {
     res.status(500).json({ error: 'Failed to fetch stats' });
   }
@@ -430,11 +435,14 @@ router.patch('/:id/status', adminRequired, async (req, res) => {
   const validStatuses = ['pending','payment_processing','paid','in_build','quality_check','shipped','delivered','cancelled','refunded'];
   if (!validStatuses.includes(status)) return res.status(400).json({ error: 'Invalid status' });
 
-  const noteTrackingNumber = extractTrackingNumber(note);
+  const cleanNote = sanitizeText(note, 1000);
+  const cleanTrackingUrl = tracking?.url ? safeHttpUrl(tracking.url) : null;
+  if (tracking?.url && !cleanTrackingUrl) return res.status(400).json({ error: 'Tracking URL must use http or https' });
+  const noteTrackingNumber = extractTrackingNumber(cleanNote);
   const resolvedTracking = {
-    carrier: tracking?.carrier || null,
-    number: tracking?.number || noteTrackingNumber || null,
-    url: tracking?.url || null,
+    carrier: sanitizeText(tracking?.carrier, 80) || null,
+    number: sanitizeText(tracking?.number, 80) || noteTrackingNumber || null,
+    url: cleanTrackingUrl,
   };
 
   const client = await pool.connect();
@@ -479,7 +487,7 @@ router.patch('/:id/status', adminRequired, async (req, res) => {
     if (!rows.length) { await client.query('ROLLBACK'); return res.status(404).json({ error: 'Order not found' }); }
     await client.query(
       `INSERT INTO order_status_history (order_id, from_status, to_status, note, changed_by) VALUES ($1,$2,$3,$4,$5)`,
-      [req.params.id, previousStatus, status, note||null, req.user.id]
+      [req.params.id, previousStatus, status, cleanNote || null, req.user.id]
     );
     await client.query('COMMIT');
     res.json(rows[0]);

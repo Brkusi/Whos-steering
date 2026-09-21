@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const pool   = require('../db/pool');
+const { safeHttpUrl } = require('../lib/security');
 
 const hasText = (value) => typeof value === 'string' && value.trim().length > 0;
 
@@ -261,6 +262,14 @@ router.post('/create-intent', async (req, res) => {
 
     for (const item of cartItems) {
       const cfg = item.config || {};
+      if (cfg.photoUrl || cfg.photo_url) {
+        const verifiedPhotoUrl = safeHttpUrl(cfg.photoUrl || cfg.photo_url);
+        if (!verifiedPhotoUrl) {
+          await client.query('ROLLBACK');
+          return res.status(400).json({ error: 'Wheel photo URL is invalid.' });
+        }
+        cfg.photoUrl = verifiedPhotoUrl;
+      }
       let amountCents;
 
       if (cfg.isPreset) {
