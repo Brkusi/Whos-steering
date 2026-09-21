@@ -184,11 +184,20 @@ router.get('/admin/stats', adminRequired, async (req, res) => {
     const { rows } = await pool.query(`
       SELECT
         COUNT(*) FILTER (WHERE status NOT IN ('cancelled','refunded')) AS total_orders,
-        COUNT(*) FILTER (WHERE status = 'paid') AS paid,
-        COUNT(*) FILTER (WHERE status = 'in_build') AS in_build,
-        COUNT(*) FILTER (WHERE status = 'shipped') AS shipped,
-        (SELECT COALESCE(SUM(GREATEST(amount-COALESCE(refunded_amount,0),0)),0) FROM payments WHERE status='succeeded') AS total_revenue,
-        (SELECT COALESCE(SUM(GREATEST(amount-COALESCE(refunded_amount,0),0)),0) FROM payments WHERE status='succeeded' AND created_at >= NOW()-($1 * INTERVAL '1 day')) AS revenue_period
+        COUNT(*) FILTER (WHERE status IN ('paid','in_build','quality_check','shipped','delivered')) AS paid,
+        COUNT(*) FILTER (WHERE status IN ('in_build','quality_check','shipped','delivered')) AS in_build,
+        COUNT(*) FILTER (WHERE status IN ('shipped','delivered')) AS shipped,
+        (SELECT COALESCE(SUM(GREATEST(p.amount-COALESCE(p.refunded_amount,0),0)),0)
+           FROM payments p
+           JOIN orders paid_order ON paid_order.id=p.order_id
+          WHERE p.status='succeeded'
+            AND paid_order.status IN ('paid','in_build','quality_check','shipped','delivered')) AS total_revenue,
+        (SELECT COALESCE(SUM(GREATEST(p.amount-COALESCE(p.refunded_amount,0),0)),0)
+           FROM payments p
+           JOIN orders paid_order ON paid_order.id=p.order_id
+          WHERE p.status='succeeded'
+            AND paid_order.status IN ('paid','in_build','quality_check','shipped','delivered')
+            AND p.created_at >= NOW()-($1 * INTERVAL '1 day')) AS revenue_period
       FROM orders
     `, [days]);
     res.json({ ...rows[0], period_days: days });
