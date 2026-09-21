@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import { apiFetch } from '../lib/api';
+import { apiFetch, authToken } from '../lib/api';
 
 // ── CART ─────────────────────────────────────────────────────────────────────
 const CartCtx = createContext(null);
@@ -45,30 +45,56 @@ export const useCart = () => useContext(CartCtx);
 
 // ── AUTH ─────────────────────────────────────────────────────────────────────
 const AuthCtx = createContext(null);
+const normalizeUser = (user) => user ? ({
+  ...user,
+  firstName: user.firstName ?? user.first_name,
+  lastName: user.lastName ?? user.last_name,
+  isAdmin: user.isAdmin ?? user.is_admin,
+}) : null;
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const cachedUser = (() => {
+    try { return JSON.parse(localStorage.getItem('ws_user') || sessionStorage.getItem('ws_user') || 'null'); } catch { return null; }
+  })();
+  const [user, setUser] = useState(cachedUser);
+  const [loading, setLoading] = useState(!cachedUser);
 
   useEffect(() => {
-    const token = localStorage.getItem('ws_token');
+    const token = authToken();
     if (token) {
       apiFetch('/api/auth/me')
-        .then(u => setUser(u))
-        .catch(() => { localStorage.removeItem('ws_token'); })
+        .then(u => {
+          const normalized = normalizeUser(u);
+          setUser(normalized);
+          const storage = localStorage.getItem('ws_token') ? localStorage : sessionStorage;
+          storage.setItem('ws_user', JSON.stringify(normalized));
+        })
+        .catch(() => {
+          localStorage.removeItem('ws_token'); localStorage.removeItem('ws_user');
+          sessionStorage.removeItem('ws_token'); sessionStorage.removeItem('ws_user');
+          setUser(null);
+        })
         .finally(() => setLoading(false));
     } else {
+      localStorage.removeItem('ws_user');
+      sessionStorage.removeItem('ws_user');
+      setUser(null);
       setLoading(false);
     }
   }, []);
 
-  const login = useCallback(async (email, password) => {
+  const login = useCallback(async (email, password, rememberMe = false) => {
     const { token, user } = await apiFetch('/api/auth/login', {
       method: 'POST',
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify({ email, password, rememberMe }),
     });
-    localStorage.setItem('ws_token', token);
-    setUser(user);
-    return user;
+    localStorage.removeItem('ws_token'); localStorage.removeItem('ws_user');
+    sessionStorage.removeItem('ws_token'); sessionStorage.removeItem('ws_user');
+    const storage = rememberMe ? localStorage : sessionStorage;
+    storage.setItem('ws_token', token);
+    const normalized = normalizeUser(user);
+    storage.setItem('ws_user', JSON.stringify(normalized));
+    setUser(normalized);
+    return normalized;
   }, []);
 
   const register = useCallback(async (data) => {
@@ -77,12 +103,17 @@ export function AuthProvider({ children }) {
       body: JSON.stringify(data),
     });
     localStorage.setItem('ws_token', token);
-    setUser(user);
-    return user;
+    const normalized = normalizeUser(user);
+    localStorage.setItem('ws_user', JSON.stringify(normalized));
+    setUser(normalized);
+    return normalized;
   }, []);
 
   const logout = useCallback(() => {
     localStorage.removeItem('ws_token');
+    localStorage.removeItem('ws_user');
+    sessionStorage.removeItem('ws_token');
+    sessionStorage.removeItem('ws_user');
     setUser(null);
   }, []);
 

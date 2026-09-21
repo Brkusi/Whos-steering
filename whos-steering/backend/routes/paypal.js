@@ -43,6 +43,13 @@ router.post('/webhook', async (req, res) => {
   if (!process.env.PAYPAL_WEBHOOK_ID) return res.status(503).json({
     error: 'Webhook is not configured.'
   });
+  const signatureHeaders = [
+    'paypal-auth-algo', 'paypal-cert-url', 'paypal-transmission-id',
+    'paypal-transmission-sig', 'paypal-transmission-time'
+  ];
+  if (signatureHeaders.some(header => !req.headers[header])) return res.status(400).json({
+    error: 'Webhook signature headers are missing.'
+  });
   try {
     const verified = await paypal.request('/v1/notifications/verify-webhook-signature', {
       method: 'POST',

@@ -1,8 +1,12 @@
 // ─── API helper ──────────────────────────────────────────────────────────────
 const BASE = process.env.REACT_APP_API_URL || '';
 
+export function authToken() {
+  return localStorage.getItem('ws_token') || sessionStorage.getItem('ws_token');
+}
+
 export async function apiFetch(path, opts = {}) {
-  const token = localStorage.getItem('ws_token');
+  const token = authToken();
   const res = await fetch(`${BASE}${path}`, {
     headers: {
       'Content-Type': 'application/json',

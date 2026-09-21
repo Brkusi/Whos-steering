@@ -501,6 +501,7 @@ export default function AdminDashboard() {
   const [page, setPage] = useState(1);
   const [revision, setRevision] = useState(0);
   const [section, setSection] = useState('overview');
+  const [statsDays, setStatsDays] = useState(30);
   const isAdmin = user?.is_admin || user?.isAdmin;
   useEffect(() => {
     if (!authLoading && !isAdmin) nav('/login');
@@ -510,7 +511,7 @@ export default function AdminDashboard() {
     let active = true;
     setLoading(true);
     setError('');
-    Promise.all([apiFetch('/api/orders/admin/stats'), apiFetch(`/api/orders?page=${page}&limit=50&status=${encodeURIComponent(filter)}&search=${encodeURIComponent(search)}`)]).then(([stats, orders]) => {
+    Promise.all([apiFetch(`/api/orders/admin/stats?days=${statsDays}`), apiFetch(`/api/orders?page=${page}&limit=50&status=${encodeURIComponent(filter)}&search=${encodeURIComponent(search)}`)]).then(([stats, orders]) => {
       if (active) {
         setStats(stats);
         setOrders(orders);
@@ -523,7 +524,7 @@ export default function AdminDashboard() {
     return () => {
       active = false;
     };
-  }, [isAdmin, page, filter, search, revision]);
+  }, [isAdmin, page, filter, search, revision, statsDays]);
   const openOrder = async order => {
     setError('');
     try {
@@ -557,13 +558,13 @@ export default function AdminDashboard() {
   if (authLoading || !isAdmin) return <div className="empty-state" role="status">Checking admin access…</div>;
   return <div className="dashboard-layout"><aside className="dashboard-sidebar"><p className="eyebrow">Workspace</p><nav aria-label="Admin navigation">{[['overview', '◫', 'Overview'], ['orders', '▤', 'Orders'], ['payments', '↗', 'Payments & refunds'], ['sales', '◎', 'Sales & fitment']].map(([id, icon, label]) => <button key={id} className={section === id ? 'active' : ''} aria-current={section === id ? 'page' : undefined} onClick={() => setSection(id)}><span aria-hidden="true">{icon}</span>{label}</button>)}</nav><div className="dashboard-sidebar-bottom"><span>Who's Steering</span><small>Admin workspace</small><button onClick={() => nav('/')}>View storefront ↗</button></div></aside><main className="dashboard-main">
     {section === 'sales' ? <SalesCenter /> : section === 'payments' ? <PaymentCenter /> : <><div className="dashboard-heading"><div><p className="eyebrow">Who's Steering / Admin</p><h1>{section === 'overview' ? 'Your workshop, at a glance.' : 'Order management'}</h1><p>Follow every build from checkout to delivery.</p></div><button className="btn-outline" disabled={loading} onClick={() => setRevision(r => r + 1)}>Refresh</button></div>
-    {section === 'overview' && stats && <div className="dashboard-stats">{[['Total orders', stats.total_orders], ['Paid', stats.paid], ['In build', stats.in_build], ['Shipped', stats.shipped], ['Net collected', `$${Number(stats.total_revenue || 0).toLocaleString('en-US', {
+    {section === 'overview' && stats && <><div className="dashboard-period"><label htmlFor="stats-period">Revenue period</label><select id="stats-period" className="fi" value={statsDays} onChange={e => setStatsDays(Number(e.target.value))}>{Array.from({ length: 8 }, (_, i) => (i + 1) * 30).map(days => <option key={days} value={days}>Last {days} days</option>)}</select></div><div className="dashboard-stats">{[['Total orders', stats.total_orders], ['Paid', stats.paid], ['In build', stats.in_build], ['Shipped', stats.shipped], ['Net collected', `$${Number(stats.total_revenue || 0).toLocaleString('en-US', {
             minimumFractionDigits: 2
-          })}`], ['Last 30 days', `$${Number(stats.revenue_30d || 0).toLocaleString('en-US', {
+          })}`], [`Last ${statsDays} days`, `$${Number(stats.revenue_period || 0).toLocaleString('en-US', {
             minimumFractionDigits: 2
           })}`]].map(([label, value], i) => <article key={label} style={{
             animationDelay: `${i * 45}ms`
-          }}><span>{label}</span><strong>{value}</strong><div className="stat-line" /></article>)}</div>}
+          }}><span>{label}</span><strong>{value}</strong><div className="stat-line" /></article>)}</div></>}
     {section === 'overview' && <div className="dashboard-quick"><div><h2>Keep every build moving.</h2><p>Review specifications, update production, and add tracking in one place.</p></div><button className="btn" onClick={() => setSection('orders')}>Manage orders →</button><button className="btn-outline" onClick={() => setSection('payments')}>Payments & refunds ↗</button></div>}
     <div className="dashboard-toolbar"><label><span>Find an order</span><input className="fi" value={search} placeholder="Order number or customer email" onChange={e => {
               setSearch(e.target.value);

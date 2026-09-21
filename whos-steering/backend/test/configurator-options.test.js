@@ -8,6 +8,7 @@ function checkoutRoutes(){
   vm.runInNewContext(fs.readFileSync(require.resolve('../routes/checkout'),'utf8'),{module,exports:module.exports,process,console,require:name=>{
     if(name==='express')return {Router:()=>router};
     if(name==='../db/pool')return {connect:()=>{throw new Error('Unexpected database access');}};
+    if(name==='../lib/security')return {safeHttpUrl:value=>value};
     if(name==='stripe')return ()=>({});
     throw new Error('Unexpected dependency '+name);
   }});return routes;

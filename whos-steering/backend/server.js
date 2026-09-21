@@ -10,19 +10,32 @@ const app = express();
 if (process.env.RENDER) app.set('trust proxy', 1);
 
 // ── CORS ──────────────────────────────────────────────────────
-app.use(cors());
-app.options('*', cors());
+const allowedOrigins = (process.env.FRONTEND_URL || '').split(',').map(value => value.trim()).filter(Boolean);
+const corsOptions = {
+  origin(origin, callback) {
+    if (!origin || !allowedOrigins.length || allowedOrigins.includes(origin)) return callback(null, true);
+    return callback(Object.assign(new Error('Origin not allowed'), { status: 403 }));
+  },
+};
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
 
 // ── Security headers ──────────────────────────────────────────
-app.use(helmet());
+app.use(helmet({
+  contentSecurityPolicy: false, // The API serves JSON; the storefront CSP is set by Netlify.
+  crossOriginResourcePolicy: { policy: 'cross-origin' },
+}));
 
 // ── Stripe webhook — RAW body BEFORE json parser ──────────────
 app.post('/api/checkout/webhook',
-  express.raw({ type: 'application/json' }),
+  express.raw({ type: 'application/json', limit: '1mb' }),
   async (req, res) => {
     const stripeLib = require('stripe');
     const stripe    = stripeLib(process.env.STRIPE_SECRET_KEY);
     const sig = req.headers['stripe-signature'];
+    if (!process.env.STRIPE_WEBHOOK_SECRET || !sig) {
+      return res.status(400).json({ error: 'Webhook signature is missing or not configured' });
+    }
     let event;
     try {
       event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET);
@@ -89,6 +102,7 @@ app.post('/api/checkout/webhook',
 
 // ── Body parser ───────────────────────────────────────────────
 app.use(express.json({ limit: '2mb' }));
+app.use(require('./lib/security').sanitizeRequestBody);
 
 // ── Rate limiting ─────────────────────────────────────────────
 app.use('/api/',      rateLimit({ windowMs: 15 * 60 * 1000, max: 300 }));
@@ -113,6 +127,8 @@ app.get('/health', (req, res) => res.json({ ok: true }));
 // ── Global error handler ──────────────────────────────────────
 app.use((err, req, res, next) => {
   console.error(err);
+  if (err.code === 'LIMIT_FILE_SIZE') return res.status(413).json({ error: 'Image must be 10 MB or smaller' });
+  if (err.code === 'LIMIT_UNEXPECTED_FILE') return res.status(400).json({ error: 'Expected one image in the photo field' });
   res.status(err.status || 500).json({ error: err.message || 'Internal server error' });
 });
 

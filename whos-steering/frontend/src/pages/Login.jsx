@@ -9,7 +9,7 @@ export default function Login() {
   const [tab, setTab] = useState('signin');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [savePassword, setSavePassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showLongLoading, setShowLongLoading] = useState(false);
 
@@ -44,10 +44,7 @@ export default function Login() {
     e.preventDefault();
     setError(''); setLoading(true);
     try {
-      await login(siEmail, siPass);
-      if (savePassword && window.PasswordCredential && navigator.credentials?.store) {
-        try { await navigator.credentials.store(new window.PasswordCredential({ id: siEmail, password: siPass })); } catch { /* Browser saving is optional; authentication has succeeded. */ }
-      }
+      await login(siEmail, siPass, rememberMe);
       nav('/account', { replace: true });
     } catch (err) {
       setError(err.message);
@@ -98,7 +95,7 @@ export default function Login() {
               <input className="fi" id="account-email" name="username" type="email" autoComplete="username" required value={tab === 'signin' ? siEmail : caEmail} onChange={e => tab === 'signin' ? setSiEmail(e.target.value) : setCaEmail(e.target.value)} placeholder="you@example.com" />
               <label htmlFor="account-password">Password</label>
               <div className="auth-password"><input className="fi" id="account-password" name="password" type={showPassword ? 'text' : 'password'} autoComplete={tab === 'signin' ? 'current-password' : 'new-password'} required minLength={tab === 'register' ? 8 : undefined} value={tab === 'signin' ? siPass : caPass} onChange={e => tab === 'signin' ? setSiPass(e.target.value) : setCaPass(e.target.value)} aria-describedby={tab === 'register' ? 'password-help' : undefined} /><button type="button" aria-label={showPassword ? 'Hide password' : 'Show password'} aria-pressed={showPassword} onClick={() => setShowPassword(!showPassword)}>{showPassword ? 'Hide' : 'Show'}</button></div>
-              {tab === 'signin' ? <div className="auth-save"><label><input type="checkbox" checked={savePassword} onChange={e => setSavePassword(e.target.checked)} /> Save password</label><small>Uses your browser’s password manager.</small></div> : <><small id="password-help">Use at least 8 characters.</small><label htmlFor="confirm-password">Confirm password</label><input className="fi" id="confirm-password" name="confirm-password" type={showPassword ? 'text' : 'password'} autoComplete="new-password" required minLength={8} value={caPass2} onChange={e => setCaPass2(e.target.value)} /></>}
+              {tab === 'signin' ? <div className="auth-save"><label><input type="checkbox" checked={rememberMe} onChange={e => setRememberMe(e.target.checked)} /> Remember me</label><small>Stay signed in on this device for 30 days.</small></div> : <><small id="password-help">Use at least 8 characters.</small><label htmlFor="confirm-password">Confirm password</label><input className="fi" id="confirm-password" name="confirm-password" type={showPassword ? 'text' : 'password'} autoComplete="new-password" required minLength={8} value={caPass2} onChange={e => setCaPass2(e.target.value)} /></>}
               <button className="btn auth-submit" type="submit" disabled={loading}>{loading ? 'Connecting…' : tab === 'signin' ? 'SIGN IN →' : 'CREATE ACCOUNT →'}</button>
             </fieldset>
           </form>
