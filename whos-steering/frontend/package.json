@@ -2,12 +2,19 @@
   "name": "whos-steering-frontend",
   "version": "1.0.0",
   "private": true,
+  "engines": { "node": ">=20" },
+  "jest": {
+    "moduleNameMapper": {
+      "^react-router/dom$": "<rootDir>/node_modules/react-router/dist/development/dom-export.js"
+    }
+  },
   "dependencies": {
     "@stripe/react-stripe-js": "^2.7.3",
     "@stripe/stripe-js": "^4.1.0",
+    "motion": "^13.4.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-router-dom": "^6.24.1",
+    "react-router-dom": "^7.18.4",
     "react-scripts": "5.0.1",
     "three": "0.180.0"
   },

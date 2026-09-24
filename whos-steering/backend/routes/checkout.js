@@ -253,9 +253,9 @@ router.post('/create-intent', async (req, res) => {
     const authHeader = req.headers.authorization || '';
     if (authHeader.startsWith('Bearer ')) {
       try {
-        const jwt = require('jsonwebtoken');
-        const decoded = jwt.verify(authHeader.slice(7), process.env.JWT_SECRET);
-        customerId = decoded.id;
+        const { currentAccount } = require('../middleware/auth');
+        const account = await currentAccount(authHeader.slice(7), client);
+        customerId = account?.id || null;
       } catch {}
     }
 

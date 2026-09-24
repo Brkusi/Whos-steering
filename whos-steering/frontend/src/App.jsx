@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { MotionConfig } from 'motion/react';
 import { CartProvider, AuthProvider } from './context';
 import Nav from './components/Nav';
 import Footer from './components/Footer';
@@ -29,7 +30,7 @@ const PaymentPolicy     = lazy(() => import('./pages/PaymentPolicy'));
 
 export default function App() {
   return (
-    <BrowserRouter>
+    <MotionConfig reducedMotion="user" transition={{ duration: .45, ease: [0.22, 1, 0.36, 1] }}><BrowserRouter>
       <AuthProvider>
         <CartProvider>
           <Nav />
@@ -65,6 +66,6 @@ export default function App() {
           <Footer />
         </CartProvider>
       </AuthProvider>
-    </BrowserRouter>
+    </BrowserRouter></MotionConfig>
   );
 }

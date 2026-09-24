@@ -1,35 +1,46 @@
-import { useNavigate, Link } from 'react-router-dom';
-import './Home.css';
-import FeaturedWheels from '../components/FeaturedWheels';
+import { useNavigate, Link } from "react-router-dom";
+import "./Home.css";
+import FeaturedWheels from "../components/FeaturedWheels";
+import { motion, useReducedMotion } from "motion/react";
 
-import heroBase from '../assets/hero/hero-base.webp';
-import heroCarbon from '../assets/hero/hero-carbon-reference.webp';
-import heroWheel from '../assets/hero/hero-wheel-highlighted.webp';
+import heroBase from "../assets/hero/hero-base.webp";
+import heroCarbon from "../assets/hero/hero-carbon-reference.webp";
+import heroWheel from "../assets/hero/hero-wheel-highlighted.webp";
 
 const MATERIALS = [
-  'Carbon fibre base engineered for superior strength, weave consistency, and surface finish',
-  'High quality leather selected for luxury feel, durability, and long-term wear',
-  'Advanced 3D modelling for precise fitment and OEM-correct ergonomics',
-  'Hand stitching applied by skilled craftsmen for a tailored, premium finish',
-  'Environmentally conscious production processes implemented where possible',
-  'Secure protective packaging to safeguard premium materials during transport',
-  'Handcrafted construction with strict quality control standards',
+  "Carbon fibre base engineered for superior strength, weave consistency, and surface finish",
+  "High quality leather selected for luxury feel, durability, and long-term wear",
+  "Advanced 3D modelling for precise fitment and OEM-correct ergonomics",
+  "Hand stitching applied by skilled craftsmen for a tailored, premium finish",
+  "Environmentally conscious production processes implemented where possible",
+  "Secure protective packaging to safeguard premium materials during transport",
+  "Handcrafted construction with strict quality control standards",
 ];
 
 const BRAND_CARDS = [
-  { id: 'bmw', name: 'BMW', tag: 'M Sport Builds', badge: 'IN STOCK' },
-  { id: 'audi', name: 'AUDI', tag: 'RS Edition Builds', badge: 'IN STOCK' },
-  { id: 'custom', name: 'CUSTOM', tag: 'Full Configurator', badge: 'CONFIGURE' },
+  { id: "bmw", name: "BMW", tag: "M Sport Builds", badge: "IN STOCK" },
+  { id: "audi", name: "AUDI", tag: "RS Edition Builds", badge: "IN STOCK" },
+  {
+    id: "custom",
+    name: "CUSTOM",
+    tag: "Full Configurator",
+    badge: "CONFIGURE",
+  },
 ];
 
 export default function Home() {
   const nav = useNavigate();
+  const reduceMotion = useReducedMotion();
+  const copyEntrance = reduceMotion ? false : { opacity: 0, x: -24 };
+  const wheelEntrance = reduceMotion
+    ? false
+    : { opacity: 0, scale: 0.96, rotate: -5 };
 
   const openBrand = (brand) => {
     nav(
-      brand.id === 'custom'
-        ? '/build'
-        : `/catalog?brand=${encodeURIComponent(brand.name)}`
+      brand.id === "custom"
+        ? "/build"
+        : `/catalog?brand=${encodeURIComponent(brand.name)}`,
     );
   };
 
@@ -58,7 +69,12 @@ export default function Home() {
             draggable="false"
           />
 
-          <div className="ws-stage-copy">
+          <motion.div
+            className="ws-stage-copy"
+            initial={copyEntrance}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, delay: 0.12 }}
+          >
             <div className="ws-stage-line" aria-hidden="true" />
 
             <h1 className="ws-stage-title">
@@ -75,7 +91,7 @@ export default function Home() {
               <button
                 type="button"
                 className="ws-stage-btn ws-stage-btn-primary"
-                onClick={() => nav('/build')}
+                onClick={() => nav("/build")}
               >
                 BUILD YOURS
               </button>
@@ -83,21 +99,28 @@ export default function Home() {
               <button
                 type="button"
                 className="ws-stage-btn ws-stage-btn-secondary"
-                onClick={() => nav('/catalog')}
+                onClick={() => nav("/catalog")}
               >
                 EXPLORE WHEELS
               </button>
             </div>
-          </div>
+          </motion.div>
 
           <div className="ws-stage-wheel" aria-hidden="true">
-            <div className="ws-wheel-glow" />
-            <img
-              src={heroWheel}
-              alt=""
-              className="ws-wheel-image"
-              draggable="false"
-            />
+            <motion.div
+              className="ws-wheel-entrance"
+              initial={wheelEntrance}
+              animate={{ opacity: 1, scale: 1, rotate: 0 }}
+              transition={{ duration: 0.9, ease: [0.2, 0.7, 0.2, 1] }}
+            >
+              <div className="ws-wheel-glow" />
+              <img
+                src={heroWheel}
+                alt=""
+                className="ws-wheel-image"
+                draggable="false"
+              />
+            </motion.div>
           </div>
         </div>
 
@@ -116,7 +139,12 @@ export default function Home() {
             draggable="false"
           />
 
-          <div className="ws-mobile-copy">
+          <motion.div
+            className="ws-mobile-copy"
+            initial={reduceMotion ? false : { opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+          >
             <h1 className="ws-mobile-title">
               <span>DESIGNED BY YOU.</span>
               <strong>BUILT BY US.</strong>
@@ -126,23 +154,30 @@ export default function Home() {
               <span>CUSTOM STEERING WHEELS</span>
               <span>MADE TO YOUR SPECIFICATION.</span>
             </p>
-          </div>
+          </motion.div>
 
           <div className="ws-mobile-wheel" aria-hidden="true">
-            <div className="ws-wheel-glow ws-wheel-glow-mobile" />
-            <img
-              src={heroWheel}
-              alt=""
-              className="ws-wheel-image"
-              draggable="false"
-            />
+            <motion.div
+              className="ws-wheel-entrance"
+              initial={wheelEntrance}
+              animate={{ opacity: 1, scale: 1, rotate: 0 }}
+              transition={{ duration: 0.9, ease: [0.2, 0.7, 0.2, 1] }}
+            >
+              <div className="ws-wheel-glow ws-wheel-glow-mobile" />
+              <img
+                src={heroWheel}
+                alt=""
+                className="ws-wheel-image"
+                draggable="false"
+              />
+            </motion.div>
           </div>
 
           <div className="ws-mobile-actions">
             <button
               type="button"
               className="ws-mobile-btn ws-mobile-btn-primary"
-              onClick={() => nav('/build')}
+              onClick={() => nav("/build")}
             >
               BUILD YOURS
             </button>
@@ -150,7 +185,7 @@ export default function Home() {
             <button
               type="button"
               className="ws-mobile-btn ws-mobile-btn-secondary"
-              onClick={() => nav('/catalog')}
+              onClick={() => nav("/catalog")}
             >
               EXPLORE WHEELS
             </button>
@@ -160,11 +195,15 @@ export default function Home() {
 
       <section className="ws-brand-strip" aria-label="Shop by category">
         {BRAND_CARDS.map((brand) => (
-          <button
+          <motion.button
             type="button"
             key={brand.id}
             className="ws-brand-card"
             onClick={() => openBrand(brand)}
+            initial={reduceMotion ? false : { opacity: 0, y: 18 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.35 }}
+            whileHover={reduceMotion ? undefined : { y: -3 }}
           >
             <span className="ws-brand-copy">
               <span className="ws-brand-name">{brand.name}</span>
@@ -172,14 +211,72 @@ export default function Home() {
             </span>
 
             <span className="ws-brand-badge">{brand.badge}</span>
-          </button>
+          </motion.button>
         ))}
       </section>
 
-    <section className="showroom-paths reveal" id="discover" aria-labelledby="paths-title"><div className="section-heading"><div><p className="eyebrow">Your wheel. Your way.</p><h2 id="paths-title">Two ways to make it yours.</h2></div><p>Start with your own vision.<br />Or find a build that already feels right.</p></div><div className="path-grid">
-      <Link to="/build" className="path-card"><img src="/BMW_PRESET_1.png" alt="BMW steering wheel with carbon trim" loading="lazy" /><div><span className="eyebrow">01 / Custom made</span><h3>Every detail.<br />Your decision.</h3><p>Choose your vehicle, materials, stitching, and finishing touches.</p><span className="text-link">Start your custom build <b>↗</b></span></div></Link>
-      <Link to="/catalog" className="path-card"><img src="/PRESET_1.png" alt="Catalog Audi-style steering wheel" loading="lazy" /><div><span className="eyebrow">02 / Catalog</span><h3>Find your<br />signature style.</h3><p>Explore our existing wheel designs and their available options.</p><span className="text-link">Explore wheels <b>↗</b></span></div></Link>
-    </div></section>
+      <section
+        className="showroom-paths reveal"
+        id="discover"
+        aria-labelledby="paths-title"
+      >
+        <div className="section-heading">
+          <div>
+            <p className="eyebrow">Your wheel. Your way.</p>
+            <h2 id="paths-title">Two ways to make it yours.</h2>
+          </div>
+          <p>
+            Start with your own vision.
+            <br />
+            Or find a build that already feels right.
+          </p>
+        </div>
+        <div className="path-grid">
+          <Link to="/build" className="path-card">
+            <img
+              src="/BMW_PRESET_1.png"
+              alt="BMW steering wheel with carbon trim"
+              loading="lazy"
+            />
+            <div>
+              <span className="eyebrow">01 / Custom made</span>
+              <h3>
+                Every detail.
+                <br />
+                Your decision.
+              </h3>
+              <p>
+                Choose your vehicle, materials, stitching, and finishing
+                touches.
+              </p>
+              <span className="text-link">
+                Start your custom build <b>↗</b>
+              </span>
+            </div>
+          </Link>
+          <Link to="/catalog" className="path-card">
+            <img
+              src="/PRESET_1.png"
+              alt="Catalog Audi-style steering wheel"
+              loading="lazy"
+            />
+            <div>
+              <span className="eyebrow">02 / Catalog</span>
+              <h3>
+                Find your
+                <br />
+                signature style.
+              </h3>
+              <p>
+                Explore our existing wheel designs and their available options.
+              </p>
+              <span className="text-link">
+                Explore wheels <b>↗</b>
+              </span>
+            </div>
+          </Link>
+        </div>
+      </section>
 
       <FeaturedWheels />
 
@@ -195,19 +292,27 @@ export default function Home() {
             </h2>
 
             <p className="ws-materials-intro">
-              Every wheel we build is a commitment to quality. From the materials
-              we select to the hands that assemble them, no detail is overlooked.
+              Every wheel we build is a commitment to quality. From the
+              materials we select to the hands that assemble them, no detail is
+              overlooked.
             </p>
           </div>
 
           <div>
             {MATERIALS.map((item, index) => (
-              <div className="ws-material-item" key={index}>
+              <motion.div
+                className="ws-material-item"
+                key={index}
+                initial={reduceMotion ? false : { opacity: 0, x: 18 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true, amount: 0.7 }}
+                transition={{ delay: index * 0.04 }}
+              >
                 <span className="ws-material-icon" aria-hidden="true">
                   <span />
                 </span>
                 <span>{item}</span>
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>

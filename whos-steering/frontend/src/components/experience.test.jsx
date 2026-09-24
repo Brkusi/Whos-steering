@@ -54,6 +54,78 @@ test('account forms offer browser password saving and appropriate autocomplete',
   expect(container.querySelector('#account-password').type).toBe('text');
   act(()=>[...container.querySelectorAll('.auth-tabs button')][1].click());
   expect(container.querySelector('#account-password').autocomplete).toBe('new-password');
-  expect(container.querySelector('#account-password').minLength).toBe(8);
+  expect(container.querySelector('#account-password').minLength).toBe(12);
   expect(container.querySelector('#confirm-password')).not.toBeNull();
+});
+
+const fillInput = (selector, value) => {
+  const input = container.querySelector(selector);
+  act(() => {
+    Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set.call(input, value);
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+  });
+};
+const submitForm = async () => {
+  await act(async () => container.querySelector('form').dispatchEvent(new Event('submit', { bubbles: true, cancelable: true })));
+};
+
+test('reset confirms matching passwords before submission and clears them after success', async () => {
+  await render(<Login />);
+  act(() => container.querySelector('.auth-help button').click());
+  fillInput('#reset-email', 'driver@example.com');
+  apiFetch.mockResolvedValueOnce({ message: 'If an account exists, a code will be sent.' });
+  await submitForm();
+  expect(container.querySelector('#reset-email').readOnly).toBe(true);
+  expect(container.querySelector('.auth-resend button').disabled).toBe(true);
+  fillInput('#reset-code', '123456');
+  fillInput('#reset-password', 'NewPassword123');
+  fillInput('#reset-confirm-password', 'Different123');
+  await submitForm();
+  expect(container.querySelector('[role="alert"]').textContent).toBe('Passwords do not match.');
+  expect(apiFetch).toHaveBeenCalledTimes(1);
+  fillInput('#reset-confirm-password', 'NewPassword123');
+  apiFetch.mockResolvedValueOnce({ message: 'Password updated.' });
+  await submitForm();
+  expect(apiFetch).toHaveBeenLastCalledWith('/api/auth/password-reset/confirm', {
+    method: 'POST', body: JSON.stringify({ email: 'driver@example.com', code: '123456', password: 'NewPassword123' }),
+  });
+  expect(container.querySelector('#account-email').value).toBe('driver@example.com');
+  expect(container.querySelector('#account-password').value).toBe('');
+  expect(container.querySelector('[role="status"]').textContent).toBe('Password updated.');
+});
+
+test('reset resend waits for the cooldown and keeps the original email', async () => {
+  jest.useFakeTimers();
+  try {
+    await render(<Login />);
+    act(() => container.querySelector('.auth-help button').click());
+    fillInput('#reset-email', 'driver@example.com');
+    apiFetch.mockResolvedValue({ message: 'If an account exists, a code will be sent.' });
+    await submitForm();
+    for (let second = 0; second < 60; second += 1) act(() => jest.advanceTimersByTime(1000));
+    expect(container.querySelector('.auth-resend button').disabled).toBe(false);
+    await act(async () => container.querySelector('.auth-resend button').click());
+    expect(apiFetch).toHaveBeenCalledTimes(2);
+    expect(apiFetch).toHaveBeenLastCalledWith('/api/auth/password-reset/request', {
+      method: 'POST', body: JSON.stringify({ email: 'driver@example.com' }),
+    });
+    expect(container.querySelector('.auth-resend button').disabled).toBe(true);
+    act(() => container.querySelector('.auth-change-email').click());
+    expect(container.querySelector('#reset-email').readOnly).toBe(false);
+    expect(container.querySelector('#reset-code')).toBeNull();
+  } finally { jest.useRealTimers(); }
+});
+
+test('reset prevents navigation while a request is pending and reports request failures', async () => {
+  await render(<Login />);
+  act(() => container.querySelector('.auth-help button').click());
+  fillInput('#reset-email', 'driver@example.com');
+  let rejectRequest;
+  apiFetch.mockReturnValueOnce(new Promise((resolve, reject) => { rejectRequest = reject; }));
+  await submitForm();
+  expect(container.querySelector('fieldset').disabled).toBe(true);
+  expect(container.querySelector('.auth-help button').disabled).toBe(true);
+  await act(async () => rejectRequest(new Error('Unable to send your code. Try again.')));
+  expect(container.querySelector('[role="alert"]').textContent).toContain('Unable to send your code');
+  expect(container.querySelector('.auth-help button').disabled).toBe(false);
 });

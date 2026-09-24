@@ -4,12 +4,11 @@
   status = 200
 
 [build]
-  base = "frontend"
   command = "npm run build"
   publish = "build"
 
 [build.environment]
-  NODE_VERSION = "18"
+  NODE_VERSION = "22"
 
 [[headers]]
   for = "/*"

@@ -385,6 +385,13 @@
   filter: blur(18px);
 }
 
+/* Keep entrance transforms inside the positioned wheel, preserving its centering. */
+.ws-wheel-entrance {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
 .ws-wheel-image {
   position: relative;
   z-index: 2;
@@ -1038,8 +1045,11 @@
 .showroom-paths .eyebrow { color:var(--y); font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:.12em; }
 .showroom-paths h2 { font:700 clamp(28px,3vw,42px)/1.1 Arial,sans-serif; margin:16px 0 0; }
 .showroom-paths h3 { font:700 clamp(25px,2.5vw,34px)/1.1 Arial,sans-serif; margin:8px 0 0; }
-.ws-wheel-image { animation: wheel-arrive 1.4s cubic-bezier(.2,.7,.2,1) both; transform-origin:50% 50%; transition:rotate .8s ease; }
-.ws-hero:hover .ws-wheel-image { rotate:3deg; }
-@keyframes wheel-arrive { from { opacity:0; transform:translateY(22px) rotate(-9deg); } to { opacity:1; transform:translateY(0) rotate(0); } }
+.ws-wheel-image { transform-origin:50% 50%; transition:rotate .8s ease; }
+@media (hover:hover) and (prefers-reduced-motion:no-preference) { .ws-hero:hover .ws-wheel-image { rotate:3deg; } }
+.ws-brand-card:focus-visible, .path-card:focus-visible { outline:2px solid var(--ws-yellow); outline-offset:-4px; }
+.ws-mobile-btn:focus-visible { outline:2px solid #fff; outline-offset:-5px; }
+.path-card:focus-visible>img { transform:scale(1.035); }
+.path-card:hover .text-link b, .path-card:focus-visible .text-link b { transform:translate(3px,-3px); }
 @media(max-width:700px) { .showroom-paths { padding:48px 20px; } .showroom-paths .section-heading { display:block; } .path-grid { grid-template-columns:1fr; } .path-card { min-height:350px; padding:26px; } }
-@media(prefers-reduced-motion:reduce) { .ws-wheel-image { animation:none; transition:none; } .ws-hero:hover .ws-wheel-image { rotate:none; } }
+@media(prefers-reduced-motion:reduce) { .ws-home *, .ws-home *::before, .ws-home *::after { animation:none !important; transition:none !important; } .ws-hero:hover .ws-wheel-image { rotate:none; } .path-card:hover>img, .path-card:focus-visible>img, .path-card .text-link b, .ws-stage-btn:hover { transform:none; } }

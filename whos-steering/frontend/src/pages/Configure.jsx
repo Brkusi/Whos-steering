@@ -3,6 +3,7 @@ import useViewport from '../hooks/useViewport';
 import { useState, useEffect, useCallback, useRef, lazy, Suspense } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import WheelPreview from '../components/WheelPreview';
+import { useDialog } from '../components/Experience';
 import {
   COLORS, MATS, TRIS, DEFAULT_CONFIG, colorName,
   STRIPE_CONCEPTS, STITCH_COLORS,
@@ -411,7 +412,7 @@ function ConfigProgress({ activeStep, onStep }) {
 }
 
 function currentWheelOptions(config) {
-  return {...config, innerTrimMatchCarbon: false, audiBadge: config.audiBadge === 'R8' && config.wheelStyleType !== 'R8' ? 'RS' : config.audiBadge};
+  return {...config, paddleFinish: config.paddleFinish === 'Stealth' ? 'Stealth' : 'Normal', innerTrimMatchCarbon: false, audiBadge: config.audiBadge === 'R8' && config.wheelStyleType !== 'R8' ? 'RS' : config.audiBadge};
 }
 
 export default function Configure() {
@@ -422,6 +423,7 @@ export default function Configure() {
   const [rules, setRules] = useState({});
   const [toast, setToast] = useState('');
   const [showReview, setShowReview] = useState(false);
+  const [showR8Notice, setShowR8Notice] = useState(false);
   const [photo, setPhoto] = useState(null);
   const [photoUploading, setPhotoUploading] = useState(false);
   const [errors, setErrors] = useState({});
@@ -433,6 +435,8 @@ export default function Configure() {
   const materialsRef = useRef(null);
   const detailsRef = useRef(null);
   const reviewRef = useRef(null);
+  const r8NoticeRef = useRef(null);
+  useDialog(r8NoticeRef, showR8Notice, () => setShowR8Notice(false));
 
   const initBrand = params.get('brand') || 'BMW';
   const [cfg, setCfg] = useState({
@@ -715,6 +719,9 @@ export default function Configure() {
       cfg.paddleShifters === 'Magnetic'
         ? ['Paddle Length', cfg.paddleLength || 'Short']
         : null,
+      cfg.brand === 'AUDI' && cfg.wheelStyleType === 'B9' && cfg.paddleShifters === 'Standard'
+        ? ['Paddle Finish', cfg.paddleFinish || 'Normal']
+        : null,
 
       ['Top & Bottom Grip Material', cfg.topBottomMat],
       ['Top & Bottom Color', topColor],
@@ -764,6 +771,7 @@ export default function Configure() {
   const buildConfigSnapshot = () => ({
     ...cfg,
     paddleLength: cfg.paddleLength || 'Short',
+    paddleFinish: cfg.paddleFinish || 'Normal',
     topBottomCustomColor: cfg.topBottomCustomColor || '',
     sideCustomColor: cfg.sideCustomColor || '',
     innerTrimCustomColor: cfg.innerTrimCustomColor || '',
@@ -1033,7 +1041,7 @@ export default function Configure() {
                 label="Start / Stop & Drive Select Buttons"
                 sub="+$40.00"
                 value={cfg.startStopButtons}
-                onChange={v => set('startStopButtons', v)}
+                onChange={v => { set('startStopButtons', v); if (v) setShowR8Notice(true); }}
               />
             )}
           </Sect>
@@ -1086,14 +1094,27 @@ export default function Configure() {
           )}
 
           {/* Paddles */}
-          <Sect label="Paddle Shifters" value={cfg.paddleShifters + (cfg.paddleShifters === 'Magnetic' ? ` · ${cfg.paddleLength}` : '')}>
+          <Sect label="Paddle Shifters" value={cfg.paddleShifters + (cfg.paddleShifters === 'Magnetic' ? ` · ${cfg.paddleLength}` : isAudi && cfg.wheelStyleType === 'B9' ? ` · ${cfg.paddleFinish || 'Normal'}` : '')}>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7 }}>
               {['Standard', 'Magnetic'].map(o => (
-                <button key={o} className={`ob${cfg.paddleShifters === o ? ' on' : ''}`} onClick={() => set('paddleShifters', o)}>
+                <button key={o} aria-pressed={cfg.paddleShifters === o} className={`ob${cfg.paddleShifters === o ? ' on' : ''}`} onClick={() => set('paddleShifters', o)}>
                   {o}{o === 'Magnetic' ? ' (+$25.00)' : ''}
                 </button>
               ))}
             </div>
+            {isAudi && cfg.wheelStyleType === 'B9' && cfg.paddleShifters === 'Standard' && (
+              <div style={{ marginTop: 14 }}>
+                <div style={{ fontSize: 14, color: 'var(--t)', letterSpacing: 1, textTransform: 'uppercase', marginBottom: 8 }}>Paddle Finish</div>
+                <div role="group" aria-label="Standard paddle finish" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 8 }}>
+                  {['Normal', 'Stealth'].map(finish => (
+                    <button key={finish} aria-pressed={cfg.paddleFinish === finish} className={`ob${cfg.paddleFinish === finish ? ' on' : ''}`} onClick={() => set('paddleFinish', finish)} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '12px 10px', textAlign: 'left', minWidth: 0 }}>
+                      <span aria-hidden="true" style={{ flexShrink: 0, width: 16, height: 30, borderRadius: '5px 8px 8px 5px', background: finish === 'Stealth' ? 'linear-gradient(110deg, #36383b, #0c0d0f)' : 'linear-gradient(110deg, #737a80, #eef0f2 48%, #93999e)', border: '1px solid #565a60', boxShadow: '-3px 0 0 #101114' }} />
+                      <span><span style={{ display: 'block' }}>{finish}</span><span style={{ display: 'block', fontSize: 12, fontWeight: 400, letterSpacing: 0, textTransform: 'none', color: 'var(--t)', marginTop: 3 }}>{finish === 'Stealth' ? 'All black' : 'Black & silver'}</span></span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
             {cfg.paddleShifters === 'Magnetic' && (
               <div style={{ marginTop: 12 }}>
                 <div style={{ fontSize: 14, color: 'rgba(232,184,0,.7)', letterSpacing: 1, marginBottom: 8, padding: '6px 10px', background: 'rgba(232,184,0,.06)', border: '1px solid rgba(232,184,0,.2)' }}>
@@ -1359,6 +1380,18 @@ export default function Configure() {
             <span aria-hidden="true" style={{ fontSize: 14 }}>↓</span>
           </span>
         </button>
+      )}
+
+      {showR8Notice && (
+        <div role="presentation" onClick={() => setShowR8Notice(false)} style={{ position:'fixed',inset:0,zIndex:2100,display:'grid',placeItems:'center',padding:20,background:'rgba(0,0,0,.86)' }}>
+          <section ref={r8NoticeRef} tabIndex={-1} role="dialog" aria-modal="true" aria-labelledby="r8-notice-title" onClick={e => e.stopPropagation()} style={{ width:520,maxWidth:'100%',padding:30,background:'#121315',border:'1px solid var(--y)',boxShadow:'0 24px 80px #000' }}>
+            <div className="auth-eyebrow">R8 BUTTON COMPATIBILITY</div>
+            <h2 id="r8-notice-title" style={{ margin:'0 0 14px',fontFamily:'Barlow Condensed, sans-serif',fontSize:32 }}>Before you add Start/Stop &amp; Drive Select</h2>
+            <p style={{ color:'var(--t)',lineHeight:1.65 }}>Button functionality depends on the features already equipped in your vehicle. Your car must already have a factory Drive Select function for the steering-wheel Drive Select button to work.</p>
+            <p style={{ color:'var(--t)',lineHeight:1.65 }}>This option also requires additional installation steps and may require professional wiring or coding. Confirm compatibility with your installer before ordering.</p>
+            <div style={{ display:'flex',gap:10,marginTop:22,flexWrap:'wrap' }}><button className="btn" onClick={() => setShowR8Notice(false)}>I UNDERSTAND</button><button className="btn-outline sm" onClick={() => { set('startStopButtons', false); setShowR8Notice(false); }}>REMOVE OPTION</button></div>
+          </section>
+        </div>
       )}
 
       {/* Review overlay */}

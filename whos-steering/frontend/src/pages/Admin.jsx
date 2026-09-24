@@ -5,6 +5,8 @@ import { useDialog } from '../components/Experience';
 import { useAuth } from '../context';
 import { apiFetch } from '../lib/api';
 import { useNavigate } from 'react-router-dom';
+import { motion } from 'motion/react';
+import BuildPipelineChart from '../components/BuildPipelineChart';
 import { colorName, STRIPE_CONCEPTS, STITCH_COLORS, CLASSIC_CARBON_COLORS, FORGED_CARBON_COLORS, HONEYCOMB_CARBON_COLORS } from '../lib/data';
 import './Admin.css';
 const STATUS_COLORS = {
@@ -18,6 +20,7 @@ const STATUS_COLORS = {
   cancelled: '#CC3300',
   refunded: '#6A1FA8'
 };
+
 const ALL_STATUSES = ['pending', 'payment_processing', 'paid', 'in_build', 'quality_check', 'shipped', 'delivered', 'cancelled', 'refunded'];
 function adminText(value) {
   return typeof value === 'string' ? value.trim() : '';
@@ -70,6 +73,10 @@ function ConfigDetail({
   } else {
     // Legacy orders created before config_json was added.
     rows = [['Brand', config.brand], ['Vehicle', [config.vehicle_year, config.brand, config.vehicle_model].filter(Boolean).join(' ') || '—'], ['Wheel Style', config.wheel_style], ['Paddle Shifters', config.paddle_shifters], ['Top/Bottom Mat', config.top_bottom_mat], ['Top/Bottom Color', config.top_bottom_col || '—'], ['Side Material', config.side_mat], ['Side Color', config.side_col || '—'], ['Stripe', config.stripe_mode || '—'], ['Airbag Cover', config.airbag_compat ? '✓ Yes' : '✗ No'], ['Heated', config.heated ? '✓ Yes' : '✗ No'], ['Lane Assist', config.lane_assist ? '✓ Yes' : '✗ No'], config.audi_badge ? ['Audi Badge', config.audi_badge] : null, config.outer_trim_col ? ['Outer Trim', config.outer_trim_col] : null, config.inner_trim_col ? ['Inner Trim', config.inner_trim_col] : null].filter(Boolean);
+  }
+  if (snapshot?.brand === 'AUDI' && snapshot.wheelStyleType === 'B9' && snapshot.paddleShifters === 'Standard') {
+    const paddleIndex = rows.findIndex(([label]) => label === 'Paddle Shifters');
+    rows.splice(paddleIndex < 0 ? rows.length : paddleIndex + 1, 0, ['Paddle Finish', snapshot.paddleFinish || 'Normal']);
   }
   return <div className="admin-config-grid" style={{
     display: 'grid',
@@ -562,9 +569,9 @@ export default function AdminDashboard() {
             minimumFractionDigits: 2
           })}`], [`Last ${statsDays} days`, `$${Number(stats.revenue_period || 0).toLocaleString('en-US', {
             minimumFractionDigits: 2
-          })}`]].map(([label, value], i) => <article key={label} style={{
+          })}`]].map(([label, value], i) => <motion.article key={label} initial={{ opacity:0, y:14 }} animate={{ opacity:1, y:0 }} whileHover={{ y:-3 }} style={{
             animationDelay: `${i * 45}ms`
-          }}><span>{label}</span><strong>{value}</strong><div className="stat-line" /></article>)}</div></>}
+          }}><span>{label}</span><strong>{value}</strong><div className="stat-line" /></motion.article>)}</div><BuildPipelineChart stats={stats} onSelect={status => { setFilter(status); setSearch(''); setPage(1); setSection('orders'); }} /></>}
     {section === 'overview' && <div className="dashboard-quick"><div><h2>Keep every build moving.</h2><p>Review specifications, update production, and add tracking in one place.</p></div><button className="btn" onClick={() => setSection('orders')}>Manage orders →</button><button className="btn-outline" onClick={() => setSection('payments')}>Payments & refunds ↗</button></div>}
     <div className="dashboard-toolbar"><label><span>Find an order</span><input className="fi" value={search} placeholder="Order number or customer email" onChange={e => {
               setSearch(e.target.value);

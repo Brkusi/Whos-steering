@@ -126,7 +126,7 @@ export const TRIS = {
 
 export const DEFAULT_CONFIG = {
   brand: 'BMW', vehicleYear: '', vehicleModel: '',
-  wheelStyle: 'Standard', paddleShifters: 'Standard', paddleLength: 'Short',
+  wheelStyle: 'Standard', paddleShifters: 'Standard', paddleLength: 'Short', paddleFinish: 'Normal',
   topBottomMat: 'Smooth Leather', topBottomCol: null, topBottomCarbonCol: null, topBottomCustomColor: '',
   wheelStyleType: 'B9',
   startStopButtons: false,
