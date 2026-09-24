@@ -290,3 +290,5 @@
   .track-progress__step { flex-basis: 125px; min-height: 58px; }
   .tracking-box__row { align-items: flex-start; flex-direction: column; }
 }
+.track-account-orders { max-width:520px;margin:24px 0; }
+.track-account-orders label { display:block;margin-bottom:8px;color:var(--y);font-size:11px;font-weight:800;letter-spacing:.14em; }

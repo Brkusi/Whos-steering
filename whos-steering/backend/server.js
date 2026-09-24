@@ -1,4 +1,7 @@
 require('dotenv').config();
+if (!process.env.JWT_SECRET || process.env.JWT_SECRET.length < 32) {
+  throw new Error('JWT_SECRET must be configured with at least 32 characters');
+}
 const express = require('express');
 const cors    = require('cors');
 const helmet  = require('helmet');
@@ -107,6 +110,7 @@ app.use(require('./lib/security').sanitizeRequestBody);
 // ── Rate limiting ─────────────────────────────────────────────
 app.use('/api/',      rateLimit({ windowMs: 15 * 60 * 1000, max: 300 }));
 app.use('/api/auth/', rateLimit({ windowMs: 15 * 60 * 1000, max: 20  }));
+app.use('/api/auth/password-reset', rateLimit({ windowMs: 60 * 60 * 1000, max: 8, standardHeaders: true, legacyHeaders: false }));
 // Public tracking lookups require email + order number. Keep this endpoint
 // tighter than the general API to discourage automated guessing.
 app.use('/api/orders/track', rateLimit({ windowMs: 15 * 60 * 1000, max: 30 }));
@@ -129,7 +133,8 @@ app.use((err, req, res, next) => {
   console.error(err);
   if (err.code === 'LIMIT_FILE_SIZE') return res.status(413).json({ error: 'Image must be 10 MB or smaller' });
   if (err.code === 'LIMIT_UNEXPECTED_FILE') return res.status(400).json({ error: 'Expected one image in the photo field' });
-  res.status(err.status || 500).json({ error: err.message || 'Internal server error' });
+  const status = Number.isInteger(err.status) && err.status >= 400 && err.status <= 599 ? err.status : 500;
+  res.status(status).json({ error: status >= 500 ? 'Internal server error' : (err.message || 'Request failed') });
 });
 
 const PORT = process.env.PORT || 3001;

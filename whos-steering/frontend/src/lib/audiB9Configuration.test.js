@@ -1,5 +1,6 @@
 import { audiB9Configuration, audiB9Parts } from './audiB9Configuration';
 import { DEFAULT_CONFIG, COLORS, TOP_BOTTOM_MATS, SIDE_MATS, STRIPE_CONCEPTS } from './data';
+import { calcPrice } from './api';
 const parse=value=>/^#[a-f\d]{6}$/i.test(value)?value:null;
 const configure=changes=>audiB9Configuration({...DEFAULT_CONFIG,brand:'AUDI',...changes},parse);
 
@@ -41,4 +42,20 @@ test('restored carbon/custom selections keep precedence and do not alter pricing
 test('RS and S use source meshes and retired B9 R8 selections resolve to RS',()=>{
   expect(audiB9Parts(configure({audiBadge:'RS'})).badge).toBe(22);expect(audiB9Parts(configure({audiBadge:'S'})).badge).toBe(23);
   const r8=audiB9Parts(configure({audiBadge:'R8'}));expect(r8.visible.has(22)).toBe(true);expect(r8.visible.has(23)).toBe(false);
+});
+
+test('standard finishes default safely for saved builds, and keep the included price',()=>{
+  expect(configure({paddleFinish:undefined}).paddleFinish).toBe('Normal');
+  expect(configure({paddleFinish:'retired'}).paddleFinish).toBe('Normal');
+  for (const paddleFinish of ['Normal', 'Stealth']) {
+    const config = {...DEFAULT_CONFIG, brand:'AUDI', wheelStyleType:'B9', paddleFinish};
+    const restored = JSON.parse(JSON.stringify(config));
+    const appearance = audiB9Configuration(restored, parse);
+    expect(appearance.standardPaddles).toBe(true);
+    expect(appearance.magnetic).toBe(false);
+    expect(appearance.paddleFinish).toBe(paddleFinish);
+    expect(calcPrice(restored, {})).toBe(calcPrice({...restored, paddleFinish:'Normal'}, {}));
+    expect(calcPrice({...restored, paddleShifters:'Magnetic'}, {})).toBe(calcPrice(restored, {}) + 25);
+  }
+  expect(configure({paddleShifters:'Magnetic',paddleFinish:'Stealth'}).standardPaddles).toBe(false);
 });

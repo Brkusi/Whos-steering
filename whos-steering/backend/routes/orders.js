@@ -187,6 +187,10 @@ router.get('/admin/stats', adminRequired, async (req, res) => {
         COUNT(*) FILTER (WHERE status IN ('paid','in_build','quality_check','shipped','delivered')) AS paid,
         COUNT(*) FILTER (WHERE status IN ('in_build','quality_check','shipped','delivered')) AS in_build,
         COUNT(*) FILTER (WHERE status IN ('shipped','delivered')) AS shipped,
+        COUNT(*) FILTER (WHERE status = 'paid') AS awaiting_build,
+        COUNT(*) FILTER (WHERE status = 'in_build') AS building_now,
+        COUNT(*) FILTER (WHERE status = 'quality_check') AS quality_now,
+        COUNT(*) FILTER (WHERE status = 'shipped') AS in_transit,
         (SELECT COALESCE(SUM(GREATEST(p.amount-COALESCE(p.refunded_amount,0),0)),0)
            FROM payments p
            JOIN orders paid_order ON paid_order.id=p.order_id
@@ -243,9 +247,8 @@ router.post('/:id/cancel', authRequired, async (req, res) => {
 
     const order = rows[0];
 
-    const ownsOrder =
-      order.customer_id === req.user.id ||
-      order.guest_email === req.user.email;
+    // Registration does not verify email ownership; an email match is not authorization.
+    const ownsOrder = order.customer_id === req.user.id;
 
     if (!ownsOrder && !req.user.is_admin && !req.user.isAdmin) {
       await client.query('ROLLBACK');
@@ -393,7 +396,7 @@ router.get('/:id', authRequired, async (req, res) => {
     );
     if (!rows.length) return res.status(404).json({ error: 'Order not found' });
     const order = rows[0];
-    if (!req.user.isAdmin && !req.user.is_admin && order.customer_id !== req.user.id && order.guest_email !== req.user.email) {
+    if (!req.user.isAdmin && !req.user.is_admin && order.customer_id !== req.user.id) {
       return res.status(403).json({ error: 'Access denied' });
     }
     res.json(order);
