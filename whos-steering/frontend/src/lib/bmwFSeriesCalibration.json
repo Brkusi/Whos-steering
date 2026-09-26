@@ -1,0 +1,236 @@
+{
+  "round-side-alcantara": {
+    "dMax": 1.93511,
+    "sMax": 0.18628,
+    "sRef": 0.25984,
+    "dHi": 1.72396,
+    "sHi": 0.09614,
+    "gloss": 1,
+    "albedoHex": "#3b7c52"
+  },
+  "round-side-perforated": {
+    "dMax": 1.66193,
+    "sMax": 0.14784,
+    "sRef": 0.19454,
+    "dHi": 1.4469,
+    "sHi": 0.10671,
+    "gloss": 1,
+    "albedoHex": "#3d674e"
+  },
+  "round-side-smooth": {
+    "dMax": 1.30006,
+    "sMax": 0.2671,
+    "sRef": 0.27769,
+    "dHi": 1.16401,
+    "sHi": 0.14055,
+    "gloss": 0.6,
+    "albedoHex": "#2f7050"
+  },
+  "round-tb-alcantara": {
+    "dMax": 1.49246,
+    "sMax": 0.16613,
+    "sRef": 0.1963,
+    "dHi": 1.35093,
+    "sHi": 0.05327,
+    "gloss": 1,
+    "albedoHex": "#298052"
+  },
+  "round-tb-perforated": {
+    "dMax": 1.27249,
+    "sMax": 0.51621,
+    "sRef": 0.50074,
+    "dHi": 1.16723,
+    "sHi": 0.10513,
+    "gloss": 1,
+    "albedoHex": "#2b7851"
+  },
+  "round-tb-smooth": {
+    "dMax": 1.24231,
+    "sMax": 0.39917,
+    "sRef": 0.39465,
+    "dHi": 1.16938,
+    "sHi": 0.11568,
+    "gloss": 0.6,
+    "albedoHex": "#1b8152"
+  },
+  "flat-flat-side-alcantara": {
+    "dMax": 1.60501,
+    "sMax": 0.14123,
+    "sRef": 0.32707,
+    "dHi": 1.39128,
+    "sHi": 0.05711,
+    "gloss": 1,
+    "albedoHex": "#29744c"
+  },
+  "flat-flat-side-perforated": {
+    "dMax": 1.59732,
+    "sMax": 0.19788,
+    "sRef": 0.24345,
+    "dHi": 1.42052,
+    "sHi": 0.10329,
+    "gloss": 1,
+    "albedoHex": "#307e4e"
+  },
+  "flat-flat-side-smooth": {
+    "dMax": 1.22801,
+    "sMax": 0.33601,
+    "sRef": 0.39592,
+    "dHi": 1.16914,
+    "sHi": 0.09315,
+    "gloss": 0.6,
+    "albedoHex": "#059d4a"
+  },
+  "flat-flat-tb-alcantara": {
+    "dMax": 1.39476,
+    "sMax": 0.18128,
+    "sRef": 0.21191,
+    "dHi": 1.28909,
+    "sHi": 0.08244,
+    "gloss": 1,
+    "albedoHex": "#288251"
+  },
+  "flat-flat-tb-perforated": {
+    "dMax": 1.35574,
+    "sMax": 0.29404,
+    "sRef": 0.27092,
+    "dHi": 1.23476,
+    "sHi": 0.12532,
+    "gloss": 1,
+    "albedoHex": "#139551"
+  },
+  "flat-flat-tb-smooth": {
+    "dMax": 1.19927,
+    "sMax": 0.19803,
+    "sRef": 0.25006,
+    "dHi": 1.14705,
+    "sHi": 0.16935,
+    "gloss": 0.6,
+    "albedoHex": "#0a8e53"
+  },
+  "flat-round-side-alcantara": {
+    "dMax": 1.65958,
+    "sMax": 0.1814,
+    "sRef": 0.20354,
+    "dHi": 1.48313,
+    "sHi": 0.07678,
+    "gloss": 1,
+    "albedoHex": "#297850"
+  },
+  "flat-round-side-perforated": {
+    "dMax": 1.86603,
+    "sMax": 0.36951,
+    "sRef": 0.33016,
+    "dHi": 1.53771,
+    "sHi": 0.11598,
+    "gloss": 1,
+    "albedoHex": "#3f5f4e"
+  },
+  "flat-round-side-smooth": {
+    "dMax": 1.44294,
+    "sMax": 0.23704,
+    "sRef": 0.278,
+    "dHi": 1.24478,
+    "sHi": 0.14638,
+    "gloss": 0.6,
+    "albedoHex": "#2e6c4e"
+  },
+  "flat-round-tb-alcantara": {
+    "dMax": 1.28425,
+    "sMax": 0.16591,
+    "sRef": 0.27331,
+    "dHi": 1.14039,
+    "sHi": 0.04261,
+    "gloss": 1,
+    "albedoHex": "#276b4d"
+  },
+  "flat-round-tb-perforated": {
+    "dMax": 1.36136,
+    "sMax": 0.17414,
+    "sRef": 0.22513,
+    "dHi": 1.21747,
+    "sHi": 0.09689,
+    "gloss": 1,
+    "albedoHex": "#3b6d51"
+  },
+  "flat-round-tb-smooth": {
+    "dMax": 1.17886,
+    "sMax": 0.18684,
+    "sRef": 0.17137,
+    "dHi": 1.10195,
+    "sHi": 0.10731,
+    "gloss": 0.6,
+    "albedoHex": "#277253"
+  },
+  "yoke-side-alcantara": {
+    "dMax": 1.94727,
+    "sMax": 0.35669,
+    "sRef": 0.19454,
+    "dHi": 1.68272,
+    "sHi": 0.13328,
+    "gloss": 1,
+    "albedoHex": "#327050"
+  },
+  "yoke-side-perforated": {
+    "dMax": 1.7074,
+    "sMax": 0.39528,
+    "sRef": 0.24789,
+    "dHi": 1.46,
+    "sHi": 0.15866,
+    "gloss": 1,
+    "albedoHex": "#3c654c"
+  },
+  "yoke-side-smooth": {
+    "dMax": 1.60522,
+    "sMax": 0.38184,
+    "sRef": 0.3184,
+    "dHi": 1.31687,
+    "sHi": 0.18921,
+    "gloss": 0.6,
+    "albedoHex": "#2d7353"
+  },
+  "yoke-bottom-alcantara": {
+    "dMax": 1.17132,
+    "sMax": 0.02255,
+    "sRef": 0.08465,
+    "dHi": 0.98416,
+    "sHi": 0.01156,
+    "gloss": 1,
+    "albedoHex": "#315a42"
+  },
+  "yoke-bottom-perforated": {
+    "dMax": 1.36824,
+    "sMax": 0.08492,
+    "sRef": 0.05763,
+    "dHi": 1.12836,
+    "sHi": 0.04994,
+    "gloss": 1,
+    "albedoHex": "#40594b"
+  },
+  "yoke-bottom-smooth": {
+    "dMax": 1.10261,
+    "sMax": 0.11392,
+    "sRef": 0.11158,
+    "dHi": 1.02591,
+    "sHi": 0.05474,
+    "gloss": 0.6,
+    "albedoHex": "#2a6b4c"
+  },
+  "airbag-alcantara": {
+    "dMax": 1.49477,
+    "sMax": 0.63502,
+    "sRef": 0.59655,
+    "dHi": 1.27802,
+    "sHi": 0.04811,
+    "gloss": 1,
+    "albedoHex": "#38614c"
+  },
+  "airbag-smooth": {
+    "dMax": 2.3764,
+    "sMax": 0.88029,
+    "sRef": 0.59708,
+    "dHi": 1.31945,
+    "sHi": 0.21223,
+    "gloss": 0.6,
+    "albedoHex": "#37614d"
+  }
+}

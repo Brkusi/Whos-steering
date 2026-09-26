@@ -477,7 +477,9 @@ async function calcServerPrice(cfg) {
   if (cfg.airbagUpgrade === true)    price += (rules.airbag_upgrade  || 75);
 
   // Magnetic paddle shifters: +$25 for all brands/styles
-  if (cfg.paddleShifters === 'Magnetic') price += (rules.paddle_magnetic || 25);
+  if (cfg.paddleShifters === 'Magnetic' || (isBmwFSeries && ['Glossy Carbon', 'Matte Carbon', 'Forged Carbon'].includes(cfg.paddleShifters))) price += (rules.paddle_magnetic || 25);
+
+  if (isBmwFSeries && ['Glossy Carbon','Matte Carbon','Forged Carbon'].includes(cfg.bmwLowerTrim)) price += (rules.bmw_lower_trim ?? 50);
 
   if (cfg.brand === 'BMW') {
     if (cfg.heated !== false)            price += (rules.heated_bmw      || 75);
