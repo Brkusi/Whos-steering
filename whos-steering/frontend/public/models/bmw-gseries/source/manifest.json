@@ -1,0 +1,326 @@
+[
+  {
+    "path": "round.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/bmw-g/round.webp",
+    "bytes": 113704,
+    "sha256": "22e3ba039299fcf49b833e5f790283a6fd6871d031cde85f4077bf66ae81369a"
+  },
+  {
+    "path": "grips/round-side-alcantara-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/bmw-g/grips/round-side-alcantara-map.webp",
+    "bytes": 785040,
+    "sha256": "6dabd4da491907d6dffd35c54bf08d6146b2a26a2816bb641d2dd8925f3d48d1"
+  },
+  {
+    "path": "grips/round-side-smooth-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/bmw-g/grips/round-side-smooth-map.webp",
+    "bytes": 585206,
+    "sha256": "4dc9d7718dc92241b8386e9dd91db47fd8ffdf0a6e1622a6f88b88c311af509f"
+  },
+  {
+    "path": "grips/round-side-perforated-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/bmw-g/grips/round-side-perforated-map.webp",
+    "bytes": 753890,
+    "sha256": "18b47d999dfc97c7e55f39667e08a7ae1c2f88a17209f106ab3889e54ebe28ba"
+  },
+  {
+    "path": "grips/round-tb-alcantara-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/bmw-g/grips/round-tb-alcantara-map.webp",
+    "bytes": 562700,
+    "sha256": "8d4b97a87dc3c02aa9aa00b7b9e44ee1ee8cae5dc57509a96e8b85868d8bb5be"
+  },
+  {
+    "path": "grips/round-tb-smooth-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/bmw-g/grips/round-tb-smooth-map.webp",
+    "bytes": 553972,
+    "sha256": "d96abcd79884e7f8ee5572cc78352fdc18e7460ef1b9a30cbde703c213b42897"
+  },
+  {
+    "path": "grips/round-tb-perforated-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/bmw-g/grips/round-tb-perforated-map.webp",
+    "bytes": 582894,
+    "sha256": "8a89d2d77b798a9c7f6883fcc36e6b501cd66026092e6686e1010f78298f8bad"
+  },
+  {
+    "path": "cf/round-glossy.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/bmw-g/cf/round-glossy.webp",
+    "bytes": 100942,
+    "sha256": "09512d9190eb931511eaa96d70264bf783090e03d1dbeebdb045d207656f785e"
+  },
+  {
+    "path": "cf/round-matte.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/bmw-g/cf/round-matte.webp",
+    "bytes": 77642,
+    "sha256": "e77344dc5a564fbbe4251cacce5aaa4466cd62663ac19d0832ce751b8bda00cd"
+  },
+  {
+    "path": "cf/round-forged.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/bmw-g/cf/round-forged.webp",
+    "bytes": 91110,
+    "sha256": "ee063c319d7fe397596459200a80b756489351b62ca8573a61c82e61de639331"
+  },
+  {
+    "path": "marker/round.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/bmw-g/marker/round.webp",
+    "bytes": 9470,
+    "sha256": "a0f45eacb5a34081231cc72fbb43b7714e392beff0d29a3c3aebac722a2e9525"
+  },
+  {
+    "path": "yoke.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/bmw-g/yoke.webp",
+    "bytes": 106924,
+    "sha256": "8c769c16abefb5ceba7298e34504309de81d69683a92540ea3973c1bf4109bbc"
+  },
+  {
+    "path": "grips/yoke-side-alcantara-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/bmw-g/grips/yoke-side-alcantara-map.webp",
+    "bytes": 813926,
+    "sha256": "6d33d5d2953a074c5d8a719e805bb36187bae87b20c8d177feed0ddd500f6ab8"
+  },
+  {
+    "path": "grips/yoke-side-smooth-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/bmw-g/grips/yoke-side-smooth-map.webp",
+    "bytes": 745898,
+    "sha256": "6b5dd2628db532b925f39b5d0ef524386e00cef5d56c5a33d4a63c3f4f09278f"
+  },
+  {
+    "path": "grips/yoke-side-perforated-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/bmw-g/grips/yoke-side-perforated-map.webp",
+    "bytes": 889168,
+    "sha256": "44cb8ac75b922162cef11475f692c9dbe6890f453435ab4b2d72a53d369de336"
+  },
+  {
+    "path": "grips/yoke-bottom-alcantara-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/bmw-g/grips/yoke-bottom-alcantara-map.webp",
+    "bytes": 314856,
+    "sha256": "bb8c23edf034e55841e76b5a1e8ad0efc180ad088583fda72d9fd821dd956c12"
+  },
+  {
+    "path": "grips/yoke-bottom-smooth-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/bmw-g/grips/yoke-bottom-smooth-map.webp",
+    "bytes": 251672,
+    "sha256": "137aab7e786c777eed16299e4faca69496b779d49c6b7085f1f4649f6d0689d0"
+  },
+  {
+    "path": "grips/yoke-bottom-perforated-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/bmw-g/grips/yoke-bottom-perforated-map.webp",
+    "bytes": 312782,
+    "sha256": "e964707a0259069a7ed3a9b4a1f3958e082f27b8387598eb9ea29c9be01923c7"
+  },
+  {
+    "path": "cf/yoke-glossy.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/bmw-g/cf/yoke-glossy.webp",
+    "bytes": 49848,
+    "sha256": "ff63ff6f208dbeba61e0bf8239d3bb4dff4d227412a198d145554ecef247d9ad"
+  },
+  {
+    "path": "cf/yoke-matte.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/bmw-g/cf/yoke-matte.webp",
+    "bytes": 42676,
+    "sha256": "a393c490ed9d0e71cbc8d766d36f1da61ef40427992c8a3bbdde2851dc3b349b"
+  },
+  {
+    "path": "cf/yoke-forged.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/bmw-g/cf/yoke-forged.webp",
+    "bytes": 45888,
+    "sha256": "a62355a25fa877737031d269e0b25807cff74a9444e101f6074d71ef92b72c9d"
+  },
+  {
+    "path": "flat-flat.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/bmw-g/flat-flat.webp",
+    "bytes": 115160,
+    "sha256": "504dac33e90aa54085a69757113e438f6958f99066a287eb3f322e8dbe4410fa"
+  },
+  {
+    "path": "grips/flat-flat-side-alcantara-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/bmw-g/grips/flat-flat-side-alcantara-map.webp",
+    "bytes": 675154,
+    "sha256": "b731e4c6acad734d6b165fe80d584d262cfc049b186be6f9490e67a8b9ced893"
+  },
+  {
+    "path": "grips/flat-flat-side-smooth-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/bmw-g/grips/flat-flat-side-smooth-map.webp",
+    "bytes": 514164,
+    "sha256": "aa933a32a25381325da2dc170cc72e3465f262b4ee5bb5265235839eb1d449b9"
+  },
+  {
+    "path": "grips/flat-flat-side-perforated-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/bmw-g/grips/flat-flat-side-perforated-map.webp",
+    "bytes": 522548,
+    "sha256": "690b97f7b89ccbb19fc06c9a30d78ebdf8164673e626244bf466916fd8d387a3"
+  },
+  {
+    "path": "grips/flat-flat-tb-alcantara-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/bmw-g/grips/flat-flat-tb-alcantara-map.webp",
+    "bytes": 922304,
+    "sha256": "617dcd72c5ccc650cf625b17a235cece89a9232c6c038a7bebc0bea1b4b68346"
+  },
+  {
+    "path": "grips/flat-flat-tb-smooth-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/bmw-g/grips/flat-flat-tb-smooth-map.webp",
+    "bytes": 586612,
+    "sha256": "ba193c35d5c4275dcf6038441c57fbd946bc0e95bf7d8dea23f2fa056622383c"
+  },
+  {
+    "path": "grips/flat-flat-tb-perforated-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/bmw-g/grips/flat-flat-tb-perforated-map.webp",
+    "bytes": 686876,
+    "sha256": "5939748e6e76d94d4a9efbf57425b071e5605db55a916f6ebfc8eacd33eaa896"
+  },
+  {
+    "path": "cf/flat-flat-glossy.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/bmw-g/cf/flat-flat-glossy.webp",
+    "bytes": 113072,
+    "sha256": "05c10dae2a1636998d9b7c1094bdfff0f7cc56e7043ac41276d0a6362e54d658"
+  },
+  {
+    "path": "cf/flat-flat-matte.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/bmw-g/cf/flat-flat-matte.webp",
+    "bytes": 88582,
+    "sha256": "8cd6a4288fab541b5ea4eb4760f6f9b66111689dc42d7dec317df1a1cccc74f9"
+  },
+  {
+    "path": "cf/flat-flat-forged.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/bmw-g/cf/flat-flat-forged.webp",
+    "bytes": 105256,
+    "sha256": "9cdf883daab6dcf7001fa1f818cd9e4c1ee125e3d9fa8db2a4ab0b498e72d8a5"
+  },
+  {
+    "path": "marker/flat-flat.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/bmw-g/marker/flat-flat.webp",
+    "bytes": 10256,
+    "sha256": "ebc651e2cc84ad56090a70c16a2fdd873f4c622416fa5280a08509df3fbcee1e"
+  },
+  {
+    "path": "flat-round.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/bmw-g/flat-round.webp",
+    "bytes": 152398,
+    "sha256": "57be0b8acbe5a4bdbeb17a51b6355e914ba378c79a8b8781cacd599340a6b7a9"
+  },
+  {
+    "path": "grips/flat-round-side-alcantara-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/bmw-g/grips/flat-round-side-alcantara-map.webp",
+    "bytes": 519300,
+    "sha256": "50aaac34cca62250c32d00fff8103412e551b5b267c9dbcbf4ba877f0f7cb0ba"
+  },
+  {
+    "path": "grips/flat-round-side-smooth-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/bmw-g/grips/flat-round-side-smooth-map.webp",
+    "bytes": 414886,
+    "sha256": "708745d04e50202dc919382695ae01914c8d83f84384a2186c2fbb11c885d04c"
+  },
+  {
+    "path": "grips/flat-round-side-perforated-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/bmw-g/grips/flat-round-side-perforated-map.webp",
+    "bytes": 528558,
+    "sha256": "5d3c20cf19237423f86855c6c864273a5ceac7699558232b5e8e78c22f37cb3e"
+  },
+  {
+    "path": "grips/flat-round-tb-alcantara-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/bmw-g/grips/flat-round-tb-alcantara-map.webp",
+    "bytes": 850704,
+    "sha256": "faa9ddb6b499c161d8e9f0df1cbb6b66e90f6422dc7624dda7a25ad0611b54de"
+  },
+  {
+    "path": "grips/flat-round-tb-smooth-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/bmw-g/grips/flat-round-tb-smooth-map.webp",
+    "bytes": 734884,
+    "sha256": "3e807829e97ca184e2d17bb76b8c01bfacb645b85ed1b817f87732204ec36916"
+  },
+  {
+    "path": "grips/flat-round-tb-perforated-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/bmw-g/grips/flat-round-tb-perforated-map.webp",
+    "bytes": 715824,
+    "sha256": "7adf8ff1da4bfc219a1d36228e321a1c505cd95e05c172af373899e659fe4e6e"
+  },
+  {
+    "path": "cf/flat-round-glossy.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/bmw-g/cf/flat-round-glossy.webp",
+    "bytes": 97204,
+    "sha256": "774e4510cf5cf62eacde823286c53f820a6eb079bed41fa345d29ff117493157"
+  },
+  {
+    "path": "cf/flat-round-matte.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/bmw-g/cf/flat-round-matte.webp",
+    "bytes": 70820,
+    "sha256": "0b8d0aae0e7bc2cb3e8a496ee692de1e79833ae83c5ccb547cbe9a701c3aa737"
+  },
+  {
+    "path": "cf/flat-round-forged.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/bmw-g/cf/flat-round-forged.webp",
+    "bytes": 82652,
+    "sha256": "ca1dab145af4870325e6d9f5549dea092c64bc0a962e7bb61cae81ec5ecb2c71"
+  },
+  {
+    "path": "marker/flat-round.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/bmw-g/marker/flat-round.webp",
+    "bytes": 9462,
+    "sha256": "a5aca7082f40cf70d76b0b8d4d9fea11f5eb4755b424497b11afd8171927e8a3"
+  },
+  {
+    "path": "paddles/glossy.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/bmw-g/paddles/glossy.webp",
+    "bytes": 41910,
+    "sha256": "a9286ec4654d080910d828e286b96b7294afd0e070f5f2dad50e0fa75a77dff3"
+  },
+  {
+    "path": "paddles/matte.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/bmw-g/paddles/matte.webp",
+    "bytes": 40444,
+    "sha256": "2a841b329a0a5af4bcb75ae386208d2915a92e6f44477834b66d2ae0b4b7a7ce"
+  },
+  {
+    "path": "paddles/forged.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/bmw-g/paddles/forged.webp",
+    "bytes": 47666,
+    "sha256": "84b763ddafd7e203d32bc04af1f17f59801c0fdc98a520e6b3bce5bf1a844be4"
+  },
+  {
+    "path": "grips/airbag-smooth-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/bmw-g/grips/airbag-smooth-map.webp",
+    "bytes": 553048,
+    "sha256": "34898a20e7d0e43b342d718d657412de497e233fb48416a181eb36e5137a7dbf"
+  },
+  {
+    "path": "neutral/airbag-smooth-logo.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/bmw-g/neutral/airbag-smooth-logo.webp",
+    "bytes": 19306,
+    "sha256": "f8c6dfe69ee32822ac2dae0e70247770fcdbedaff52df0b655830bf787ce2d34"
+  },
+  {
+    "path": "grips/airbag-alcantara-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/bmw-g/grips/airbag-alcantara-map.webp",
+    "bytes": 594142,
+    "sha256": "e88ef5fda311eedefc5739e5263bfce7cb1b2277d1283be83cdce27ee07c36a8"
+  },
+  {
+    "path": "neutral/airbag-alcantara-logo.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/bmw-g/neutral/airbag-alcantara-logo.webp",
+    "bytes": 19306,
+    "sha256": "f8c6dfe69ee32822ac2dae0e70247770fcdbedaff52df0b655830bf787ce2d34"
+  },
+  {
+    "path": "led/flat-round.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/bmw-g/led/flat-round.webp",
+    "bytes": 37056,
+    "sha256": "7fb108b3c85a4ec8bcdb6a48453ab7b2cae8d729e1cf517913c6f9f1530dddb7"
+  },
+  {
+    "path": "trims/glossy.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/bmw-g/trims/glossy.webp",
+    "bytes": 182482,
+    "sha256": "220f0af48a426a85133cb75f925a131de6a358a141e83f3f113aa419e8c2e6e6"
+  },
+  {
+    "path": "trims/matte.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/bmw-g/trims/matte.webp",
+    "bytes": 173588,
+    "sha256": "9f48b819daafc797e74371cdb5a8f06661a009da906e13020312dd3d49748c0e"
+  },
+  {
+    "path": "trims/forged.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/bmw-g/trims/forged.webp",
+    "bytes": 196324,
+    "sha256": "dec19bfbf35869383ca60f3bfb0e34d2caceec7af47055fc1f1ca74caca13746"
+  }
+]

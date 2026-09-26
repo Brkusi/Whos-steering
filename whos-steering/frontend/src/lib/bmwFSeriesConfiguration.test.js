@@ -53,3 +53,15 @@ test('F-series paddle/trim pricing and rule overrides match the server',()=>{
   expect(calcPrice({...base,bmwLowerTrim:'Forged Carbon'},{bmw_lower_trim:60})).toBe(initial+60);
   expect(calcPrice({...base,wheelStyleType:'G-Series',paddleShifters:'Forged Carbon'})).toBe(549.99);
 });
+
+
+test('G-Series Pre LCI selects its own assets and keeps G-Series pricing',()=>{
+  const cfg={...base,wheelStyleType:'G-Series Pre LCI',bmwShape:'Flat bottom',paddleShifters:'Forged Carbon',bmwLowerTrim:'Glossy Carbon'};
+  expect(bmwFSeriesConfiguration(cfg,parse)).toMatchObject({family:'bmw-gseries',shape:'flat-round',paddle:'forged'});
+  expect(calcPrice(cfg)).toBe(549.99+25+50);
+  const directory=path.join(process.cwd(),'public/models/bmw-gseries/source');
+  const manifest=JSON.parse(fs.readFileSync(path.join(directory,'manifest.json'),'utf8'));
+  for(const asset of manifest)expect(crypto.createHash('sha256').update(fs.readFileSync(path.join(directory,asset.path))).digest('hex')).toBe(asset.sha256);
+  const calibration=require('./bmwGSeriesCalibration.json');
+  for(const shape of Object.values(F_SERIES_SHAPE_IDS))for(const zone of ['side',shape==='yoke'?'bottom':'tb'])for(const mat of ['smooth','perforated','alcantara'])expect(calibration[`${shape}-${zone}-${mat}`]).toBeDefined();
+});
