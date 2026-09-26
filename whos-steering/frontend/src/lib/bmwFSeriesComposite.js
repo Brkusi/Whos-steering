@@ -1,14 +1,17 @@
 import { carbonCoordinates } from './bmwFSeriesCarbonUV';
-import CALIBRATION from './bmwFSeriesCalibration.json';
+import F_CALIBRATION from './bmwFSeriesCalibration.json';
+import G_CALIBRATION from './bmwGSeriesCalibration.json';
 import { SourceMaterialRenderer } from './bmwFSeriesSourceRenderer';
 import { sourceMaterial } from './bmwFSeriesConfiguration';
 
-const ROOT = `${process.env.PUBLIC_URL || ''}/models/bmw-fseries`;
+
 const SIZE = 1024;
 const canvas = (size=SIZE) => {const c=document.createElement('canvas');c.width=c.height=size;return c;};
 const rgb = hex => [1,3,5].map(start=>parseInt(hex.slice(start,start+2),16));
 
-export function createFSeriesCompositor() {
+export function createFSeriesCompositor(family = 'bmw-fseries') {
+  const ROOT = `${process.env.PUBLIC_URL || ''}/models/${family}`;
+  const CALIBRATION = family === 'bmw-gseries' ? G_CALIBRATION : F_CALIBRATION;
   const assets=new Map(), layers=new Map(), materialRenderer=new SourceMaterialRenderer(12);
   let disposed=false;
   function image(path) {

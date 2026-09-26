@@ -1,4 +1,4 @@
-import { hasCarbonPaddles } from './bmwFSeriesConfiguration';
+import { hasCarbonPaddles, usesBmw2D } from './bmwFSeriesConfiguration';
 
 // ─── API helper ──────────────────────────────────────────────────────────────
 const BASE = process.env.REACT_APP_API_URL || '';
@@ -50,7 +50,7 @@ export function calcPrice(config, rules = {}) {
   // Magnetic paddle shifters: +$25 for all brands/styles
   if (config.paddleShifters === 'Magnetic' || hasCarbonPaddles(config)) price += (rules.paddle_magnetic ?? 25);
 
-  if (isBmwFSeries && ['Glossy Carbon','Matte Carbon','Forged Carbon'].includes(config.bmwLowerTrim)) price += (rules.bmw_lower_trim ?? 50);
+  if (usesBmw2D(config) && ['Glossy Carbon','Matte Carbon','Forged Carbon'].includes(config.bmwLowerTrim)) price += (rules.bmw_lower_trim ?? 50);
 
   // BMW-only add-ons
   if (config.brand === 'BMW') {

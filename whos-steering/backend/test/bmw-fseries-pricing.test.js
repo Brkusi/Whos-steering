@@ -25,3 +25,10 @@ test('server charges existing paddle upgrade for F-series carbon finishes only',
   assert.equal(await serverPrice([{rule_key:'bmw_lower_trim',amount:'60'}])({...base,bmwLowerTrim:'Forged Carbon'}),50999);
   assert.equal(await serverPrice()({...base,wheelStyleType:'G-Series',paddleShifters:'Forged Carbon'}),54999);
 });
+
+test('G-Series Pre LCI retains G pricing and charges source paddle/trim choices',async()=>{
+  const base={brand:'BMW',wheelStyleType:'G-Series Pre LCI',airbagCompat:false,heated:false,laneAssist:false};
+  assert.equal(await serverPrice()(base),54999);
+  assert.equal(await serverPrice()({...base,paddleShifters:'Forged Carbon',bmwLowerTrim:'Glossy Carbon'}),62499);
+  assert.equal(await serverPrice()({...base,airbagCompat:true}),57499);
+});

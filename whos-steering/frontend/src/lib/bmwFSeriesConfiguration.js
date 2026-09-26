@@ -5,7 +5,10 @@ export const F_SERIES_SHAPES = ['Round', 'Yoke', 'Flat top & bottom', 'Flat bott
 export const F_SERIES_SHAPE_IDS = {Round:'round', Yoke:'yoke', 'Flat top & bottom':'flat-flat', 'Flat bottom':'flat-round'};
 export const F_SERIES_PADDLES = ['Standard', 'None', 'Glossy Carbon', 'Matte Carbon', 'Forged Carbon'];
 export const isFSeries = cfg => cfg.brand === 'BMW' && cfg.wheelStyleType === 'F-Series';
-export const hasCarbonPaddles = cfg => isFSeries(cfg) && ['Glossy Carbon', 'Matte Carbon', 'Forged Carbon'].includes(cfg.paddleShifters);
+export const isGSeriesPreLCI = cfg => cfg.brand === 'BMW' && cfg.wheelStyleType === 'G-Series Pre LCI';
+export const usesBmw2D = cfg => isFSeries(cfg) || isGSeriesPreLCI(cfg);
+export const bmwAssetFamily = cfg => isGSeriesPreLCI(cfg) ? 'bmw-gseries' : 'bmw-fseries';
+export const hasCarbonPaddles = cfg => usesBmw2D(cfg) && ['Glossy Carbon', 'Matte Carbon', 'Forged Carbon'].includes(cfg.paddleShifters);
 export const sourceMaterial = material => ({'Smooth Leather':'smooth',Leather:'smooth',Alcantara:'alcantara','Perforated Leather':'perforated'}[material] || 'smooth');
 
 export function bmwFSeriesConfiguration(cfg, parseColor) {
@@ -17,6 +20,7 @@ export function bmwFSeriesConfiguration(cfg, parseColor) {
   const swatch = swatches.find(c => c.h.toLowerCase() === (cfg.topBottomCarbonCol || '').toLowerCase() || c.n === cfg.topBottomCarbonCol) || swatches[0];
   return {
     ...appearance, shape, paddle,
+    family: bmwAssetFamily(cfg),
     carbonSwatch: swatch.img,
     carbonCustomTint: !!cfg.topBottomCustomColor,
     topZone:shape==='yoke'?'bottom':'tb',

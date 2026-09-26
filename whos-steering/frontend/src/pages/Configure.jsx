@@ -9,7 +9,7 @@ import {
   CLASSIC_CARBON_COLORS, FORGED_CARBON_COLORS, HONEYCOMB_CARBON_COLORS,
   TOP_BOTTOM_MATS, SIDE_MATS, AIRBAG_MATS,
 } from '../lib/data';
-import { F_SERIES_SHAPES, F_SERIES_SHAPE_IDS, F_SERIES_PADDLES, isFSeries } from '../lib/bmwFSeriesConfiguration';
+import { F_SERIES_SHAPES, F_SERIES_SHAPE_IDS, F_SERIES_PADDLES, usesBmw2D, bmwAssetFamily } from '../lib/bmwFSeriesConfiguration';
 import { calcPrice, apiFetch } from '../lib/api';
 import { useCart } from '../context';
 
@@ -414,7 +414,7 @@ function ConfigProgress({ activeStep, onStep }) {
 }
 
 function currentWheelOptions(config) {
-  return {...config, ...(!isFSeries(config) && ['Matte Carbon','Perforated Leather'].includes(config.topBottomMat) ? {topBottomMat:config.topBottomMat === 'Matte Carbon' ? 'Classic Carbon' : 'Smooth Leather'} : {}), ...(isFSeries(config) && config.bmwShape === 'Yoke' ? {stripeConceptId:'C-1', stripeCustomColor:''} : {}), ...(isFSeries(config) && config.bmwShape !== 'Flat bottom' ? {ledDisplay:false} : {}), ...(isFSeries(config) && config.paddleShifters === 'Magnetic' ? {paddleShifters:'Glossy Carbon'} : {}), ...(!isFSeries(config) && !['Standard','Magnetic'].includes(config.paddleShifters) ? {paddleShifters:'Standard'} : {}), innerTrimMatchCarbon: false, audiBadge: config.audiBadge === 'R8' && config.wheelStyleType !== 'R8' ? 'RS' : config.audiBadge};
+  return {...config, ...(!usesBmw2D(config) && ['Matte Carbon','Perforated Leather'].includes(config.topBottomMat) ? {topBottomMat:config.topBottomMat === 'Matte Carbon' ? 'Classic Carbon' : 'Smooth Leather'} : {}), ...(usesBmw2D(config) && config.bmwShape === 'Yoke' ? {stripeConceptId:'C-1', stripeCustomColor:''} : {}), ...(usesBmw2D(config) && config.bmwShape !== 'Flat bottom' ? {ledDisplay:false} : {}), ...(usesBmw2D(config) && config.paddleShifters === 'Magnetic' ? {paddleShifters:'Glossy Carbon'} : {}), ...(!usesBmw2D(config) && !['Standard','Magnetic'].includes(config.paddleShifters) ? {paddleShifters:'Standard'} : {}), innerTrimMatchCarbon: false, audiBadge: config.audiBadge === 'R8' && config.wheelStyleType !== 'R8' ? 'RS' : config.audiBadge};
 }
 
 export default function Configure() {
@@ -501,7 +501,7 @@ export default function Configure() {
     if (!tracked.length || typeof IntersectionObserver === 'undefined') return;
 
     const isMobileViewport = viewportWidth < 980;
-    const hasPinnedPreview = isMobileViewport && ((cfg.brand === 'AUDI' && cfg.wheelStyleType === 'B9') || isFSeries(cfg));
+    const hasPinnedPreview = isMobileViewport && ((cfg.brand === 'AUDI' && cfg.wheelStyleType === 'B9') || usesBmw2D(cfg));
 
     const observer = new IntersectionObserver(
       () => {
@@ -609,7 +609,7 @@ export default function Configure() {
     if (!textValue(cfg.vehicleModel)) e.model = true;
     if (!photo && !cfg.photoUrl) e.photo = true;
 
-    const topMaterial = (isFSeries(cfg) ? F_SERIES_TOP_MATS : TOP_BOTTOM_MATS).find(m => m.n === cfg.topBottomMat);
+    const topMaterial = (usesBmw2D(cfg) ? F_SERIES_TOP_MATS : TOP_BOTTOM_MATS).find(m => m.n === cfg.topBottomMat);
     const topColorSelected = topMaterial?.carbon
       ? Boolean(cfg.topBottomCarbonCol || textValue(cfg.topBottomCustomColor))
       : Boolean(cfg.topBottomCol || textValue(cfg.topBottomCustomColor));
@@ -710,12 +710,12 @@ export default function Configure() {
       ['Stitch Color', configuredColor(cfg.stitchColor, cfg.stitchCustomColor, 'stitch')],
 
       !(cfg.brand === 'AUDI' && cfg.wheelStyleType === 'R8') &&
-      !(cfg.brand === 'BMW' && cfg.wheelStyleType === 'F-Series')
+      !usesBmw2D(cfg)
         ? ['Wheel Style', cfg.wheelStyle]
         : null,
 
-      isFSeries(cfg) ? ['Wheel Shape', cfg.bmwShape || 'Round'] : null,
-      isFSeries(cfg) ? ['Lower Trim', cfg.bmwLowerTrim || 'Original'] : null,
+      usesBmw2D(cfg) ? ['Wheel Shape', cfg.bmwShape || 'Round'] : null,
+      usesBmw2D(cfg) ? ['Lower Trim', cfg.bmwLowerTrim || 'Original'] : null,
       ['Paddle Shifters', cfg.paddleShifters],
       cfg.paddleShifters === 'Magnetic'
         ? ['Paddle Length', cfg.paddleLength || 'Short']
@@ -777,7 +777,7 @@ export default function Configure() {
   const isAudi = cfg.brand === 'AUDI';
   const isMobileViewport = viewportWidth < 980;
   const previewMediaMaxHeight = isMobileViewport ? 440 : 'none';
-  const mobile3D = isMobileViewport && ((isAudi && cfg.wheelStyleType === 'B9') || isFSeries(cfg));
+  const mobile3D = isMobileViewport && ((isAudi && cfg.wheelStyleType === 'B9') || usesBmw2D(cfg));
   // The document already contributes 140px of scroll padding.
   const mobilePreviewTop = viewportWidth < 780 ? 108 : 120;
   const stepScrollMargin = mobile3D ? mobilePreviewTop + 280 : isMobileViewport ? 205 : 88;
@@ -844,7 +844,7 @@ export default function Configure() {
                 }}
               />
             </div>
-          ) : !isAudi && cfg.wheelStyleType === 'F-Series' ? (
+          ) : usesBmw2D(cfg) ? (
             <Suspense fallback={<div style={{ padding: 40, textAlign: 'center' }} role="status">Loading wheel preview…</div>}>
               <FSeriesPreview config={cfg} />
             </Suspense>
@@ -921,7 +921,7 @@ export default function Configure() {
               BELOW the 120px site header, so desktop must stick at 0.
               Mobile scrolls in the page viewport, so it still needs 120px.
             */
-            top: mobile3D ? mobilePreviewTop + (isFSeries(cfg) ? 240 : 300) : isMobileViewport ? 120 : 0,
+            top: mobile3D ? mobilePreviewTop + (usesBmw2D(cfg) ? 240 : 300) : isMobileViewport ? 120 : 0,
 
             zIndex: 30,
             background: 'var(--d)',
@@ -990,20 +990,20 @@ export default function Configure() {
           <div ref={styleRef} data-step="style" style={{ scrollMarginTop: stepScrollMargin }}>
           {/* Wheel Style Type */}
           <Sect label="Wheel Style Type" value={cfg.wheelStyleType}>
-            <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
-              {(isAudi ? ['B9', 'R8'] : ['G-Series', 'F-Series']).map(style => (
+            <div style={{ display: 'grid', gridTemplateColumns: isMobileViewport ? '1fr' : 'repeat(2, minmax(0, 1fr))', gap: 8, marginBottom: 16 }}>
+              {(isAudi ? ['B9', 'R8'] : ['G-Series', 'G-Series Pre LCI', 'F-Series']).map(style => (
                 <div key={style} onClick={() => set('wheelStyleType', style)}
                   style={{ flex: 1, padding: '14px 12px', border: `2px solid ${cfg.wheelStyleType === style ? 'var(--y)' : 'var(--b)'}`, background: cfg.wheelStyleType === style ? 'rgba(232,184,0,.06)' : 'transparent', cursor: 'pointer', textAlign: 'center', transition: 'all .2s' }}>
                   <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 28, color: cfg.wheelStyleType === style ? 'var(--y)' : 'var(--w)', letterSpacing: .6 }}>{style} STYLE</div>
                   <div style={{ fontSize: 14, color: 'var(--t)', marginTop: 4 }}>
                     {isAudi
                       ? (style === 'B9' ? 'Classic flat-bottom sport profile' : 'R8 supercar-inspired round profile')
-                      : (style === 'G-Series' ? 'Modern G-chassis flat-bottom sport profile' : 'Classic F-chassis round profile')}
+                      : (style === 'G-Series Pre LCI' ? 'Pre LCI wheel with live shape and material preview' : style === 'G-Series' ? 'Modern G-chassis flat-bottom sport profile' : 'Classic F-chassis round profile')}
                   </div>
                   <div style={{ fontSize: 14, color: 'var(--y)', fontWeight: 700, marginTop: 6 }}>
                     {isAudi
                       ? (style === 'B9' ? 'From $699.99' : 'From $799.99')
-                      : (style === 'G-Series' ? 'From $549.99' : 'From $449.99')}
+                      : (style !== 'F-Series' ? 'From $549.99' : 'From $449.99')}
                   </div>
                 </div>
               ))}
@@ -1019,7 +1019,7 @@ export default function Configure() {
           </Sect>
 
           {/* LED / RPM Display Strip — both brands, price differs by brand */}
-          {(!isFSeries(cfg) || cfg.bmwShape === 'Flat bottom') && <Sect label={isAudi ? 'LED Display Strip' : 'RPM Gauge'}
+          {(!usesBmw2D(cfg) || cfg.bmwShape === 'Flat bottom') && <Sect label={isAudi ? 'LED Display Strip' : 'RPM Gauge'}
             value={cfg.ledDisplay ? `Yes · +$${isAudi ? '50' : '100'}` : 'No'}
             badge={cfg.ledDisplay ? 'ADDED' : undefined}>
             <Toggle
@@ -1042,7 +1042,7 @@ export default function Configure() {
           </Sect>}
 
           {/* Stripe */}
-          {!(isFSeries(cfg) && cfg.bmwShape === 'Yoke') && <Sect label="Top Stripe" value={selectedStripeConcept.label}>
+          {!(usesBmw2D(cfg) && cfg.bmwShape === 'Yoke') && <Sect label="Top Stripe" value={selectedStripeConcept.label}>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(72px,1fr))', gap: 10, marginBottom: 14 }}>
               {STRIPE_CONCEPTS.map(sc => (
                 <StripeConcept key={sc.id} concept={sc} selected={cfg.stripeConceptId} onSelect={v => set('stripeConceptId', v)} />
@@ -1059,16 +1059,16 @@ export default function Configure() {
           </Sect>
 
           {/* Wheel Style — hidden for R8 and F-Series */}
-          {!(isAudi && cfg.wheelStyleType === 'R8') && !(!isAudi && cfg.wheelStyleType === 'F-Series') && (
+          {!(isAudi && cfg.wheelStyleType === 'R8') && !usesBmw2D(cfg) && (
             <Sect label="Wheel Style" value={cfg.wheelStyle}>
               <OptionRow options={['Standard', 'Sport']} selected={cfg.wheelStyle} onSelect={v => set('wheelStyle', v)} />
             </Sect>
           )}
 
-          {isFSeries(cfg) && <Sect label="Wheel Shape" value={cfg.bmwShape || 'Round'}>
+          {usesBmw2D(cfg) && <Sect label="Wheel Shape" value={cfg.bmwShape || 'Round'}>
             <div className="fseries-shape-grid">
               {F_SERIES_SHAPES.map(shape => <button key={shape} type="button" className={`fseries-shape${(cfg.bmwShape || 'Round') === shape ? ' on' : ''}`} aria-pressed={(cfg.bmwShape || 'Round') === shape} onClick={() => set('bmwShape', shape)}>
-                <img src={`/models/bmw-fseries/source/${F_SERIES_SHAPE_IDS[shape]}.webp`} alt=""/><span>{shape}</span>
+                <img src={`/models/${bmwAssetFamily(cfg)}/source/${F_SERIES_SHAPE_IDS[shape]}.webp`} alt=""/><span>{shape}</span>
               </button>)}
             </div>
             {cfg.bmwShape === 'Yoke' && <p style={{color:'var(--t)',fontSize:13}}>The open top has no center stripe or RPM display.</p>}
@@ -1077,9 +1077,9 @@ export default function Configure() {
           {/* Paddles */}
           <Sect label="Paddle Shifters" value={cfg.paddleShifters + (cfg.paddleShifters === 'Magnetic' ? ` · ${cfg.paddleLength}` : '')}>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7 }}>
-              {(isFSeries(cfg) ? F_SERIES_PADDLES : ['Standard', 'Magnetic']).map(o => (
+              {(usesBmw2D(cfg) ? F_SERIES_PADDLES : ['Standard', 'Magnetic']).map(o => (
                 <button key={o} aria-pressed={cfg.paddleShifters === o} className={`ob${cfg.paddleShifters === o ? ' on' : ''}`} onClick={() => set('paddleShifters', o)}>
-                  {o === 'Standard' && isFSeries(cfg) ? 'Original paddles' : o === 'None' ? 'No paddles' : o}{o === 'Magnetic' || o.includes('Carbon') ? ' (+$25.00)' : ''}
+                  {o === 'Standard' && usesBmw2D(cfg) ? 'Original paddles' : o === 'None' ? 'No paddles' : o}{o === 'Magnetic' || o.includes('Carbon') ? ' (+$25.00)' : ''}
                 </button>
               ))}
             </div>
@@ -1102,7 +1102,7 @@ export default function Configure() {
           <MatSection label="Top & Bottom Grip Material"
             matKey="topBottomMat" colKey="topBottomCol"
             carbonColKey="topBottomCarbonCol" customColKey="topBottomCustomColor"
-            cfg={cfg} set={set} matsOverride={isFSeries(cfg) ? F_SERIES_TOP_MATS : TOP_BOTTOM_MATS}
+            cfg={cfg} set={set} matsOverride={usesBmw2D(cfg) ? F_SERIES_TOP_MATS : TOP_BOTTOM_MATS}
             colorError={errors.topBottomColor} />
 
           {/* Side Mat — restricted to match Top/Bottom carbon type when applicable */}
@@ -1110,10 +1110,10 @@ export default function Configure() {
             matKey="sideMat" colKey="sideCol"
             carbonColKey="sideCarbonCol" customColKey="sideCustomColor"
             cfg={cfg} set={set} matsOverride={SIDE_MATS}
-            linkedMat={isFSeries(cfg) ? undefined : TOP_BOTTOM_MATS.find(m => m.n === cfg.topBottomMat)}
+            linkedMat={usesBmw2D(cfg) ? undefined : TOP_BOTTOM_MATS.find(m => m.n === cfg.topBottomMat)}
             colorError={errors.sideColor} />
 
-          {isFSeries(cfg) && <Sect label="Lower Trim" value={cfg.bmwLowerTrim || 'Original'}>
+          {usesBmw2D(cfg) && <Sect label="Lower Trim" value={cfg.bmwLowerTrim || 'Original'}>
             <div style={{display:'flex',gap:7,flexWrap:'wrap'}}>
               {['Original','Glossy Carbon','Matte Carbon','Forged Carbon'].map(trim => <button key={trim} className={`ob${(cfg.bmwLowerTrim || 'Original') === trim ? ' on' : ''}`} aria-pressed={(cfg.bmwLowerTrim || 'Original') === trim} onClick={()=>set('bmwLowerTrim',trim)}>{trim}{trim !== 'Original' ? ' (+$50.00)' : ''}</button>)}
             </div>
