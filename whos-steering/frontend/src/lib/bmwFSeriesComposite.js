@@ -1,3 +1,4 @@
+import { carbonCoordinates } from './bmwFSeriesCarbonUV';
 import CALIBRATION from './bmwFSeriesCalibration.json';
 import { SourceMaterialRenderer } from './bmwFSeriesSourceRenderer';
 import { sourceMaterial } from './bmwFSeriesConfiguration';
@@ -26,10 +27,12 @@ export function createFSeriesCompositor() {
   async function carbon(a) {
     const type=a.top.material==='Forged Carbon'?'forged':a.top.material==='Matte Carbon'?'matte':'glossy';
     const key=JSON.stringify([a.shape,a.top]);if(layers.has(key))return layers.get(key);
-    const [mask,texture]=await Promise.all([source(`cf/${a.shape}-${type}`),image(a.top.material==='Honeycomb Carbon'?`${process.env.PUBLIC_URL || ''}/HoneyComb.jpeg`:`${ROOT}/${type==='forged'?'forged':'classic'}.webp`)]);
+    const [mask,texture]=await Promise.all([wrap(`${a.shape}-${a.topZone}-smooth`,'#ffffff','#ffffff'),image(a.top.material==='Honeycomb Carbon'?`${process.env.PUBLIC_URL || ''}/HoneyComb.jpeg`:`${ROOT}/${type==='forged'?'forged':'classic'}.webp`)]);
     const out=canvas(),ctx=out.getContext('2d',{willReadFrequently:true});ctx.drawImage(mask,0,0,SIZE,SIZE);
     const pixels=ctx.getImageData(0,0,SIZE,SIZE);
-    // Keep the exact source silhouette and highlights, replacing only the print.
+    // Use the original rim mask and lighting: carbon reference overlays can
+    // have different edges from the underlying wheel photograph.
+    const coordinates=carbonCoordinates(pixels.data,SIZE);
     const light=canvas(),lc=light.getContext('2d',{willReadFrequently:true});lc.filter='blur(3px)';lc.drawImage(mask,0,0,SIZE,SIZE);
     const lighting=lc.getImageData(0,0,SIZE,SIZE).data;
     const tile=canvas(512),tc=tile.getContext('2d',{willReadFrequently:true});tc.drawImage(texture,0,0,512,512);const pattern=tc.getImageData(0,0,512,512).data;
@@ -37,7 +40,8 @@ export function createFSeriesCompositor() {
     const multiplier=max-min<12||max<4?[1,1,1]:tint.map(v=>v/max);
     for(let y=0;y<SIZE;y++)for(let x=0;x<SIZE;x++){
       const i=(y*SIZE+x)*4;if(!pixels.data[i+3])continue;
-      const u=Math.floor(x*.75)%512,v=Math.floor(y*.75)%512,j=(v*512+u)*4;
+      const [along,across]=coordinates(x,y);
+      const u=((Math.floor(along*.75)%512)+512)%512,v=((Math.floor(across*.75)%512)+512)%512,j=(v*512+u)*4;
       const luminance=(lighting[i]*.2126+lighting[i+1]*.7152+lighting[i+2]*.0722)/255;
       for(let c=0;c<3;c++)pixels.data[i+c]=Math.min(255,pattern[j+c]*(.5+luminance*2.2)*multiplier[c]+Math.max(0,luminance-.48)*170);
     }
