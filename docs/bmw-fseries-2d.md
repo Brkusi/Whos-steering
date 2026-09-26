@@ -9,7 +9,7 @@ The F-Series preview uses the supplied site's actual 2D wheel assets, calibrated
 - Source grip maps for smooth leather, perforated leather, and Alcantara, with the source diffuse/specular/stitch coloring algorithm and BMW calibration values.
 - Source lower-trim, airbag cover/logo, marker and flat-bottom LED layers.
 - Existing Who's Steering palettes, custom color fields, checkout and saved-build workflow. The reference's extra 77-color palette is not imported. Existing honeycomb remains available.
-- Classic and Forged Carbon top/bottom prints use the B9's actual embedded images, as requested. They follow the original grip masks and rim curvature, preserving the underlying wheel outline and source lighting. Texture coordinates trace each upper/lower rim centerline and wrap across its thickness. The shape, buttons, center, paddles and other source images remain unchanged. These requested print/color substitutions mean the corresponding pixels intentionally differ from the reference.
+- Carbon top/bottom prints use the exact selected configuration swatch image, tiled at a fine scale and shaded without washing out its colors. They follow the original grip masks and rim curvature. Custom color input tints the pattern; preset colors retain the swatch's own colored fibers/flakes. This supersedes the initial B9 texture substitution at the user's request.
 - The source only supports an RPM display for Flat bottom; other shapes clear and hide that option. Yoke also clears/hides the top stripe.
 - Shape and lower trim are included in review/admin details and persist in the existing full configuration snapshot; no database migration is needed.
 
