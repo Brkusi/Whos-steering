@@ -1,3 +1,5 @@
+import { hasCarbonPaddles } from './bmwFSeriesConfiguration';
+
 // ─── API helper ──────────────────────────────────────────────────────────────
 const BASE = process.env.REACT_APP_API_URL || '';
 
@@ -46,7 +48,9 @@ export function calcPrice(config, rules = {}) {
   if (config.airbagUpgrade === true) price += (rules.airbag_upgrade ?? 75);
 
   // Magnetic paddle shifters: +$25 for all brands/styles
-  if (config.paddleShifters === 'Magnetic') price += (rules.paddle_magnetic ?? 25);
+  if (config.paddleShifters === 'Magnetic' || hasCarbonPaddles(config)) price += (rules.paddle_magnetic ?? 25);
+
+  if (isBmwFSeries && ['Glossy Carbon','Matte Carbon','Forged Carbon'].includes(config.bmwLowerTrim)) price += (rules.bmw_lower_trim ?? 50);
 
   // BMW-only add-ons
   if (config.brand === 'BMW') {
