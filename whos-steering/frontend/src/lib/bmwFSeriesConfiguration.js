@@ -4,6 +4,7 @@ import { wheelAppearance } from './wheelAppearance';
 export const F_SERIES_SHAPES = ['Round', 'Yoke', 'Flat top & bottom', 'Flat bottom'];
 export const F_SERIES_SHAPE_IDS = {Round:'round', Yoke:'yoke', 'Flat top & bottom':'flat-flat', 'Flat bottom':'flat-round'};
 export const F_SERIES_PADDLES = ['Standard', 'None', 'Glossy Carbon', 'Matte Carbon', 'Forged Carbon'];
+export const bmwStyleLabel = style => style === 'G-Series' ? 'G-Series LCI' : style;
 export const isFSeries = cfg => cfg.brand === 'BMW' && cfg.wheelStyleType === 'F-Series';
 export const isGSeriesPreLCI = cfg => cfg.brand === 'BMW' && cfg.wheelStyleType === 'G-Series Pre LCI';
 export const usesBmw2D = cfg => isFSeries(cfg) || isGSeriesPreLCI(cfg);

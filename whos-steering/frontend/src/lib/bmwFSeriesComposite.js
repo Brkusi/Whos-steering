@@ -7,6 +7,7 @@ import { sourceMaterial } from './bmwFSeriesConfiguration';
 
 const SIZE = 1024;
 const canvas = (size=SIZE) => {const c=document.createElement('canvas');c.width=c.height=size;return c;};
+export const stripeColorIndex = (x, left, right, count) => Math.max(0, Math.min(count - 1, Math.floor((x - left) / Math.max(1, right - left + 1) * count)));
 const rgb = hex => [1,3,5].map(start=>parseInt(hex.slice(start,start+2),16));
 
 export function createFSeriesCompositor(family = 'bmw-fseries') {
@@ -21,18 +22,19 @@ export function createFSeriesCompositor(family = 'bmw-fseries') {
     return assets.get(path);
   }
   const source = path => image(`${ROOT}/source/${path}.webp`);
-  async function wrap(key,color,stitch) {
-    const result=await materialRenderer.render(key,`${ROOT}/source/grips/${key}-map.webp`,SIZE,CALIBRATION[key],color,stitch).catch(error=>{materialRenderer.invalidate();throw error;});
+  async function wrap(key,color,stitch,carbonFinish=false) {
+    const result=await materialRenderer.render(`${carbonFinish ? 'carbon:' : ''}${key}`,`${ROOT}/source/grips/${key}-map.webp`,SIZE,(carbonFinish ? G_CALIBRATION : CALIBRATION)[key],color,stitch).catch(error=>{materialRenderer.invalidate();throw error;});
     // Bound retained source pixel buffers as well as the rendered color cache.
     while(materialRenderer.sources.size>8)materialRenderer.sources.delete(materialRenderer.sources.keys().next().value);
     return result;
   }
   async function carbon(a) {
     const key=JSON.stringify([a.shape,a.top,a.carbonSwatch,a.carbonCustomTint]);if(layers.has(key))return layers.get(key);
-    const [mask,texture]=await Promise.all([wrap(`${a.shape}-${a.topZone}-smooth`,'#ffffff','#ffffff'),image(`${process.env.PUBLIC_URL || ''}${a.carbonSwatch}`)]);
+    const [mask,texture]=await Promise.all([wrap(`${a.shape}-${a.topZone}-smooth`,'#ffffff','#ffffff',true),image(`${process.env.PUBLIC_URL || ''}${a.carbonSwatch}`)]);
     const out=canvas(),ctx=out.getContext('2d',{willReadFrequently:true});ctx.drawImage(mask,0,0,SIZE,SIZE);
     const pixels=ctx.getImageData(0,0,SIZE,SIZE);
-    // Use the original rim mask and lighting: carbon reference overlays can
+    // Both families use the Pre LCI carbon finish calibration, while retaining
+    // their own rim mask and lighting map. Carbon reference overlays can
     // have different edges from the underlying wheel photograph.
     const coordinates=carbonCoordinates(pixels.data,SIZE);
     const light=canvas(),lc=light.getContext('2d',{willReadFrequently:true});lc.filter='blur(3px)';lc.drawImage(mask,0,0,SIZE,SIZE);
@@ -59,7 +61,8 @@ export function createFSeriesCompositor(family = 'bmw-fseries') {
     const colors=a.stripes.map(rgb);
     for(let i=0;i<p.length;i+=4){if(!p[i+3])continue;
       const m=(p[i]*.2126+p[i+1]*.7152+p[i+2]*.0722)/255, gain=Math.min(1.15,.38+m*1.35),highlight=Math.max(0,(m-.58)/.42)*.22;
-      const color=colors[Math.min(colors.length-1,Math.floor(((i/4)%SIZE-left)/(right-left+1)*colors.length))];
+      // Faint antialiased pixels extend past the solid marker bounds.
+      const color=colors[stripeColorIndex((i/4)%SIZE,left,right,colors.length)];
       for(let c=0;c<3;c++)p[i+c]=Math.min(255,color[c]*gain+255*highlight);
     }
     ctx.putImageData(data,0,0);return out;
