@@ -9,7 +9,7 @@ import {
   CLASSIC_CARBON_COLORS, FORGED_CARBON_COLORS, HONEYCOMB_CARBON_COLORS,
   TOP_BOTTOM_MATS, SIDE_MATS, AIRBAG_MATS,
 } from '../lib/data';
-import { F_SERIES_SHAPES, F_SERIES_SHAPE_IDS, F_SERIES_PADDLES, usesBmw2D, bmwAssetFamily } from '../lib/bmwFSeriesConfiguration';
+import { F_SERIES_SHAPES, F_SERIES_SHAPE_IDS, F_SERIES_PADDLES, usesBmw2D, bmwAssetFamily, bmwStyleLabel } from '../lib/bmwFSeriesConfiguration';
 import { calcPrice, apiFetch } from '../lib/api';
 import { useCart } from '../context';
 
@@ -693,7 +693,7 @@ export default function Configure() {
       ['Vehicle Model', cfg.vehicleModel],
       ['Current Wheel Photo', photo || cfg.photoUrl ? 'Attached' : 'Missing'],
 
-      ['Wheel Style Type', cfg.wheelStyleType],
+      ['Wheel Style Type', bmwStyleLabel(cfg.wheelStyleType)],
 
       cfg.brand === 'AUDI' && cfg.wheelStyleType === 'R8'
         ? ['Start / Stop & Drive Select Buttons', cfg.startStopButtons ? 'Yes (+$40)' : 'No']
@@ -830,7 +830,7 @@ export default function Configure() {
             }}>
               <img
                 src="/g-series-reference.png"
-                alt="BMW G-Series Steering Wheel customization options"
+                alt="BMW G-Series LCI Steering Wheel customization options"
                 style={{
                   position: isMobileViewport ? 'relative' : 'absolute',
                   inset: isMobileViewport ? 'auto' : 0,
@@ -989,12 +989,12 @@ export default function Configure() {
           {/* Style */}
           <div ref={styleRef} data-step="style" style={{ scrollMarginTop: stepScrollMargin }}>
           {/* Wheel Style Type */}
-          <Sect label="Wheel Style Type" value={cfg.wheelStyleType}>
+          <Sect label="Wheel Style Type" value={bmwStyleLabel(cfg.wheelStyleType)}>
             <div style={{ display: 'grid', gridTemplateColumns: isMobileViewport ? '1fr' : 'repeat(2, minmax(0, 1fr))', gap: 8, marginBottom: 16 }}>
               {(isAudi ? ['B9', 'R8'] : ['G-Series', 'G-Series Pre LCI', 'F-Series']).map(style => (
                 <div key={style} onClick={() => set('wheelStyleType', style)}
                   style={{ flex: 1, padding: '14px 12px', border: `2px solid ${cfg.wheelStyleType === style ? 'var(--y)' : 'var(--b)'}`, background: cfg.wheelStyleType === style ? 'rgba(232,184,0,.06)' : 'transparent', cursor: 'pointer', textAlign: 'center', transition: 'all .2s' }}>
-                  <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 28, color: cfg.wheelStyleType === style ? 'var(--y)' : 'var(--w)', letterSpacing: .6 }}>{style} STYLE</div>
+                  <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 28, color: cfg.wheelStyleType === style ? 'var(--y)' : 'var(--w)', letterSpacing: .6 }}>{bmwStyleLabel(style)} STYLE</div>
                   <div style={{ fontSize: 14, color: 'var(--t)', marginTop: 4 }}>
                     {isAudi
                       ? (style === 'B9' ? 'Classic flat-bottom sport profile' : 'R8 supercar-inspired round profile')
