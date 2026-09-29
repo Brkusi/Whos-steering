@@ -7,15 +7,17 @@ export const F_SERIES_PADDLES = ['Standard', 'None', 'Glossy Carbon', 'Matte Car
 export const bmwStyleLabel = style => style === 'G-Series' ? 'G-Series LCI' : style;
 export const isFSeries = cfg => cfg.brand === 'BMW' && cfg.wheelStyleType === 'F-Series';
 export const isGSeriesPreLCI = cfg => cfg.brand === 'BMW' && cfg.wheelStyleType === 'G-Series Pre LCI';
+export const isAudiRS2020 = cfg => cfg.brand === 'AUDI' && cfg.wheelStyleType === 'RS 2020+';
+export const usesSource2D = cfg => usesBmw2D(cfg) || isAudiRS2020(cfg);
 export const usesBmw2D = cfg => isFSeries(cfg) || isGSeriesPreLCI(cfg);
-export const bmwAssetFamily = cfg => isGSeriesPreLCI(cfg) ? 'bmw-gseries' : 'bmw-fseries';
+export const bmwAssetFamily = cfg => isAudiRS2020(cfg) ? 'audi-rs-2020' : isGSeriesPreLCI(cfg) ? 'bmw-gseries' : 'bmw-fseries';
 export const hasCarbonPaddles = cfg => usesBmw2D(cfg) && ['Glossy Carbon', 'Matte Carbon', 'Forged Carbon'].includes(cfg.paddleShifters);
 export const sourceMaterial = material => ({'Smooth Leather':'smooth',Leather:'smooth',Alcantara:'alcantara','Perforated Leather':'perforated'}[material] || 'smooth');
 
 export function bmwFSeriesConfiguration(cfg, parseColor) {
   const appearance=wheelAppearance(cfg,parseColor);
   const shape=F_SERIES_SHAPE_IDS[cfg.bmwShape] || 'round';
-  const paddle=({'Glossy Carbon':'glossy','Matte Carbon':'matte','Forged Carbon':'forged',Magnetic:'glossy'})[cfg.paddleShifters] || null;
+  const paddle=isAudiRS2020(cfg) ? null : ({'Glossy Carbon':'glossy','Matte Carbon':'matte','Forged Carbon':'forged',Magnetic:'glossy'})[cfg.paddleShifters] || null;
   const swatches = appearance.top.material === 'Forged Carbon' ? FORGED_CARBON_COLORS
     : appearance.top.material === 'Honeycomb Carbon' ? HONEYCOMB_CARBON_COLORS : CLASSIC_CARBON_COLORS;
   const swatch = swatches.find(c => c.h.toLowerCase() === (cfg.topBottomCarbonCol || '').toLowerCase() || c.n === cfg.topBottomCarbonCol) || swatches[0];
@@ -28,7 +30,7 @@ export function bmwFSeriesConfiguration(cfg, parseColor) {
     // The source only supplies an LED layer for the flat-bottom shape.
     led:appearance.led && shape==='flat-round',
     stripes:shape==='yoke'?[]:appearance.stripes,
-    cover:!!cfg.airbagCompat,
-    lowerTrim:({'Glossy Carbon':'glossy','Matte Carbon':'matte','Forged Carbon':'forged'})[cfg.bmwLowerTrim] || null,
+    cover:!isAudiRS2020(cfg) && !!cfg.airbagCompat,
+    lowerTrim:isAudiRS2020(cfg) ? null : ({'Glossy Carbon':'glossy','Matte Carbon':'matte','Forged Carbon':'forged'})[cfg.bmwLowerTrim] || null,
   };
 }
