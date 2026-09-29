@@ -13,6 +13,7 @@ test('compatibility label needs a fitting year and model', () => {
   expect(wheelMatchesVehicle({brand:'AUDI',vehicleYear:'2018',vehicleModel:'RS 6'},'RS 2020+')).toBe(false);
   expect(wheelMatchesVehicle({brand:'AUDI',vehicleYear:'2022',vehicleModel:'A4'},'RS 2020+')).toBe(false);
   expect(wheelMatchesVehicle({brand:'AUDI',vehicleYear:'2022',vehicleModel:'A4'},'B9')).toBe(true);
+  expect(wheelMatchesVehicle({brand:'AUDI',vehicleYear:'2026',vehicleModel:'A4'},'B9')).toBe(false);
   expect(wheelMatchesVehicle({brand:'BMW',vehicleYear:'2018',vehicleModel:'F30'},'F-Series')).toBe(true);
   expect(wheelMatchesVehicle({brand:'BMW',vehicleYear:'2018',vehicleModel:'G20'},'F-Series')).toBe(false);
 });

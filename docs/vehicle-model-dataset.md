@@ -1,0 +1,5 @@
+# Vehicle year and model lookup
+
+The storefront's make → year → model dropdowns use the static snapshot in `whos-steering/frontend/src/lib/vehicleModels.json`. It was retrieved on 2026-09-29 from the [NHTSA vPIC GetModelsForMakeYear API](https://vpic.nhtsa.dot.gov/api/), combining its passenger-car and multipurpose-passenger-vehicle results and deduplicating models. Refresh it with `python3 scripts/refresh_vehicle_models.py` from the repository root. This source covers US VIN-listed models, so the dropdown also offers “My model isn't listed” for imported, special, or missing variants.
+
+BMW and Mercedes-Benz offer model years 2010–2025, Audi 2011–2025, and Toyota 2020–2026 (the current year). Dodge SRT and Porsche remain fitment-inquiry-only because no model-year range was specified for them. A model's presence in the dataset means it was listed for that make and year; it does **not** establish steering-wheel compatibility. The existing wheel-fitment label applies its own rules, and every order still requires a current-wheel photo for final review.
