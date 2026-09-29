@@ -1,4 +1,6 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
+import { useState } from 'react';
+import { VEHICLE_MAKES } from '../lib/vehicleCompatibility';
 import { BMW_PRESETS, AUDI_PRESETS_FULL as AUDI_PRESETS } from '../lib/data';
 import './BuildStart.css';
 
@@ -15,14 +17,15 @@ const BRANDS = [
     id: 'AUDI',
     eyebrow: 'AUDI',
     title: 'BUILD YOUR AUDI',
-    subtitle: 'RS-inspired custom steering wheels with B9 and R8-style configurations.',
+    subtitle: 'RS-inspired custom steering wheels with B9, RS 2020+, and R8-style configurations.',
     image: AUDI_PRESETS.find(Boolean)?.images?.[0] || '/PRESET_1.png',
-    fitment: 'Audi 2011+ · B9 & R8 Styles',
+    fitment: 'Audi 2011+ · B9, RS 2020+ & R8 Styles',
   },
 ];
 
 export default function BuildStart() {
   const nav = useNavigate();
+  const [make, setMake] = useState('');
 
   return (
     <main className="build-start">
@@ -33,8 +36,14 @@ export default function BuildStart() {
           Choose your brand first. Your configurator will then show only the options that apply to that vehicle family.
         </p>
 
+        <label className="build-start__make-label" htmlFor="compatible-make">Check vehicle compatibility</label>
+        <select id="compatible-make" className="build-start__make-select" value={make} onChange={event => setMake(event.target.value)}>
+          <option value="">Select your vehicle make</option>
+          {VEHICLE_MAKES.map(item => <option value={item.value} key={item.value}>{item.label}</option>)}
+        </select>
+
         <div className="build-start__grid">
-          {BRANDS.map((brand) => (
+          {BRANDS.filter(brand => !make || brand.id === make).map((brand) => (
             <button
               type="button"
               className="build-brand-card"
@@ -58,6 +67,12 @@ export default function BuildStart() {
             </button>
           ))}
         </div>
+
+        {make && !BRANDS.some(brand => brand.id === make) && (
+          <div className="build-start__unavailable" role="status">
+            A configurable wheel for {VEHICLE_MAKES.find(item => item.value === make)?.label} is not available yet. <Link to="/contact">Ask about fitment</Link> and our team can check your current wheel.
+          </div>
+        )}
 
         <div className="build-start__note">
           Not sure about fitment? Contact our team before starting your build.

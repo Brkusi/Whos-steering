@@ -67,7 +67,7 @@ function validateRequiredColors(cfg) {
     missing.push('Stitch Color');
   }
 
-  if (cfg.brand === 'AUDI') {
+  if (cfg.brand === 'AUDI' && cfg.wheelStyleType !== 'RS 2020+') {
     if (!(cfg.plasticTrimCol || hasText(cfg.plasticTrimCustomColor))) {
       missing.push('Plastic Trim Color');
     }

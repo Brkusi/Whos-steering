@@ -1,0 +1,266 @@
+[
+  {
+    "path": "round.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/audi-rs-2020/round.webp",
+    "bytes": 117288,
+    "sha256": "9182e58648f6738eae02952a203552347884e89995aa2ef240d7092e3ac9a479"
+  },
+  {
+    "path": "grips/round-side-alcantara-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/audi-rs-2020/grips/round-side-alcantara-map.webp",
+    "bytes": 259678,
+    "sha256": "deec436246c2ed27a9edebe3c0d876658b4c7b7dba2f8621f01c72c113fe85fe"
+  },
+  {
+    "path": "grips/round-side-smooth-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/audi-rs-2020/grips/round-side-smooth-map.webp",
+    "bytes": 214862,
+    "sha256": "1bc41592a0fbd5ffc4e5bfee677948c3c56de9d76c0fdf3cbf1fc6f735e0f9d4"
+  },
+  {
+    "path": "grips/round-side-perforated-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/audi-rs-2020/grips/round-side-perforated-map.webp",
+    "bytes": 249026,
+    "sha256": "8494806fa088835be85dbd0a15ccb50c120d5a87425460f3595dcc7a0eec671e"
+  },
+  {
+    "path": "grips/round-tb-alcantara-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/audi-rs-2020/grips/round-tb-alcantara-map.webp",
+    "bytes": 490594,
+    "sha256": "1773e84a158e80743d890aceb1565f0d5f6765407a612cba528259af89d934e6"
+  },
+  {
+    "path": "grips/round-tb-smooth-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/audi-rs-2020/grips/round-tb-smooth-map.webp",
+    "bytes": 387026,
+    "sha256": "d53135816f7ff8122a800d9dd429f6008bfe6cb91624a415c082e79456f76fdf"
+  },
+  {
+    "path": "grips/round-tb-perforated-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/audi-rs-2020/grips/round-tb-perforated-map.webp",
+    "bytes": 450370,
+    "sha256": "266ac2dd526636b654b99a854cad78c7c90c67e06f88494620b50dad91e6fa00"
+  },
+  {
+    "path": "cf/round-glossy.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/audi-rs-2020/cf/round-glossy.webp",
+    "bytes": 120990,
+    "sha256": "1a484c15daadd459824ed81d280c9aa66036da0ce8639ba9c9be3a114f5f3e6e"
+  },
+  {
+    "path": "cf/round-matte.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/audi-rs-2020/cf/round-matte.webp",
+    "bytes": 87418,
+    "sha256": "28fc72c4a4023f6b95f05c7cf7c03f651e5afeb8b29a63ba362af63f852cd5b9"
+  },
+  {
+    "path": "cf/round-forged.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/audi-rs-2020/cf/round-forged.webp",
+    "bytes": 102118,
+    "sha256": "8e436a2639f43cb0ff70308bd957726504c9dc4d20075c4a4e316d50f71f2e92"
+  },
+  {
+    "path": "marker/round.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/audi-rs-2020/marker/round.webp",
+    "bytes": 9454,
+    "sha256": "426b51a3ca45e1afd5921b98c6fb72db40fe45b32e3f727cecc38615c8535dd1"
+  },
+  {
+    "path": "yoke.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/audi-rs-2020/yoke.webp",
+    "bytes": 164588,
+    "sha256": "f268a096a6a18c4e8556cf78a996ffb97db988cfdc1df03ab00924596fafeec3"
+  },
+  {
+    "path": "grips/yoke-side-alcantara-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/audi-rs-2020/grips/yoke-side-alcantara-map.webp",
+    "bytes": 309564,
+    "sha256": "984ed4792b84f56b298522d3dd23f615c5aef9cdd6f7620892f01b110201c048"
+  },
+  {
+    "path": "grips/yoke-side-smooth-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/audi-rs-2020/grips/yoke-side-smooth-map.webp",
+    "bytes": 246440,
+    "sha256": "641532cb4b64f6d90be607d19b76a82537e25c2ae9603a3bef941d81181ad903"
+  },
+  {
+    "path": "grips/yoke-side-perforated-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/audi-rs-2020/grips/yoke-side-perforated-map.webp",
+    "bytes": 309900,
+    "sha256": "fb6dcb09f530ad81869f4ef9913e85c2fce0eb283d42e17d43b6da871817052d"
+  },
+  {
+    "path": "grips/yoke-bottom-alcantara-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/audi-rs-2020/grips/yoke-bottom-alcantara-map.webp",
+    "bytes": 68336,
+    "sha256": "6696c82a828b629633c16cbecbcb6f1d924f992cb38dff51b97c15ca15f7c236"
+  },
+  {
+    "path": "grips/yoke-bottom-smooth-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/audi-rs-2020/grips/yoke-bottom-smooth-map.webp",
+    "bytes": 51240,
+    "sha256": "d6f56d721087a3c7b587a751dc9486766efe93cfbe984c997b4b1fbf3b186784"
+  },
+  {
+    "path": "grips/yoke-bottom-perforated-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/audi-rs-2020/grips/yoke-bottom-perforated-map.webp",
+    "bytes": 69152,
+    "sha256": "2fa4b186e4cff7a4463c88b629f377b07b5482f7b957cf6bf963d1aa3cbf06b4"
+  },
+  {
+    "path": "cf/yoke-glossy.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/audi-rs-2020/cf/yoke-glossy.webp",
+    "bytes": 50104,
+    "sha256": "8ec13fec72d7b4e7f429ec645c1bdabc6cdf76732bd6cf57420c5922caf59d16"
+  },
+  {
+    "path": "cf/yoke-matte.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/audi-rs-2020/cf/yoke-matte.webp",
+    "bytes": 17100,
+    "sha256": "2a71ce605b0414a2c590c4bf836e0b4ec2839223c6fa034472ae9f481935e81f"
+  },
+  {
+    "path": "cf/yoke-forged.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/audi-rs-2020/cf/yoke-forged.webp",
+    "bytes": 20214,
+    "sha256": "e03a7dd4a81bee32d3671eb711e21ff0a7d3415ab7c47420541b452d9f565c00"
+  },
+  {
+    "path": "flat-flat.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/audi-rs-2020/flat-flat.webp",
+    "bytes": 199508,
+    "sha256": "c5e0f5f7742f8b744a54c74a219aa136a393968089fec7a2c42723edd9f38e87"
+  },
+  {
+    "path": "grips/flat-flat-side-alcantara-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/audi-rs-2020/grips/flat-flat-side-alcantara-map.webp",
+    "bytes": 620740,
+    "sha256": "21990b44fb21346c9ff3511cbb47d1f30eaa4a9b0d559f301a576a7dd867c793"
+  },
+  {
+    "path": "grips/flat-flat-side-smooth-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/audi-rs-2020/grips/flat-flat-side-smooth-map.webp",
+    "bytes": 272750,
+    "sha256": "19c38c62e2ec96bacc8e89c1feb29f6b2abaea822fd14c5d4b69ec619f1422a8"
+  },
+  {
+    "path": "grips/flat-flat-side-perforated-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/audi-rs-2020/grips/flat-flat-side-perforated-map.webp",
+    "bytes": 612022,
+    "sha256": "655118ee576faab1756f01aa8d44b810e2d7c9abe5a3924de641fdaf63f881a5"
+  },
+  {
+    "path": "grips/flat-flat-tb-alcantara-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/audi-rs-2020/grips/flat-flat-tb-alcantara-map.webp",
+    "bytes": 254782,
+    "sha256": "49e73173d923c91b1351dfee1aa4881f64343bb0cf1afa940b1dc914c1c25efd"
+  },
+  {
+    "path": "grips/flat-flat-tb-smooth-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/audi-rs-2020/grips/flat-flat-tb-smooth-map.webp",
+    "bytes": 177572,
+    "sha256": "1b1c39f36bee10c7daf3afeda060124a47a3632d3fc2645969239fd81cd2ea67"
+  },
+  {
+    "path": "grips/flat-flat-tb-perforated-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/audi-rs-2020/grips/flat-flat-tb-perforated-map.webp",
+    "bytes": 221560,
+    "sha256": "0b8ec77fafb6e1630417463afe0ec720750f505a50e6720f917cbf87a0a13e7b"
+  },
+  {
+    "path": "cf/flat-flat-glossy.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/audi-rs-2020/cf/flat-flat-glossy.webp",
+    "bytes": 50022,
+    "sha256": "bfe7f10b9de0549bd7d9459eb83f10952ae7a5bc3423306edf34ff228c513b0b"
+  },
+  {
+    "path": "cf/flat-flat-matte.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/audi-rs-2020/cf/flat-flat-matte.webp",
+    "bytes": 40942,
+    "sha256": "2b41a62a74822c7e9b755278ec2758168d93811f677b81584133d6b78a5f5fc2"
+  },
+  {
+    "path": "cf/flat-flat-forged.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/audi-rs-2020/cf/flat-flat-forged.webp",
+    "bytes": 51796,
+    "sha256": "658f76e9f027e0558fdea03edbe6dd885e22b12eccc83d8eba6e95acb0c9e6ae"
+  },
+  {
+    "path": "marker/flat-flat.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/audi-rs-2020/marker/flat-flat.webp",
+    "bytes": 9618,
+    "sha256": "11279060cff53960f16ac5fc7bcb012f8709880d716c12290ff07c1d31a3ed01"
+  },
+  {
+    "path": "flat-round.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/audi-rs-2020/flat-round.webp",
+    "bytes": 84262,
+    "sha256": "9893d19339fac74d72a8e6c0b36d5328c2c9a25df1aa7b4d563a9a1807cc3010"
+  },
+  {
+    "path": "grips/flat-round-side-alcantara-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/audi-rs-2020/grips/flat-round-side-alcantara-map.webp",
+    "bytes": 333712,
+    "sha256": "e04f26dbac652211680ac25ae3cd4e2d9032647bcce1ba9a738a2425d1b37624"
+  },
+  {
+    "path": "grips/flat-round-side-smooth-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/audi-rs-2020/grips/flat-round-side-smooth-map.webp",
+    "bytes": 280486,
+    "sha256": "cf9ab75b43f532a89a73fb5cc02223a6ed1836f27f52365a9eb0b15593ff6281"
+  },
+  {
+    "path": "grips/flat-round-side-perforated-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/audi-rs-2020/grips/flat-round-side-perforated-map.webp",
+    "bytes": 390304,
+    "sha256": "385f9c6773c117768d5fd406a00943ec5ca3b08ce95013a5d553e9dc1afeefa3"
+  },
+  {
+    "path": "grips/flat-round-tb-alcantara-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/audi-rs-2020/grips/flat-round-tb-alcantara-map.webp",
+    "bytes": 411944,
+    "sha256": "12ab281d4bb8b21817dd2aa564b14f68274469e42736a2ee1d9b4b646c3ca317"
+  },
+  {
+    "path": "grips/flat-round-tb-smooth-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/audi-rs-2020/grips/flat-round-tb-smooth-map.webp",
+    "bytes": 269280,
+    "sha256": "c0fc5f951644e5b52e6451846a157509bde8741dfb3859b4939cc12fad324ffc"
+  },
+  {
+    "path": "grips/flat-round-tb-perforated-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/audi-rs-2020/grips/flat-round-tb-perforated-map.webp",
+    "bytes": 322162,
+    "sha256": "e327bab1b0787b4f9d34f4b536da201cc0a206b8bdbec5b7a6e6ebfb7eacfe0c"
+  },
+  {
+    "path": "cf/flat-round-glossy.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/audi-rs-2020/cf/flat-round-glossy.webp",
+    "bytes": 80188,
+    "sha256": "9e7e892245fb85c8bf0d22c6409da91e9071f4283470fe267116256fbfc30f9b"
+  },
+  {
+    "path": "cf/flat-round-matte.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/audi-rs-2020/cf/flat-round-matte.webp",
+    "bytes": 77238,
+    "sha256": "3e6bf1254badc73055fcd1dd87d98347fc320623ed190ca4a2b10815093f5199"
+  },
+  {
+    "path": "cf/flat-round-forged.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/audi-rs-2020/cf/flat-round-forged.webp",
+    "bytes": 75978,
+    "sha256": "6eb9eccbf08c31f67bb9091b3fd49422f3bdc124e40f96ece7498740d1f5998e"
+  },
+  {
+    "path": "marker/flat-round.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/audi-rs-2020/marker/flat-round.webp",
+    "bytes": 9240,
+    "sha256": "da78bf104999b6c85e4f61f12b7a7bfc4d561487f63ebe22c4099def2f862ede"
+  },
+  {
+    "path": "led/flat-round.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/audi-rs-2020/led/flat-round.webp",
+    "bytes": 36268,
+    "sha256": "68e600d0e7456d3a16eb2f6be1c347ba34040e2a345786571d60c58f68af7774"
+  }
+]

@@ -1,6 +1,7 @@
 import { carbonCoordinates } from './bmwFSeriesCarbonUV';
 import F_CALIBRATION from './bmwFSeriesCalibration.json';
 import G_CALIBRATION from './bmwGSeriesCalibration.json';
+import AUDI_RS_CALIBRATION from './audiRS2020Calibration.json';
 import { SourceMaterialRenderer } from './bmwFSeriesSourceRenderer';
 import { sourceMaterial } from './bmwFSeriesConfiguration';
 
@@ -12,7 +13,7 @@ const rgb = hex => [1,3,5].map(start=>parseInt(hex.slice(start,start+2),16));
 
 export function createFSeriesCompositor(family = 'bmw-fseries') {
   const ROOT = `${process.env.PUBLIC_URL || ''}/models/${family}`;
-  const CALIBRATION = family === 'bmw-gseries' ? G_CALIBRATION : F_CALIBRATION;
+  const CALIBRATION = family === 'audi-rs-2020' ? AUDI_RS_CALIBRATION : family === 'bmw-gseries' ? G_CALIBRATION : F_CALIBRATION;
   const assets=new Map(), layers=new Map(), materialRenderer=new SourceMaterialRenderer(12);
   let disposed=false;
   function image(path) {
@@ -23,7 +24,7 @@ export function createFSeriesCompositor(family = 'bmw-fseries') {
   }
   const source = path => image(`${ROOT}/source/${path}.webp`);
   async function wrap(key,color,stitch,carbonFinish=false) {
-    const result=await materialRenderer.render(`${carbonFinish ? 'carbon:' : ''}${key}`,`${ROOT}/source/grips/${key}-map.webp`,SIZE,(carbonFinish ? G_CALIBRATION : CALIBRATION)[key],color,stitch).catch(error=>{materialRenderer.invalidate();throw error;});
+    const result=await materialRenderer.render(`${carbonFinish ? 'carbon:' : ''}${key}`,`${ROOT}/source/grips/${key}-map.webp`,SIZE,(carbonFinish && family !== 'audi-rs-2020' ? G_CALIBRATION : CALIBRATION)[key],color,stitch).catch(error=>{materialRenderer.invalidate();throw error;});
     // Bound retained source pixel buffers as well as the rendered color cache.
     while(materialRenderer.sources.size>8)materialRenderer.sources.delete(materialRenderer.sources.keys().next().value);
     return result;

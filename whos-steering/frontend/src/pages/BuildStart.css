@@ -41,6 +41,12 @@
   line-height: 1.7;
 }
 
+.build-start__make-label { display: block; color: var(--y); font-size: 14px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; margin-bottom: 8px; }
+.build-start__make-select { width: min(100%, 390px); min-height: 48px; padding: 10px 14px; margin-bottom: 26px; color: #fff; background: #151515; border: 1px solid #494949; font: inherit; }
+.build-start__make-select:focus-visible { outline: 2px solid var(--y); outline-offset: 2px; }
+.build-start__unavailable { max-width: 650px; padding: 20px; margin-top: 18px; border: 1px solid var(--b); color: var(--t); line-height: 1.6; }
+.build-start__unavailable a { color: var(--y); }
+
 .build-start__grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
