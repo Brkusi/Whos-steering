@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
+import { VEHICLE_MAKES } from '../lib/vehicleCompatibility';
 
 const EMAILJS_SERVICE  = 'service_b5oz67d';
 const EMAILJS_TEMPLATE = 'template_akep1pv';
@@ -26,7 +27,14 @@ function loadEmailJS() {
 }
 
 export default function Contact() {
-  const [form, setForm] = useState({ name: '', email: '', vehicle: '', message: '' });
+  const [params] = useSearchParams();
+  const [form, setForm] = useState(() => {
+    const make = VEHICLE_MAKES.find(item => item.value === params.get('brand'))?.label || '';
+    const year = /^\d{4}$/.test(params.get('year') || '') ? params.get('year') : '';
+    const model = (params.get('model') || '').slice(0,80);
+    const vehicle = [year, make, model].filter(Boolean).join(' ');
+    return {name:'',email:'',vehicle,message:vehicle ? `Please check steering wheel fitment for my ${vehicle}.` : ''};
+  });
   const [errors, setErrors] = useState({});
   const [sent, setSent] = useState(false);
   const [sending, setSending] = useState(false);

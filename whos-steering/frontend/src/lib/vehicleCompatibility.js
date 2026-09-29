@@ -1,3 +1,5 @@
+import { vehicleYears } from './vehicleCatalog';
+
 export const VEHICLE_MAKES = [
   { value: 'AUDI', label: 'Audi', available: true },
   { value: 'BMW', label: 'BMW', available: true },
@@ -13,7 +15,7 @@ export const isConfigurableMake = make => VEHICLE_MAKES.some(item => item.value 
 // still receives final fitment review before production.
 export function wheelMatchesVehicle(config, style) {
   const year = Number(config.vehicleYear);
-  if (!Number.isInteger(year) || year < 1900 || year > 2100 || !String(config.vehicleModel || '').trim()) return false;
+  if (!Number.isInteger(year) || !vehicleYears(config.brand).includes(String(year)) || !String(config.vehicleModel || '').trim()) return false;
   if (config.brand === 'AUDI') {
     if (style === 'RS 2020+') return year >= 2020 && /^RS\s?\d+/i.test(config.vehicleModel.trim());
     if (style === 'B9') return year >= 2011;

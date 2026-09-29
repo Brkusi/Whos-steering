@@ -14,6 +14,8 @@ import { calcPrice, apiFetch } from '../lib/api';
 import { useCart } from '../context';
 
 import { VEHICLE_MAKES, isConfigurableMake, wheelMatchesVehicle } from '../lib/vehicleCompatibility';
+import { hasVehicleCatalog, vehicleInquiryPath, vehicleYears } from '../lib/vehicleCatalog';
+import VehicleYearModelFields from '../components/VehicleYearModelFields';
 
 const FSeriesPreview = lazy(() => import('../components/FSeriesPreview'));
 const AudiB9Preview = lazy(() => import('../components/B9ModelPreview'));
@@ -451,10 +453,14 @@ export default function Configure() {
   const reviewRef = useRef(null);
 
   const initBrand = params.get('brand') || 'BMW';
+  const initYear = vehicleYears(initBrand).includes(params.get('year')) ? params.get('year') : '';
+  const initModel = initYear ? (params.get('model') || '').slice(0, 80) : '';
   const [compatibilityMake, setCompatibilityMake] = useState(initBrand);
   const [cfg, setCfg] = useState({
     ...DEFAULT_CONFIG,
     brand: initBrand,
+    vehicleYear: initYear,
+    vehicleModel: initModel,
     wheelStyleType: initBrand === 'BMW' ? 'G-Series' : 'B9',
   });
 
@@ -561,6 +567,16 @@ export default function Configure() {
     setErrors({});
   };
 
+  const setVehicleYear = year => {
+    setCfg(prev => currentWheelOptions({...prev,vehicleYear:year,vehicleModel:''}));
+    setErrors(prev => ({...prev,year:false,model:false}));
+  };
+
+  const setVehicleModel = model => {
+    set('vehicleModel',model);
+    setErrors(prev => ({...prev,model:false}));
+  };
+
   const setAirbagCover = (enabled) => {
     setCfg(prev => {
       if (enabled) {
@@ -620,7 +636,7 @@ export default function Configure() {
   const validate = () => {
     const e = {};
 
-    if (!textValue(cfg.vehicleYear)) e.year = true;
+    if (!vehicleYears(cfg.brand).includes(String(cfg.vehicleYear))) e.year = true;
     if (!textValue(cfg.vehicleModel)) e.model = true;
     if (!photo && !cfg.photoUrl) e.photo = true;
 
@@ -800,12 +816,15 @@ export default function Configure() {
   if (!isConfigurableMake(compatibilityMake)) return (
     <main style={{minHeight:'70vh',maxWidth:720,margin:'auto',padding:'60px 24px',color:'var(--w)'}}>
       <label className="fl" htmlFor="configure-make">Vehicle compatibility</label>
-      <select id="configure-make" className="fi" value={compatibilityMake} onChange={event => {const make=event.target.value;setCompatibilityMake(make);if(isConfigurableMake(make))setBrand(make);}}>
+      <select id="configure-make" className="fi" value={compatibilityMake} onChange={event => setBrand(event.target.value)}>
         {VEHICLE_MAKES.map(make => <option value={make.value} key={make.value}>{make.label}</option>)}
       </select>
       <h1 style={{fontFamily:'Barlow Condensed, sans-serif',marginTop:28}}>Wheel fitment for {VEHICLE_MAKES.find(make => make.value === compatibilityMake)?.label}</h1>
+      {hasVehicleCatalog(compatibilityMake) && <VehicleYearModelFields key={compatibilityMake} make={compatibilityMake}
+        year={cfg.vehicleYear} model={cfg.vehicleModel} idPrefix="inquiry-vehicle"
+        onYearChange={setVehicleYear} onModelChange={setVehicleModel} />}
       <p>We do not have a configurable wheel for this make yet. Contact us with your model, year and a photo of your current wheel so we can check the fit.</p>
-      <button type="button" className="btn" onClick={() => nav('/contact')}>ASK ABOUT FITMENT</button>
+      <button type="button" className="btn" onClick={() => nav(vehicleInquiryPath(compatibilityMake,cfg.vehicleYear,cfg.vehicleModel))}>ASK ABOUT FITMENT</button>
     </main>
   );
 
@@ -971,35 +990,22 @@ export default function Configure() {
           <div ref={vehicleRef} data-step="vehicle" style={{ scrollMarginTop: stepScrollMargin }}>
           <Sect label="Vehicle" value={cfg.vehicleYear && cfg.vehicleModel ? `${cfg.vehicleYear} ${cfg.brand} ${cfg.vehicleModel}` : '—'}>
             <label className="fl" htmlFor="vehicle-compatible-make">Check vehicle compatibility</label>
-            <select id="vehicle-compatible-make" className="fi" value={compatibilityMake} onChange={event => {const make=event.target.value;setCompatibilityMake(make);if(isConfigurableMake(make))setBrand(make);}} style={{marginBottom:14}}>
+            <select id="vehicle-compatible-make" className="fi" value={compatibilityMake} onChange={event => setBrand(event.target.value)} style={{marginBottom:14}}>
               {VEHICLE_MAKES.map(make => <option value={make.value} key={make.value}>{make.label}</option>)}
             </select>
             {isAudi && (
               <div style={{ padding: '8px 12px', background: 'rgba(232,184,0,.05)', border: '1px solid rgba(232,184,0,.2)', marginBottom: 12, fontSize: 14, color: 'var(--t)', letterSpacing: 1 }}>
-                ✓ {isAudiRS2020(cfg) ? 'Audi RS models 2020+ · final fitment checked from your wheel photo' : 'Fits 2011+ AUDI All Models'}
+                {isAudiRS2020(cfg) ? 'Audi RS 2020+ wheel family' : 'Audi wheel family'} · final fitment checked from your current wheel photo
               </div>
             )}
             {!isAudi && (
               <div style={{ padding: '8px 12px', background: 'rgba(232,184,0,.05)', border: '1px solid rgba(232,184,0,.2)', marginBottom: 12, fontSize: 14, color: 'var(--t)', letterSpacing: 1 }}>
-                ✓ {cfg.wheelStyleType === 'F-Series' ? 'Fits F10, F30, F80, E90' : 'Fits F10, F30, F80, G20, G30, G22, G42, G80, G82, G87'}
+                {cfg.wheelStyleType === 'F-Series' ? 'F10, F30, F80, E90 wheel family' : 'BMW G-series wheel family'} · final fitment checked from your current wheel photo
               </div>
             )}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 12 }}>
-              <div>
-                <label className="fl">Year <span className="req">*</span></label>
-                <input className={`fi${errors.year ? ' error' : ''}`} value={cfg.vehicleYear}
-                  onChange={e => { set('vehicleYear', e.target.value); setErrors(p => ({...p, year: false})); }}
-                  placeholder="e.g. 2023" />
-                {errors.year && <div className="err-msg">Required</div>}
-              </div>
-              <div>
-                <label className="fl">Model <span className="req">*</span></label>
-                <input className={`fi${errors.model ? ' error' : ''}`} value={cfg.vehicleModel}
-                  onChange={e => { set('vehicleModel', e.target.value); setErrors(p => ({...p, model: false})); }}
-                  placeholder={isAudi ? 'e.g. A5, S4' : 'e.g. M4, 540i'} />
-                {errors.model && <div className="err-msg">Required</div>}
-              </div>
-            </div>
+            <VehicleYearModelFields key={compatibilityMake} make={compatibilityMake} year={cfg.vehicleYear} model={cfg.vehicleModel}
+              idPrefix="configure-vehicle" onYearChange={setVehicleYear} onModelChange={setVehicleModel}
+              errors={errors} required />
             <label className="fl">Current Wheel Photo <span className="req">*</span></label>
             <label style={{ display: 'block', border: `2px dashed ${errors.photo ? '#CC3300' : photo ? '#3DB85A' : 'var(--b)'}`, padding: 16, textAlign: 'center', cursor: 'pointer', transition: 'all .2s', marginTop: 6, background: photo ? 'rgba(61,184,90,.04)' : 'transparent' }}>
               <input type="file" accept="image/*" style={{ display: 'none' }} onChange={handlePhoto} />
