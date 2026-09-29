@@ -32,3 +32,18 @@ test('G-Series Pre LCI retains G pricing and charges source paddle/trim choices'
   assert.equal(await serverPrice()({...base,paddleShifters:'Forged Carbon',bmwLowerTrim:'Glossy Carbon'}),62499);
   assert.equal(await serverPrice()({...base,airbagCompat:true}),57499);
 });
+
+test('Toyota and Mercedes source wheels use their own base price and available paddles',async()=>{
+  const base={airbagCompat:false,heated:false,laneAssist:false};
+  for(const [brand,wheelStyleType,hasPaddles] of [
+    ['TOYOTA','Supra GR',true],
+    ['MERCEDES','AMG Performance',true],
+    ['MERCEDES','Mercedes 2015–2023',false],
+    ['MERCEDES','Mercedes 2010–2015',true],
+  ]){
+    const cfg={...base,brand,wheelStyleType};
+    assert.equal(await serverPrice()(cfg),89900);
+    assert.equal(await serverPrice()({...cfg,paddleShifters:'Forged Carbon'}),89900+(hasPaddles?2500:0));
+    assert.equal(await serverPrice()({...cfg,topBottomMat:'Classic Carbon',ledDisplay:true}),103900);
+  }
+});

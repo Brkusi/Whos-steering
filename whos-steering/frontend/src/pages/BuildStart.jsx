@@ -23,6 +23,22 @@ const BRANDS = [
     image: AUDI_PRESETS.find(Boolean)?.images?.[0] || '/PRESET_1.png',
     fitment: 'Audi 2011+ · B9, RS 2020+ & R8 Styles',
   },
+  {
+    id: 'MERCEDES',
+    eyebrow: 'MERCEDES',
+    title: 'BUILD YOUR MERCEDES',
+    subtitle: 'AMG Performance and Mercedes wheel styles with live shape and material previews.',
+    image: '/models/mercedes-amg/source/round.webp',
+    fitment: 'Mercedes 2010–2025 · Three Wheel Styles',
+  },
+  {
+    id: 'TOYOTA',
+    eyebrow: 'TOYOTA',
+    title: 'BUILD YOUR TOYOTA',
+    subtitle: 'Customize the Supra GR wheel with three shapes and matching materials.',
+    image: '/models/supra-gr/source/flat-round.webp',
+    fitment: 'Toyota Supra GR · 2020+',
+  },
 ];
 
 export default function BuildStart() {

@@ -1,0 +1,248 @@
+[
+  {
+    "path": "yoke.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/supra-gr/yoke.webp",
+    "bytes": 129520,
+    "sha256": "d58c13cdc4051c01eda7589771170f36f53429eb71c24107bc49ec7c51b4e48d"
+  },
+  {
+    "path": "grips/yoke-side-alcantara-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/supra-gr/grips/yoke-side-alcantara-map.webp",
+    "bytes": 414626,
+    "sha256": "6b5d5268024e8495e82f9e4d4e191de3655a78774d0b4400ebab1a11409f50fe"
+  },
+  {
+    "path": "grips/yoke-side-smooth-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/supra-gr/grips/yoke-side-smooth-map.webp",
+    "bytes": 466452,
+    "sha256": "b08d7edf03750a0792742cef87ca0703b99a0a1fa7f3b1a9f7deb94b80f7fef4"
+  },
+  {
+    "path": "grips/yoke-side-perforated-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/supra-gr/grips/yoke-side-perforated-map.webp",
+    "bytes": 431610,
+    "sha256": "b32557c8087cf228fba20d26656f2d6e25f49d094bee58e8c300bac7c2817bda"
+  },
+  {
+    "path": "grips/yoke-bottom-alcantara-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/supra-gr/grips/yoke-bottom-alcantara-map.webp",
+    "bytes": 169862,
+    "sha256": "de0de742584d48eb773e784bd8a760710e4fd20c643467f2f66391622c937b20"
+  },
+  {
+    "path": "grips/yoke-bottom-smooth-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/supra-gr/grips/yoke-bottom-smooth-map.webp",
+    "bytes": 116324,
+    "sha256": "b2235d3140bbf5aa62a2f9cae2c0b052984f861ccb1beabd151eb542222a0a3a"
+  },
+  {
+    "path": "grips/yoke-bottom-perforated-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/supra-gr/grips/yoke-bottom-perforated-map.webp",
+    "bytes": 156766,
+    "sha256": "c38331db3f6e058aa95d8f1cc71fbd43f0b0fd77bbd7c2d1bf5c822e862996cb"
+  },
+  {
+    "path": "cf/yoke-glossy.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/supra-gr/cf/yoke-glossy.webp",
+    "bytes": 27514,
+    "sha256": "4840d26eee77e45612fd516c2ef5e6be5f398f290a5c3558c729384227dbf8e1"
+  },
+  {
+    "path": "cf/yoke-matte.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/supra-gr/cf/yoke-matte.webp",
+    "bytes": 32694,
+    "sha256": "bba767d8c0162bb4c091846d08c8e7b564f362cda4b331f10ee9a7868869b72a"
+  },
+  {
+    "path": "cf/yoke-forged.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/supra-gr/cf/yoke-forged.webp",
+    "bytes": 39148,
+    "sha256": "ecba8963be625c51de74f822450205374fb787345fc825a326e18d4f06c0ef4a"
+  },
+  {
+    "path": "flat-flat.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/supra-gr/flat-flat.webp",
+    "bytes": 146882,
+    "sha256": "252d23b6ff7cc384d97e4d3c15ba6922be5c17b67bf8a7cde2ed11c798f9c196"
+  },
+  {
+    "path": "grips/flat-flat-side-alcantara-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/supra-gr/grips/flat-flat-side-alcantara-map.webp",
+    "bytes": 185242,
+    "sha256": "34d1c06989666fb9816e8406ddf2ba8318825ef81e3aca998af07862df9be145"
+  },
+  {
+    "path": "grips/flat-flat-side-smooth-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/supra-gr/grips/flat-flat-side-smooth-map.webp",
+    "bytes": 150310,
+    "sha256": "412ea1cd7146ecc521195345023150d3c578afb6c3805762ced49f1e04ea990f"
+  },
+  {
+    "path": "grips/flat-flat-side-perforated-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/supra-gr/grips/flat-flat-side-perforated-map.webp",
+    "bytes": 193378,
+    "sha256": "f680735bb1648aba64113d4401d63de6ff38a0852a68e3ee119c1b73022fccfa"
+  },
+  {
+    "path": "grips/flat-flat-tb-alcantara-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/supra-gr/grips/flat-flat-tb-alcantara-map.webp",
+    "bytes": 305866,
+    "sha256": "6f2accaabbb2506d412dd04c5c3f9af2b397f7d7599ef7462c9ce96585224dc9"
+  },
+  {
+    "path": "grips/flat-flat-tb-smooth-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/supra-gr/grips/flat-flat-tb-smooth-map.webp",
+    "bytes": 149114,
+    "sha256": "a1091c281d8a2c276bf2fe8d6ab0805c0ac7ae55643ab36dde8f3abf17681d04"
+  },
+  {
+    "path": "grips/flat-flat-tb-perforated-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/supra-gr/grips/flat-flat-tb-perforated-map.webp",
+    "bytes": 177204,
+    "sha256": "38b799400e70956ddbe21692f4b0c97c163fab0d629532d7ced93e1f47572a91"
+  },
+  {
+    "path": "cf/flat-flat-glossy.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/supra-gr/cf/flat-flat-glossy.webp",
+    "bytes": 53540,
+    "sha256": "175ac9f252a8645fad2f3dfa85e2cf54d0d0e33520aab92b3e095b1290e3704e"
+  },
+  {
+    "path": "cf/flat-flat-matte.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/supra-gr/cf/flat-flat-matte.webp",
+    "bytes": 52782,
+    "sha256": "a22e387b46b22bf2b18b273063ab0908a3c5c7e4ce666521af1eba8ca760a1c1"
+  },
+  {
+    "path": "cf/flat-flat-forged.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/supra-gr/cf/flat-flat-forged.webp",
+    "bytes": 124778,
+    "sha256": "a2cf11ae3b7d9692819138dac6b2d8344cbcef8fa8f76e1b0c772ed592424214"
+  },
+  {
+    "path": "flat-round.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/supra-gr/flat-round.webp",
+    "bytes": 197130,
+    "sha256": "d29ebaab652d1618b91b4ba17da021f7d1612499e58a10857d3468cf56f8dacd"
+  },
+  {
+    "path": "grips/flat-round-side-alcantara-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/supra-gr/grips/flat-round-side-alcantara-map.webp",
+    "bytes": 250794,
+    "sha256": "8dd1e6d0a03a469d07c158745f0f72ca1d8df3a9ef46f2f3c6ed92e98995c4fc"
+  },
+  {
+    "path": "grips/flat-round-side-smooth-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/supra-gr/grips/flat-round-side-smooth-map.webp",
+    "bytes": 252328,
+    "sha256": "4b771e075504a2d9b8ac0bb8c6a1bc6bc36eee5c3a513576c66cfd715a812ffd"
+  },
+  {
+    "path": "grips/flat-round-side-perforated-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/supra-gr/grips/flat-round-side-perforated-map.webp",
+    "bytes": 289828,
+    "sha256": "2427ba242a92bd3fdd7577df2bb6070ad9b35d9b85bbf6982dd22cbbff37fa61"
+  },
+  {
+    "path": "grips/flat-round-tb-alcantara-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/supra-gr/grips/flat-round-tb-alcantara-map.webp",
+    "bytes": 264592,
+    "sha256": "f30f21b24e43a65c417ac0f12e6bdd6ea7f18493a1d9dbb326874919e7a54a8d"
+  },
+  {
+    "path": "grips/flat-round-tb-smooth-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/supra-gr/grips/flat-round-tb-smooth-map.webp",
+    "bytes": 232248,
+    "sha256": "72b84e7bcda448bd61e79fa31bc70adcce123a52b37e0a1a7f112b8f2c1fea76"
+  },
+  {
+    "path": "grips/flat-round-tb-perforated-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/supra-gr/grips/flat-round-tb-perforated-map.webp",
+    "bytes": 513012,
+    "sha256": "766dee861cb5b90c0c160af59472542c808a813fccc3469eb751359994e6b5c5"
+  },
+  {
+    "path": "cf/flat-round-glossy.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/supra-gr/cf/flat-round-glossy.webp",
+    "bytes": 120266,
+    "sha256": "a31d0dbedb6668b081f80b01839d1d3b42b3c2b1ac094dcfc2a10fefdcf1b9ac"
+  },
+  {
+    "path": "cf/flat-round-matte.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/supra-gr/cf/flat-round-matte.webp",
+    "bytes": 48266,
+    "sha256": "14aa72766cb57d97ca91c1691692e1fce4fba0d142284c44639b7eea4bd781ad"
+  },
+  {
+    "path": "cf/flat-round-forged.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/supra-gr/cf/flat-round-forged.webp",
+    "bytes": 64282,
+    "sha256": "0209d247af3196a1ad6ee2b7a89a1986e3c4992d8b2b796b5d08ea7abb7ba2ed"
+  },
+  {
+    "path": "marker/flat-flat.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/supra-gr/marker/flat-flat.webp",
+    "bytes": 9468,
+    "sha256": "3a6cf2a8a874018523d7d8378620c6a4484e0fa9064a5edeb5478f069507175c"
+  },
+  {
+    "path": "marker/flat-round.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/supra-gr/marker/flat-round.webp",
+    "bytes": 9558,
+    "sha256": "4e92c2cc5379d4b279901fb3f7efd4b4543667bc0197012a3a558ef83ed0934c"
+  },
+  {
+    "path": "led/flat-flat.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/supra-gr/led/flat-flat.webp",
+    "bytes": 13982,
+    "sha256": "a5b355c95c3028779a902aa376aff13ba1d91f440d3a037664365d5ccb469a76"
+  },
+  {
+    "path": "led/flat-round.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/supra-gr/led/flat-round.webp",
+    "bytes": 37294,
+    "sha256": "5db00759a7c809dc9c574139386eb3c0d059e0554d646476eff60b732c73146f"
+  },
+  {
+    "path": "grips/airbag-smooth-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/supra-gr/grips/airbag-smooth-map.webp",
+    "bytes": 489134,
+    "sha256": "c5eba4e75cbb092fc2cadef12d6b94002534a4686bf032d29f3079e172c5b4d7"
+  },
+  {
+    "path": "neutral/airbag-smooth-logo.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/supra-gr/neutral/airbag-smooth-logo.webp",
+    "bytes": 19106,
+    "sha256": "c9241b3ea059f7051445ada9088e88c5ffe6bf56c4d70893a819030ef1ed5641"
+  },
+  {
+    "path": "grips/airbag-alcantara-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/supra-gr/grips/airbag-alcantara-map.webp",
+    "bytes": 476014,
+    "sha256": "ab78e3ecaff5f4d433d796aa0ad0e6468cc527271dc74bed0b2784a9d0cadb51"
+  },
+  {
+    "path": "neutral/airbag-alcantara-logo.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/supra-gr/neutral/airbag-alcantara-logo.webp",
+    "bytes": 18284,
+    "sha256": "c9f60d4a32ba68b6eb42e481aeb142fd68c392bc0b03c9c9f97621630694f5d7"
+  },
+  {
+    "path": "paddles/glossy.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/supra-gr/paddles/glossy.webp",
+    "bytes": 42558,
+    "sha256": "16474d373d70a6c8f603f49902d27afb62f24f389f591230e3dde88536b80d17"
+  },
+  {
+    "path": "paddles/matte.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/supra-gr/paddles/matte.webp",
+    "bytes": 33628,
+    "sha256": "9d43ba32f79273b57156e66f2ecdb76c0f60dce05534fba3b0767c7b55a6e471"
+  },
+  {
+    "path": "paddles/forged.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/supra-gr/paddles/forged.webp",
+    "bytes": 42620,
+    "sha256": "c466c442a811c1be5f63403cc864213910334e5bd93b1f350fdaa60d1f6040b7"
+  }
+]

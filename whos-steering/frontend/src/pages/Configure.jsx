@@ -9,7 +9,7 @@ import {
   CLASSIC_CARBON_COLORS, FORGED_CARBON_COLORS, HONEYCOMB_CARBON_COLORS,
   TOP_BOTTOM_MATS, SIDE_MATS, AIRBAG_MATS,
 } from '../lib/data';
-import { F_SERIES_SHAPES, F_SERIES_SHAPE_IDS, F_SERIES_PADDLES, usesBmw2D, usesSource2D, isAudiRS2020, bmwAssetFamily, bmwStyleLabel } from '../lib/bmwFSeriesConfiguration';
+import { F_SERIES_SHAPE_IDS, F_SERIES_PADDLES, SOURCE_WHEEL_STYLES, sourceWheelStyle, sourceWheelShapes, sourceWheelHasPaddles, sourceWheelSupportsLed, usesBmw2D, usesSource2D, isAudiRS2020, bmwAssetFamily, bmwStyleLabel } from '../lib/bmwFSeriesConfiguration';
 import { calcPrice, apiFetch } from '../lib/api';
 import { useCart } from '../context';
 
@@ -19,7 +19,7 @@ import VehicleYearModelFields from '../components/VehicleYearModelFields';
 
 const FSeriesPreview = lazy(() => import('../components/FSeriesPreview'));
 const AudiB9Preview = lazy(() => import('../components/B9ModelPreview'));
-const F_SERIES_TOP_MATS = [...TOP_BOTTOM_MATS, SIDE_MATS.find(m => m.n === 'Perforated Leather'), {n:'Matte Carbon',d:'#111111',col:false,carbon:true,cType:'classic'}];
+const F_SERIES_TOP_MATS = [...TOP_BOTTOM_MATS.filter(m => m.n !== 'Honeycomb Carbon'), SIDE_MATS.find(m => m.n === 'Perforated Leather'), {n:'Matte Carbon',d:'#111111',col:false,carbon:true,cType:'classic'}];
 
 function Sect({ label, value, children, badge }) {
   return (
@@ -419,13 +419,17 @@ function ConfigProgress({ activeStep, onStep }) {
 
 function currentWheelOptions(config) {
   const source2D = usesSource2D(config);
+  const bmwShape = source2D && !sourceWheelShapes(config).includes(config.bmwShape)
+    ? sourceWheelShapes(config)[0] : (config.bmwShape || 'Round');
+  const next = {...config,bmwShape};
   return {
-    ...config,
+    ...next,
     ...(!source2D && ['Matte Carbon','Perforated Leather'].includes(config.topBottomMat) ? {topBottomMat:config.topBottomMat === 'Matte Carbon' ? 'Classic Carbon' : 'Smooth Leather'} : {}),
-    ...(source2D && config.bmwShape === 'Yoke' ? {stripeConceptId:'C-1',stripeCustomColor:''} : {}),
-    ...(source2D && config.bmwShape !== 'Flat bottom' ? {ledDisplay:false} : {}),
+    ...(source2D && bmwShape === 'Yoke' ? {stripeConceptId:'C-1',stripeCustomColor:''} : {}),
+    ...(source2D && !sourceWheelSupportsLed(next) ? {ledDisplay:false} : {}),
     ...(usesBmw2D(config) && config.paddleShifters === 'Magnetic' ? {paddleShifters:'Glossy Carbon'} : {}),
     ...(isAudiRS2020(config) ? {paddleShifters:'Standard',airbagCompat:false,airbagUpgrade:false,bmwLowerTrim:'Original'} : {}),
+    ...(source2D && !sourceWheelHasPaddles(config) ? {paddleShifters:'Standard'} : {}),
     ...(!source2D && !['Standard','Magnetic'].includes(config.paddleShifters) ? {paddleShifters:'Standard'} : {}),
     innerTrimMatchCarbon:false,
     audiBadge:config.audiBadge === 'R8' && config.wheelStyleType !== 'R8' ? 'RS' : config.audiBadge,
@@ -461,7 +465,8 @@ export default function Configure() {
     brand: initBrand,
     vehicleYear: initYear,
     vehicleModel: initModel,
-    wheelStyleType: initBrand === 'BMW' ? 'G-Series' : 'B9',
+    wheelStyleType: initBrand === 'BMW' ? 'G-Series' : initBrand === 'AUDI' ? 'B9' : initBrand === 'TOYOTA' ? 'Supra GR' : 'AMG Performance',
+    bmwShape: initBrand === 'TOYOTA' ? 'Flat bottom' : 'Round',
   });
 
   useEffect(() => {
@@ -470,7 +475,10 @@ export default function Configure() {
   }, []);
 
   const set = useCallback((key, val) => {
-    setCfg(prev => currentWheelOptions({ ...prev, [key]: val }));
+    setCfg(prev => currentWheelOptions({ ...prev, [key]: val,
+      ...(key === 'ledDisplay' && val ? {stripeConceptId:'C-1',stripeCustomColor:''} : {}),
+      ...(key === 'stripeConceptId' && val !== 'C-1' ? {ledDisplay:false} : {}),
+    }));
 
     const errorMap = {
       topBottomCol: 'topBottomColor',
@@ -561,7 +569,10 @@ export default function Configure() {
   const price = calcPrice(cfg, rules);
 
   const setBrand = (brand) => {
-    setCfg({ ...DEFAULT_CONFIG, brand, wheelStyleType: brand === 'BMW' ? 'G-Series' : 'B9' });
+    setCfg(currentWheelOptions({ ...DEFAULT_CONFIG, brand,
+      wheelStyleType: brand === 'BMW' ? 'G-Series' : brand === 'AUDI' ? 'B9' : brand === 'TOYOTA' ? 'Supra GR' : 'AMG Performance',
+      bmwShape: brand === 'TOYOTA' ? 'Flat bottom' : 'Round',
+    }));
     setCompatibilityMake(brand);
     setPhoto(null);
     setErrors({});
@@ -741,13 +752,13 @@ export default function Configure() {
       ['Stitch Color', configuredColor(cfg.stitchColor, cfg.stitchCustomColor, 'stitch')],
 
       !(cfg.brand === 'AUDI' && cfg.wheelStyleType === 'R8') &&
-      !usesBmw2D(cfg)
+      !usesSource2D(cfg)
         ? ['Wheel Style', cfg.wheelStyle]
         : null,
 
       usesSource2D(cfg) ? ['Wheel Shape', cfg.bmwShape || 'Round'] : null,
       usesBmw2D(cfg) ? ['Lower Trim', cfg.bmwLowerTrim || 'Original'] : null,
-      ['Paddle Shifters', cfg.paddleShifters],
+      sourceWheelHasPaddles(cfg) ? ['Paddle Shifters', cfg.paddleShifters] : null,
       cfg.paddleShifters === 'Magnetic'
         ? ['Paddle Length', cfg.paddleLength || 'Short']
         : null,
@@ -998,9 +1009,14 @@ export default function Configure() {
                 {isAudiRS2020(cfg) ? 'Audi RS 2020+ wheel family' : 'Audi wheel family'} · final fitment checked from your current wheel photo
               </div>
             )}
-            {!isAudi && (
+            {cfg.brand === 'BMW' && (
               <div style={{ padding: '8px 12px', background: 'rgba(232,184,0,.05)', border: '1px solid rgba(232,184,0,.2)', marginBottom: 12, fontSize: 14, color: 'var(--t)', letterSpacing: 1 }}>
                 {cfg.wheelStyleType === 'F-Series' ? 'F10, F30, F80, E90 wheel family' : 'BMW G-series wheel family'} · final fitment checked from your current wheel photo
+              </div>
+            )}
+            {sourceWheelStyle(cfg) && (
+              <div style={{ padding: '8px 12px', background: 'rgba(232,184,0,.05)', border: '1px solid rgba(232,184,0,.2)', marginBottom: 12, fontSize: 14, color: 'var(--t)', letterSpacing: 1 }}>
+                {cfg.wheelStyleType} wheel family · final fitment checked from your current wheel photo
               </div>
             )}
             <VehicleYearModelFields key={compatibilityMake} make={compatibilityMake} year={cfg.vehicleYear} model={cfg.vehicleModel}
@@ -1023,19 +1039,20 @@ export default function Configure() {
           {/* Wheel Style Type */}
           <Sect label="Wheel Style Type" value={bmwStyleLabel(cfg.wheelStyleType)}>
             <div style={{ display: 'grid', gridTemplateColumns: isMobileViewport ? '1fr' : 'repeat(2, minmax(0, 1fr))', gap: 8, marginBottom: 16 }}>
-              {(isAudi ? ['B9', 'RS 2020+', 'R8'] : ['G-Series', 'G-Series Pre LCI', 'F-Series']).map(style => (
+              {(isAudi ? ['B9', 'RS 2020+', 'R8'] : cfg.brand === 'BMW' ? ['G-Series', 'G-Series Pre LCI', 'F-Series'] : Object.keys(SOURCE_WHEEL_STYLES[cfg.brand] || {})).map(style => (
                 <div key={style} onClick={() => set('wheelStyleType', style)}
                   style={{ flex: 1, padding: '14px 12px', border: `2px solid ${cfg.wheelStyleType === style ? 'var(--y)' : 'var(--b)'}`, background: cfg.wheelStyleType === style ? 'rgba(232,184,0,.06)' : 'transparent', cursor: 'pointer', textAlign: 'center', transition: 'all .2s' }}>
                   <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 28, color: cfg.wheelStyleType === style ? 'var(--y)' : 'var(--w)', letterSpacing: .6 }}>{bmwStyleLabel(style)} STYLE {cfg.wheelStyleType === style && wheelMatchesVehicle(cfg,style) && <span style={{display:'inline-block',verticalAlign:'middle',fontFamily:'Arial,sans-serif',fontSize:12,fontStyle:'normal',fontWeight:700,color:'#102010',background:'#77d28b',padding:'4px 7px',marginLeft:8,letterSpacing:0}}>Compatible with your vehicle</span>}</div>
                   <div style={{ fontSize: 14, color: 'var(--t)', marginTop: 4 }}>
                     {isAudi
                       ? (style === 'B9' ? 'Classic flat-bottom sport profile' : style === 'RS 2020+' ? 'Audi RS Performance · 2020+ live 2D wheel' : 'R8 supercar-inspired round profile')
-                      : (style === 'G-Series Pre LCI' ? 'Pre LCI wheel with live shape and material preview' : style === 'G-Series' ? 'Modern G-chassis flat-bottom sport profile' : 'Classic F-chassis round profile')}
+                      : cfg.brand === 'BMW' ? (style === 'G-Series Pre LCI' ? 'Pre LCI wheel with live shape and material preview' : style === 'G-Series' ? 'Modern G-chassis flat-bottom sport profile' : 'Classic F-chassis round profile')
+                        : style === 'Supra GR' ? 'Toyota Supra GR · 2020+ · three wheel shapes' : style === 'AMG Performance' ? 'Mercedes-AMG · 2019–2024' : style === 'Mercedes 2015–2023' ? 'Mercedes C, E, S, GLC, GLE, GLS, G, CLS' : 'Mercedes C, E, S, GLK, ML, GL, CLS'}
                   </div>
                   <div style={{ fontSize: 14, color: 'var(--y)', fontWeight: 700, marginTop: 6 }}>
                     {isAudi
                       ? (style === 'R8' ? 'From $799.99' : 'From $699.99')
-                      : (style !== 'F-Series' ? 'From $549.99' : 'From $449.99')}
+                      : cfg.brand === 'BMW' ? (style !== 'F-Series' ? 'From $549.99' : 'From $449.99') : 'From $899.00'}
                   </div>
                 </div>
               ))}
@@ -1052,7 +1069,7 @@ export default function Configure() {
           </Sect>
 
           {/* LED / RPM Display Strip — both brands, price differs by brand */}
-          {(!usesSource2D(cfg) || cfg.bmwShape === 'Flat bottom') && <Sect label={isAudi ? 'LED Display Strip' : 'RPM Gauge'}
+          {(!usesSource2D(cfg) || sourceWheelSupportsLed(cfg)) && <Sect label={isAudi ? 'LED Display Strip' : 'RPM Gauge'}
             value={cfg.ledDisplay ? `Yes · +$${isAudi ? '50' : '100'}` : 'No'}
             badge={cfg.ledDisplay ? 'ADDED' : undefined}>
             <Toggle
@@ -1100,7 +1117,7 @@ export default function Configure() {
 
           {usesSource2D(cfg) && <Sect label="Wheel Shape" value={cfg.bmwShape || 'Round'}>
             <div className="fseries-shape-grid">
-              {F_SERIES_SHAPES.map(shape => <button key={shape} type="button" className={`fseries-shape${(cfg.bmwShape || 'Round') === shape ? ' on' : ''}`} aria-pressed={(cfg.bmwShape || 'Round') === shape} onClick={() => set('bmwShape', shape)}>
+              {sourceWheelShapes(cfg).map(shape => <button key={shape} type="button" className={`fseries-shape${(cfg.bmwShape || 'Round') === shape ? ' on' : ''}`} aria-pressed={(cfg.bmwShape || 'Round') === shape} onClick={() => set('bmwShape', shape)}>
                 <img src={`/models/${bmwAssetFamily(cfg)}/source/${F_SERIES_SHAPE_IDS[shape]}.webp`} alt=""/><span>{shape}</span>
               </button>)}
             </div>
@@ -1108,11 +1125,11 @@ export default function Configure() {
           </Sect>}
 
           {/* Paddles */}
-          {!isAudiRS2020(cfg) && <Sect label="Paddle Shifters" value={cfg.paddleShifters + (cfg.paddleShifters === 'Magnetic' ? ` · ${cfg.paddleLength}` : '')}>
+          {sourceWheelHasPaddles(cfg) && <Sect label="Paddle Shifters" value={cfg.paddleShifters + (cfg.paddleShifters === 'Magnetic' ? ` · ${cfg.paddleLength}` : '')}>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7 }}>
-              {(usesBmw2D(cfg) ? F_SERIES_PADDLES : ['Standard', 'Magnetic']).map(o => (
+              {(usesSource2D(cfg) ? F_SERIES_PADDLES : ['Standard', 'Magnetic']).map(o => (
                 <button key={o} aria-pressed={cfg.paddleShifters === o} className={`ob${cfg.paddleShifters === o ? ' on' : ''}`} onClick={() => set('paddleShifters', o)}>
-                  {o === 'Standard' && usesBmw2D(cfg) ? 'Original paddles' : o === 'None' ? 'No paddles' : o}{o === 'Magnetic' || o.includes('Carbon') ? ' (+$25.00)' : ''}
+                  {o === 'Standard' && usesSource2D(cfg) ? 'Original paddles' : o === 'None' ? 'No paddles' : o}{o === 'Magnetic' || o.includes('Carbon') ? ' (+$25.00)' : ''}
                 </button>
               ))}
             </div>

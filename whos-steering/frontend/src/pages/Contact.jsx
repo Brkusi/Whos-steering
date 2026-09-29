@@ -114,7 +114,7 @@ export default function Contact() {
           <div style={{ color: 'var(--t)', fontSize: 14, lineHeight: 1.7, marginBottom: 28 }}>
             Questions about fitment, materials, or a custom build? Reach out — we respond within 24 hours.
           </div>
-          {[['✉','service@whossteering.com'],['⏱','3–4 Week Build · Made to Order'],['🛡','6 Month Manufacturer Warranty'],['🚗','BMW & Audi Specialists']].map(([icon, text]) => (
+          {[['✉','service@whossteering.com'],['⏱','3–4 Week Build · Made to Order'],['🛡','6 Month Manufacturer Warranty'],['🚗','Custom Wheel Specialists']].map(([icon, text]) => (
             <div key={text} style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 16 }}>
               <span style={{ color: 'var(--y)', fontSize: 18, width: 24, flexShrink: 0 }}>{icon}</span>
               <span style={{ fontSize: 14, color: 'var(--t)' }}>{text}</span>
