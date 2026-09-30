@@ -14,7 +14,7 @@ import { calcPrice, apiFetch } from '../lib/api';
 import { useCart } from '../context';
 
 import { VEHICLE_MAKES, isConfigurableMake, wheelMatchesVehicle } from '../lib/vehicleCompatibility';
-import { defaultWheelStyle, stylesForBrand, wheelStyle } from '../lib/wheelStyles';
+import { defaultWheelStyle, wheelStyle } from '../lib/wheelStyles';
 import { hasVehicleCatalog, vehicleInquiryPath, vehicleYears } from '../lib/vehicleCatalog';
 import VehicleYearModelFields from '../components/VehicleYearModelFields';
 
@@ -575,6 +575,12 @@ export default function Configure() {
   };
 
   const price = calcPrice(cfg, rules);
+  const changeWheel = () => {
+    const query = new URLSearchParams({brand:cfg.brand});
+    if (cfg.vehicleYear) query.set('year',cfg.vehicleYear);
+    if (cfg.vehicleModel) query.set('model',cfg.vehicleModel);
+    nav(`/build?${query}`);
+  };
 
   const setBrand = (brand) => {
     setCfg(currentWheelOptions({ ...DEFAULT_CONFIG, brand,
@@ -1020,10 +1026,10 @@ export default function Configure() {
           {/* Vehicle */}
           <div ref={vehicleRef} data-step="vehicle" style={{ scrollMarginTop: stepScrollMargin }}>
           <Sect label="Vehicle" value={cfg.vehicleYear && cfg.vehicleModel ? `${cfg.vehicleYear} ${VEHICLE_MAKES.find(make => make.value === cfg.brand)?.label || cfg.brand} ${cfg.vehicleModel}` : '—'}>
-            <label className="fl" htmlFor="vehicle-compatible-make">Check vehicle compatibility</label>
-            <select id="vehicle-compatible-make" className="fi" value={compatibilityMake} onChange={event => setBrand(event.target.value)} style={{marginBottom:14}}>
-              {VEHICLE_MAKES.map(make => <option value={make.value} key={make.value}>{make.label}</option>)}
-            </select>
+            <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',gap:12,marginBottom:14,padding:'10px 12px',background:'#141414',border:'1px solid #353535'}}>
+              <span style={{color:'var(--y)',fontWeight:800,letterSpacing:1,textTransform:'uppercase'}}>{VEHICLE_MAKES.find(make => make.value === cfg.brand)?.label || cfg.brand}</span>
+              <button type="button" className="ob" onClick={changeWheel}>CHANGE VEHICLE OR WHEEL →</button>
+            </div>
             {isAudi && (
               <div style={{ padding: '8px 12px', background: 'rgba(232,184,0,.05)', border: '1px solid rgba(232,184,0,.2)', marginBottom: 12, fontSize: 14, color: 'var(--t)', letterSpacing: 1 }}>
                 {isAudiRS2020(cfg) ? 'Audi RS 2020+ wheel family' : 'Audi wheel family'} · final fitment checked from your current wheel photo
@@ -1056,18 +1062,16 @@ export default function Configure() {
 
           {/* Style */}
           <div ref={styleRef} data-step="style" style={{ scrollMarginTop: stepScrollMargin }}>
-          {/* Wheel Style Type */}
-          <Sect label="Wheel Style Type" value={bmwStyleLabel(cfg.wheelStyleType)}>
-            <div style={{ display: 'grid', gridTemplateColumns: isMobileViewport ? '1fr' : 'repeat(2, minmax(0, 1fr))', gap: 8, marginBottom: 16 }}>
-              {stylesForBrand(cfg.brand).map(({style,label,image,detail,price}) => (
-                <div key={style} onClick={() => set('wheelStyleType', style)}
-                  style={{ flex: 1, padding: '14px 12px', border: `2px solid ${cfg.wheelStyleType === style ? 'var(--y)' : 'var(--b)'}`, background: cfg.wheelStyleType === style ? 'rgba(232,184,0,.06)' : 'transparent', cursor: 'pointer', textAlign: 'center', transition: 'all .2s' }}>
-                  <img src={image} alt={`${label} steering wheel`} style={{display:'block',width:'100%',height:150,objectFit:'contain',background:'#090909',marginBottom:10}} />
-                  <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 26, color: cfg.wheelStyleType === style ? 'var(--y)' : 'var(--w)', letterSpacing: .6 }}>{label} STYLE {cfg.wheelStyleType === style && wheelMatchesVehicle(cfg,style) && <span style={{display:'inline-block',verticalAlign:'middle',fontFamily:'Arial,sans-serif',fontSize:12,fontStyle:'normal',fontWeight:700,color:'#102010',background:'#77d28b',padding:'4px 7px',marginLeft:8,letterSpacing:0}}>Compatible with your vehicle</span>}</div>
-                  <div style={{ fontSize: 14, color: 'var(--t)', marginTop: 4 }}>{detail}</div>
-                  <div style={{ fontSize: 14, color: 'var(--y)', fontWeight: 700, marginTop: 6 }}>From ${price.toFixed(2)}</div>
-                </div>
-              ))}
+          {/* The wheel was chosen with the vehicle details on the build page. */}
+          <Sect label="Selected Wheel" value={bmwStyleLabel(cfg.wheelStyleType)}>
+            <div style={{display:'flex',alignItems:'center',gap:16,padding:12,border:'1px solid #343434',background:'#101010',flexWrap:'wrap'}}>
+              <img src={wheelStyle(cfg.brand,cfg.wheelStyleType)?.image} alt={`${bmwStyleLabel(cfg.wheelStyleType)} steering wheel`} style={{width:110,height:100,objectFit:'contain',background:'#090909'}} />
+              <div style={{flex:'1 1 180px'}}>
+                <strong style={{display:'block',fontFamily:'Barlow Condensed, sans-serif',fontSize:25,fontStyle:'italic',color:'var(--y)'}}>{bmwStyleLabel(cfg.wheelStyleType)} STYLE</strong>
+                <span style={{fontSize:13,color:'var(--t)'}}>{wheelStyle(cfg.brand,cfg.wheelStyleType)?.detail}</span>
+                {wheelMatchesVehicle(cfg,cfg.wheelStyleType) && <span style={{display:'block',marginTop:6,fontSize:12,fontWeight:700,color:'#77d28b'}}>✓ Compatible with your vehicle</span>}
+              </div>
+              <button type="button" className="ob" onClick={changeWheel}>CHANGE WHEEL →</button>
             </div>
             <p style={{fontSize:13,color:'var(--t)',margin:'0 0 8px'}}>Compatibility shown here is based on your make, model, and year. We confirm final fitment from your current wheel photo.</p>
             {isAudi && cfg.wheelStyleType === 'R8' && (
