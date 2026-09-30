@@ -189,7 +189,7 @@ function PresetCard({ preset, onOpen }) {
             {quickAdded ? '✓ ADDED' : 'ADD TO CART'}
           </button>
         )}
-        <div style={{ fontSize: 14, color: 'var(--t)', paddingTop: 10, marginTop: 8, borderTop: '1px solid var(--b)', textAlign: 'center' }}>{preset.readyToShip ? '🛡 6 Month Warranty · Ready to Ship' : '🛡 6 Month Warranty · ⏱ 3–4 Week Build'}</div>
+        <div style={{ fontSize: 14, color: 'var(--t)', paddingTop: 10, marginTop: 8, borderTop: '1px solid var(--b)', textAlign: 'center' }}>{preset.readyToShip ? '🛡 6 Month Warranty · Ready to Ship' : '🛡 6 Month Warranty · ⏱ 3–5 Week Build'}</div>
       </div>
     </div>
   );
@@ -503,7 +503,7 @@ function PresetPage({ preset, onClose }) {
                 {added ? '✓ ADDED' : 'ADD TO CART'}
               </button>
             </div>
-            <div style={{ fontSize: 14, color: 'var(--t)', lineHeight: 1.7 }}>{preset.footerMeta || '🛡 6 Month Warranty · ⏱ 3–4 Week Build · Made to Order'}</div>
+            <div style={{ fontSize: 14, color: 'var(--t)', lineHeight: 1.7 }}>{preset.footerMeta || '🛡 6 Month Warranty · ⏱ 3–5 Week Build · Made to Order'}</div>
           </div>
         </div>
       </div>
@@ -563,7 +563,7 @@ export default function Catalog() {
       </div>
 
       <div className="catalog-trust-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', borderTop: '1px solid var(--b)', background: 'var(--m)', marginTop: 1 }}>
-        {[['🛡','6 Month Warranty','Manufacturer guaranteed'],['⏱','3–4 Week Build','Handcrafted to order'],['🔧','BMW, Audi & Infiniti','Fitment specialists']].map(([icon,title,sub]) => (
+        {[['🛡','6 Month Warranty','Manufacturer guaranteed'],['⏱','3–5 Week Build','Handcrafted to order'],['🔧','BMW, Audi, Mercedes, Toyota, Porsche & Dodge','Fitment specialists']].map(([icon,title,sub]) => (
           <div key={title} style={{ padding: '22px 28px', display: 'flex', alignItems: 'center', gap: 12, borderRight: '1px solid var(--b)' }}>
             <span style={{ fontSize: 22, color: 'var(--y)' }}>{icon}</span>
             <div><div style={{ fontWeight: 700, fontSize: 14, letterSpacing: 1 }}>{title}</div><div style={{ fontSize: 14, color: 'var(--t)' }}>{sub}</div></div>

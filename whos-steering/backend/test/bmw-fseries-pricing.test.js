@@ -42,10 +42,18 @@ test('Toyota and Mercedes source wheels use their own base price and available p
     ['MERCEDES','Mercedes 2010–2015',true],
   ]){
     const cfg={...base,brand,wheelStyleType};
-    assert.equal(await serverPrice()(cfg),89900);
-    assert.equal(await serverPrice()({...cfg,paddleShifters:'Forged Carbon'}),89900+(hasPaddles?2500:0));
-    assert.equal(await serverPrice()({...cfg,topBottomMat:'Classic Carbon',ledDisplay:true}),103900);
+    const starting=brand==='MERCEDES'?(wheelStyleType==='Mercedes 2010–2015'?69999:79999):89900;
+    assert.equal(await serverPrice()(cfg),starting);
+    assert.equal(await serverPrice()({...cfg,paddleShifters:'Forged Carbon'}),starting+(hasPaddles?2500:0));
+    assert.equal(await serverPrice()({...cfg,topBottomMat:'Classic Carbon',ledDisplay:true}),starting+14000);
   }
+});
+
+test('Audi B9.5 pricing includes optional cover and full airbag unit',async()=>{
+  const cfg={brand:'AUDI',wheelStyleType:'RS 2020+',airbagCompat:false,airbagUpgrade:false};
+  assert.equal(await serverPrice()(cfg),79999);
+  assert.equal(await serverPrice()({...cfg,airbagCompat:true}),82499);
+  assert.equal(await serverPrice()({...cfg,airbagCompat:true,airbagUpgrade:true}),89999);
 });
 
 test('Porsche and Dodge source wheels use their listed bases and paddle rules',async()=>{

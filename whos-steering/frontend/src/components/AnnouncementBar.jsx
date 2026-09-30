@@ -4,7 +4,7 @@ const ITEMS = [
   '📍 Engineered in Florida · Assembled in New York City',
   '🌍 International Shipping Available Worldwide',
   '🛡 Every build backed by a 6-Month Warranty',
-  '⏱ Production Time: 3–4 Weeks from Order Confirmation',
+  '⏱ Custom Build Time: 3–5 Weeks from Order Confirmation',
   '🔧 Custom wheels for BMW, Audi, Mercedes, Toyota, Porsche & Dodge SRT — fitment confirmed from your wheel photo',
   '✈️ We ship globally — no matter where you are, we deliver',
   '🏁 Race-inspired materials. Street-legal quality.',

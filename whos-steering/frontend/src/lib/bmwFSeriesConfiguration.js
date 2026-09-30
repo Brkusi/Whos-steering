@@ -25,7 +25,7 @@ export const sourceWheelHasPaddles = cfg => sourceWheelStyle(cfg)?.paddles ?? !i
 export const sourceWheelSupportsLed = cfg => sourceWheelStyle(cfg)
   ? sourceWheelStyle(cfg).led.includes(cfg.bmwShape || 'Round')
   : (cfg.bmwShape || 'Round') === 'Flat bottom';
-export const bmwStyleLabel = style => style === 'G-Series' ? 'G-Series LCI' : style;
+export const bmwStyleLabel = style => style === 'G-Series' ? 'G-Series LCI' : style === 'RS 2020+' ? 'Audi B9.5' : style;
 export const isFSeries = cfg => cfg.brand === 'BMW' && cfg.wheelStyleType === 'F-Series';
 export const isGSeriesPreLCI = cfg => cfg.brand === 'BMW' && cfg.wheelStyleType === 'G-Series Pre LCI';
 export const isAudiRS2020 = cfg => cfg.brand === 'AUDI' && cfg.wheelStyleType === 'RS 2020+';
@@ -50,6 +50,8 @@ export function bmwFSeriesConfiguration(cfg, parseColor) {
     topZone:shape==='yoke'?'bottom':'tb',
     led:appearance.led && sourceWheelSupportsLed(cfg),
     stripes:shape==='yoke'?[]:appearance.stripes,
+    // The Audi B9.5 source set has no cover overlay. Keep its original center
+    // visible while retaining the customer's cover and airbag-unit choices.
     cover:!isAudiRS2020(cfg) && !!cfg.airbagCompat,
     dodgeAirbagTrim:appearance.dodgeAirbagTrim,
     dodgeLogo:appearance.dodgeLogo,

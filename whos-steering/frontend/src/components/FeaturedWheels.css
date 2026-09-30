@@ -82,13 +82,18 @@
 .featured-wheels__tabs {
   display: flex;
   align-items: center;
-  gap: clamp(24px, 3vw, 42px);
+  gap: clamp(16px, 2.4vw, 36px);
   margin-bottom: 18px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  overflow-x: auto;
+  scrollbar-width: none;
 }
+
+.featured-wheels__tabs::-webkit-scrollbar { display: none; }
 
 .featured-wheels__tab {
   position: relative;
+  flex: none;
   appearance: none;
   padding: 0 0 11px;
   border: 0;
@@ -317,6 +322,8 @@
   font-weight: 700;
   letter-spacing: 0.14em;
 }
+
+.featured-wheel-card__timeline { margin-top: 6px; color: #a99d77; font-family: Rajdhani, sans-serif; font-size: 13px; font-weight: 600; letter-spacing: .04em; }
 
 .featured-wheels__footer {
   display: flex;

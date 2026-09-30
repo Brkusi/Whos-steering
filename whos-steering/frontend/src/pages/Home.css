@@ -475,6 +475,12 @@
 
 .ws-brand-card:hover {
   background: #1b1b1b;
+  box-shadow: inset 0 2px 0 var(--ws-yellow);
+}
+
+.ws-brand-card:focus-visible {
+  outline: 2px solid var(--ws-yellow);
+  outline-offset: -3px;
 }
 
 .ws-brand-copy {
@@ -538,6 +544,11 @@
   font-weight: 800;
 
   letter-spacing: 0.08em;
+}
+
+@media (max-width: 760px) {
+  .ws-brand-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .ws-brand-card:nth-child(2n) { border-right: 0; }
 }
 
 /* =========================================================

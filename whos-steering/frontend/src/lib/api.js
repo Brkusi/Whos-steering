@@ -29,11 +29,16 @@ export function calcPrice(config, rules = {}) {
   const isBmwFSeries = config.brand === 'BMW' && config.wheelStyleType === 'F-Series';
 
   if (config.brand === 'AUDI') {
-    // Audi base: B9 $699.99, R8 $799.99; +$40 if carbon top
+    // Audi base varies by wheel family; +$40 if carbon top.
     if (config.wheelStyleType === 'R8') price = (rules.base_audi_r8 ?? 799.99) + (isCarbonTop ? 40 : 0);
+    else if (config.wheelStyleType === 'RS 2020+') price = (rules.base_audi_b95 ?? 799.99) + (isCarbonTop ? 40 : 0);
     else price = (rules.base_audi_b9 ?? 699.99) + (isCarbonTop ? 40 : 0);
-  } else if (config.brand === 'MERCEDES' || config.brand === 'TOYOTA') {
-    price = (rules[`base_${config.brand.toLowerCase()}`] ?? 899) + (isCarbonTop ? 40 : 0);
+  } else if (config.brand === 'MERCEDES') {
+    price = (config.wheelStyleType === 'Mercedes 2010–2015'
+      ? (rules.base_mercedes_2010 ?? 699.99)
+      : (rules.base_mercedes_modern ?? 799.99)) + (isCarbonTop ? 40 : 0);
+  } else if (config.brand === 'TOYOTA') {
+    price = (rules.base_toyota ?? 899) + (isCarbonTop ? 40 : 0);
   } else if (config.brand === 'PORSCHE' || config.brand === 'DODGE_SRT') {
     price = (config.brand === 'PORSCHE' ? 1399 : 899) + (isCarbonTop ? 40 : 0);
   } else {

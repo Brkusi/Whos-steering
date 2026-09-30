@@ -149,6 +149,8 @@ export default function Checkout() {
   const [recoveryAvailable,setRecoveryAvailable]=useState(false);
   useEffect(()=>{trackSales('checkout_started');apiFetch('/api/sales/status').then(s=>setRecoveryAvailable(s.recovery)).catch(()=>{});},[]);
   const { items, total } = useCart();
+  const hasCustomWheels = items.some(item => item.config?.readyToShip !== true);
+  const hasInStockWheels = items.some(item => item.config?.readyToShip === true);
   const { user } = useAuth();
   const nav = useNavigate();
 
@@ -478,8 +480,9 @@ export default function Checkout() {
           </div>
           <div style={{ marginTop: 20, padding: '12px 0', borderTop: '1px solid var(--b)', fontSize: 14, color: 'var(--t)', lineHeight: 1.9 }}>
             🛡 6 Month Warranty<br />
-            ⏱ 3–4 Week Build Time<br />
-            📦 Made to Order — ships when complete<br />
+            {hasCustomWheels && <>⏱ 3–5 Week Custom Build Time<br /></>}
+            {hasInStockWheels && <>📦 In-stock wheels are already built<br /></>}
+            {hasCustomWheels && <>📦 Made-to-order wheels ship when complete<br /></>}
             <span style={{ color: 'var(--y)' }}>↩ Cancellation:</span>{' '}
             Orders may be canceled before order processing / the build begins.
             Once processing starts, cancellation is no longer available.

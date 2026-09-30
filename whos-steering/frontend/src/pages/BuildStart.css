@@ -187,6 +187,8 @@
   line-height: 1.55;
 }
 
+.build-brand-card .build-brand-card__timeline { margin-top: 6px; color: #a99d77; font-size: 12px; }
+
 .build-brand-card__action {
   flex-shrink: 0;
   color: var(--y);

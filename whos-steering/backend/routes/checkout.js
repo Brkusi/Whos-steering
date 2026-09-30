@@ -470,9 +470,14 @@ async function calcServerPrice(cfg) {
 
   if (cfg.brand === 'AUDI') {
     if (cfg.wheelStyleType === 'R8') price = (rules.base_audi_r8 || 799.99) + (isCarbonTop ? 40 : 0);
+    else if (cfg.wheelStyleType === 'RS 2020+') price = (rules.base_audi_b95 ?? 799.99) + (isCarbonTop ? 40 : 0);
     else price = (rules.base_audi_b9 || 699.99) + (isCarbonTop ? 40 : 0);
-  } else if (cfg.brand === 'MERCEDES' || cfg.brand === 'TOYOTA') {
-    price = (rules[`base_${cfg.brand.toLowerCase()}`] ?? 899) + (isCarbonTop ? 40 : 0);
+  } else if (cfg.brand === 'MERCEDES') {
+    price = (cfg.wheelStyleType === 'Mercedes 2010–2015'
+      ? (rules.base_mercedes_2010 ?? 699.99)
+      : (rules.base_mercedes_modern ?? 799.99)) + (isCarbonTop ? 40 : 0);
+  } else if (cfg.brand === 'TOYOTA') {
+    price = (rules.base_toyota ?? 899) + (isCarbonTop ? 40 : 0);
   } else if (cfg.brand === 'PORSCHE' || cfg.brand === 'DODGE_SRT') {
     price = (cfg.brand === 'PORSCHE' ? 1399 : 899) + (isCarbonTop ? 40 : 0);
   } else {

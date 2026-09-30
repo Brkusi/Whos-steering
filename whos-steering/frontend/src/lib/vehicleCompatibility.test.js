@@ -2,11 +2,12 @@ import { VEHICLE_MAKES, isConfigurableMake, wheelMatchesVehicle } from './vehicl
 import { bmwFSeriesConfiguration, sourceWheelShapes, sourceWheelHasPaddles, sourceWheelSupportsLed } from './bmwFSeriesConfiguration';
 import { calcPrice } from './api';
 import { DEFAULT_CONFIG } from './data';
+import { wheelStyle } from './wheelStyles';
 const fs = require('fs'), path = require('path'), crypto = require('crypto');
 
 test('make selection separates available wheels from requests for fitment', () => {
-  expect(VEHICLE_MAKES.map(item => item.label)).toEqual(['Audi','BMW','Dodge SRT','Mercedes','Toyota','Porsche']);
-  expect(VEHICLE_MAKES.filter(item => isConfigurableMake(item.value)).map(item => item.label)).toEqual(['Audi','BMW','Dodge SRT','Mercedes','Toyota','Porsche']);
+  expect(VEHICLE_MAKES.map(item => item.label)).toEqual(['Audi','BMW','Dodge','Mercedes','Toyota','Porsche']);
+  expect(VEHICLE_MAKES.filter(item => isConfigurableMake(item.value)).map(item => item.label)).toEqual(['Audi','BMW','Dodge','Mercedes','Toyota','Porsche']);
 });
 
 test('compatibility label needs a fitting year and model', () => {
@@ -43,7 +44,8 @@ test('source styles expose their reference shapes, LEDs, paddles, and original a
     const cfg={...DEFAULT_CONFIG,brand,wheelStyleType,bmwShape,ledDisplay:true,paddleShifters:'Forged Carbon',heated:false,laneAssist:false};
     expect(bmwFSeriesConfiguration(cfg,()=>null)).toMatchObject({family,led:sourceWheelSupportsLed(cfg),paddle:paddles?'forged':null,lowerTrim:null});
     expect(sourceWheelHasPaddles(cfg)).toBe(paddles);
-    expect(calcPrice({...cfg,airbagCompat:false})).toBe((brand==='PORSCHE'?1399:899)+25*(paddles?1:0)+100);
+    const basePrice=brand==='PORSCHE'?1399:brand==='MERCEDES'?(wheelStyleType==='Mercedes 2010–2015'?699.99:799.99):899;
+    expect(calcPrice({...cfg,airbagCompat:false})).toBe(basePrice+25*(paddles?1:0)+100);
     const root=path.join(process.cwd(),`public/models/${family}/source`);
     const assets=JSON.parse(fs.readFileSync(path.join(root,'manifest.json'),'utf8'));
     const names=new Set(assets.filter(asset=>asset.sha256).map(asset=>asset.path));
@@ -70,4 +72,17 @@ test('Audi RS 2020+ source maps cover four shapes and retain original bytes', ()
   for (const asset of assets) expect(crypto.createHash('sha256').update(fs.readFileSync(path.join(root,asset.path))).digest('hex')).toBe(asset.sha256);
   const wheel=bmwFSeriesConfiguration({...DEFAULT_CONFIG,brand:'AUDI',wheelStyleType:'RS 2020+',bmwShape:'Flat bottom',ledDisplay:true,airbagCompat:true},()=>null);
   expect(wheel).toMatchObject({family:'audi-rs-2020',shape:'flat-round',led:true,cover:false,paddle:null,lowerTrim:null});
+});
+
+test('Audi B9.5 and Mercedes style prices match the advertised starting prices', () => {
+  const noOptions={...DEFAULT_CONFIG,airbagCompat:false,heated:false,laneAssist:false};
+  expect(wheelStyle('AUDI','RS 2020+')).toMatchObject({label:'Audi B9.5',price:799.99});
+  expect(calcPrice({...noOptions,brand:'AUDI',wheelStyleType:'RS 2020+'})).toBe(799.99);
+  for(const style of ['AMG Performance','Mercedes 2015–2023']) {
+    expect(wheelStyle('MERCEDES',style).price).toBe(799.99);
+    expect(calcPrice({...noOptions,brand:'MERCEDES',wheelStyleType:style})).toBe(799.99);
+  }
+  expect(wheelStyle('MERCEDES','Mercedes 2010–2015').price).toBe(699.99);
+  expect(calcPrice({...noOptions,brand:'MERCEDES',wheelStyleType:'Mercedes 2010–2015'})).toBe(699.99);
+  expect(calcPrice({...noOptions,brand:'AUDI',wheelStyleType:'RS 2020+',airbagCompat:true,airbagUpgrade:true})).toBe(899.99);
 });

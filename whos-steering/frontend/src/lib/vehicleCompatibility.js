@@ -3,7 +3,7 @@ import { vehicleYears } from './vehicleCatalog';
 export const VEHICLE_MAKES = [
   { value: 'AUDI', label: 'Audi', available: true },
   { value: 'BMW', label: 'BMW', available: true },
-  { value: 'DODGE_SRT', label: 'Dodge SRT', available: true },
+  { value: 'DODGE_SRT', label: 'Dodge', available: true },
   { value: 'MERCEDES', label: 'Mercedes', available: true },
   { value: 'TOYOTA', label: 'Toyota', available: true },
   { value: 'PORSCHE', label: 'Porsche', available: true },
