@@ -41,14 +41,26 @@
   line-height: 1.7;
 }
 
-.build-start__make-label { display: block; color: var(--y); font-size: 14px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; margin-bottom: 8px; }
-.build-start__make-select { width: 100%; min-height: 48px; padding: 10px 14px; color: #fff; background: #151515; border: 1px solid #494949; font: inherit; }
-.build-start__make-select:focus-visible { outline: 2px solid var(--y); outline-offset: 2px; }
-.build-start__compatibility { display: grid; grid-template-columns: minmax(230px, 1fr) minmax(0, 2fr); align-items: end; gap: 16px; width: 100%; padding: 22px; margin-bottom: 30px; border: 1px solid #333; background: #101010; }
+.build-start__compatibility { position: relative; width: 100%; padding: 24px 26px 18px; margin-bottom: 30px; border: 1px solid #3a3422; border-radius: 5px; background: radial-gradient(circle at 0 0, rgba(232,184,0,.12), transparent 44%), linear-gradient(120deg, #171714, #0e0e0e 72%); box-shadow: 0 16px 42px rgba(0,0,0,.2); }
+.build-start__compatibility::before { content: ''; position: absolute; inset: -1px -1px auto; height: 3px; border-radius: 5px 5px 0 0; background: linear-gradient(90deg, var(--y), rgba(232,184,0,.16) 74%); }
+.build-start__compatibility-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-bottom: 19px; }
+.build-start__compatibility-heading > div { display: flex; align-items: center; gap: 10px; color: var(--y); font-family: Orbitron, monospace; font-size: 14px; font-weight: 800; letter-spacing: .13em; }
+.build-start__compatibility-mark { display: grid; place-items: center; width: 27px; height: 27px; flex: none; border: 1px solid rgba(232,184,0,.5); border-radius: 50%; font-family: Arial, sans-serif; font-size: 16px; letter-spacing: 0; }
+.build-start__compatibility-heading p { margin: 0; color: #969696; font-size: 13px; line-height: 1.5; }
+.build-start__compatibility-fields { display: grid; grid-template-columns: minmax(220px, 1fr) minmax(0, 2fr); gap: 12px; }
+.build-start__field, .build-start__vehicle-fields .vehicle-field { min-width: 0; padding: 10px; border: 1px solid #303030; border-radius: 4px; background: rgba(7,7,7,.65); transition: border-color .2s, box-shadow .2s, background .2s; }
+.build-start__field.is-next, .build-start__vehicle-fields .vehicle-field.is-next { border-color: var(--y); background: rgba(232,184,0,.08); box-shadow: 0 0 0 2px rgba(232,184,0,.13), 0 0 24px rgba(232,184,0,.08); }
+.build-start__make-label, .build-start__vehicle-fields .fl { display: flex; align-items: center; gap: 8px; min-height: 19px; margin: 0 0 8px; color: #e4e4e4; font-family: Rajdhani, sans-serif; font-size: 14px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+.build-start__field.is-next .build-start__make-label, .build-start__vehicle-fields .vehicle-field.is-next .fl { color: var(--y); }
+.vehicle-field__number { color: var(--y); font-family: Orbitron, monospace; font-size: 10px; font-weight: 800; letter-spacing: .04em; }
+.build-start__make-select, .build-start__vehicle-fields .fi { appearance: none; width: 100%; height: 50px; padding: 10px 40px 10px 14px; border: 1px solid #454545; border-radius: 3px; color: #fff; background-color: #191919; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='m1 1 5 5 5-5' fill='none' stroke='%23e8b800' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); background-position: right 15px center; background-repeat: no-repeat; font-family: Rajdhani, sans-serif; font-size: 18px; font-weight: 700; letter-spacing: .02em; cursor: pointer; }
+.build-start__make-select:hover, .build-start__vehicle-fields .fi:hover:not(:disabled) { border-color: #a58a2e; }
+.build-start__make-select:focus-visible, .build-start__vehicle-fields .fi:focus-visible { outline: 2px solid var(--y); outline-offset: 2px; }
 .build-start__vehicle-fields { min-width: 0; }
-.build-start__vehicle-fields > div { margin-bottom: 0 !important; }
-.build-start__vehicle-fields .fl { color: var(--y); font-size: 14px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; margin-bottom: 8px; }
-.build-start__vehicle-fields .fi { color: #fff; background: #151515; border: 1px solid #494949; min-height: 48px; }
+.build-start__vehicle-fields > div { grid-template-columns: repeat(2, minmax(0,1fr)) !important; margin-bottom: 0 !important; gap: 12px !important; }
+.build-start__vehicle-fields .fi:disabled { opacity: .52; cursor: not-allowed; }
+.build-start__vehicle-fields input.fi { background-image: none; cursor: text; }
+.build-start__next-step { min-height: 20px; margin-top: 15px; color: var(--y); font-family: Rajdhani, sans-serif; font-size: 14px; font-weight: 700; letter-spacing: .05em; }
 .build-start__section-heading { margin: 0 0 16px; color: var(--y); font-family: Orbitron, monospace; font-size: 14px; font-weight: 700; letter-spacing: .15em; text-transform: uppercase; }
 .build-start__unavailable { max-width: 650px; padding: 20px; margin-top: 18px; border: 1px solid var(--b); color: var(--t); line-height: 1.6; }
 .build-start__unavailable a { color: var(--y); }
@@ -202,7 +214,10 @@
   }
 
   .build-start__grid { grid-template-columns: 1fr; }
-  .build-start__compatibility { grid-template-columns: 1fr; padding: 16px; }
+  .build-start__compatibility { padding: 18px 15px 15px; }
+  .build-start__compatibility-heading { display: block; }
+  .build-start__compatibility-heading p { margin-top: 8px; }
+  .build-start__compatibility-fields, .build-start__vehicle-fields > div { grid-template-columns: 1fr !important; }
   .build-brand-card__media { aspect-ratio: 5 / 4; }
   .build-brand-card__media img { padding: 10px; transform: scale(.98); }
   .build-brand-card__content { padding: 18px; }

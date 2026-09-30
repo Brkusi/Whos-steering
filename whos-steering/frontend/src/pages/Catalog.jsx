@@ -55,13 +55,13 @@ function ConfigureBanner({ nav }) {
       <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 700, fontStyle: 'italic', fontSize: 18, color: 'var(--w)', marginBottom: 12 }}>BUILD YOUR OWN — Every material, color, stripe &amp; stitch</div>
       <div className="catalog-config-actions" style={{ display: 'flex', gap: 8 }}>
         <button style={btnStyle}
-          onClick={() => nav('/configure?brand=BMW')}
+          onClick={() => nav('/build?brand=BMW')}
           onMouseEnter={e => { e.currentTarget.style.background = '#FFD000'; }}
           onMouseLeave={e => { e.currentTarget.style.background = 'var(--y)'; }}>
           CONFIGURE BMW →
         </button>
         <button style={btnStyle}
-          onClick={() => nav('/configure?brand=AUDI')}
+          onClick={() => nav('/build?brand=AUDI')}
           onMouseEnter={e => { e.currentTarget.style.background = '#FFD000'; }}
           onMouseLeave={e => { e.currentTarget.style.background = 'var(--y)'; }}>
           CONFIGURE AUDI →

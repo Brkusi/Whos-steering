@@ -60,7 +60,7 @@ export default function Product() {
 
           {/* CTAs */}
           <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginBottom: 22 }}>
-            <button className="btn" onClick={() => nav(`/configure?brand=${product.brand}`)}>CONFIGURE THIS WHEEL</button>
+            <button className="btn" onClick={() => nav(`/build?brand=${product.brand}`)}>CONFIGURE THIS WHEEL</button>
             <button className="btn-outline sm" onClick={() => {
               addItem({ name: `${product.brand} ${product.name}`, detail: features.slice(0, 3).join(' · '), price: parseFloat(product.base_price), config: { brand: product.brand, productId: product.id } });
               showToast('ADDED TO CART');
