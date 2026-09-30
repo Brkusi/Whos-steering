@@ -2,6 +2,10 @@ import { carbonCoordinates } from './bmwFSeriesCarbonUV';
 import F_CALIBRATION from './bmwFSeriesCalibration.json';
 import G_CALIBRATION from './bmwGSeriesCalibration.json';
 import AUDI_RS_CALIBRATION from './audiRS2020Calibration.json';
+import SUPRA_CALIBRATION from './sourceCalibrationSupraGr.json';
+import MERCEDES_AMG_CALIBRATION from './sourceCalibrationMercedesAmg.json';
+import MERCEDES_2015_CALIBRATION from './sourceCalibrationMercedes2015.json';
+import MERCEDES_2010_CALIBRATION from './sourceCalibrationMercedes2010.json';
 import { SourceMaterialRenderer } from './bmwFSeriesSourceRenderer';
 import { sourceMaterial } from './bmwFSeriesConfiguration';
 
@@ -10,10 +14,21 @@ const SIZE = 1024;
 const canvas = (size=SIZE) => {const c=document.createElement('canvas');c.width=c.height=size;return c;};
 export const stripeColorIndex = (x, left, right, count) => Math.max(0, Math.min(count - 1, Math.floor((x - left) / Math.max(1, right - left + 1) * count)));
 const rgb = hex => [1,3,5].map(start=>parseInt(hex.slice(start,start+2),16));
+const SOURCE_CALIBRATIONS = {'audi-rs-2020':AUDI_RS_CALIBRATION,'supra-gr':SUPRA_CALIBRATION,
+  'mercedes-amg':MERCEDES_AMG_CALIBRATION,'mercedes-2015':MERCEDES_2015_CALIBRATION,'mercedes-2010':MERCEDES_2010_CALIBRATION,
+  'bmw-gseries':G_CALIBRATION,'bmw-fseries':F_CALIBRATION};
+// These four maps are absent on the source server. Use the closest map from
+// the same shape and grip zone so every advertised option can still preview.
+const SOURCE_MAP_FALLBACKS = {
+  'mercedes-amg:round-tb-alcantara':'round-tb-smooth',
+  'mercedes-2015:flat-round-side-perforated':'flat-round-side-smooth',
+  'mercedes-2010:round-side-smooth':'round-side-perforated',
+  'mercedes-2010:round-tb-perforated':'round-tb-smooth',
+};
 
 export function createFSeriesCompositor(family = 'bmw-fseries') {
   const ROOT = `${process.env.PUBLIC_URL || ''}/models/${family}`;
-  const CALIBRATION = family === 'audi-rs-2020' ? AUDI_RS_CALIBRATION : family === 'bmw-gseries' ? G_CALIBRATION : F_CALIBRATION;
+  const CALIBRATION = SOURCE_CALIBRATIONS[family] || F_CALIBRATION;
   const assets=new Map(), layers=new Map(), materialRenderer=new SourceMaterialRenderer(12);
   let disposed=false;
   function image(path) {
@@ -24,7 +39,9 @@ export function createFSeriesCompositor(family = 'bmw-fseries') {
   }
   const source = path => image(`${ROOT}/source/${path}.webp`);
   async function wrap(key,color,stitch,carbonFinish=false) {
-    const result=await materialRenderer.render(`${carbonFinish ? 'carbon:' : ''}${key}`,`${ROOT}/source/grips/${key}-map.webp`,SIZE,(carbonFinish && family !== 'audi-rs-2020' ? G_CALIBRATION : CALIBRATION)[key],color,stitch).catch(error=>{materialRenderer.invalidate();throw error;});
+    const mapKey=SOURCE_MAP_FALLBACKS[`${family}:${key}`] || key;
+    const carbonCalibration=family.startsWith('bmw-') ? G_CALIBRATION : CALIBRATION;
+    const result=await materialRenderer.render(`${carbonFinish ? 'carbon:' : ''}${mapKey}`,`${ROOT}/source/grips/${mapKey}-map.webp`,SIZE,(carbonFinish ? carbonCalibration : CALIBRATION)[mapKey],color,stitch).catch(error=>{materialRenderer.invalidate();throw error;});
     // Bound retained source pixel buffers as well as the rendered color cache.
     while(materialRenderer.sources.size>8)materialRenderer.sources.delete(materialRenderer.sources.keys().next().value);
     return result;
@@ -76,7 +93,7 @@ export function createFSeriesCompositor(family = 'bmw-fseries') {
       a.lowerTrim?source(`trims/${a.lowerTrim}`):null,
       a.cover?wrap(`airbag-${sourceMaterial(a.airbag.material)}`,a.airbag.color,a.airbagStitch):null,
       a.cover?source(`neutral/airbag-${sourceMaterial(a.airbag.material)}-logo`):null,
-      a.stripes.length?marker(a):null,a.led?source('led/flat-round'):null,
+      a.stripes.length?marker(a):null,a.led?source(`led/${a.shape}`):null,
     ]);
     if(disposed)return null;
     const out=canvas(),ctx=out.getContext('2d');

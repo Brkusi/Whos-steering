@@ -459,10 +459,14 @@ async function calcServerPrice(cfg) {
   const isCarbonTop = cfg.topBottomMat && cfg.topBottomMat.toLowerCase().includes('carbon');
   const isBmwFSeries = cfg.brand === 'BMW' && cfg.wheelStyleType === 'F-Series';
   const usesBmw2D = cfg.brand === 'BMW' && ['F-Series', 'G-Series Pre LCI'].includes(cfg.wheelStyleType);
+  const hasSourcePaddles = usesBmw2D || (cfg.brand === 'TOYOTA' && cfg.wheelStyleType === 'Supra GR') ||
+    (cfg.brand === 'MERCEDES' && ['AMG Performance','Mercedes 2010–2015'].includes(cfg.wheelStyleType));
 
   if (cfg.brand === 'AUDI') {
     if (cfg.wheelStyleType === 'R8') price = (rules.base_audi_r8 || 799.99) + (isCarbonTop ? 40 : 0);
     else price = (rules.base_audi_b9 || 699.99) + (isCarbonTop ? 40 : 0);
+  } else if (cfg.brand === 'MERCEDES' || cfg.brand === 'TOYOTA') {
+    price = (rules[`base_${cfg.brand.toLowerCase()}`] ?? 899) + (isCarbonTop ? 40 : 0);
   } else {
     if (cfg.wheelStyleType === 'F-Series') {
       price = rules.base_bmw_f || 449.99;
@@ -478,11 +482,11 @@ async function calcServerPrice(cfg) {
   if (cfg.airbagUpgrade === true)    price += (rules.airbag_upgrade  || 75);
 
   // Magnetic paddle shifters: +$25 for all brands/styles
-  if (cfg.paddleShifters === 'Magnetic' || (usesBmw2D && ['Glossy Carbon', 'Matte Carbon', 'Forged Carbon'].includes(cfg.paddleShifters))) price += (rules.paddle_magnetic || 25);
+  if (cfg.paddleShifters === 'Magnetic' || (hasSourcePaddles && ['Glossy Carbon', 'Matte Carbon', 'Forged Carbon'].includes(cfg.paddleShifters))) price += (rules.paddle_magnetic || 25);
 
   if (usesBmw2D && ['Glossy Carbon','Matte Carbon','Forged Carbon'].includes(cfg.bmwLowerTrim)) price += (rules.bmw_lower_trim ?? 50);
 
-  if (cfg.brand === 'BMW') {
+  if (['BMW','MERCEDES','TOYOTA'].includes(cfg.brand)) {
     if (cfg.heated !== false)            price += (rules.heated_bmw      || 75);
     if (cfg.laneAssist !== false)        price += (rules.lane_assist_bmw || 30);
     if (cfg.ledDisplay === true)         price += (rules.rpm_gauge_bmw   || 100);

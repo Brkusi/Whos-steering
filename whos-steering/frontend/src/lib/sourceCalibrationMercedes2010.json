@@ -1,0 +1,218 @@
+{
+  "flat-round-side-alcantara": {
+    "dMax": 1.59789,
+    "sMax": 0.03951,
+    "sRef": 0.04481,
+    "dHi": 1.36137,
+    "sHi": 0.02305,
+    "gloss": 1,
+    "albedoHex": "#28792c"
+  },
+  "flat-round-side-perforated": {
+    "dMax": 1.56225,
+    "sMax": 0.13934,
+    "sRef": 0.09467,
+    "dHi": 1.42131,
+    "sHi": 0.08436,
+    "gloss": 1,
+    "albedoHex": "#329721"
+  },
+  "flat-round-side-smooth": {
+    "dMax": 1.38878,
+    "sMax": 0.09783,
+    "sRef": 0.12727,
+    "dHi": 1.26298,
+    "sHi": 0.06144,
+    "gloss": 0.6,
+    "albedoHex": "#438223"
+  },
+  "flat-round-tb-alcantara": {
+    "dMax": 1.84,
+    "sMax": 0.02904,
+    "sRef": 0.05728,
+    "dHi": 1.49424,
+    "sHi": 0.01608,
+    "gloss": 1,
+    "albedoHex": "#496d31"
+  },
+  "flat-round-tb-perforated": {
+    "dMax": 1.4344,
+    "sMax": 0.16434,
+    "sRef": 0.12104,
+    "dHi": 1.30631,
+    "sHi": 0.11879,
+    "gloss": 1,
+    "albedoHex": "#447b35"
+  },
+  "flat-round-tb-smooth": {
+    "dMax": 1.29299,
+    "sMax": 0.22939,
+    "sRef": 0.17565,
+    "dHi": 1.20897,
+    "sHi": 0.16877,
+    "gloss": 0.6,
+    "albedoHex": "#437042"
+  },
+  "flat-flat-side-alcantara": {
+    "dMax": 1.86447,
+    "sMax": 0.08081,
+    "sRef": 0.10455,
+    "dHi": 1.54197,
+    "sHi": 0.03911,
+    "gloss": 1,
+    "albedoHex": "#358025"
+  },
+  "flat-flat-side-perforated": {
+    "dMax": 1.48028,
+    "sMax": 0.07,
+    "sRef": 0.06197,
+    "dHi": 1.33201,
+    "sHi": 0.04405,
+    "gloss": 1,
+    "albedoHex": "#4b763c"
+  },
+  "flat-flat-side-smooth": {
+    "dMax": 1.47299,
+    "sMax": 0.12085,
+    "sRef": 0.0441,
+    "dHi": 1.34631,
+    "sHi": 0.08534,
+    "gloss": 0.6,
+    "albedoHex": "#317147"
+  },
+  "flat-flat-tb-alcantara": {
+    "dMax": 1.54291,
+    "sMax": 0.04735,
+    "sRef": 0.17399,
+    "dHi": 1.34136,
+    "sHi": 0.02044,
+    "gloss": 1,
+    "albedoHex": "#396a3a"
+  },
+  "flat-flat-tb-perforated": {
+    "dMax": 1.86826,
+    "sMax": 0.10112,
+    "sRef": 0.05768,
+    "dHi": 1.6025,
+    "sHi": 0.06804,
+    "gloss": 1,
+    "albedoHex": "#3c703a"
+  },
+  "flat-flat-tb-smooth": {
+    "dMax": 1.72592,
+    "sMax": 0.15999,
+    "sRef": 0.08811,
+    "dHi": 1.52021,
+    "sHi": 0.08904,
+    "gloss": 0.6,
+    "albedoHex": "#506149"
+  },
+  "round-side-alcantara": {
+    "dMax": 1.35356,
+    "sMax": 0.12098,
+    "sRef": 0.15822,
+    "dHi": 1.24471,
+    "sHi": 0.05528,
+    "gloss": 1,
+    "albedoHex": "#5e9938"
+  },
+  "round-side-perforated": {
+    "dMax": 1.39689,
+    "sMax": 0.22465,
+    "sRef": 0.14106,
+    "dHi": 1.2659,
+    "sHi": 0.15394,
+    "gloss": 1,
+    "albedoHex": "#518534"
+  },
+  "round-tb-alcantara": {
+    "dMax": 1.5007,
+    "sMax": 0.03413,
+    "sRef": 0.04905,
+    "dHi": 1.31553,
+    "sHi": 0.02153,
+    "gloss": 1,
+    "albedoHex": "#527d26"
+  },
+  "round-tb-smooth": {
+    "dMax": 1.24034,
+    "sMax": 0.15776,
+    "sRef": 0.12772,
+    "dHi": 1.18327,
+    "sHi": 0.12794,
+    "gloss": 0.6,
+    "albedoHex": "#529024"
+  },
+  "yoke-side-alcantara": {
+    "dMax": 1.50369,
+    "sMax": 0.14024,
+    "sRef": 0.53276,
+    "dHi": 1.37706,
+    "sHi": 0.05248,
+    "gloss": 1,
+    "albedoHex": "#308a4b"
+  },
+  "yoke-side-perforated": {
+    "dMax": 1.28735,
+    "sMax": 0.09978,
+    "sRef": 0.03625,
+    "dHi": 1.15927,
+    "sHi": 0.05909,
+    "gloss": 1,
+    "albedoHex": "#365e4c"
+  },
+  "yoke-side-smooth": {
+    "dMax": 1.46576,
+    "sMax": 0.15436,
+    "sRef": 0.25912,
+    "dHi": 1.29287,
+    "sHi": 0.10364,
+    "gloss": 0.6,
+    "albedoHex": "#376550"
+  },
+  "yoke-bottom-alcantara": {
+    "dMax": 1.04061,
+    "sMax": 0.02,
+    "sRef": 0.04668,
+    "dHi": 0.80528,
+    "sHi": 0.00627,
+    "gloss": 1,
+    "albedoHex": "#3c5737"
+  },
+  "yoke-bottom-perforated": {
+    "dMax": 1.29511,
+    "sMax": 0.0393,
+    "sRef": 0.03648,
+    "dHi": 1.0782,
+    "sHi": 0.02003,
+    "gloss": 1,
+    "albedoHex": "#4a5e41"
+  },
+  "yoke-bottom-smooth": {
+    "dMax": 1.31153,
+    "sMax": 0.06428,
+    "sRef": 0.10083,
+    "dHi": 1.14434,
+    "sHi": 0.04007,
+    "gloss": 0.6,
+    "albedoHex": "#4b5c43"
+  },
+  "airbag-alcantara": {
+    "dMax": 1.42861,
+    "sMax": 0.64463,
+    "sRef": 0.38191,
+    "dHi": 1.1992,
+    "sHi": 0.16894,
+    "gloss": 1,
+    "albedoHex": "#3e573f"
+  },
+  "airbag-smooth": {
+    "dMax": 1.49042,
+    "sMax": 0.68499,
+    "sRef": 0.41566,
+    "dHi": 1.31967,
+    "sHi": 0.17967,
+    "gloss": 0.6,
+    "albedoHex": "#425241"
+  }
+}

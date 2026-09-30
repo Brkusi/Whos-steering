@@ -41,7 +41,7 @@ export default function Footer() {
               style={{ height: 48, width: 'auto', objectFit: 'contain', display: 'block', marginBottom: 16 }}
               onError={e => e.target.style.display = 'none'} />
             <div style={{ fontSize: 14, color: 'var(--t)', lineHeight: 1.8, maxWidth: 240 }}>
-              Custom BMW & Audi steering wheels. Engineered in Florida. Assembled in New York City.
+              Custom BMW, Audi, Mercedes & Toyota steering wheels. Engineered in Florida. Assembled in New York City.
             </div>
             <div style={{ marginTop: 14, fontSize: 14, color: 'rgba(232,184,0,.6)', letterSpacing: 1 }}>
               ✈️ Worldwide Shipping Available

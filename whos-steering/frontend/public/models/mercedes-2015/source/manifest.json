@@ -1,0 +1,300 @@
+[
+  {
+    "path": "round.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/mercedes-2015/round.webp",
+    "bytes": 178100,
+    "sha256": "352674b46b6ca88942b193fb7051b15f5ae4ad773957d67eeb7989357c7533bf"
+  },
+  {
+    "path": "grips/round-side-alcantara-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/mercedes-2015/grips/round-side-alcantara-map.webp",
+    "bytes": 218484,
+    "sha256": "3e0dab86e2cf080e72ad7d43afa9dd5151bfe9c04286dfee76fdb97b6f36927a"
+  },
+  {
+    "path": "grips/round-side-smooth-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/mercedes-2015/grips/round-side-smooth-map.webp",
+    "bytes": 174760,
+    "sha256": "256e6cf55d8a0cea3c167b02a7d80e87a3fb3b714edf1e3c83d3ffae344942b6"
+  },
+  {
+    "path": "grips/round-side-perforated-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/mercedes-2015/grips/round-side-perforated-map.webp",
+    "bytes": 204394,
+    "sha256": "5853bf1d6eb467688a976ec5e4450a182db64c09b5c25bb4ba54f158dc503840"
+  },
+  {
+    "path": "grips/round-tb-alcantara-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/mercedes-2015/grips/round-tb-alcantara-map.webp",
+    "bytes": 241982,
+    "sha256": "037b21b889b52cfb882dd730969d0af42d897e08ea0aaa5f4e4bdbcdb1f0f325"
+  },
+  {
+    "path": "grips/round-tb-smooth-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/mercedes-2015/grips/round-tb-smooth-map.webp",
+    "bytes": 184600,
+    "sha256": "52434d2c9181470a5d68408cd70a5e665edb4e85f6af995e731023a554690322"
+  },
+  {
+    "path": "grips/round-tb-perforated-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/mercedes-2015/grips/round-tb-perforated-map.webp",
+    "bytes": 231924,
+    "sha256": "78822dd1560f7a377f54d44e2a00e4834c32f696a37a493700f7faf887bc0cb6"
+  },
+  {
+    "path": "cf/round-glossy.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/mercedes-2015/cf/round-glossy.webp",
+    "bytes": 97180,
+    "sha256": "2eb9605b88c5814764be70d49198be4e6c82ea6c05a4f25b23479005140dbd80"
+  },
+  {
+    "path": "cf/round-matte.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/mercedes-2015/cf/round-matte.webp",
+    "bytes": 50894,
+    "sha256": "6d60a53c970ba068d78eb5ec6faa61d75361ccadb54974af37fb98be69a557d5"
+  },
+  {
+    "path": "cf/round-forged.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/mercedes-2015/cf/round-forged.webp",
+    "bytes": 63444,
+    "sha256": "921d1db7414fe60e7323c1645c04579dd2b685dda940d2696d66d7fcff7e3a88"
+  },
+  {
+    "path": "yoke.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/mercedes-2015/yoke.webp",
+    "bytes": 257928,
+    "sha256": "9ba152305f98af5fb9712876622acd452dc9fb00b9f4c8a4f704bedd412f05b1"
+  },
+  {
+    "path": "grips/yoke-side-alcantara-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/mercedes-2015/grips/yoke-side-alcantara-map.webp",
+    "bytes": 293688,
+    "sha256": "8ef20e7ad67cfbf338c0f562e232187359c324a1a1ddbec01831f7622e078190"
+  },
+  {
+    "path": "grips/yoke-side-smooth-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/mercedes-2015/grips/yoke-side-smooth-map.webp",
+    "bytes": 225052,
+    "sha256": "b4e78ba403df2229cbbb85d6adcc840c67ba304cbb18db50d7222e2c0bd130ef"
+  },
+  {
+    "path": "grips/yoke-side-perforated-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/mercedes-2015/grips/yoke-side-perforated-map.webp",
+    "bytes": 303994,
+    "sha256": "261c103a7d97df779ab36dce1f240aeed3913897f64fdad449e67899772f69c6"
+  },
+  {
+    "path": "grips/yoke-bottom-alcantara-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/mercedes-2015/grips/yoke-bottom-alcantara-map.webp",
+    "bytes": 218964,
+    "sha256": "ebaf03cfefa78b7f37cac62d3bc612a476780956ce8744b7a534de8c4c109e2f"
+  },
+  {
+    "path": "grips/yoke-bottom-smooth-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/mercedes-2015/grips/yoke-bottom-smooth-map.webp",
+    "bytes": 160658,
+    "sha256": "ff614ec1760bf018969d9d4b682b2cca9e7b67247fd3e29c588abfa98052665a"
+  },
+  {
+    "path": "grips/yoke-bottom-perforated-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/mercedes-2015/grips/yoke-bottom-perforated-map.webp",
+    "bytes": 188826,
+    "sha256": "7ed7bcce6230cedf51f3873a2857cfdd3d9f35b1d591a3d4cb86537dd34ef476"
+  },
+  {
+    "path": "cf/yoke-glossy.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/mercedes-2015/cf/yoke-glossy.webp",
+    "bytes": 44788,
+    "sha256": "b2aefd09f9e67d401a1ece6b9f4f86e8a9c7e04993ab79efb7878d5c835918c0"
+  },
+  {
+    "path": "cf/yoke-matte.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/mercedes-2015/cf/yoke-matte.webp",
+    "bytes": 46694,
+    "sha256": "54847187bb2f5baea1cbea01ae3ee4031d2801273fdcb95b708848ea29f3f39f"
+  },
+  {
+    "path": "cf/yoke-forged.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/mercedes-2015/cf/yoke-forged.webp",
+    "bytes": 48536,
+    "sha256": "3376dacb54066516b599180e87dafd110889a2a36005a91d4232e1654db49abc"
+  },
+  {
+    "path": "flat-flat.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/mercedes-2015/flat-flat.webp",
+    "bytes": 287128,
+    "sha256": "4c92448937cfda1a6b4f1cc25fba00f295dfea3cef0da26d30e39321dc83859d"
+  },
+  {
+    "path": "grips/flat-flat-side-alcantara-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/mercedes-2015/grips/flat-flat-side-alcantara-map.webp",
+    "bytes": 175708,
+    "sha256": "358c5730efda5450e875e10def16bf842720ff7be1c8f74e0b6bbf803b5095ba"
+  },
+  {
+    "path": "grips/flat-flat-side-smooth-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/mercedes-2015/grips/flat-flat-side-smooth-map.webp",
+    "bytes": 160106,
+    "sha256": "5538190c7b5a9dcfc048403c17b8611454d8b643668213627010a3389ea4b3ea"
+  },
+  {
+    "path": "grips/flat-flat-side-perforated-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/mercedes-2015/grips/flat-flat-side-perforated-map.webp",
+    "bytes": 187364,
+    "sha256": "0ed679e19463fa67feb34f9aa2d544172820ff670673ff3bc9c1663c7682794a"
+  },
+  {
+    "path": "grips/flat-flat-tb-alcantara-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/mercedes-2015/grips/flat-flat-tb-alcantara-map.webp",
+    "bytes": 269698,
+    "sha256": "6a1d85448f80ee55c31112cada5d328f8aa6d1c9516afe18a209eb7442b11625"
+  },
+  {
+    "path": "grips/flat-flat-tb-smooth-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/mercedes-2015/grips/flat-flat-tb-smooth-map.webp",
+    "bytes": 249220,
+    "sha256": "444aa6032efa0a5b1ee5849a49eb9113ffa2c7180f2dff94a697b6690e30a958"
+  },
+  {
+    "path": "grips/flat-flat-tb-perforated-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/mercedes-2015/grips/flat-flat-tb-perforated-map.webp",
+    "bytes": 240774,
+    "sha256": "0fa5353c6c371e4fabf5218736188a2fb6c5db62e74a1ac00bdc61d7132da601"
+  },
+  {
+    "path": "cf/flat-flat-glossy.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/mercedes-2015/cf/flat-flat-glossy.webp",
+    "bytes": 60788,
+    "sha256": "f992eb1cfb389ad6a9455d249d2073063b03fb424dbf4e2d75d1a24d7dc4ef5b"
+  },
+  {
+    "path": "cf/flat-flat-matte.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/mercedes-2015/cf/flat-flat-matte.webp",
+    "bytes": 51930,
+    "sha256": "92e3fd43c8dbf9278e608887680996a3fad54b8204599dbf267c2cdf6fc5134d"
+  },
+  {
+    "path": "cf/flat-flat-forged.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/mercedes-2015/cf/flat-flat-forged.webp",
+    "bytes": 63020,
+    "sha256": "ea4ac95e282a5e006815330dc8990f07ee33d1946bfec754b1b2ddf6d153e3a3"
+  },
+  {
+    "path": "flat-round.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/mercedes-2015/flat-round.webp",
+    "bytes": 271220,
+    "sha256": "6bcd0696516407301679d836728672b6662caafcae6e6d202e59db89f01ab1f0"
+  },
+  {
+    "path": "grips/flat-round-side-alcantara-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/mercedes-2015/grips/flat-round-side-alcantara-map.webp",
+    "bytes": 173672,
+    "sha256": "b208b8118d014b341944ebac69b24aa005959efd7d8a062ae089e2e3d439b53f"
+  },
+  {
+    "path": "grips/flat-round-side-smooth-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/mercedes-2015/grips/flat-round-side-smooth-map.webp",
+    "bytes": 144968,
+    "sha256": "9b8b40f67e25f57823a3c7f973a0ea45adc688408c2d0aa09db0aa8b234362a5"
+  },
+  {
+    "path": "grips/flat-round-side-perforated-map.webp",
+    "error": "HTTP Error 404: Not Found"
+  },
+  {
+    "path": "grips/flat-round-tb-alcantara-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/mercedes-2015/grips/flat-round-tb-alcantara-map.webp",
+    "bytes": 288490,
+    "sha256": "dcb86371c6606de2f77c4bd9cfa9e8eb05b62e5039ddd57e148cabc4ecb4a6e2"
+  },
+  {
+    "path": "grips/flat-round-tb-smooth-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/mercedes-2015/grips/flat-round-tb-smooth-map.webp",
+    "bytes": 236014,
+    "sha256": "189c3d889438867dc1ba3033704c6a9691673e5259e7890f9f8e14af1d1c3bf0"
+  },
+  {
+    "path": "grips/flat-round-tb-perforated-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/mercedes-2015/grips/flat-round-tb-perforated-map.webp",
+    "bytes": 235308,
+    "sha256": "ccf153d98c285b1a003f36a7f51216bd9fe7f082c3d25487378bf78e01250c3f"
+  },
+  {
+    "path": "cf/flat-round-glossy.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/mercedes-2015/cf/flat-round-glossy.webp",
+    "bytes": 72070,
+    "sha256": "99829d4373de352bbe1e397dfc46935f6ef2de4263f584bd448908aa1a88202b"
+  },
+  {
+    "path": "cf/flat-round-matte.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/mercedes-2015/cf/flat-round-matte.webp",
+    "bytes": 53192,
+    "sha256": "a1b3d1e25d532e5b88594c8cb79a1af0c3e98610d61684e2bb1c367244bff4e9"
+  },
+  {
+    "path": "cf/flat-round-forged.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/mercedes-2015/cf/flat-round-forged.webp",
+    "bytes": 64966,
+    "sha256": "e4ef442bfa9ca0e9073cd5970192233f10029a3df65d3ef3a781a49466621892"
+  },
+  {
+    "path": "marker/round.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/mercedes-2015/marker/round.webp",
+    "bytes": 9326,
+    "sha256": "3328cc4d7bd8c3808ac4a2902462139bbad312be5762ebfb1514a3cd70f7c302"
+  },
+  {
+    "path": "marker/flat-flat.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/mercedes-2015/marker/flat-flat.webp",
+    "bytes": 9500,
+    "sha256": "9aed1df9e998c7385c93c31f2e9d69fdfb4976e1ccbb5211236b3f8069966312"
+  },
+  {
+    "path": "marker/flat-round.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/mercedes-2015/marker/flat-round.webp",
+    "bytes": 9952,
+    "sha256": "6fb8d6c11b95aa2471c2503059b5649a2eef3cbafb24781940762c0531c832b9"
+  },
+  {
+    "path": "led/round.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/mercedes-2015/led/round.webp",
+    "bytes": 37374,
+    "sha256": "d6527cdc359d1f733ef0f5ba2de299fd16cb4b25a4024a44da757d9d6fbb6598"
+  },
+  {
+    "path": "led/flat-flat.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/mercedes-2015/led/flat-flat.webp",
+    "bytes": 13592,
+    "sha256": "359fdb208f521c080a4a91d04b04e823a4d0dd4d72bd9ada73a5b81d86191af4"
+  },
+  {
+    "path": "led/flat-round.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/mercedes-2015/led/flat-round.webp",
+    "bytes": 37732,
+    "sha256": "29130a2ddd3e3d3fda9934ee2472809fa0da19179d3acbd36d5640d9406425e4"
+  },
+  {
+    "path": "grips/airbag-smooth-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/mercedes-2015/grips/airbag-smooth-map.webp",
+    "bytes": 356236,
+    "sha256": "a8d02ac0abd125499c1e5446f453a7b165dd84720add5f348ca4444fe54d2baf"
+  },
+  {
+    "path": "neutral/airbag-smooth-logo.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/mercedes-2015/neutral/airbag-smooth-logo.webp",
+    "bytes": 22240,
+    "sha256": "13898bc9ac33538e7ae47c83354f6200f307ad6728a9bb39a7dd8904b2795108"
+  },
+  {
+    "path": "grips/airbag-alcantara-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/mercedes-2015/grips/airbag-alcantara-map.webp",
+    "bytes": 448438,
+    "sha256": "2057beebc712ee37dda37a76fb0982166633b8fd5290c9703d603fc6d1e3f32d"
+  },
+  {
+    "path": "neutral/airbag-alcantara-logo.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/mercedes-2015/neutral/airbag-alcantara-logo.webp",
+    "bytes": 23394,
+    "sha256": "9c4ae3d0a6b0d4bd60b9cf8ca75ccbfb2d0adb5b78960417895b54c6503df5c7"
+  }
+]

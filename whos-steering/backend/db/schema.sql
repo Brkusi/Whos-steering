@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS customers (
 CREATE TABLE IF NOT EXISTS products (
   id           UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   sku          TEXT UNIQUE NOT NULL,
-  brand        TEXT NOT NULL CHECK (brand IN ('BMW','AUDI')),
+  brand        TEXT NOT NULL CHECK (brand IN ('BMW','AUDI','INFINITI','MERCEDES','TOYOTA')),
   name         TEXT NOT NULL,
   description  TEXT,
   base_price   NUMERIC(10,2) NOT NULL,
@@ -52,7 +52,7 @@ CREATE TABLE IF NOT EXISTS inventory (
 CREATE TABLE IF NOT EXISTS wheel_configurations (
   id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   product_id      UUID REFERENCES products(id),   -- NULL for fully custom
-  brand           TEXT NOT NULL CHECK (brand IN ('BMW','AUDI')),
+  brand           TEXT NOT NULL CHECK (brand IN ('BMW','AUDI','INFINITI','MERCEDES','TOYOTA')),
   vehicle_year    TEXT NOT NULL,
   vehicle_model   TEXT NOT NULL,
   wheel_style     TEXT NOT NULL DEFAULT 'Standard',  -- Standard | Sport

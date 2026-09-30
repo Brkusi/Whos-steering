@@ -74,7 +74,9 @@ async function captureCheckout(email,items) {
   await save(email,'checkout',{items},true);
 }
 async function initialize() {
-  await pool.query('BEGIN; SELECT pg_advisory_xact_lock(8391205); ' + fs.readFileSync(path.join(__dirname,'../db/migrations/20260908_sales.sql'),'utf8') + '; COMMIT;');
+  const migrationFiles = ['20260908_sales.sql','20260929_wheel_brands.sql'];
+  const migrations = migrationFiles.map(file => fs.readFileSync(path.join(__dirname,'../db/migrations',file),'utf8')).join('\n');
+  await pool.query('BEGIN; SELECT pg_advisory_xact_lock(8391205); ' + migrations + '; COMMIT;');
   const interval=setInterval(tick,60000); interval.unref(); tick();
 }
 module.exports={save,initialize,mailReady,recoveryReady,captureCheckout};

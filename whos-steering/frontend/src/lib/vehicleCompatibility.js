@@ -4,8 +4,8 @@ export const VEHICLE_MAKES = [
   { value: 'AUDI', label: 'Audi', available: true },
   { value: 'BMW', label: 'BMW', available: true },
   { value: 'DODGE_SRT', label: 'Dodge SRT', available: false },
-  { value: 'MERCEDES', label: 'Mercedes', available: false },
-  { value: 'TOYOTA', label: 'Toyota', available: false },
+  { value: 'MERCEDES', label: 'Mercedes', available: true },
+  { value: 'TOYOTA', label: 'Toyota', available: true },
   { value: 'PORSCHE', label: 'Porsche', available: false },
 ];
 
@@ -25,6 +25,13 @@ export function wheelMatchesVehicle(config, style) {
     const model = config.vehicleModel.trim().toUpperCase();
     if (style === 'F-Series') return /\b(?:F10|F30|F80|E90)\b/.test(model);
     if (style === 'G-Series' || style === 'G-Series Pre LCI') return /\b(?:G20|G30|G22|G42|G80|G82|G87)\b/.test(model);
+  }
+  if (config.brand === 'TOYOTA') return style === 'Supra GR' && year >= 2020 && /\bSupra\b/i.test(config.vehicleModel);
+  if (config.brand === 'MERCEDES') {
+    const model = config.vehicleModel.trim();
+    if (style === 'AMG Performance') return year >= 2019 && year <= 2024 && /\bAMG\b/i.test(model);
+    if (style === 'Mercedes 2015–2023') return year >= 2015 && year <= 2023 && /^(?:C|E|S|G|CLS|GLC|GLE|GLS)(?:-Class|\b)/i.test(model);
+    if (style === 'Mercedes 2010–2015') return year >= 2010 && year <= 2015 && /^(?:C|E|S|GLK|ML|GL|CLS)(?:-Class|\b)/i.test(model);
   }
   return false;
 }
