@@ -26,7 +26,7 @@
   font-family: "Barlow Condensed", Impact, sans-serif;
   font-size: clamp(42px, 5vw, 72px);
   font-style: italic;
-  font-weight: 900;
+  font-weight: 700;
   line-height: .92;
   letter-spacing: .01em;
 }
@@ -42,16 +42,20 @@
 }
 
 .build-start__make-label { display: block; color: var(--y); font-size: 14px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; margin-bottom: 8px; }
-.build-start__make-select { width: min(100%, 390px); min-height: 48px; padding: 10px 14px; margin-bottom: 26px; color: #fff; background: #151515; border: 1px solid #494949; font: inherit; }
+.build-start__make-select { width: 100%; min-height: 48px; padding: 10px 14px; color: #fff; background: #151515; border: 1px solid #494949; font: inherit; }
 .build-start__make-select:focus-visible { outline: 2px solid var(--y); outline-offset: 2px; }
-.build-start__vehicle-fields { width: min(100%, 650px); margin-bottom: 22px; }
+.build-start__compatibility { display: grid; grid-template-columns: minmax(230px, 1fr) minmax(0, 2fr); align-items: end; gap: 16px; width: 100%; padding: 22px; margin-bottom: 30px; border: 1px solid #333; background: #101010; }
+.build-start__vehicle-fields { min-width: 0; }
+.build-start__vehicle-fields > div { margin-bottom: 0 !important; }
+.build-start__vehicle-fields .fl { color: var(--y); font-size: 14px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; margin-bottom: 8px; }
 .build-start__vehicle-fields .fi { color: #fff; background: #151515; border: 1px solid #494949; min-height: 48px; }
+.build-start__section-heading { margin: 0 0 16px; color: var(--y); font-family: Orbitron, monospace; font-size: 14px; font-weight: 700; letter-spacing: .15em; text-transform: uppercase; }
 .build-start__unavailable { max-width: 650px; padding: 20px; margin-top: 18px; border: 1px solid var(--b); color: var(--t); line-height: 1.6; }
 .build-start__unavailable a { color: var(--y); }
 
 .build-start__grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 18px;
 }
 
@@ -75,7 +79,7 @@
 
 .build-brand-card__media {
   position: relative;
-  aspect-ratio: 16 / 9;
+  aspect-ratio: 4 / 3;
   overflow: hidden;
   background: #060606;
 }
@@ -141,7 +145,7 @@
   align-items: flex-end;
   justify-content: space-between;
   gap: 24px;
-  padding: 22px 24px 24px;
+  padding: 17px 18px 19px;
 }
 
 .build-brand-card__fitment {
@@ -157,7 +161,7 @@
 .build-brand-card h2 {
   margin: 0 0 5px;
   font-family: "Barlow Condensed", sans-serif;
-  font-size: clamp(28px, 2.8vw, 40px);
+  font-size: clamp(25px, 2.2vw, 34px);
   font-style: italic;
   font-weight: 900;
   line-height: 1;
@@ -198,8 +202,13 @@
   }
 
   .build-start__grid { grid-template-columns: 1fr; }
+  .build-start__compatibility { grid-template-columns: 1fr; padding: 16px; }
   .build-brand-card__media { aspect-ratio: 5 / 4; }
   .build-brand-card__media img { padding: 10px; transform: scale(.98); }
   .build-brand-card__content { padding: 18px; }
   .build-brand-card__action { font-size: 14px; }
+}
+
+@media (min-width: 761px) and (max-width: 1080px) {
+  .build-start__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }

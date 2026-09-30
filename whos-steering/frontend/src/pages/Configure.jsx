@@ -9,11 +9,12 @@ import {
   CLASSIC_CARBON_COLORS, FORGED_CARBON_COLORS, HONEYCOMB_CARBON_COLORS,
   TOP_BOTTOM_MATS, SIDE_MATS, AIRBAG_MATS,
 } from '../lib/data';
-import { F_SERIES_SHAPE_IDS, F_SERIES_PADDLES, SOURCE_WHEEL_STYLES, sourceWheelStyle, sourceWheelShapes, sourceWheelHasPaddles, sourceWheelSupportsLed, usesBmw2D, usesSource2D, isAudiRS2020, bmwAssetFamily, bmwStyleLabel } from '../lib/bmwFSeriesConfiguration';
+import { F_SERIES_SHAPE_IDS, F_SERIES_PADDLES, sourceWheelStyle, sourceWheelShapes, sourceWheelHasPaddles, sourceWheelSupportsLed, usesBmw2D, usesSource2D, isAudiRS2020, bmwAssetFamily, bmwStyleLabel } from '../lib/bmwFSeriesConfiguration';
 import { calcPrice, apiFetch } from '../lib/api';
 import { useCart } from '../context';
 
 import { VEHICLE_MAKES, isConfigurableMake, wheelMatchesVehicle } from '../lib/vehicleCompatibility';
+import { defaultWheelStyle, stylesForBrand, wheelStyle } from '../lib/wheelStyles';
 import { hasVehicleCatalog, vehicleInquiryPath, vehicleYears } from '../lib/vehicleCatalog';
 import VehicleYearModelFields from '../components/VehicleYearModelFields';
 
@@ -422,8 +423,10 @@ function currentWheelOptions(config) {
   const bmwShape = source2D && !sourceWheelShapes(config).includes(config.bmwShape)
     ? sourceWheelShapes(config)[0] : (config.bmwShape || 'Round');
   const next = {...config,bmwShape};
+  const dodgeNoCarbon = config.brand === 'DODGE_SRT' && ['Round','Yoke'].includes(bmwShape) && config.topBottomMat?.includes('Carbon');
   return {
     ...next,
+    ...(dodgeNoCarbon ? {topBottomMat:'Smooth Leather',topBottomCarbonCol:null} : {}),
     ...(!source2D && ['Matte Carbon','Perforated Leather'].includes(config.topBottomMat) ? {topBottomMat:config.topBottomMat === 'Matte Carbon' ? 'Classic Carbon' : 'Smooth Leather'} : {}),
     ...(source2D && bmwShape === 'Yoke' ? {stripeConceptId:'C-1',stripeCustomColor:''} : {}),
     ...(source2D && !sourceWheelSupportsLed(next) ? {ledDisplay:false} : {}),
@@ -457,6 +460,7 @@ export default function Configure() {
   const reviewRef = useRef(null);
 
   const initBrand = params.get('brand') || 'BMW';
+  const initStyle = wheelStyle(initBrand, params.get('style'))?.style || defaultWheelStyle(initBrand);
   const initYear = vehicleYears(initBrand).includes(params.get('year')) ? params.get('year') : '';
   const initModel = initYear ? (params.get('model') || '').slice(0, 80) : '';
   const [compatibilityMake, setCompatibilityMake] = useState(initBrand);
@@ -465,8 +469,8 @@ export default function Configure() {
     brand: initBrand,
     vehicleYear: initYear,
     vehicleModel: initModel,
-    wheelStyleType: initBrand === 'BMW' ? 'G-Series' : initBrand === 'AUDI' ? 'B9' : initBrand === 'TOYOTA' ? 'Supra GR' : 'AMG Performance',
-    bmwShape: initBrand === 'TOYOTA' ? 'Flat bottom' : 'Round',
+    wheelStyleType: initStyle,
+    bmwShape: ['TOYOTA','PORSCHE'].includes(initBrand) ? 'Flat bottom' : 'Round',
   });
 
   useEffect(() => {
@@ -505,6 +509,10 @@ export default function Configure() {
 
       audiLogoCol: 'audiLogoColor',
       audiLogoCustomColor: 'audiLogoColor',
+      dodgeAirbagTrimCol: 'dodgeAirbagTrimColor',
+      dodgeAirbagTrimCustomColor: 'dodgeAirbagTrimColor',
+      dodgeLogoCol: 'dodgeLogoColor',
+      dodgeLogoCustomColor: 'dodgeLogoColor',
     };
 
     const errorKey = errorMap[key];
@@ -570,8 +578,8 @@ export default function Configure() {
 
   const setBrand = (brand) => {
     setCfg(currentWheelOptions({ ...DEFAULT_CONFIG, brand,
-      wheelStyleType: brand === 'BMW' ? 'G-Series' : brand === 'AUDI' ? 'B9' : brand === 'TOYOTA' ? 'Supra GR' : 'AMG Performance',
-      bmwShape: brand === 'TOYOTA' ? 'Flat bottom' : 'Round',
+      wheelStyleType: defaultWheelStyle(brand),
+      bmwShape: ['TOYOTA','PORSCHE'].includes(brand) ? 'Flat bottom' : 'Round',
     }));
     setCompatibilityMake(brand);
     setPhoto(null);
@@ -611,6 +619,10 @@ export default function Configure() {
 
         audiLogoCol: null,
         audiLogoCustomColor: '',
+        dodgeAirbagTrimCol: null,
+        dodgeAirbagTrimCustomColor: '',
+        dodgeLogoCol: null,
+        dodgeLogoCustomColor: '',
       };
     });
 
@@ -663,7 +675,7 @@ export default function Configure() {
       : Boolean(cfg.sideCol || textValue(cfg.sideCustomColor));
     if (!sideColorSelected) e.sideColor = true;
 
-    if (!cfg.stitchColor && !textValue(cfg.stitchCustomColor)) {
+    if (sourceWheelStyle(cfg)?.stitch !== false && !cfg.stitchColor && !textValue(cfg.stitchCustomColor)) {
       e.stitchColor = true;
     }
 
@@ -680,10 +692,14 @@ export default function Configure() {
     if (cfg.airbagCompat) {
       if (!cfg.airbagMat) e.airbagMaterial = true;
       if (!cfg.airbagCol && !textValue(cfg.airbagCustomColor)) e.airbagColor = true;
-      if (!cfg.airbagStitchColor && !textValue(cfg.airbagStitchCustomColor)) e.airbagStitchColor = true;
+      if (sourceWheelStyle(cfg)?.airbagStitch !== false && !cfg.airbagStitchColor && !textValue(cfg.airbagStitchCustomColor)) e.airbagStitchColor = true;
 
       if (cfg.brand === 'AUDI' && !cfg.audiLogoCol && !textValue(cfg.audiLogoCustomColor)) {
         e.audiLogoColor = true;
+      }
+      if (cfg.brand === 'DODGE_SRT') {
+        if (!cfg.dodgeAirbagTrimCol && !textValue(cfg.dodgeAirbagTrimCustomColor)) e.dodgeAirbagTrimColor = true;
+        if (!cfg.dodgeLogoCol && !textValue(cfg.dodgeLogoCustomColor)) e.dodgeLogoColor = true;
       }
     }
 
@@ -696,7 +712,7 @@ export default function Configure() {
         e.topBottomColor || e.sideColor ||
         e.plasticTrimColor || e.innerTrimColor;
       const detailErrors =
-        e.airbagMaterial || e.airbagColor || e.airbagStitchColor || e.audiLogoColor;
+        e.airbagMaterial || e.airbagColor || e.airbagStitchColor || e.audiLogoColor || e.dodgeAirbagTrimColor || e.dodgeLogoColor;
 
       if (vehicleErrors) scrollToStep('vehicle');
       else if (styleErrors) scrollToStep('style');
@@ -730,7 +746,7 @@ export default function Configure() {
     );
 
     const rows = [
-      ['Brand', cfg.brand],
+      ['Brand', VEHICLE_MAKES.find(make => make.value === cfg.brand)?.label || cfg.brand],
       ['Vehicle Year', cfg.vehicleYear],
       ['Vehicle Model', cfg.vehicleModel],
       ['Current Wheel Photo', photo || cfg.photoUrl ? 'Attached' : 'Missing'],
@@ -749,7 +765,7 @@ export default function Configure() {
         ? ['Custom Stripe Color', textValue(cfg.stripeCustomColor)]
         : null,
 
-      ['Stitch Color', configuredColor(cfg.stitchColor, cfg.stitchCustomColor, 'stitch')],
+      sourceWheelStyle(cfg)?.stitch !== false ? ['Stitch Color', configuredColor(cfg.stitchColor, cfg.stitchCustomColor, 'stitch')] : null,
 
       !(cfg.brand === 'AUDI' && cfg.wheelStyleType === 'R8') &&
       !usesSource2D(cfg)
@@ -790,14 +806,18 @@ export default function Configure() {
       cfg.airbagCompat
         ? ['Airbag Color', configuredColor(cfg.airbagCol, cfg.airbagCustomColor)]
         : null,
-      cfg.airbagCompat
+      cfg.airbagCompat && sourceWheelStyle(cfg)?.airbagStitch !== false
         ? ['Airbag Stitch Color', configuredColor(cfg.airbagStitchColor, cfg.airbagStitchCustomColor, 'stitch')]
         : null,
       cfg.brand === 'AUDI' && cfg.airbagCompat
         ? ['Audi Logo Color', configuredColor(cfg.audiLogoCol, cfg.audiLogoCustomColor)]
         : null,
+      cfg.brand === 'DODGE_SRT' && cfg.airbagCompat
+        ? ['Airbag Trim Color', configuredColor(cfg.dodgeAirbagTrimCol,cfg.dodgeAirbagTrimCustomColor)] : null,
+      cfg.brand === 'DODGE_SRT' && cfg.airbagCompat
+        ? ['SRT Logo Color', configuredColor(cfg.dodgeLogoCol,cfg.dodgeLogoCustomColor)] : null,
 
-      ['Heated Steering', cfg.heated ? (cfg.brand === 'BMW' ? 'Yes (+$75)' : 'Yes') : 'No'],
+      ['Heated Steering', cfg.heated ? (cfg.brand === 'AUDI' ? 'Yes' : 'Yes (+$75)') : 'No'],
       [cfg.brand === 'BMW' ? 'Driver Assistance Retained' : 'Lane Assist Compatible',
         cfg.laneAssist ? (cfg.brand === 'BMW' ? 'Yes (+$30)' : 'Yes') : 'No'],
 
@@ -999,7 +1019,7 @@ export default function Configure() {
 
           {/* Vehicle */}
           <div ref={vehicleRef} data-step="vehicle" style={{ scrollMarginTop: stepScrollMargin }}>
-          <Sect label="Vehicle" value={cfg.vehicleYear && cfg.vehicleModel ? `${cfg.vehicleYear} ${cfg.brand} ${cfg.vehicleModel}` : '—'}>
+          <Sect label="Vehicle" value={cfg.vehicleYear && cfg.vehicleModel ? `${cfg.vehicleYear} ${VEHICLE_MAKES.find(make => make.value === cfg.brand)?.label || cfg.brand} ${cfg.vehicleModel}` : '—'}>
             <label className="fl" htmlFor="vehicle-compatible-make">Check vehicle compatibility</label>
             <select id="vehicle-compatible-make" className="fi" value={compatibilityMake} onChange={event => setBrand(event.target.value)} style={{marginBottom:14}}>
               {VEHICLE_MAKES.map(make => <option value={make.value} key={make.value}>{make.label}</option>)}
@@ -1039,21 +1059,13 @@ export default function Configure() {
           {/* Wheel Style Type */}
           <Sect label="Wheel Style Type" value={bmwStyleLabel(cfg.wheelStyleType)}>
             <div style={{ display: 'grid', gridTemplateColumns: isMobileViewport ? '1fr' : 'repeat(2, minmax(0, 1fr))', gap: 8, marginBottom: 16 }}>
-              {(isAudi ? ['B9', 'RS 2020+', 'R8'] : cfg.brand === 'BMW' ? ['G-Series', 'G-Series Pre LCI', 'F-Series'] : Object.keys(SOURCE_WHEEL_STYLES[cfg.brand] || {})).map(style => (
+              {stylesForBrand(cfg.brand).map(({style,label,image,detail,price}) => (
                 <div key={style} onClick={() => set('wheelStyleType', style)}
                   style={{ flex: 1, padding: '14px 12px', border: `2px solid ${cfg.wheelStyleType === style ? 'var(--y)' : 'var(--b)'}`, background: cfg.wheelStyleType === style ? 'rgba(232,184,0,.06)' : 'transparent', cursor: 'pointer', textAlign: 'center', transition: 'all .2s' }}>
-                  <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 28, color: cfg.wheelStyleType === style ? 'var(--y)' : 'var(--w)', letterSpacing: .6 }}>{bmwStyleLabel(style)} STYLE {cfg.wheelStyleType === style && wheelMatchesVehicle(cfg,style) && <span style={{display:'inline-block',verticalAlign:'middle',fontFamily:'Arial,sans-serif',fontSize:12,fontStyle:'normal',fontWeight:700,color:'#102010',background:'#77d28b',padding:'4px 7px',marginLeft:8,letterSpacing:0}}>Compatible with your vehicle</span>}</div>
-                  <div style={{ fontSize: 14, color: 'var(--t)', marginTop: 4 }}>
-                    {isAudi
-                      ? (style === 'B9' ? 'Classic flat-bottom sport profile' : style === 'RS 2020+' ? 'Audi RS Performance · 2020+ live 2D wheel' : 'R8 supercar-inspired round profile')
-                      : cfg.brand === 'BMW' ? (style === 'G-Series Pre LCI' ? 'Pre LCI wheel with live shape and material preview' : style === 'G-Series' ? 'Modern G-chassis flat-bottom sport profile' : 'Classic F-chassis round profile')
-                        : style === 'Supra GR' ? 'Toyota Supra GR · 2020+ · three wheel shapes' : style === 'AMG Performance' ? 'Mercedes-AMG · 2019–2024' : style === 'Mercedes 2015–2023' ? 'Mercedes C, E, S, GLC, GLE, GLS, G, CLS' : 'Mercedes C, E, S, GLK, ML, GL, CLS'}
-                  </div>
-                  <div style={{ fontSize: 14, color: 'var(--y)', fontWeight: 700, marginTop: 6 }}>
-                    {isAudi
-                      ? (style === 'R8' ? 'From $799.99' : 'From $699.99')
-                      : cfg.brand === 'BMW' ? (style !== 'F-Series' ? 'From $549.99' : 'From $449.99') : 'From $899.00'}
-                  </div>
+                  <img src={image} alt={`${label} steering wheel`} style={{display:'block',width:'100%',height:150,objectFit:'contain',background:'#090909',marginBottom:10}} />
+                  <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 26, color: cfg.wheelStyleType === style ? 'var(--y)' : 'var(--w)', letterSpacing: .6 }}>{label} STYLE {cfg.wheelStyleType === style && wheelMatchesVehicle(cfg,style) && <span style={{display:'inline-block',verticalAlign:'middle',fontFamily:'Arial,sans-serif',fontSize:12,fontStyle:'normal',fontWeight:700,color:'#102010',background:'#77d28b',padding:'4px 7px',marginLeft:8,letterSpacing:0}}>Compatible with your vehicle</span>}</div>
+                  <div style={{ fontSize: 14, color: 'var(--t)', marginTop: 4 }}>{detail}</div>
+                  <div style={{ fontSize: 14, color: 'var(--y)', fontWeight: 700, marginTop: 6 }}>From ${price.toFixed(2)}</div>
                 </div>
               ))}
             </div>
@@ -1102,11 +1114,11 @@ export default function Configure() {
           </Sect>}
 
           {/* Stitch */}
-          <Sect label="Stitch Color *" value={cfg.stitchColor ? stitchColorName(cfg.stitchColor) : cfg.stitchCustomColor || '—'}>
+          {sourceWheelStyle(cfg)?.stitch !== false && <Sect label="Stitch Color *" value={cfg.stitchColor ? stitchColorName(cfg.stitchColor) : cfg.stitchCustomColor || '—'}>
             <ColorGrid colors={STITCH_COLORS} selected={cfg.stitchColor} onSelect={v => { set('stitchColor', v); set('stitchCustomColor', ''); }} />
             <CustomColorInput label="Type Any Stitch Color (Max Two):" value={cfg.stitchCustomColor} onChange={v => { set('stitchCustomColor', v); set('stitchColor', null); }} placeholder="e.g. Gold, Magenta, Dual Colors..." />
             {errors.stitchColor && <div className="err-msg" style={{ marginTop: 8 }}>Please choose a stitch color.</div>}
-          </Sect>
+          </Sect>}
 
           {/* Wheel Style — hidden for R8 and F-Series */}
           {!(isAudi && cfg.wheelStyleType === 'R8') && !usesSource2D(cfg) && (
@@ -1152,7 +1164,7 @@ export default function Configure() {
           <MatSection label="Top & Bottom Grip Material"
             matKey="topBottomMat" colKey="topBottomCol"
             carbonColKey="topBottomCarbonCol" customColKey="topBottomCustomColor"
-            cfg={cfg} set={set} matsOverride={usesSource2D(cfg) ? F_SERIES_TOP_MATS : TOP_BOTTOM_MATS}
+            cfg={cfg} set={set} matsOverride={cfg.brand === 'DODGE_SRT' && ['Round','Yoke'].includes(cfg.bmwShape) ? F_SERIES_TOP_MATS.filter(m => !m.carbon) : usesSource2D(cfg) ? F_SERIES_TOP_MATS : TOP_BOTTOM_MATS}
             colorError={errors.topBottomColor} />
 
           {/* Side Mat — restricted to match Top/Bottom carbon type when applicable */}
@@ -1256,12 +1268,12 @@ export default function Configure() {
                     {errors.airbagColor && <div className="err-msg" style={{ marginTop: 8 }}>Please choose an airbag color.</div>}
                   </>
                 )}
-                <div style={{ fontSize: 14, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase', margin: '16px 0 4px', color: 'var(--t)' }}>
+                {sourceWheelStyle(cfg)?.airbagStitch !== false && <><div style={{ fontSize: 14, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase', margin: '16px 0 4px', color: 'var(--t)' }}>
                   Airbag Stitch Color <span className="req">*</span>: {configuredColor(cfg.airbagStitchColor, cfg.airbagStitchCustomColor, 'stitch')}
                 </div>
                 <ColorGrid colors={STITCH_COLORS} selected={cfg.airbagStitchColor} onSelect={v => { set('airbagStitchColor', v); set('airbagStitchCustomColor', ''); }} />
                 <CustomColorInput label="Type Any Stitch Color:" value={cfg.airbagStitchCustomColor} onChange={v => { set('airbagStitchCustomColor', v); set('airbagStitchColor', null); }} placeholder="e.g. Gold, Magenta, Dual Colors..." />
-                {errors.airbagStitchColor && <div className="err-msg" style={{ marginTop: 8 }}>Please choose an airbag stitch color.</div>}
+                {errors.airbagStitchColor && <div className="err-msg" style={{ marginTop: 8 }}>Please choose an airbag stitch color.</div>}</>}
               </div>
             )}
 
@@ -1273,6 +1285,18 @@ export default function Configure() {
                 <ColorGrid colors={COLORS} selected={cfg.audiLogoCol} onSelect={v => { set('audiLogoCol', v); set('audiLogoCustomColor', ''); }} />
                 <CustomColorInput label="Type Any Color:" value={cfg.audiLogoCustomColor} onChange={v => { set('audiLogoCustomColor', v); set('audiLogoCol', null); }} />
                 {errors.audiLogoColor && <div className="err-msg" style={{ marginTop: 8 }}>Please choose an Audi logo color.</div>}
+              </div>
+            )}
+            {cfg.brand === 'DODGE_SRT' && cfg.airbagCompat && (
+              <div style={{marginTop:14,paddingTop:14,borderTop:'1px solid #1A1A1A'}}>
+                <div className="fl">Airbag Trim Color <span className="req">*</span>: {configuredColor(cfg.dodgeAirbagTrimCol,cfg.dodgeAirbagTrimCustomColor)}</div>
+                <ColorGrid colors={COLORS} selected={cfg.dodgeAirbagTrimCol} onSelect={v=>{set('dodgeAirbagTrimCol',v);set('dodgeAirbagTrimCustomColor','');}} />
+                <CustomColorInput label="Type Any Color:" value={cfg.dodgeAirbagTrimCustomColor} onChange={v=>{set('dodgeAirbagTrimCustomColor',v);set('dodgeAirbagTrimCol',null);}} />
+                {errors.dodgeAirbagTrimColor && <div className="err-msg">Please choose an airbag trim color.</div>}
+                <div className="fl" style={{marginTop:16}}>SRT Logo Color <span className="req">*</span>: {configuredColor(cfg.dodgeLogoCol,cfg.dodgeLogoCustomColor)}</div>
+                <ColorGrid colors={COLORS} selected={cfg.dodgeLogoCol} onSelect={v=>{set('dodgeLogoCol',v);set('dodgeLogoCustomColor','');}} />
+                <CustomColorInput label="Type Any Color:" value={cfg.dodgeLogoCustomColor} onChange={v=>{set('dodgeLogoCustomColor',v);set('dodgeLogoCol',null);}} />
+                {errors.dodgeLogoColor && <div className="err-msg">Please choose an SRT logo color.</div>}
               </div>
             )}
           </div>
@@ -1422,8 +1446,8 @@ export default function Configure() {
               <button className="btn" style={{ clipPath: 'none', flex: 1 }} onClick={() => {
                 const topMat = MATS.find(m => m.n === cfg.topBottomMat);
                 addItem({
-                  name: `${cfg.brand} Custom Wheel`,
-                  detail: `${cfg.vehicleYear} ${cfg.brand} ${cfg.vehicleModel} · ${cfg.wheelStyle} · ${cfg.topBottomMat}`,
+                  name: `${VEHICLE_MAKES.find(make => make.value === cfg.brand)?.label || cfg.brand} Custom Wheel`,
+                  detail: `${cfg.vehicleYear} ${VEHICLE_MAKES.find(make => make.value === cfg.brand)?.label || cfg.brand} ${cfg.vehicleModel} · ${cfg.wheelStyleType} · ${cfg.topBottomMat}`,
                   price,
                   config: { ...buildConfigSnapshot(), topMatIsCarbon: topMat?.carbon },
                 });

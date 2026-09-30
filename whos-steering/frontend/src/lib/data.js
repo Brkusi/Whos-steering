@@ -138,6 +138,7 @@ export const DEFAULT_CONFIG = {
   airbagMat: null, airbagCol: null, airbagCustomColor: '',
   airbagStitchColor: null, airbagStitchCustomColor: '',
   audiLogoCol: null, audiLogoCustomColor: '',
+  dodgeAirbagTrimCol: null, dodgeAirbagTrimCustomColor: '', dodgeLogoCol: null, dodgeLogoCustomColor: '',
   audiBadge: 'RS', plasticTrimCol: null, plasticTrimCustomColor: '', innerTrimCol: null, innerTrimCustomColor: '', innerTrimMatchCarbon: false,
   photoUrl: null,
   customNotes: '',

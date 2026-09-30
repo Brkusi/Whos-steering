@@ -1,0 +1,248 @@
+[
+  {
+    "path": "yoke.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/porsche-992/yoke.webp",
+    "bytes": 209758,
+    "sha256": "7da911e7f4c1b48aaa5cbd70819d8f9e8a3af9cc0ee023e5db85fe0e3ad6ce24"
+  },
+  {
+    "path": "grips/yoke-side-alcantara-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/porsche-992/grips/yoke-side-alcantara-map.webp",
+    "bytes": 294730,
+    "sha256": "aab0849b7106585311b8f98410d7dcb31eab94e163ce797e0b529837f0153523"
+  },
+  {
+    "path": "grips/yoke-side-smooth-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/porsche-992/grips/yoke-side-smooth-map.webp",
+    "bytes": 220096,
+    "sha256": "96c036b77ad4abbf3dc0063e3801e2631c9a67b49f24f4656474284cc505262c"
+  },
+  {
+    "path": "grips/yoke-side-perforated-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/porsche-992/grips/yoke-side-perforated-map.webp",
+    "bytes": 303286,
+    "sha256": "c4f50944828ddd72daa8d1d93b45780abdfd65b61b2767d2a5f4812c7c33606e"
+  },
+  {
+    "path": "grips/yoke-bottom-alcantara-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/porsche-992/grips/yoke-bottom-alcantara-map.webp",
+    "bytes": 210248,
+    "sha256": "c1e4de9115826adc0eefcbb2e8e9778b88c3dfd658fb285b315f591f2084d396"
+  },
+  {
+    "path": "grips/yoke-bottom-smooth-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/porsche-992/grips/yoke-bottom-smooth-map.webp",
+    "bytes": 164492,
+    "sha256": "0eab6e13ce7647d0d13ce590ac468f838e38a88713d88514f735771494a0f00b"
+  },
+  {
+    "path": "grips/yoke-bottom-perforated-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/porsche-992/grips/yoke-bottom-perforated-map.webp",
+    "bytes": 180486,
+    "sha256": "5addc12f1a051fa8bb8b40deb5f5a19fcf2388ed522f03ef0673ccee15bf6265"
+  },
+  {
+    "path": "cf/yoke-glossy.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/porsche-992/cf/yoke-glossy.webp",
+    "bytes": 47270,
+    "sha256": "cc410decff88b28ee1724a7360be1424c658c4d9d5376edacf7601b6a1f6d617"
+  },
+  {
+    "path": "cf/yoke-matte.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/porsche-992/cf/yoke-matte.webp",
+    "bytes": 38288,
+    "sha256": "c45d1ed5ef5f6e183635942a4974575fabeb7b227270fee5ee5878e6b9a372f0"
+  },
+  {
+    "path": "cf/yoke-forged.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/porsche-992/cf/yoke-forged.webp",
+    "bytes": 42272,
+    "sha256": "6a6fc77dbc2d53321a971f9d9b42330560544b88345312c841b6c5c54165d2b0"
+  },
+  {
+    "path": "flat-flat.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/porsche-992/flat-flat.webp",
+    "bytes": 250894,
+    "sha256": "9ab45cb2965c76baf69e14ce2b0d3131fde812d03da8f803af4529aa9bf92a1a"
+  },
+  {
+    "path": "grips/flat-flat-side-alcantara-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/porsche-992/grips/flat-flat-side-alcantara-map.webp",
+    "bytes": 248808,
+    "sha256": "a71ba81ca2195f191c4264a2cd51158e80e4f7eeace8281ec1b178824a203bfa"
+  },
+  {
+    "path": "grips/flat-flat-side-smooth-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/porsche-992/grips/flat-flat-side-smooth-map.webp",
+    "bytes": 220062,
+    "sha256": "0a429cb4dbe4245632f361a16eeb428a04ab80eeaa4a842c93b28d787f58a5e0"
+  },
+  {
+    "path": "grips/flat-flat-side-perforated-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/porsche-992/grips/flat-flat-side-perforated-map.webp",
+    "bytes": 268842,
+    "sha256": "4cb5c33db8575766915559418013476c67aeefe8d337fd7b27e81cddbea0585d"
+  },
+  {
+    "path": "grips/flat-flat-tb-alcantara-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/porsche-992/grips/flat-flat-tb-alcantara-map.webp",
+    "bytes": 228524,
+    "sha256": "5a08b792ad654e105732cd334b802bcab146a01ef1f838f77da4c545d55d2541"
+  },
+  {
+    "path": "grips/flat-flat-tb-smooth-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/porsche-992/grips/flat-flat-tb-smooth-map.webp",
+    "bytes": 174980,
+    "sha256": "8f2dd045ecd7c4cf1440c176cacd615ac06c8c2c5c210da3b44cd9f68e9b2716"
+  },
+  {
+    "path": "grips/flat-flat-tb-perforated-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/porsche-992/grips/flat-flat-tb-perforated-map.webp",
+    "bytes": 214884,
+    "sha256": "3dc16272a382dbe8bdd3861581f66197a0d8782db0793ff617d230ce57b1feb7"
+  },
+  {
+    "path": "cf/flat-flat-glossy.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/porsche-992/cf/flat-flat-glossy.webp",
+    "bytes": 58816,
+    "sha256": "b6cbf2a985ad792981f04adc7ec013610ebbb616a9af16e75a77f1ef246f1533"
+  },
+  {
+    "path": "cf/flat-flat-matte.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/porsche-992/cf/flat-flat-matte.webp",
+    "bytes": 44734,
+    "sha256": "cf808ddb8ca0b9255ec686b164da6fe1c81fb39d10b3b6ddc911cc1b73fcd06c"
+  },
+  {
+    "path": "cf/flat-flat-forged.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/porsche-992/cf/flat-flat-forged.webp",
+    "bytes": 56176,
+    "sha256": "8594941bb5c733390fef2358a96cff554ad820e6ef1d74e968775ff27f08a16d"
+  },
+  {
+    "path": "flat-round.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/porsche-992/flat-round.webp",
+    "bytes": 405318,
+    "sha256": "c69be1e8e6c6467d24b8f6a374527a52bfb69f0d881f665cb789dc2284f3aabf"
+  },
+  {
+    "path": "grips/flat-round-side-alcantara-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/porsche-992/grips/flat-round-side-alcantara-map.webp",
+    "bytes": 214624,
+    "sha256": "59fbce49b87d7a8c438458958f0db7d8f6eaa6dbc5efa74e56615fbd4af9b065"
+  },
+  {
+    "path": "grips/flat-round-side-smooth-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/porsche-992/grips/flat-round-side-smooth-map.webp",
+    "bytes": 187472,
+    "sha256": "f79e25c05b57b541dd882deed49d4eb84380e467dd202072b2a1a52eb96ab9ed"
+  },
+  {
+    "path": "grips/flat-round-side-perforated-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/porsche-992/grips/flat-round-side-perforated-map.webp",
+    "bytes": 229492,
+    "sha256": "32e6948be5882f857711c65d2a945937ac7ab997ac5586088f9efaab004c6b24"
+  },
+  {
+    "path": "grips/flat-round-tb-alcantara-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/porsche-992/grips/flat-round-tb-alcantara-map.webp",
+    "bytes": 399442,
+    "sha256": "5ba6db837da28013765c60623f42b2ba33a40171fabef4251fd66884201bf85c"
+  },
+  {
+    "path": "grips/flat-round-tb-smooth-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/porsche-992/grips/flat-round-tb-smooth-map.webp",
+    "bytes": 317936,
+    "sha256": "ead97a0a39182d7126a775dc8ef5885d8ff5eb8886a74909675a12754857ffcc"
+  },
+  {
+    "path": "grips/flat-round-tb-perforated-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/porsche-992/grips/flat-round-tb-perforated-map.webp",
+    "bytes": 353038,
+    "sha256": "a914f86cbda4c096d8fe4d69e6319cf9a5e49bbfd2b7a4f12fcef93cbefac85e"
+  },
+  {
+    "path": "cf/flat-round-glossy.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/porsche-992/cf/flat-round-glossy.webp",
+    "bytes": 64686,
+    "sha256": "4ff4ab85ce4dbfd7e97079e4978489d82f0843238ce6f03ea48dbaf39391ee0c"
+  },
+  {
+    "path": "cf/flat-round-matte.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/porsche-992/cf/flat-round-matte.webp",
+    "bytes": 59234,
+    "sha256": "779fa63e47689e6efc479c24774a07000bc83bde897981bfa39e9c5d1e464238"
+  },
+  {
+    "path": "cf/flat-round-forged.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/porsche-992/cf/flat-round-forged.webp",
+    "bytes": 78598,
+    "sha256": "6caf28402679aed68a4e8d4624d97ed90a8b9bf57c62a6f2d4ed105d110c0dba"
+  },
+  {
+    "path": "marker/flat-flat.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/porsche-992/marker/flat-flat.webp",
+    "bytes": 9008,
+    "sha256": "a813886d285de31e6a0b9d8b34ed8f96d03e684b4a2e401c60f710f2c86bd818"
+  },
+  {
+    "path": "marker/flat-round.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/porsche-992/marker/flat-round.webp",
+    "bytes": 10198,
+    "sha256": "fc4b2fd0a22ed98a085b15a64fb0d065e909a24c3b7def500e2716f2011c1d0a"
+  },
+  {
+    "path": "led/flat-flat.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/porsche-992/led/flat-flat.webp",
+    "bytes": 347812,
+    "sha256": "b1145b2f43bc4b2b723d514d2a82446287f55778090e46b2cdc299b2ae38177c"
+  },
+  {
+    "path": "led/flat-round.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/porsche-992/led/flat-round.webp",
+    "bytes": 37008,
+    "sha256": "6d487f104fdcd26ddae266b3111feffeacc0e654e6cdf7f7a40001b78d01ecd8"
+  },
+  {
+    "path": "grips/airbag-smooth-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/porsche-992/grips/airbag-smooth-map.webp",
+    "bytes": 281844,
+    "sha256": "51ea7af8fb9752847673b588403de45119d360db70d6498e8cf547dcad2cf11b"
+  },
+  {
+    "path": "neutral/airbag-smooth-logo.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/porsche-992/neutral/airbag-smooth-logo.webp",
+    "bytes": 50934,
+    "sha256": "ae6c768c8d9f9a5078e7291c967f9c6aa874cf2316b6863f746210fa2dbfb3d5"
+  },
+  {
+    "path": "grips/airbag-alcantara-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/porsche-992/grips/airbag-alcantara-map.webp",
+    "bytes": 320638,
+    "sha256": "8adfc47dc0ddd19edc9013d61b6b86dfe36d2f8032768420ddae4986ed032798"
+  },
+  {
+    "path": "neutral/airbag-alcantara-logo.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/porsche-992/neutral/airbag-alcantara-logo.webp",
+    "bytes": 50900,
+    "sha256": "508dee246c472ad7702835d740511f3aa476cc8aa6d158861ad1a85326901e29"
+  },
+  {
+    "path": "paddles/glossy.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/porsche-992/paddles/glossy.webp",
+    "bytes": 37486,
+    "sha256": "3784f07d48c201e5a25883bdb3f06ab15ba11f79e671dbeb817b402ce5ab8b4a"
+  },
+  {
+    "path": "paddles/matte.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/porsche-992/paddles/matte.webp",
+    "bytes": 31484,
+    "sha256": "d0076b22ccf76784567f5f0cea1c4aea907b25948fb85b9cc3259e5277120db0"
+  },
+  {
+    "path": "paddles/forged.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/porsche-992/paddles/forged.webp",
+    "bytes": 35820,
+    "sha256": "6ad55ae4f31eeffb07e33f6635fc9578cd86c20d7b9c1795b0801d737c966934"
+  }
+]

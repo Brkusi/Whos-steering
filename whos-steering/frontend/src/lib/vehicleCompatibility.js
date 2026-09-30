@@ -3,10 +3,10 @@ import { vehicleYears } from './vehicleCatalog';
 export const VEHICLE_MAKES = [
   { value: 'AUDI', label: 'Audi', available: true },
   { value: 'BMW', label: 'BMW', available: true },
-  { value: 'DODGE_SRT', label: 'Dodge SRT', available: false },
+  { value: 'DODGE_SRT', label: 'Dodge SRT', available: true },
   { value: 'MERCEDES', label: 'Mercedes', available: true },
   { value: 'TOYOTA', label: 'Toyota', available: true },
-  { value: 'PORSCHE', label: 'Porsche', available: false },
+  { value: 'PORSCHE', label: 'Porsche', available: true },
 ];
 
 export const isConfigurableMake = make => VEHICLE_MAKES.some(item => item.value === make && item.available);
@@ -27,6 +27,13 @@ export function wheelMatchesVehicle(config, style) {
     if (style === 'G-Series' || style === 'G-Series Pre LCI') return /\b(?:G20|G30|G22|G42|G80|G82|G87)\b/.test(model);
   }
   if (config.brand === 'TOYOTA') return style === 'Supra GR' && year >= 2020 && /\bSupra\b/i.test(config.vehicleModel);
+  if (config.brand === 'PORSCHE') {
+    if (!/^911\b/i.test(config.vehicleModel.trim())) return false;
+    if (style === '911 Performance (991)') return year >= 2012 && year <= 2019;
+    if (style === '911 Performance (992)') return year >= 2019;
+  }
+  // The SRT source does not specify a year/model fitment range. The wheel
+  // remains configurable, with final compatibility confirmed from the photo.
   if (config.brand === 'MERCEDES') {
     const model = config.vehicleModel.trim();
     if (style === 'AMG Performance') return year >= 2019 && year <= 2024 && /\bAMG\b/i.test(model);

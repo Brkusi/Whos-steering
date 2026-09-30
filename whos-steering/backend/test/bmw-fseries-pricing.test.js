@@ -47,3 +47,15 @@ test('Toyota and Mercedes source wheels use their own base price and available p
     assert.equal(await serverPrice()({...cfg,topBottomMat:'Classic Carbon',ledDisplay:true}),103900);
   }
 });
+
+test('Porsche and Dodge source wheels use their listed bases and paddle rules',async()=>{
+  const base={airbagCompat:false,heated:false,laneAssist:false};
+  for(const wheelStyleType of ['911 Performance (991)','911 Performance (992)']) {
+    const cfg={...base,brand:'PORSCHE',wheelStyleType};
+    assert.equal(await serverPrice()(cfg),139900);
+    assert.equal(await serverPrice()({...cfg,paddleShifters:'Forged Carbon'}),142400);
+  }
+  const dodge={...base,brand:'DODGE_SRT',wheelStyleType:'SRT'};
+  assert.equal(await serverPrice()(dodge),89900);
+  assert.equal(await serverPrice()({...dodge,paddleShifters:'Forged Carbon'}),89900);
+});

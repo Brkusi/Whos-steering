@@ -1,0 +1,286 @@
+[
+  {
+    "path": "round.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/dodge-srt/round.webp",
+    "bytes": 185612,
+    "sha256": "42d3c305676f0a8b3d09e2bee86524c6b99f131dd4d79c3b492e5edfdd53d2b6"
+  },
+  {
+    "path": "grips/round-side-alcantara-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/dodge-srt/grips/round-side-alcantara-map.webp",
+    "bytes": 623736,
+    "sha256": "c4edc243f7ee9ebe6dd50db351d62be7e8581eff0d87ae96ddd1c10286606715"
+  },
+  {
+    "path": "grips/round-side-smooth-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/dodge-srt/grips/round-side-smooth-map.webp",
+    "bytes": 634952,
+    "sha256": "b704e7de3123e575c217fb8c7fd24337a69fa9bbe2e627b940d80bac6e183104"
+  },
+  {
+    "path": "grips/round-side-perforated-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/dodge-srt/grips/round-side-perforated-map.webp",
+    "bytes": 753986,
+    "sha256": "5f06291016dc050500ab100b13a8bbadf8e4e63f71be2aa2b423e894053d63be"
+  },
+  {
+    "path": "grips/round-tb-alcantara-map.webp",
+    "error": "HTTP Error 404: Not Found"
+  },
+  {
+    "path": "grips/round-tb-smooth-map.webp",
+    "error": "HTTP Error 404: Not Found"
+  },
+  {
+    "path": "grips/round-tb-perforated-map.webp",
+    "error": "HTTP Error 404: Not Found"
+  },
+  {
+    "path": "yoke.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/dodge-srt/yoke.webp",
+    "bytes": 251246,
+    "sha256": "ea62b194edf4f25c0ff3fbfc16ce3d6f2547c267d856730caeed7a79a75efd66"
+  },
+  {
+    "path": "grips/yoke-side-alcantara-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/dodge-srt/grips/yoke-side-alcantara-map.webp",
+    "bytes": 803984,
+    "sha256": "747e900f8a4a7e9518970257f176e8269dc50f8bb52217c1055995e27dedf310"
+  },
+  {
+    "path": "grips/yoke-side-smooth-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/dodge-srt/grips/yoke-side-smooth-map.webp",
+    "bytes": 852644,
+    "sha256": "ba5a484a95103c2e70c79639f8e8115df94dd4611bc42b5a8d3d00d94aa77dae"
+  },
+  {
+    "path": "grips/yoke-side-perforated-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/dodge-srt/grips/yoke-side-perforated-map.webp",
+    "bytes": 654926,
+    "sha256": "348b1ea501ab059e25775b79c61e38b3bc41a2d249eae53352e014292e8e0961"
+  },
+  {
+    "path": "grips/yoke-bottom-alcantara-map.webp",
+    "error": "HTTP Error 404: Not Found"
+  },
+  {
+    "path": "grips/yoke-bottom-smooth-map.webp",
+    "error": "HTTP Error 404: Not Found"
+  },
+  {
+    "path": "grips/yoke-bottom-perforated-map.webp",
+    "error": "HTTP Error 404: Not Found"
+  },
+  {
+    "path": "flat-flat.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/dodge-srt/flat-flat.webp",
+    "bytes": 354392,
+    "sha256": "e57d1f0348b9abe3d941d270353c0e6573e7d2cd3b47b6444b1dc281513b9762"
+  },
+  {
+    "path": "grips/flat-flat-side-alcantara-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/dodge-srt/grips/flat-flat-side-alcantara-map.webp",
+    "bytes": 835612,
+    "sha256": "8d2999c060ed9638905ec175a98a3fbc8da863e11d5a2eb28dbb05e4fa49cc2d"
+  },
+  {
+    "path": "grips/flat-flat-side-smooth-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/dodge-srt/grips/flat-flat-side-smooth-map.webp",
+    "bytes": 680642,
+    "sha256": "9b910ba83500cea9a2af9fd0bbea6d561bab80dfdf46140d1ec1af2beb145711"
+  },
+  {
+    "path": "grips/flat-flat-side-perforated-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/dodge-srt/grips/flat-flat-side-perforated-map.webp",
+    "bytes": 662782,
+    "sha256": "b031039b8502a93f6b241eb686cb88e1c2a2b001e0d2db7a655fe6a6a5a1ecc4"
+  },
+  {
+    "path": "grips/flat-flat-tb-alcantara-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/dodge-srt/grips/flat-flat-tb-alcantara-map.webp",
+    "bytes": 790278,
+    "sha256": "4671c6cb180065a8ef629e4022e7dab191d7b03381560b100a0b962eae80e408"
+  },
+  {
+    "path": "grips/flat-flat-tb-smooth-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/dodge-srt/grips/flat-flat-tb-smooth-map.webp",
+    "bytes": 701768,
+    "sha256": "1bd63f6706047a39c03b9501334d15d3700b8aac2c3a726335bbc2b38177e314"
+  },
+  {
+    "path": "grips/flat-flat-tb-perforated-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/dodge-srt/grips/flat-flat-tb-perforated-map.webp",
+    "bytes": 727348,
+    "sha256": "f845075270127343532af7b127b4a8fdf581d1a9c7fbf22b4dde4eec024bafce"
+  },
+  {
+    "path": "cf/flat-flat-glossy.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/dodge-srt/cf/flat-flat-glossy.webp",
+    "bytes": 129094,
+    "sha256": "cac3ed57bfd9c0ed23787a6385014c77939e8bd6173aae58a59da5183ce3266b"
+  },
+  {
+    "path": "cf/flat-flat-matte.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/dodge-srt/cf/flat-flat-matte.webp",
+    "bytes": 92076,
+    "sha256": "6c3c127650161bcb72d5b6684df3a9752bc20b7beb48df1325c647aa4b937616"
+  },
+  {
+    "path": "cf/flat-flat-forged.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/dodge-srt/cf/flat-flat-forged.webp",
+    "bytes": 146622,
+    "sha256": "d635fdfbf609aed9b53cbd304be7ec1ff2b0f92e5a35710decf61ad06b19b60b"
+  },
+  {
+    "path": "flat-round.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/dodge-srt/flat-round.webp",
+    "bytes": 299262,
+    "sha256": "ac718c43999b0bde493fb407496c3984629c9b002d7810482b8e5bc6c612f9d4"
+  },
+  {
+    "path": "grips/flat-round-side-alcantara-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/dodge-srt/grips/flat-round-side-alcantara-map.webp",
+    "bytes": 617092,
+    "sha256": "2d0f4c59c2d102c01f8cf97f4d9885d688c663fe05a7853e5ff7f84c767426b4"
+  },
+  {
+    "path": "grips/flat-round-side-smooth-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/dodge-srt/grips/flat-round-side-smooth-map.webp",
+    "bytes": 539696,
+    "sha256": "72630c316a21b23f2ef45361090e7f2d95b63f78f027c73532ef73f69acb92f6"
+  },
+  {
+    "path": "grips/flat-round-side-perforated-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/dodge-srt/grips/flat-round-side-perforated-map.webp",
+    "bytes": 605948,
+    "sha256": "0f28075e7ebcaaec7efeea2e1ad27370ab10c973e0ae5609817e8cb545ae17df"
+  },
+  {
+    "path": "grips/flat-round-tb-alcantara-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/dodge-srt/grips/flat-round-tb-alcantara-map.webp",
+    "bytes": 791788,
+    "sha256": "53b2be27b2e423d05ff35e5f7e1e56dbc0899e074d2476fa7a098b7eefd5909c"
+  },
+  {
+    "path": "grips/flat-round-tb-smooth-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/dodge-srt/grips/flat-round-tb-smooth-map.webp",
+    "bytes": 636262,
+    "sha256": "5ef9df821437b9646cb9f8a0c3a6a3e2c7652f84521eca084acafc98ebd0a1f8"
+  },
+  {
+    "path": "grips/flat-round-tb-perforated-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/dodge-srt/grips/flat-round-tb-perforated-map.webp",
+    "bytes": 711192,
+    "sha256": "b9c74e80163321d14e198bd7ea8b5fbc80047400cd16dcc81399bf0d2fc9ddb8"
+  },
+  {
+    "path": "cf/flat-round-glossy.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/dodge-srt/cf/flat-round-glossy.webp",
+    "bytes": 123412,
+    "sha256": "2948a04d045ac224bc327c4ac6fdacd10eb6b5dfc69c24f1a92198e02c6deb3d"
+  },
+  {
+    "path": "cf/flat-round-matte.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/dodge-srt/cf/flat-round-matte.webp",
+    "bytes": 92640,
+    "sha256": "e71c1935bc42893a469faa4722637444af56158962e5b2b27d621c20376ee59d"
+  },
+  {
+    "path": "cf/flat-round-forged.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/dodge-srt/cf/flat-round-forged.webp",
+    "bytes": 113584,
+    "sha256": "6fa6467ac78dca20cf4838c42c6194c623f4dcc4ed1e4c95e25157310194ae40"
+  },
+  {
+    "path": "marker/round.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/dodge-srt/marker/round.webp",
+    "bytes": 9244,
+    "sha256": "e079a64e6f23b04c83fcf5e884d1522255b5bfea719263366861484d8f9a0a4b"
+  },
+  {
+    "path": "marker/flat-flat.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/dodge-srt/marker/flat-flat.webp",
+    "bytes": 8920,
+    "sha256": "57ba5cf6b4f7bc868ed32a47732b4752d521cb422c67e683bc49738fc7582ee7"
+  },
+  {
+    "path": "marker/flat-round.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/dodge-srt/marker/flat-round.webp",
+    "bytes": 9570,
+    "sha256": "830f65c0be9aca2d930c92805501775b94bd82b393dd733ca05d421ecc14c07c"
+  },
+  {
+    "path": "led/flat-round.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/dodge-srt/led/flat-round.webp",
+    "bytes": 36398,
+    "sha256": "3edb515b416611b56a7144b1cc7893447e9dd4aaa921ea7aaafbe51e1b21c09a"
+  },
+  {
+    "path": "grips/airbag-smooth-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/dodge-srt/grips/airbag-smooth-map.webp",
+    "bytes": 555890,
+    "sha256": "54f1e0a44c0b867ad48e8757c0bbb4e97d7fcdb74d54765b494b4cfc1942ea95"
+  },
+  {
+    "path": "neutral/airbag-smooth-logo.webp",
+    "error": "HTTP Error 404: Not Found"
+  },
+  {
+    "path": "grips/airbag-alcantara-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/dodge-srt/grips/airbag-alcantara-map.webp",
+    "bytes": 697582,
+    "sha256": "8b72289c973970fbbd7d4378d4f3fc29c6402a8ebab6b27668e4ce56d2832551"
+  },
+  {
+    "path": "neutral/airbag-alcantara-logo.webp",
+    "error": "HTTP Error 404: Not Found"
+  },
+  {
+    "path": "grips/airbag-trim-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/dodge-srt/grips/airbag-trim-map.webp",
+    "bytes": 85594,
+    "sha256": "48d34405bc8c29f4ebb87f7123cbb0aa2d9a90b33fea792129be445a997b928a"
+  },
+  {
+    "path": "grips/srt-logo-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/dodge-srt/grips/srt-logo-map.webp",
+    "bytes": 32684,
+    "sha256": "75dcd0820f00dad39119a4c3f5599b47eb8c4dd530ff3f3078181f6a0804aa36"
+  },
+  {
+    "path": "pre/round-tb-perforated-9800.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/dodge-srt/pre/round-tb-perforated-9800.webp?v=5",
+    "bytes": 47848,
+    "sha256": "b6b2a6f4bb713848ec31ab714df796fe1510e3d9cfacb93455c0580e3271c062"
+  },
+  {
+    "path": "pre/round-tb-smooth-9800.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/dodge-srt/pre/round-tb-smooth-9800.webp?v=5",
+    "bytes": 33250,
+    "sha256": "08bf8bf430686a1766cafa6a2921926059ff78dd5e9ba014e5a75c07a9945fe8"
+  },
+  {
+    "path": "pre/round-tb-alcantara-9800.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/dodge-srt/pre/round-tb-alcantara-9800.webp?v=5",
+    "bytes": 64634,
+    "sha256": "c07f13117146716eb4af9030c3d2b9598d5ac00886bd698daa0ca282d9ddc767"
+  },
+  {
+    "path": "pre/yoke-bottom-perforated-9800.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/dodge-srt/pre/yoke-bottom-perforated-9800.webp?v=5",
+    "bytes": 29756,
+    "sha256": "b7e479a4972c9247a769da65cc72ccbefd3e0949ec14305a3bb991de9ecea54a"
+  },
+  {
+    "path": "pre/yoke-bottom-alcantara-9800.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/dodge-srt/pre/yoke-bottom-alcantara-9800.webp?v=5",
+    "bytes": 30432,
+    "sha256": "31c09434b2291f624f1df3af087accecbaa388987d74aaf8f0644e9eba04d443"
+  },
+  {
+    "path": "pre/yoke-bottom-smooth-9800.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/dodge-srt/pre/yoke-bottom-smooth-9800.webp?v=5",
+    "bytes": 41874,
+    "sha256": "67d77ab8213f14e46e86f5045cc3c1aeb083cf3adaecacc19763c5e16d168798"
+  }
+]

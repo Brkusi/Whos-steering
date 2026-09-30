@@ -6,6 +6,9 @@ import SUPRA_CALIBRATION from './sourceCalibrationSupraGr.json';
 import MERCEDES_AMG_CALIBRATION from './sourceCalibrationMercedesAmg.json';
 import MERCEDES_2015_CALIBRATION from './sourceCalibrationMercedes2015.json';
 import MERCEDES_2010_CALIBRATION from './sourceCalibrationMercedes2010.json';
+import PORSCHE_991_CALIBRATION from './sourceCalibrationPorsche991.json';
+import PORSCHE_992_CALIBRATION from './sourceCalibrationPorsche992.json';
+import DODGE_SRT_CALIBRATION from './sourceCalibrationDodgeSrt.json';
 import { SourceMaterialRenderer } from './bmwFSeriesSourceRenderer';
 import { sourceMaterial } from './bmwFSeriesConfiguration';
 
@@ -16,6 +19,7 @@ export const stripeColorIndex = (x, left, right, count) => Math.max(0, Math.min(
 const rgb = hex => [1,3,5].map(start=>parseInt(hex.slice(start,start+2),16));
 const SOURCE_CALIBRATIONS = {'audi-rs-2020':AUDI_RS_CALIBRATION,'supra-gr':SUPRA_CALIBRATION,
   'mercedes-amg':MERCEDES_AMG_CALIBRATION,'mercedes-2015':MERCEDES_2015_CALIBRATION,'mercedes-2010':MERCEDES_2010_CALIBRATION,
+  'porsche-991':PORSCHE_991_CALIBRATION,'porsche-992':PORSCHE_992_CALIBRATION,'dodge-srt':DODGE_SRT_CALIBRATION,
   'bmw-gseries':G_CALIBRATION,'bmw-fseries':F_CALIBRATION};
 // These four maps are absent on the source server. Use the closest map from
 // the same shape and grip zone so every advertised option can still preview.
@@ -38,7 +42,25 @@ export function createFSeriesCompositor(family = 'bmw-fseries') {
     return assets.get(path);
   }
   const source = path => image(`${ROOT}/source/${path}.webp`);
+  async function dodgePreWrap(key,color) {
+    const original=await source(`pre/${key}-9800`),out=canvas(),ctx=out.getContext('2d',{willReadFrequently:true});
+    ctx.drawImage(original,0,0,SIZE,SIZE);
+    if(color && !['#292929','#111111'].includes(color.toLowerCase())) {
+      const data=ctx.getImageData(0,0,SIZE,SIZE),p=data.data,tint=rgb(color);
+      for(let i=0;i<p.length;i+=4){
+        if(p[i+3]<8)continue;
+        // Keep the neutral backing and highlights from the source photograph.
+        const chroma=Math.max(p[i],p[i+1],p[i+2])-Math.min(p[i],p[i+1],p[i+2]);
+        if(chroma<3)continue;
+        const lum=(p[i]*.2126+p[i+1]*.7152+p[i+2]*.0722)/255;
+        for(let c=0;c<3;c++)p[i+c]=Math.min(255,tint[c]*(.25+lum*1.15));
+      }
+      ctx.putImageData(data,0,0);
+    }
+    return out;
+  }
   async function wrap(key,color,stitch,carbonFinish=false) {
+    if(family==='dodge-srt' && /^(?:round-tb|yoke-bottom)-(?:smooth|alcantara|perforated)$/.test(key)) return dodgePreWrap(key,color);
     const mapKey=SOURCE_MAP_FALLBACKS[`${family}:${key}`] || key;
     const carbonCalibration=family.startsWith('bmw-') ? G_CALIBRATION : CALIBRATION;
     const result=await materialRenderer.render(`${carbonFinish ? 'carbon:' : ''}${mapKey}`,`${ROOT}/source/grips/${mapKey}-map.webp`,SIZE,(carbonFinish ? carbonCalibration : CALIBRATION)[mapKey],color,stitch).catch(error=>{materialRenderer.invalidate();throw error;});
@@ -86,13 +108,15 @@ export function createFSeriesCompositor(family = 'bmw-fseries') {
     ctx.putImageData(data,0,0);return out;
   }
   async function render(a) {
-    const [base,paddles,side,top,trim,cover,logo,ring,led]=await Promise.all([
+    const [base,paddles,side,top,trim,cover,logo,dodgeTrim,dodgeLogo,ring,led]=await Promise.all([
       source(a.shape),a.paddle?source(`paddles/${a.paddle}`):null,
       wrap(`${a.shape}-side-${sourceMaterial(a.side.material)}`,a.side.color,a.stitch),
       a.top.material.includes('Carbon')?carbon(a):wrap(`${a.shape}-${a.topZone}-${sourceMaterial(a.top.material)}`,a.top.color,a.stitch),
       a.lowerTrim?source(`trims/${a.lowerTrim}`):null,
       a.cover?wrap(`airbag-${sourceMaterial(a.airbag.material)}`,a.airbag.color,a.airbagStitch):null,
-      a.cover?source(`neutral/airbag-${sourceMaterial(a.airbag.material)}-logo`):null,
+      a.cover && family!=='dodge-srt'?source(`neutral/airbag-${sourceMaterial(a.airbag.material)}-logo`):null,
+      a.cover && family==='dodge-srt'?wrap('airbag-trim',a.dodgeAirbagTrim,a.airbagStitch):null,
+      a.cover && family==='dodge-srt'?wrap('srt-logo',a.dodgeLogo,a.airbagStitch):null,
       a.stripes.length?marker(a):null,a.led?source(`led/${a.shape}`):null,
     ]);
     if(disposed)return null;
@@ -101,7 +125,7 @@ export function createFSeriesCompositor(family = 'bmw-fseries') {
     // This is the reference's exact composition order. Lighten places the
     // paddles behind the wheel while retaining the source's black background.
     if(paddles){ctx.globalCompositeOperation='lighten';ctx.drawImage(paddles,0,0,SIZE,SIZE);ctx.globalCompositeOperation='source-over';}
-    [side,top,trim,cover,logo,ring,led].filter(Boolean).forEach(layer=>ctx.drawImage(layer,0,0,SIZE,SIZE));
+    [side,top,trim,cover,logo,dodgeTrim,dodgeLogo,ring,led].filter(Boolean).forEach(layer=>ctx.drawImage(layer,0,0,SIZE,SIZE));
     return out;
   }
   return {render,dispose(){disposed=true;assets.clear();layers.clear();materialRenderer.invalidate();}};
