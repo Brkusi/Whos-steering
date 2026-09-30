@@ -63,7 +63,7 @@ function validateRequiredColors(cfg) {
     missing.push('Side Grip Color');
   }
 
-  if (!(cfg.stitchColor || hasText(cfg.stitchCustomColor))) {
+  if (cfg.brand !== 'DODGE_SRT' && !(cfg.stitchColor || hasText(cfg.stitchCustomColor))) {
     missing.push('Stitch Color');
   }
 
@@ -80,10 +80,15 @@ function validateRequiredColors(cfg) {
   if (cfg.airbagCompat === true) {
     if (!cfg.airbagMat) missing.push('Airbag Material');
     if (!(cfg.airbagCol || hasText(cfg.airbagCustomColor))) missing.push('Airbag Color');
-    if (!(cfg.airbagStitchColor || hasText(cfg.airbagStitchCustomColor))) missing.push('Airbag Stitch Color');
+    if (!(cfg.brand === 'PORSCHE' && cfg.wheelStyleType === '911 Performance (992)') &&
+        !(cfg.airbagStitchColor || hasText(cfg.airbagStitchCustomColor))) missing.push('Airbag Stitch Color');
 
     if (cfg.brand === 'AUDI' && !(cfg.audiLogoCol || hasText(cfg.audiLogoCustomColor))) {
       missing.push('Audi Logo Color');
+    }
+    if (cfg.brand === 'DODGE_SRT') {
+      if (!(cfg.dodgeAirbagTrimCol || hasText(cfg.dodgeAirbagTrimCustomColor))) missing.push('Airbag Trim Color');
+      if (!(cfg.dodgeLogoCol || hasText(cfg.dodgeLogoCustomColor))) missing.push('SRT Logo Color');
     }
   }
 
@@ -460,13 +465,16 @@ async function calcServerPrice(cfg) {
   const isBmwFSeries = cfg.brand === 'BMW' && cfg.wheelStyleType === 'F-Series';
   const usesBmw2D = cfg.brand === 'BMW' && ['F-Series', 'G-Series Pre LCI'].includes(cfg.wheelStyleType);
   const hasSourcePaddles = usesBmw2D || (cfg.brand === 'TOYOTA' && cfg.wheelStyleType === 'Supra GR') ||
-    (cfg.brand === 'MERCEDES' && ['AMG Performance','Mercedes 2010–2015'].includes(cfg.wheelStyleType));
+    (cfg.brand === 'MERCEDES' && ['AMG Performance','Mercedes 2010–2015'].includes(cfg.wheelStyleType)) ||
+    cfg.brand === 'PORSCHE';
 
   if (cfg.brand === 'AUDI') {
     if (cfg.wheelStyleType === 'R8') price = (rules.base_audi_r8 || 799.99) + (isCarbonTop ? 40 : 0);
     else price = (rules.base_audi_b9 || 699.99) + (isCarbonTop ? 40 : 0);
   } else if (cfg.brand === 'MERCEDES' || cfg.brand === 'TOYOTA') {
     price = (rules[`base_${cfg.brand.toLowerCase()}`] ?? 899) + (isCarbonTop ? 40 : 0);
+  } else if (cfg.brand === 'PORSCHE' || cfg.brand === 'DODGE_SRT') {
+    price = (cfg.brand === 'PORSCHE' ? 1399 : 899) + (isCarbonTop ? 40 : 0);
   } else {
     if (cfg.wheelStyleType === 'F-Series') {
       price = rules.base_bmw_f || 449.99;
@@ -486,7 +494,7 @@ async function calcServerPrice(cfg) {
 
   if (usesBmw2D && ['Glossy Carbon','Matte Carbon','Forged Carbon'].includes(cfg.bmwLowerTrim)) price += (rules.bmw_lower_trim ?? 50);
 
-  if (['BMW','MERCEDES','TOYOTA'].includes(cfg.brand)) {
+  if (['BMW','MERCEDES','TOYOTA','PORSCHE','DODGE_SRT'].includes(cfg.brand)) {
     if (cfg.heated !== false)            price += (rules.heated_bmw      || 75);
     if (cfg.laneAssist !== false)        price += (rules.lane_assist_bmw || 30);
     if (cfg.ledDisplay === true)         price += (rules.rpm_gauge_bmw   || 100);

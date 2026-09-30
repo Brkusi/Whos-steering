@@ -34,6 +34,8 @@ export function calcPrice(config, rules = {}) {
     else price = (rules.base_audi_b9 ?? 699.99) + (isCarbonTop ? 40 : 0);
   } else if (config.brand === 'MERCEDES' || config.brand === 'TOYOTA') {
     price = (rules[`base_${config.brand.toLowerCase()}`] ?? 899) + (isCarbonTop ? 40 : 0);
+  } else if (config.brand === 'PORSCHE' || config.brand === 'DODGE_SRT') {
+    price = (config.brand === 'PORSCHE' ? 1399 : 899) + (isCarbonTop ? 40 : 0);
   } else {
     // BMW base: G-Series $549.99, F-Series $449.99; +$40 if carbon top
     if (config.wheelStyleType === 'F-Series') {
@@ -55,7 +57,7 @@ export function calcPrice(config, rules = {}) {
   if (usesBmw2D(config) && ['Glossy Carbon','Matte Carbon','Forged Carbon'].includes(config.bmwLowerTrim)) price += (rules.bmw_lower_trim ?? 50);
 
   // Non-Audi option prices are shared across the supported wheel families.
-  if (['BMW','MERCEDES','TOYOTA'].includes(config.brand)) {
+  if (['BMW','MERCEDES','TOYOTA','PORSCHE','DODGE_SRT'].includes(config.brand)) {
     if (config.heated !== false)   price += (rules.heated_bmw ?? 75);
     if (config.laneAssist !== false) price += (rules.lane_assist_bmw ?? 30);
     if (config.ledDisplay === true) price += (rules.rpm_gauge_bmw ?? 100);

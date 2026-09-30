@@ -11,6 +11,13 @@ export const SOURCE_WHEEL_STYLES = {
     'Mercedes 2015–2023': {family:'mercedes-2015', shapes:F_SERIES_SHAPES, led:['Round','Flat top & bottom','Flat bottom'], paddles:false},
     'Mercedes 2010–2015': {family:'mercedes-2010', shapes:F_SERIES_SHAPES, led:['Round','Flat top & bottom','Flat bottom'], paddles:true},
   },
+  PORSCHE: {
+    '911 Performance (991)': {family:'porsche-991', shapes:['Yoke','Flat top & bottom','Flat bottom'], led:['Flat top & bottom','Flat bottom'], paddles:true},
+    '911 Performance (992)': {family:'porsche-992', shapes:['Yoke','Flat top & bottom','Flat bottom'], led:['Flat top & bottom','Flat bottom'], paddles:true, airbagStitch:false},
+  },
+  DODGE_SRT: {
+    SRT: {family:'dodge-srt', shapes:F_SERIES_SHAPES, led:['Flat bottom'], paddles:false, stitch:false, carbonShapes:['Flat top & bottom','Flat bottom']},
+  },
 };
 export const sourceWheelStyle = cfg => SOURCE_WHEEL_STYLES[cfg.brand]?.[cfg.wheelStyleType];
 export const sourceWheelShapes = cfg => sourceWheelStyle(cfg)?.shapes || F_SERIES_SHAPES;
@@ -44,6 +51,8 @@ export function bmwFSeriesConfiguration(cfg, parseColor) {
     led:appearance.led && sourceWheelSupportsLed(cfg),
     stripes:shape==='yoke'?[]:appearance.stripes,
     cover:!isAudiRS2020(cfg) && !!cfg.airbagCompat,
+    dodgeAirbagTrim:appearance.dodgeAirbagTrim,
+    dodgeLogo:appearance.dodgeLogo,
     lowerTrim:usesBmw2D(cfg) ? ({'Glossy Carbon':'glossy','Matte Carbon':'matte','Forged Carbon':'forged'})[cfg.bmwLowerTrim] || null : null,
   };
 }

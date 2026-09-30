@@ -9,7 +9,7 @@ router.get('/status',(req,res)=>res.json({email:sales.mailReady(),recovery:sales
 router.post('/save',rateLimit({windowMs:60*60*1000,max:10}),wrap(async(req,res)=>{
   const {email,kind,payload,consent}=req.body;
   if(typeof email!=='string'||email.length>254||!/^\S+@\S+\.\S+$/.test(email)||!['build','checkout','fitment'].includes(kind)||!payload||typeof payload!=='object'||JSON.stringify(payload).length>60000) return res.status(400).json({error:'Please enter a valid email and wheel details.'});
-  if(kind==='build' && (!payload.config||!['BMW','AUDI'].includes(payload.config.brand))) return res.status(400).json({error:'Invalid wheel build.'});
+  if(kind==='build' && (!payload.config||!['BMW','AUDI','MERCEDES','TOYOTA','PORSCHE','DODGE_SRT'].includes(payload.config.brand))) return res.status(400).json({error:'Invalid wheel build.'});
   if(kind==='checkout' && (!Array.isArray(payload.items)||!payload.items.length||payload.items.length>30)) return res.status(400).json({error:'Your cart is empty or invalid.'});
   if(kind==='fitment' && (!payload.year||!payload.model||!payload.photoUrl)) return res.status(400).json({error:'Add your vehicle year, model and wheel photo first.'});
   if(kind==='checkout' && payload.items.some(i=>!i||typeof i.name!=='string'||typeof i.price!=='number'||!Number.isFinite(i.price)||i.price<0||!i.config||typeof i.config!=='object'))return res.status(400).json({error:'Invalid saved cart.'});

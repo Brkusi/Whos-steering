@@ -28,6 +28,8 @@ export function wheelAppearance(cfg, parseColor) {
     airbag: { material: cfg.airbagCompat ? cfg.airbagMat || 'Smooth Leather' : 'Smooth Leather', color: cfg.airbagCompat ? color(cfg.airbagCustomColor || cfg.airbagCol, '#292929') : '#292929' },
     airbagStitch: cfg.airbagCompat ? color(cfg.airbagStitchCustomColor || cfg.airbagStitchColor, '#555555') : '#555555',
     logo: cfg.airbagCompat ? color(cfg.audiLogoCustomColor || cfg.audiLogoCol, '#c5c9ce') : '#c5c9ce',
+    dodgeAirbagTrim: color(cfg.dodgeAirbagTrimCustomColor || cfg.dodgeAirbagTrimCol, '#292929'),
+    dodgeLogo: color(cfg.dodgeLogoCustomColor || cfg.dodgeLogoCol, '#c5c9ce'),
     badge: cfg.audiBadge === 'R8' && cfg.wheelStyleType !== 'R8' ? 'RS' : cfg.audiBadge || 'RS', led: !!cfg.ledDisplay,
     magnetic: cfg.paddleShifters === 'Magnetic', longPaddles: cfg.paddleLength === 'Long',
     unresolved: [...new Set(unresolved)],

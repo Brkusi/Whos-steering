@@ -6,7 +6,7 @@ const fs = require('fs'), path = require('path'), crypto = require('crypto');
 
 test('make selection separates available wheels from requests for fitment', () => {
   expect(VEHICLE_MAKES.map(item => item.label)).toEqual(['Audi','BMW','Dodge SRT','Mercedes','Toyota','Porsche']);
-  expect(VEHICLE_MAKES.filter(item => isConfigurableMake(item.value)).map(item => item.label)).toEqual(['Audi','BMW','Mercedes','Toyota']);
+  expect(VEHICLE_MAKES.filter(item => isConfigurableMake(item.value)).map(item => item.label)).toEqual(['Audi','BMW','Dodge SRT','Mercedes','Toyota','Porsche']);
 });
 
 test('compatibility label needs a fitting year and model', () => {
@@ -23,20 +23,27 @@ test('compatibility label needs a fitting year and model', () => {
   expect(wheelMatchesVehicle({brand:'MERCEDES',vehicleYear:'2019',vehicleModel:'GLC-Class'},'Mercedes 2015–2023')).toBe(true);
   expect(wheelMatchesVehicle({brand:'MERCEDES',vehicleYear:'2012',vehicleModel:'GLK-Class'},'Mercedes 2010–2015')).toBe(true);
   expect(wheelMatchesVehicle({brand:'MERCEDES',vehicleYear:'2022',vehicleModel:'GLK-Class'},'Mercedes 2010–2015')).toBe(false);
+  expect(wheelMatchesVehicle({brand:'PORSCHE',vehicleYear:'2018',vehicleModel:'911'},'911 Performance (991)')).toBe(true);
+  expect(wheelMatchesVehicle({brand:'PORSCHE',vehicleYear:'2024',vehicleModel:'911'},'911 Performance (992)')).toBe(true);
+  expect(wheelMatchesVehicle({brand:'PORSCHE',vehicleYear:'2024',vehicleModel:'Macan'},'911 Performance (992)')).toBe(false);
+  expect(wheelMatchesVehicle({brand:'DODGE_SRT',vehicleYear:'2020',vehicleModel:'Charger'},'SRT')).toBe(false);
 });
 
-test('Toyota and Mercedes source styles expose only their reference shapes, LEDs, and paddles', () => {
+test('source styles expose their reference shapes, LEDs, paddles, and original assets', () => {
   const cases=[
     ['TOYOTA','Supra GR','supra-gr','Flat bottom',true],
     ['MERCEDES','AMG Performance','mercedes-amg','Flat bottom',true],
     ['MERCEDES','Mercedes 2015–2023','mercedes-2015','Round',false],
     ['MERCEDES','Mercedes 2010–2015','mercedes-2010','Round',true],
+    ['PORSCHE','911 Performance (991)','porsche-991','Flat bottom',true],
+    ['PORSCHE','911 Performance (992)','porsche-992','Flat bottom',true],
+    ['DODGE_SRT','SRT','dodge-srt','Flat bottom',false],
   ];
   for(const [brand,wheelStyleType,family,bmwShape,paddles] of cases){
     const cfg={...DEFAULT_CONFIG,brand,wheelStyleType,bmwShape,ledDisplay:true,paddleShifters:'Forged Carbon',heated:false,laneAssist:false};
     expect(bmwFSeriesConfiguration(cfg,()=>null)).toMatchObject({family,led:sourceWheelSupportsLed(cfg),paddle:paddles?'forged':null,lowerTrim:null});
     expect(sourceWheelHasPaddles(cfg)).toBe(paddles);
-    expect(calcPrice({...cfg,airbagCompat:false})).toBe(899+25*(paddles?1:0)+100);
+    expect(calcPrice({...cfg,airbagCompat:false})).toBe((brand==='PORSCHE'?1399:899)+25*(paddles?1:0)+100);
     const root=path.join(process.cwd(),`public/models/${family}/source`);
     const assets=JSON.parse(fs.readFileSync(path.join(root,'manifest.json'),'utf8'));
     const names=new Set(assets.filter(asset=>asset.sha256).map(asset=>asset.path));
@@ -44,6 +51,7 @@ test('Toyota and Mercedes source styles expose only their reference shapes, LEDs
     for(const asset of assets.filter(asset=>asset.sha256))expect(crypto.createHash('sha256').update(fs.readFileSync(path.join(root,asset.path))).digest('hex')).toBe(asset.sha256);
   }
   expect(sourceWheelShapes({brand:'TOYOTA',wheelStyleType:'Supra GR'})).not.toContain('Round');
+  expect(fs.existsSync(path.join(process.cwd(),'public/models/dodge-srt/source/pre/round-tb-smooth-9800.webp'))).toBe(true);
 });
 
 test('Audi RS 2020+ source maps cover four shapes and retain original bytes', () => {

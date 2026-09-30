@@ -5,7 +5,7 @@ const ITEMS = [
   '🌍 International Shipping Available Worldwide',
   '🛡 Every build backed by a 6-Month Warranty',
   '⏱ Production Time: 3–4 Weeks from Order Confirmation',
-  '🔧 Precision-fit for BMW, Audi, Mercedes & Toyota — OEM-correct ergonomics',
+  '🔧 Custom wheels for BMW, Audi, Mercedes, Toyota, Porsche & Dodge SRT — fitment confirmed from your wheel photo',
   '✈️ We ship globally — no matter where you are, we deliver',
   '🏁 Race-inspired materials. Street-legal quality.',
 ];

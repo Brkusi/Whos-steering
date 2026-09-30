@@ -1446,6 +1446,282 @@
           "Supra"
         ]
       }
+    },
+    "PORSCHE": {
+      "firstYear": 2012,
+      "lastYear": 2026,
+      "modelsByYear": {
+        "2012": [
+          "911",
+          "Boxster",
+          "Cayenne",
+          "Cayman",
+          "Panamera"
+        ],
+        "2013": [
+          "911",
+          "Boxster",
+          "Cayenne",
+          "Cayman",
+          "Panamera"
+        ],
+        "2014": [
+          "911",
+          "Boxster",
+          "Cayenne",
+          "Cayman",
+          "Panamera"
+        ],
+        "2015": [
+          "911",
+          "918",
+          "Boxster",
+          "Cayenne",
+          "Cayman",
+          "Macan",
+          "Panamera"
+        ],
+        "2016": [
+          "911",
+          "Boxster",
+          "Cayenne",
+          "Cayman",
+          "Macan",
+          "Panamera"
+        ],
+        "2017": [
+          "718 Boxster",
+          "718 Cayman",
+          "911",
+          "Cayenne",
+          "Macan",
+          "Panamera"
+        ],
+        "2018": [
+          "718 Boxster",
+          "718 Cayman",
+          "911",
+          "Cayenne",
+          "Macan",
+          "Panamera"
+        ],
+        "2019": [
+          "718 Boxster",
+          "718 Cayman",
+          "911",
+          "Cayenne",
+          "Macan",
+          "Panamera"
+        ],
+        "2020": [
+          "718 Boxster",
+          "718 Cayman",
+          "718 Spyder",
+          "911",
+          "Cayenne",
+          "Macan",
+          "Panamera",
+          "Taycan"
+        ],
+        "2021": [
+          "718 Boxster",
+          "718 Cayman",
+          "911",
+          "Cayenne",
+          "Macan",
+          "Panamera",
+          "Taycan"
+        ],
+        "2022": [
+          "718 Boxster",
+          "718 Cayman",
+          "718 Spyder",
+          "911",
+          "Cayenne",
+          "Macan",
+          "Panamera",
+          "Taycan"
+        ],
+        "2023": [
+          "718 Boxster",
+          "718 Cayman",
+          "718 Spyder",
+          "911",
+          "Cayenne",
+          "Macan",
+          "Panamera",
+          "Taycan"
+        ],
+        "2024": [
+          "718 Boxster",
+          "718 Cayman",
+          "718 Spyder",
+          "911",
+          "Cayenne",
+          "Macan",
+          "Panamera",
+          "Taycan"
+        ],
+        "2025": [
+          "718 Boxster",
+          "718 Cayman",
+          "718 Spyder",
+          "911",
+          "Cayenne",
+          "Macan",
+          "Panamera",
+          "Taycan"
+        ],
+        "2026": [
+          "911",
+          "Cayenne",
+          "Macan",
+          "Panamera",
+          "Taycan"
+        ]
+      }
+    },
+    "DODGE_SRT": {
+      "firstYear": 2010,
+      "lastYear": 2026,
+      "modelsByYear": {
+        "2010": [
+          "Avenger",
+          "Caliber",
+          "Challenger",
+          "Charger",
+          "Grand Caravan",
+          "Journey",
+          "Nitro",
+          "Viper"
+        ],
+        "2011": [
+          "Avenger",
+          "Caliber",
+          "Challenger",
+          "Charger",
+          "Durango",
+          "Grand Caravan",
+          "Journey",
+          "Nitro"
+        ],
+        "2012": [
+          "Avenger",
+          "Caliber",
+          "Challenger",
+          "Charger",
+          "Dakota",
+          "Durango",
+          "Grand Caravan",
+          "Journey",
+          "Nitro",
+          "Ram",
+          "Ram Chassis Cab"
+        ],
+        "2013": [
+          "Avenger",
+          "Challenger",
+          "Charger",
+          "Dart",
+          "Durango",
+          "Grand Caravan",
+          "Journey",
+          "Viper"
+        ],
+        "2014": [
+          "Avenger",
+          "Challenger",
+          "Charger",
+          "Dart",
+          "Durango",
+          "Grand Caravan",
+          "Journey",
+          "Viper"
+        ],
+        "2015": [
+          "Challenger",
+          "Charger",
+          "Dart",
+          "Durango",
+          "Grand Caravan",
+          "Journey",
+          "Viper"
+        ],
+        "2016": [
+          "Challenger",
+          "Charger",
+          "Dart",
+          "Durango",
+          "Grand Caravan",
+          "Journey",
+          "Viper"
+        ],
+        "2017": [
+          "Challenger",
+          "Charger",
+          "Durango",
+          "Grand Caravan",
+          "Journey",
+          "Viper"
+        ],
+        "2018": [
+          "Challenger",
+          "Charger",
+          "Durango",
+          "Grand Caravan",
+          "Journey"
+        ],
+        "2019": [
+          "Challenger",
+          "Charger",
+          "Durango",
+          "Grand Caravan",
+          "Journey"
+        ],
+        "2020": [
+          "Challenger",
+          "Charger",
+          "Durango",
+          "Grand Caravan",
+          "Journey"
+        ],
+        "2021": [
+          "Challenger",
+          "Charger",
+          "Durango",
+          "Grand Caravan",
+          "Journey"
+        ],
+        "2022": [
+          "Challenger",
+          "Charger",
+          "Durango",
+          "Grand Caravan",
+          "Journey"
+        ],
+        "2023": [
+          "Challenger",
+          "Charger",
+          "Durango",
+          "Grand Caravan",
+          "Hornet",
+          "Journey"
+        ],
+        "2024": [
+          "Charger",
+          "Durango",
+          "Hornet"
+        ],
+        "2025": [
+          "Charger",
+          "Durango",
+          "Hornet"
+        ],
+        "2026": [
+          "Charger",
+          "Durango"
+        ]
+      }
     }
   }
 }

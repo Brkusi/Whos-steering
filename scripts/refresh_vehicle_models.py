@@ -22,6 +22,8 @@ SPECS = {
     "AUDI": ("AUDI", 2011, 2025),
     "MERCEDES": ("MERCEDES-BENZ", 2010, 2025),
     "TOYOTA": ("TOYOTA", 2020, date.today().year),
+    "PORSCHE": ("PORSCHE", 2012, date.today().year),
+    "DODGE_SRT": ("DODGE", 2010, date.today().year),
 }
 TYPES = ("passenger car", "Multipurpose Passenger Vehicle (MPV)")
 
@@ -54,7 +56,7 @@ def fetch_models(make, year, vehicle_type):
 def main():
     jobs = {}
     by_make = {key: {} for key in SPECS}
-    with ThreadPoolExecutor(max_workers=6) as pool:
+    with ThreadPoolExecutor(max_workers=2) as pool:
         for key, (make, first, last) in SPECS.items():
             for year in range(first, last + 1):
                 for vehicle_type in TYPES:

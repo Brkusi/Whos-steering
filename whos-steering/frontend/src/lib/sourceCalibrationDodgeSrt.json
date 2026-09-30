@@ -1,0 +1,200 @@
+{
+  "round-side-alcantara": {
+    "dMax": 1.42809,
+    "sMax": 0.1593,
+    "sRef": 0.14546,
+    "dHi": 1.1978,
+    "sHi": 0.04265,
+    "gloss": 1,
+    "albedoHex": "#395c43"
+  },
+  "round-side-perforated": {
+    "dMax": 1.63237,
+    "sMax": 0.21434,
+    "sRef": 0.15348,
+    "dHi": 1.33501,
+    "sHi": 0.07485,
+    "gloss": 1,
+    "albedoHex": "#3b5440"
+  },
+  "round-side-smooth": {
+    "dMax": 1.69869,
+    "sMax": 0.29618,
+    "sRef": 0.22753,
+    "dHi": 1.41045,
+    "sHi": 0.1897,
+    "gloss": 0.6,
+    "albedoHex": "#376c36"
+  },
+  "yoke-side-alcantara": {
+    "dMax": 1.36559,
+    "sMax": 0.23732,
+    "sRef": 0.29442,
+    "dHi": 1.12842,
+    "sHi": 0.01704,
+    "gloss": 1,
+    "albedoHex": "#355d3e"
+  },
+  "yoke-side-perforated": {
+    "dMax": 1.53823,
+    "sMax": 0.30431,
+    "sRef": 0.31601,
+    "dHi": 1.24149,
+    "sHi": 0.04019,
+    "gloss": 1,
+    "albedoHex": "#35664d"
+  },
+  "yoke-side-smooth": {
+    "dMax": 1.97041,
+    "sMax": 0.31541,
+    "sRef": 0.30039,
+    "dHi": 1.68936,
+    "sHi": 0.08306,
+    "gloss": 0.6,
+    "albedoHex": "#386348"
+  },
+  "flat-flat-side-alcantara": {
+    "dMax": 1.22816,
+    "sMax": 0.42389,
+    "sRef": 0.32132,
+    "dHi": 0.94168,
+    "sHi": 0.03604,
+    "gloss": 1,
+    "albedoHex": "#2c6240"
+  },
+  "flat-flat-side-perforated": {
+    "dMax": 1.40238,
+    "sMax": 0.48808,
+    "sRef": 0.34004,
+    "dHi": 1.11036,
+    "sHi": 0.03882,
+    "gloss": 1,
+    "albedoHex": "#365f3f"
+  },
+  "flat-flat-side-smooth": {
+    "dMax": 1.53356,
+    "sMax": 0.57092,
+    "sRef": 0.39678,
+    "dHi": 1.26509,
+    "sHi": 0.08039,
+    "gloss": 0.6,
+    "albedoHex": "#336749"
+  },
+  "flat-flat-tb-alcantara": {
+    "dMax": 1.48437,
+    "sMax": 0.7641,
+    "sRef": 0.53883,
+    "dHi": 1.17745,
+    "sHi": 0.02581,
+    "gloss": 1,
+    "albedoHex": "#277024"
+  },
+  "flat-flat-tb-perforated": {
+    "dMax": 1.62135,
+    "sMax": 0.74532,
+    "sRef": 0.40486,
+    "dHi": 1.27401,
+    "sHi": 0.06569,
+    "gloss": 1,
+    "albedoHex": "#25723c"
+  },
+  "flat-flat-tb-smooth": {
+    "dMax": 1.41971,
+    "sMax": 0.5764,
+    "sRef": 0.31307,
+    "dHi": 1.25016,
+    "sHi": 0.06229,
+    "gloss": 0.6,
+    "albedoHex": "#356341"
+  },
+  "flat-round-side-alcantara": {
+    "dMax": 1.15363,
+    "sMax": 0.41492,
+    "sRef": 0.38963,
+    "dHi": 0.91744,
+    "sHi": 0.01765,
+    "gloss": 1,
+    "albedoHex": "#3d5933"
+  },
+  "flat-round-side-perforated": {
+    "dMax": 1.37527,
+    "sMax": 0.34773,
+    "sRef": 0.30175,
+    "dHi": 1.07234,
+    "sHi": 0.05192,
+    "gloss": 1,
+    "albedoHex": "#366245"
+  },
+  "flat-round-side-smooth": {
+    "dMax": 1.35702,
+    "sMax": 0.36546,
+    "sRef": 0.32612,
+    "dHi": 1.19682,
+    "sHi": 0.05714,
+    "gloss": 0.6,
+    "albedoHex": "#346246"
+  },
+  "flat-round-tb-alcantara": {
+    "dMax": 1.38792,
+    "sMax": 0.31164,
+    "sRef": 0.24334,
+    "dHi": 1.17636,
+    "sHi": 0.03085,
+    "gloss": 1,
+    "albedoHex": "#2c6930"
+  },
+  "flat-round-tb-perforated": {
+    "dMax": 1.52719,
+    "sMax": 0.27477,
+    "sRef": 0.17915,
+    "dHi": 1.26307,
+    "sHi": 0.05075,
+    "gloss": 1,
+    "albedoHex": "#2f6e40"
+  },
+  "flat-round-tb-smooth": {
+    "dMax": 1.42979,
+    "sMax": 0.28223,
+    "sRef": 0.2041,
+    "dHi": 1.28752,
+    "sHi": 0.18966,
+    "gloss": 0.6,
+    "albedoHex": "#3f6544"
+  },
+  "airbag-alcantara": {
+    "dMax": 1.4744,
+    "sMax": 0.44027,
+    "sRef": 0.27486,
+    "dHi": 1.06931,
+    "sHi": 0.04,
+    "gloss": 1,
+    "albedoHex": "#556e27"
+  },
+  "airbag-smooth": {
+    "dMax": 1.39442,
+    "sMax": 0.45419,
+    "sRef": 0.31681,
+    "dHi": 1.28995,
+    "sHi": 0.06353,
+    "gloss": 0.6,
+    "albedoHex": "#608432"
+  },
+  "airbag-trim": {
+    "dMax": 3.91068,
+    "sMax": 0.09019,
+    "sRef": 0.06914,
+    "dHi": 0.37324,
+    "sHi": 0.04916,
+    "gloss": 1,
+    "albedoHex": "#437b0b"
+  },
+  "srt-logo": {
+    "dMax": 1.11469,
+    "sMax": 0.03017,
+    "sRef": 0.04938,
+    "dHi": 0,
+    "sHi": 0,
+    "gloss": 1,
+    "albedoHex": "#5aaa0c"
+  }
+}
