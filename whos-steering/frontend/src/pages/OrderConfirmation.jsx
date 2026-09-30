@@ -182,8 +182,8 @@ export default function OrderConfirmation() {
             </div>
 
             <div style={{ fontSize: 14, color: 'var(--t)', lineHeight: 1.9, marginBottom: 18 }}>
-              🛡 Your custom wheel order is confirmed.<br />
-              ⏱ Estimated build time: <strong style={{ color: 'var(--w)' }}>3–4 weeks</strong>.<br />
+              🛡 Your wheel order is confirmed.<br />
+              ⏱ Made-to-order wheels typically take <strong style={{ color: 'var(--w)' }}>3–5 weeks</strong> to build; in-stock wheels do not require a custom build.<br />
               📧 For inquiries contact <a href="mailto:service@whossteering.com" style={{ color: 'var(--y)', textDecoration: 'none' }}>service@whossteering.com</a>
             </div>
 

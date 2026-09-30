@@ -17,21 +17,18 @@ const MATERIALS = [
 ];
 
 const BRAND_CARDS = [
-  { id: 'bmw', name: 'BMW', tag: 'M Sport Builds', badge: 'IN STOCK' },
-  { id: 'audi', name: 'AUDI', tag: 'RS Edition Builds', badge: 'IN STOCK' },
-  { id: 'custom', name: 'CUSTOM', tag: 'Full Configurator', badge: 'CONFIGURE' },
+  { id: 'bmw', name: 'BMW', tag: 'M Sport Builds', badge: 'IN STOCK', path: '/catalog?brand=BMW' },
+  { id: 'audi', name: 'AUDI', tag: 'B9 & RS Builds', badge: 'IN STOCK', path: '/catalog?brand=AUDI' },
+  { id: 'mercedes', name: 'MERCEDES', tag: 'AMG & Classic Builds', badge: 'CONFIGURE', path: '/build?brand=MERCEDES' },
+  { id: 'toyota', name: 'TOYOTA', tag: 'Supra GR Builds', badge: 'CONFIGURE', path: '/build?brand=TOYOTA' },
+  { id: 'porsche', name: 'PORSCHE', tag: '911 Performance Builds', badge: 'CONFIGURE', path: '/build?brand=PORSCHE' },
+  { id: 'dodge', name: 'DODGE', tag: 'SRT Performance Builds', badge: 'CONFIGURE', path: '/build?brand=DODGE_SRT' },
 ];
 
 export default function Home() {
   const nav = useNavigate();
 
-  const openBrand = (brand) => {
-    nav(
-      brand.id === 'custom'
-        ? '/build'
-        : `/catalog?brand=${encodeURIComponent(brand.name)}`
-    );
-  };
+  const openBrand = (brand) => nav(brand.path);
 
   return (
     <main className="ws-home">

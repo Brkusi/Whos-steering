@@ -7,7 +7,7 @@ export default function TermsOfService() {
       <div style={{ maxWidth: 860, margin: '0 auto', padding: '48px 24px 80px' }}>
         <div style={{ fontFamily: 'Arial, sans-serif', fontSize: 14, letterSpacing: .6, color: 'var(--y)', marginBottom: 10 }}>LEGAL</div>
         <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 52, marginBottom: 8 }}>TERMS OF SERVICE</div>
-        <div style={{ fontSize: 14, color: 'var(--t)', marginBottom: 40, borderBottom: '1px solid var(--b)', paddingBottom: 24 }}>Last updated: June 25, 2026</div>
+        <div style={{ fontSize: 14, color: 'var(--t)', marginBottom: 40, borderBottom: '1px solid var(--b)', paddingBottom: 24 }}>Last updated: September 30, 2026</div>
 
         <Legal h="INTERPRETATION AND DEFINITIONS">
           <p>The words of which the initial letter is capitalized have meanings defined under the following conditions. The following definitions shall have the same meaning regardless of whether they appear in singular or in plural.</p>
@@ -42,7 +42,7 @@ export default function TermsOfService() {
         </Legal>
 
         <Legal h="PRODUCTION & DELIVERY">
-          <p>All wheels are manufactured in Florida and assembled in New York City. Production typically spans 3–4 weeks from order confirmation, though complex custom configurations may take longer. You will receive a photo of the completed wheel for verification before it ships.</p>
+          <p>Made-to-order wheels are manufactured in Florida and assembled in New York City. Production typically spans 3–5 weeks from order confirmation, though complex custom configurations may take longer. In-stock wheels do not require a custom build. You will receive a photo of the completed custom wheel for verification before it ships.</p>
           <p>We ship worldwide. International customers are responsible for all import duties, taxes, and customs fees levied by their local customs authority. We are not responsible for delays caused by customs clearance.</p>
         </Legal>
 

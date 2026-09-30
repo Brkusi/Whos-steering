@@ -1,9 +1,16 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AUDI_PRESETS_FULL as AUDI_PRESETS, BMW_PRESETS, INFINITI_PRESETS } from '../lib/data';
+import { WHEEL_STYLES } from '../lib/wheelStyles';
 import './FeaturedWheels.css';
 
-const BRANDS = ['BMW', 'AUDI', 'INFINITI'];
+const BRANDS = ['BMW', 'AUDI', 'MERCEDES', 'TOYOTA', 'PORSCHE', 'DODGE', 'INFINITI'];
+const STYLE_BRANDS = {MERCEDES:'MERCEDES',TOYOTA:'TOYOTA',PORSCHE:'PORSCHE',DODGE:'DODGE_SRT'};
+const styleWheels = brand => WHEEL_STYLES.filter(wheel => wheel.brand === brand).map(wheel => ({
+  id: `${wheel.brand}-${wheel.style}`, brand:wheel.brand === 'DODGE_SRT' ? 'DODGE' : wheel.brand,
+  name:`${wheel.label} Style`, base_price:wheel.price, images:[wheel.image], compat:wheel.detail,
+  buildBrand:wheel.brand,
+}));
 
 export default function FeaturedWheels() {
   const nav = useNavigate();
@@ -18,6 +25,10 @@ export default function FeaturedWheels() {
     () => ({
       BMW: BMW_PRESETS.filter(Boolean),
       AUDI: AUDI_PRESETS.filter(Boolean),
+      MERCEDES: styleWheels('MERCEDES'),
+      TOYOTA: styleWheels('TOYOTA'),
+      PORSCHE: styleWheels('PORSCHE'),
+      DODGE: styleWheels('DODGE_SRT'),
       INFINITI: INFINITI_PRESETS.filter(Boolean),
     }),
     []
@@ -120,8 +131,9 @@ export default function FeaturedWheels() {
     }
   };
 
-  const wheelUrl = (wheel) =>
-    `/catalog?brand=${encodeURIComponent(wheel.brand)}&preset=${encodeURIComponent(wheel.id)}`;
+  const wheelUrl = (wheel) => wheel.buildBrand
+    ? `/build?brand=${encodeURIComponent(wheel.buildBrand)}`
+    : `/catalog?brand=${encodeURIComponent(wheel.brand)}&preset=${encodeURIComponent(wheel.id)}`;
 
   const openWheel = (wheel, event) => {
     if (suppressClickRef.current) {
@@ -179,7 +191,9 @@ export default function FeaturedWheels() {
           <button
             type="button"
             className="featured-wheels__view-all"
-            onClick={() => nav(`/catalog?brand=${activeBrand}`)}
+            onClick={() => nav(STYLE_BRANDS[activeBrand]
+              ? `/build?brand=${STYLE_BRANDS[activeBrand]}`
+              : `/catalog?brand=${activeBrand}`)}
           >
             VIEW ALL {activeBrand}
             <span aria-hidden="true">→</span>
@@ -223,7 +237,7 @@ export default function FeaturedWheels() {
                 className="featured-wheel-card__image-wrap"
                 role="link"
                 tabIndex={0}
-                aria-label={`Open ${wheel.name} details`}
+                aria-label={wheel.buildBrand ? `Explore ${wheel.brand} wheel styles` : `Open ${wheel.name} details`}
                 onClick={(event) => openWheel(wheel, event)}
                 onKeyDown={(event) => {
                   if (event.key === 'Enter' || event.key === ' ') {
@@ -236,7 +250,7 @@ export default function FeaturedWheels() {
               >
                 <img
                   src={wheel.images[0]}
-                  alt={`${wheel.brand} ${wheel.name} steering wheel`}
+                  alt={`${wheel.name.startsWith(wheel.brand) ? '' : `${wheel.brand} `}${wheel.name} steering wheel`}
                   className="featured-wheel-card__image"
                   loading="lazy"
                   draggable="false"
@@ -252,9 +266,9 @@ export default function FeaturedWheels() {
                   className="featured-wheel-card__view"
                   onPointerDown={(event) => event.stopPropagation()}
                   onClick={(event) => openWheelFromCta(wheel, event)}
-                  aria-label={`${wheel.readyToShip ? 'View wheel' : 'View build'}: ${wheel.name}`}
+                  aria-label={`${wheel.buildBrand ? 'Explore styles' : wheel.readyToShip ? 'View wheel' : 'View build'}: ${wheel.name}`}
                 >
-                  {wheel.readyToShip ? 'VIEW WHEEL' : 'VIEW BUILD'} <span aria-hidden="true">↗</span>
+                  {wheel.buildBrand ? 'EXPLORE STYLES' : wheel.readyToShip ? 'VIEW WHEEL' : 'VIEW BUILD'} <span aria-hidden="true">↗</span>
                 </button>
               </div>
 
@@ -275,6 +289,7 @@ export default function FeaturedWheels() {
                   <span>{wheel.readyShipOption ? 'FROM' : (wheel.readyToShip ? 'PRICE' : 'FROM')}</span>
                   ${wheel.base_price.toFixed(2)}
                 </div>
+                {!wheel.readyToShip && <div className="featured-wheel-card__timeline">⏱ 3–5 week custom build</div>}
                 {wheel.readyShipOption && (
                   <div style={{ fontSize: 14, color: 'var(--t)', letterSpacing: 1, marginTop: 4 }}>
                     ${wheel.readyShipOption.selectedPrice.toFixed(2)} WITH INSERTS · PADDLES NOT INCLUDED

@@ -431,7 +431,7 @@ function currentWheelOptions(config) {
     ...(source2D && bmwShape === 'Yoke' ? {stripeConceptId:'C-1',stripeCustomColor:''} : {}),
     ...(source2D && !sourceWheelSupportsLed(next) ? {ledDisplay:false} : {}),
     ...(usesBmw2D(config) && config.paddleShifters === 'Magnetic' ? {paddleShifters:'Glossy Carbon'} : {}),
-    ...(isAudiRS2020(config) ? {paddleShifters:'Standard',airbagCompat:false,airbagUpgrade:false,bmwLowerTrim:'Original'} : {}),
+    ...(isAudiRS2020(config) ? {paddleShifters:'Standard',bmwLowerTrim:'Original'} : {}),
     ...(source2D && !sourceWheelHasPaddles(config) ? {paddleShifters:'Standard'} : {}),
     ...(!source2D && !['Standard','Magnetic'].includes(config.paddleShifters) ? {paddleShifters:'Standard'} : {}),
     innerTrimMatchCarbon:false,
@@ -790,11 +790,11 @@ export default function Configure() {
       ['Side Grip Material', cfg.sideMat],
       ['Side Grip Color', sideColor],
 
-      cfg.brand === 'AUDI' ? ['Lower Badge', cfg.audiBadge] : null,
-      cfg.brand === 'AUDI'
+      cfg.brand === 'AUDI' && !isAudiRS2020(cfg) ? ['Lower Badge', cfg.audiBadge] : null,
+      cfg.brand === 'AUDI' && !isAudiRS2020(cfg)
         ? ['Plastic Trim Color', configuredColor(cfg.plasticTrimCol, cfg.plasticTrimCustomColor)]
         : null,
-      cfg.brand === 'AUDI'
+      cfg.brand === 'AUDI' && !isAudiRS2020(cfg)
         ? ['Inner Trim Color',
             configuredColor(cfg.innerTrimCol, cfg.innerTrimCustomColor)]
         : null,
@@ -1032,7 +1032,7 @@ export default function Configure() {
             </div>
             {isAudi && (
               <div style={{ padding: '8px 12px', background: 'rgba(232,184,0,.05)', border: '1px solid rgba(232,184,0,.2)', marginBottom: 12, fontSize: 14, color: 'var(--t)', letterSpacing: 1 }}>
-                {isAudiRS2020(cfg) ? 'Audi RS 2020+ wheel family' : 'Audi wheel family'} · final fitment checked from your current wheel photo
+                {isAudiRS2020(cfg) ? 'Audi B9.5 wheel family' : 'Audi wheel family'} · final fitment checked from your current wheel photo
               </div>
             )}
             {cfg.brand === 'BMW' && (
@@ -1084,6 +1084,15 @@ export default function Configure() {
             )}
           </Sect>
 
+          {usesSource2D(cfg) && <Sect label="Wheel Shape" value={cfg.bmwShape || 'Round'}>
+            <div className="fseries-shape-grid">
+              {sourceWheelShapes(cfg).map(shape => <button key={shape} type="button" className={`fseries-shape${(cfg.bmwShape || 'Round') === shape ? ' on' : ''}`} aria-pressed={(cfg.bmwShape || 'Round') === shape} onClick={() => set('bmwShape', shape)}>
+                <img src={`/models/${bmwAssetFamily(cfg)}/source/${F_SERIES_SHAPE_IDS[shape]}.webp`} alt=""/><span>{shape}</span>
+              </button>)}
+            </div>
+            {cfg.bmwShape === 'Yoke' && <p style={{color:'var(--t)',fontSize:13}}>The open top has no center stripe or RPM display.</p>}
+          </Sect>}
+
           {/* LED / RPM Display Strip — both brands, price differs by brand */}
           {(!usesSource2D(cfg) || sourceWheelSupportsLed(cfg)) && <Sect label={isAudi ? 'LED Display Strip' : 'RPM Gauge'}
             value={cfg.ledDisplay ? `Yes · +$${isAudi ? '50' : '100'}` : 'No'}
@@ -1130,15 +1139,6 @@ export default function Configure() {
               <OptionRow options={['Standard', 'Sport']} selected={cfg.wheelStyle} onSelect={v => set('wheelStyle', v)} />
             </Sect>
           )}
-
-          {usesSource2D(cfg) && <Sect label="Wheel Shape" value={cfg.bmwShape || 'Round'}>
-            <div className="fseries-shape-grid">
-              {sourceWheelShapes(cfg).map(shape => <button key={shape} type="button" className={`fseries-shape${(cfg.bmwShape || 'Round') === shape ? ' on' : ''}`} aria-pressed={(cfg.bmwShape || 'Round') === shape} onClick={() => set('bmwShape', shape)}>
-                <img src={`/models/${bmwAssetFamily(cfg)}/source/${F_SERIES_SHAPE_IDS[shape]}.webp`} alt=""/><span>{shape}</span>
-              </button>)}
-            </div>
-            {cfg.bmwShape === 'Yoke' && <p style={{color:'var(--t)',fontSize:13}}>The open top has no center stripe or RPM display.</p>}
-          </Sect>}
 
           {/* Paddles */}
           {sourceWheelHasPaddles(cfg) && <Sect label="Paddle Shifters" value={cfg.paddleShifters + (cfg.paddleShifters === 'Magnetic' ? ` · ${cfg.paddleLength}` : '')}>
@@ -1217,22 +1217,24 @@ export default function Configure() {
           {/* ── OPTIONS ── */}
           <div style={{ padding: '20px 28px', borderBottom: '1px solid var(--b)' }}>
             <div style={{ fontFamily: 'Rajdhani, sans-serif', fontWeight: 700, fontSize: 15, letterSpacing: .6, textTransform: 'uppercase', marginBottom: 8 }}>Options</div>
-            {!isAudiRS2020(cfg) && <Toggle
+            <Toggle
               label="Airbag Cover"
               sub={cfg.brand === 'BMW' && cfg.wheelStyleType === 'F-Series'
                 ? <span style={{ display: 'inline-block', background: 'var(--y)', color: '#000', fontWeight: 800, fontSize: 14, letterSpacing: 1, padding: '2px 8px', borderRadius: 3 }}>FREE</span>
                 : '+$25.00'}
               value={cfg.airbagCompat}
               onChange={setAirbagCover}
-            />}
+            />
 
-            {/* Only relevant when the customer is ordering an airbag cover */}
-            {cfg.airbagCompat && (
+            {/* The B9.5 full unit can be chosen directly; it includes the cover. */}
+            {(cfg.airbagCompat || isAudiRS2020(cfg)) && (
               <Toggle
-                label="Will you require a full upgraded airbag unit (full airbag not just cover)?"
-                sub="+$75.00"
+                label={isAudiRS2020(cfg) ? 'Full Upgraded Airbag Unit (includes cover)' : 'Will you require a full upgraded airbag unit (full airbag not just cover)?'}
+                sub={isAudiRS2020(cfg) && !cfg.airbagCompat ? '+$100.00 including cover' : '+$75.00'}
                 value={cfg.airbagUpgrade}
-                onChange={v => set('airbagUpgrade', v)}
+                onChange={v => isAudiRS2020(cfg) && v
+                  ? setCfg(prev => currentWheelOptions({...prev,airbagCompat:true,airbagUpgrade:true}))
+                  : set('airbagUpgrade', v)}
               />
             )}
             <Toggle
@@ -1451,7 +1453,7 @@ export default function Configure() {
                 const topMat = MATS.find(m => m.n === cfg.topBottomMat);
                 addItem({
                   name: `${VEHICLE_MAKES.find(make => make.value === cfg.brand)?.label || cfg.brand} Custom Wheel`,
-                  detail: `${cfg.vehicleYear} ${VEHICLE_MAKES.find(make => make.value === cfg.brand)?.label || cfg.brand} ${cfg.vehicleModel} · ${cfg.wheelStyleType} · ${cfg.topBottomMat}`,
+                  detail: `${cfg.vehicleYear} ${VEHICLE_MAKES.find(make => make.value === cfg.brand)?.label || cfg.brand} ${cfg.vehicleModel} · ${bmwStyleLabel(cfg.wheelStyleType)} · ${cfg.topBottomMat}`,
                   price,
                   config: { ...buildConfigSnapshot(), topMatIsCarbon: topMat?.carbon },
                 });

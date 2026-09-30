@@ -70,7 +70,7 @@ export default function BuildStart() {
           {WHEEL_STYLES.filter(wheel => !make || wheel.brand === make).map(wheel => (
             <button type="button" className="build-brand-card" key={`${wheel.brand}-${wheel.style}`} onClick={() => startBuild(wheel)}>
               <div className="build-brand-card__media">
-                <img src={wheel.image} alt={`${wheel.brand} ${wheel.label} steering wheel`} loading="lazy" />
+                <img src={wheel.image} alt={`${wheel.label.startsWith('Audi') ? '' : `${VEHICLE_MAKES.find(item => item.value === wheel.brand)?.label} `}${wheel.label} steering wheel`} loading="lazy" />
                 <span className="build-brand-card__badge">{VEHICLE_MAKES.find(item => item.value === wheel.brand)?.label}</span>
                 <span className="build-brand-card__corner" aria-hidden="true" />
               </div>
@@ -79,6 +79,7 @@ export default function BuildStart() {
                   <div className="build-brand-card__fitment">{wheel.detail}</div>
                   <h2>{wheel.label} Style</h2>
                   <p>From ${wheel.price.toFixed(2)}</p>
+                  <p className="build-brand-card__timeline">⏱ 3–5 week custom build</p>
                 </div>
                 <span className="build-brand-card__action">CONFIGURE <b>→</b></span>
               </div>

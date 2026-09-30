@@ -7,11 +7,11 @@ export default function ShippingPolicy() {
       <div style={{ maxWidth: 860, margin: '0 auto', padding: '48px 24px 80px' }}>
         <div style={{ fontFamily: 'Arial, sans-serif', fontSize: 14, letterSpacing: .6, color: 'var(--y)', marginBottom: 10 }}>LEGAL</div>
         <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 52, marginBottom: 8 }}>SHIPPING POLICY</div>
-        <div style={{ fontSize: 14, color: 'var(--t)', marginBottom: 40, borderBottom: '1px solid var(--b)', paddingBottom: 24 }}>Last updated: June 25, 2026</div>
+        <div style={{ fontSize: 14, color: 'var(--t)', marginBottom: 40, borderBottom: '1px solid var(--b)', paddingBottom: 24 }}>Last updated: September 30, 2026</div>
 
         <Legal h="PRODUCTION & ORDER PROCESSING">
           <p>Every Who's Steering wheel is built by hand to your exact specifications. Production begins within 24 hours of order confirmation and order processing takes place seven days a week.</p>
-          <p>Standard production time is <strong style={{ color: 'var(--w)' }}>3–4 weeks</strong> from the date of order confirmation. Complex custom configurations or delays in sourcing OEM-specific components may extend this timeline. We will communicate any delays proactively.</p>
+          <p>Standard production time for made-to-order wheels is <strong style={{ color: 'var(--w)' }}>3–5 weeks</strong> from the date of order confirmation. In-stock wheels do not require a custom build. Complex custom configurations or delays in sourcing OEM-specific components may extend this timeline. We will communicate any delays proactively.</p>
           <p>Once your build is complete, you will receive a photo of your finished wheel for approval before it ships.</p>
         </Legal>
 
