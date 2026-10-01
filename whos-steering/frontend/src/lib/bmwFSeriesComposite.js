@@ -17,6 +17,11 @@ const SIZE = 1024;
 const canvas = (size=SIZE) => {const c=document.createElement('canvas');c.width=c.height=size;return c;};
 export const stripeColorIndex = (x, left, right, count) => Math.max(0, Math.min(count - 1, Math.floor((x - left) / Math.max(1, right - left + 1) * count)));
 const rgb = hex => [1,3,5].map(start=>parseInt(hex.slice(start,start+2),16));
+export function wheelSilhouetteOpacity(red,green,blue,alpha,opaqueBlackBackground) {
+  if (!opaqueBlackBackground) return alpha;
+  const brightness=Math.max(red,green,blue);
+  return Math.round(alpha*Math.max(0,Math.min(1,(brightness-5)/18)));
+}
 const SOURCE_CALIBRATIONS = {'audi-rs-2020':AUDI_RS_CALIBRATION,'supra-gr':SUPRA_CALIBRATION,
   'mercedes-amg':MERCEDES_AMG_CALIBRATION,'mercedes-2015':MERCEDES_2015_CALIBRATION,'mercedes-2010':MERCEDES_2010_CALIBRATION,
   'porsche-991':PORSCHE_991_CALIBRATION,'porsche-992':PORSCHE_992_CALIBRATION,'dodge-srt':DODGE_SRT_CALIBRATION,
@@ -33,7 +38,7 @@ const SOURCE_MAP_FALLBACKS = {
 export function createFSeriesCompositor(family = 'bmw-fseries') {
   const ROOT = `${process.env.PUBLIC_URL || ''}/models/${family}`;
   const CALIBRATION = SOURCE_CALIBRATIONS[family] || F_CALIBRATION;
-  const assets=new Map(), layers=new Map(), materialRenderer=new SourceMaterialRenderer(12);
+  const assets=new Map(), layers=new Map(), silhouettes=new Map(), materialRenderer=new SourceMaterialRenderer(12);
   let disposed=false;
   function image(path) {
     if(!assets.has(path))assets.set(path,new Promise((resolve,reject)=>{
@@ -42,6 +47,19 @@ export function createFSeriesCompositor(family = 'bmw-fseries') {
     return assets.get(path);
   }
   const source = path => image(`${ROOT}/source/${path}.webp`);
+  function silhouette(shape,base) {
+    if(silhouettes.has(shape))return silhouettes.get(shape);
+    const mask=canvas(),ctx=mask.getContext('2d',{willReadFrequently:true});
+    ctx.drawImage(base,0,0,SIZE,SIZE);
+    const pixels=ctx.getImageData(0,0,SIZE,SIZE),p=pixels.data;
+    const opaqueBlackBackground=p[3]>250&&Math.max(p[0],p[1],p[2])<10;
+    for(let i=0;i<p.length;i+=4){
+      const opacity=wheelSilhouetteOpacity(p[i],p[i+1],p[i+2],p[i+3],opaqueBlackBackground);
+      p[i]=p[i+1]=p[i+2]=255;
+      p[i+3]=opacity;
+    }
+    ctx.putImageData(pixels,0,0);silhouettes.set(shape,mask);return mask;
+  }
   async function dodgePreWrap(key,color) {
     const original=await source(`pre/${key}-9800`),out=canvas(),ctx=out.getContext('2d',{willReadFrequently:true});
     ctx.drawImage(original,0,0,SIZE,SIZE);
@@ -125,8 +143,13 @@ export function createFSeriesCompositor(family = 'bmw-fseries') {
     // This is the reference's exact composition order. Lighten places the
     // paddles behind the wheel while retaining the source's black background.
     if(paddles){ctx.globalCompositeOperation='lighten';ctx.drawImage(paddles,0,0,SIZE,SIZE);ctx.globalCompositeOperation='source-over';}
-    [side,top,trim,cover,logo,dodgeTrim,dodgeLogo,ring,led].filter(Boolean).forEach(layer=>ctx.drawImage(layer,0,0,SIZE,SIZE));
+    const materials=canvas(),mc=materials.getContext('2d');
+    [side,top,trim,cover,logo,dodgeTrim,dodgeLogo].filter(Boolean).forEach(layer=>mc.drawImage(layer,0,0,SIZE,SIZE));
+    mc.globalCompositeOperation='destination-in';mc.drawImage(silhouette(a.shape,base),0,0,SIZE,SIZE);
+    ctx.drawImage(materials,0,0,SIZE,SIZE);
+    if(ring)ctx.drawImage(ring,0,0,SIZE,SIZE);
+    if(led)ctx.drawImage(led,0,0,SIZE,SIZE);
     return out;
   }
-  return {render,dispose(){disposed=true;assets.clear();layers.clear();materialRenderer.invalidate();}};
+  return {render,dispose(){disposed=true;assets.clear();layers.clear();silhouettes.clear();materialRenderer.invalidate();}};
 }

@@ -1,5 +1,5 @@
 import { DEFAULT_CONFIG, COLORS } from './data';
-import { bmwFSeriesConfiguration, F_SERIES_SHAPES, F_SERIES_SHAPE_IDS, F_SERIES_PADDLES } from './bmwFSeriesConfiguration';
+import { bmwFSeriesConfiguration, F_SERIES_SHAPES, F_SERIES_SHAPE_IDS, F_SERIES_PADDLES, sourceWheelStyle } from './bmwFSeriesConfiguration';
 import { calcPrice } from './api';
 import { renderMaterialPixels } from './bmwFSeriesSourceRenderer';
 import calibration from './bmwFSeriesCalibration.json';
@@ -37,6 +37,15 @@ test('source renderer preserves alpha and colors stitch masks separately from th
   expect([...out.data.slice(0,4)]).toEqual([0,0,0,0]);
   expect(out.data[4]).toBeGreaterThan(out.data[6]);
   expect(out.data[10]).toBeGreaterThan(out.data[8]);expect(out.data[11]).toBe(255);
+});
+test('faint red map noise does not tint the grip, and Dodge exposes stitching',()=>{
+  const input={data:new Uint8ClampedArray([24,200,90,255, 255,200,90,255])};
+  const red={data:new Uint8ClampedArray(8)},blue={data:new Uint8ClampedArray(8)};
+  renderMaterialPixels(input,red,calibration['round-side-smooth'],'#292929','#ff0000');
+  renderMaterialPixels(input,blue,calibration['round-side-smooth'],'#292929','#0000ff');
+  expect([...red.data.slice(0,4)]).toEqual([...blue.data.slice(0,4)]);
+  expect([...red.data.slice(4,8)]).not.toEqual([...blue.data.slice(4,8)]);
+  expect(sourceWheelStyle({brand:'DODGE_SRT',wheelStyleType:'SRT'}).stitch).not.toBe(false);
 });
 test('existing palette and carbon selections pass through without extra source colors',()=>{
   for(const c of COLORS)expect(bmwFSeriesConfiguration({...base,sideCol:c.h},parse).side.color).toBe(c.h);
