@@ -16,7 +16,7 @@ export const SOURCE_WHEEL_STYLES = {
     '911 Performance (992)': {family:'porsche-992', shapes:['Yoke','Flat top & bottom','Flat bottom'], led:['Flat top & bottom','Flat bottom'], paddles:true, airbagStitch:false},
   },
   DODGE_SRT: {
-    SRT: {family:'dodge-srt', shapes:F_SERIES_SHAPES, led:['Flat bottom'], paddles:false, stitch:false, carbonShapes:['Flat top & bottom','Flat bottom']},
+    SRT: {family:'dodge-srt', shapes:F_SERIES_SHAPES, led:['Flat bottom'], paddles:false, carbonShapes:['Flat top & bottom','Flat bottom']},
   },
 };
 export const sourceWheelStyle = cfg => SOURCE_WHEEL_STYLES[cfg.brand]?.[cfg.wheelStyleType];

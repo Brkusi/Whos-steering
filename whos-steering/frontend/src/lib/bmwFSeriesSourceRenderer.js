@@ -65,7 +65,9 @@ function x2(e, a, s, o, r) {
       l[T] = 0, l[T + 1] = 0, l[T + 2] = 0;
       continue;
     }
-    const Y = i[T] / 255,
+    // The downloaded WebP maps contain faint red compression noise away from
+    // the sewn seams. Treat only the deliberate red mask as stitching.
+    const Y = Math.max(0, Math.min(1, (i[T] - 48) / 176)),
       s0 = g[i[T + 1]],
       R0 = H[i[T + 2]] * H0,
       S = R0 * G * D0;

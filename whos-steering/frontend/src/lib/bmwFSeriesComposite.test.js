@@ -1,4 +1,11 @@
-import { stripeColorIndex } from './bmwFSeriesComposite';
+import { stripeColorIndex, wheelSilhouetteOpacity } from './bmwFSeriesComposite';
+
+test('material layers stop at the photographed wheel silhouette', () => {
+  expect(wheelSilhouetteOpacity(1,1,1,255,true)).toBe(0);
+  expect(wheelSilhouetteOpacity(24,20,18,255,true)).toBe(255);
+  expect(wheelSilhouetteOpacity(0,0,0,0,false)).toBe(0);
+  expect(wheelSilhouetteOpacity(0,0,0,255,false)).toBe(255);
+});
 
 test('faint stripe pixels outside the opaque bounds retain an edge color', () => {
   for (const count of [1, 3]) {
