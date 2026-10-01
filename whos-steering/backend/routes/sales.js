@@ -36,15 +36,41 @@ router.post('/events',wrap(async(req,res)=>{
   res.json({ok:true});
 }));
 router.get('/admin',adminRequired,wrap(async(req,res)=>{
-  const {rows:events}=await pool.query("SELECT event,count(*) FROM sales_events WHERE created_at>now()-interval '30 days' GROUP BY event");
-  const {rows:leads}=await pool.query("SELECT id,email,kind,payload,created_at,status,stage FROM sales_leads ORDER BY created_at DESC LIMIT 100");
-  const {rows:orders}=await pool.query("SELECT count(*) AS purchases,coalesce(sum(total),0) AS revenue FROM orders WHERE created_at>now()-interval '30 days' AND status IN ('paid','in_build','quality_check','shipped','delivered')");
-  const {rows:counts}=await pool.query('SELECT kind,count(*) FROM sales_leads GROUP BY kind');
-  const {rows:recovered}=await pool.query("SELECT count(*) AS orders,coalesce(sum(o.total),0) AS revenue FROM sales_attributions a JOIN orders o ON o.id=a.order_id WHERE a.created_at>now()-interval '30 days' AND o.status IN ('paid','in_build','quality_check','shipped','delivered')");
-  res.json({events,leads,counts,recovered:recovered[0],orders:orders[0],email:sales.mailReady(),recovery:sales.recoveryReady()});
+  const days=Number(req.query.days||30);
+  if(![7,30,90].includes(days))return res.status(400).json({error:'Choose a valid reporting period.'});
+  const paid="('paid','in_build','quality_check','shipped','delivered')";
+  const [events,orders,counts,recovered,eventDaily,orderDaily,recentSaves,fitment]=await Promise.all([
+    pool.query("SELECT event,count(*) FROM sales_events WHERE created_at>=now()-($1::int*interval '1 day') GROUP BY event",[days]),
+    pool.query(`SELECT count(*) AS purchases,coalesce(sum(total),0) AS revenue FROM orders WHERE created_at>=now()-($1::int*interval '1 day') AND status IN ${paid}`,[days]),
+    pool.query("SELECT kind,count(*) FROM sales_leads WHERE created_at>=now()-($1::int*interval '1 day') GROUP BY kind",[days]),
+    pool.query(`SELECT count(*) AS orders,coalesce(sum(o.total),0) AS revenue FROM sales_attributions a JOIN orders o ON o.id=a.order_id WHERE a.created_at>=now()-($1::int*interval '1 day') AND o.status IN ${paid}`,[days]),
+    pool.query("SELECT to_char(created_at AT TIME ZONE 'UTC','YYYY-MM-DD') AS day,event,count(*) AS count FROM sales_events WHERE created_at>=now()-($1::int*interval '1 day') GROUP BY day,event ORDER BY day",[days]),
+    pool.query(`SELECT to_char(created_at AT TIME ZONE 'UTC','YYYY-MM-DD') AS day,count(*) AS count FROM orders WHERE created_at>=now()-($1::int*interval '1 day') AND status IN ${paid} GROUP BY day ORDER BY day`,[days]),
+    pool.query("SELECT id,email,kind,created_at,stage FROM sales_leads WHERE kind IN ('build','checkout') ORDER BY created_at DESC LIMIT 8"),
+    pool.query("SELECT count(*) FILTER (WHERE status='open') AS open,count(*) FILTER (WHERE status='resolved') AS resolved,min(created_at) FILTER (WHERE status='open') AS oldest_open FROM sales_leads WHERE kind='fitment'"),
+  ]);
+  res.set('Cache-Control','no-store').json({days,events:events.rows,counts:counts.rows,recovered:recovered.rows[0],orders:orders.rows[0],activity:{events:eventDaily.rows,orders:orderDaily.rows},recentSaves:recentSaves.rows,fitment:fitment.rows[0],email:sales.mailReady(),recovery:sales.recoveryReady()});
+}));
+router.get('/admin/fitment',adminRequired,wrap(async(req,res)=>{
+  const status=['open','resolved','all'].includes(req.query.status)?req.query.status:'open';
+  const sort=req.query.sort==='newest'?'newest':'oldest';
+  const page=Math.max(1,Math.min(1000,Number.parseInt(req.query.page,10)||1));
+  const search=typeof req.query.search==='string'?req.query.search.trim().slice(0,100):'';
+  const clauses=["kind='fitment'"];
+  const params=[];
+  if(status!=='all'){params.push(status);clauses.push(`status=$${params.length}`);}
+  if(search){params.push(search.toLowerCase());const n=params.length;clauses.push(`(position($${n} in lower(email))>0 OR position($${n} in lower(coalesce(payload->>'brand','')))>0 OR position($${n} in lower(coalesce(payload->>'model','')))>0 OR position($${n} in lower(coalesce(payload->>'year','')))>0)`);}
+  const where=clauses.join(' AND ');
+  const count=await pool.query(`SELECT count(*) AS total FROM sales_leads WHERE ${where}`,params);
+  const total=Number(count.rows[0].total);
+  const direction=sort==='newest'?'DESC':'ASC';
+  const rows=await pool.query(`SELECT id,email,payload,created_at,status FROM sales_leads WHERE ${where} ORDER BY created_at ${direction},id ${direction} LIMIT 25 OFFSET $${params.length+1}`,[...params,(page-1)*25]);
+  res.set('Cache-Control','no-store').json({leads:rows.rows,total,page,hasMore:page*25<total});
 }));
 router.patch('/admin/:id',adminRequired,wrap(async(req,res)=>{
   if(!['open','resolved'].includes(req.body.status))return res.status(400).json({error:'Invalid status.'});
-  await pool.query('UPDATE sales_leads SET status=$1 WHERE id=$2',[req.body.status,req.params.id]);res.json({ok:true});
+  const {rowCount}=await pool.query("UPDATE sales_leads SET status=$1 WHERE id=$2 AND kind='fitment'",[req.body.status,req.params.id]);
+  if(!rowCount)return res.status(404).json({error:'Fitment request not found.'});
+  res.json({ok:true});
 }));
 module.exports=router;
