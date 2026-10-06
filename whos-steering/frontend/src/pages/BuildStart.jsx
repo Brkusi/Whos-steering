@@ -71,6 +71,7 @@ export default function BuildStart() {
             <button type="button" className="build-brand-card" key={`${wheel.brand}-${wheel.style}`} onClick={() => startBuild(wheel)}>
               <div className="build-brand-card__media">
                 <img src={wheel.image} alt={`${wheel.label.startsWith('Audi') ? '' : `${VEHICLE_MAKES.find(item => item.value === wheel.brand)?.label} `}${wheel.label} steering wheel`} loading="lazy" />
+                {wheel.imageOverlay && <img className="build-brand-card__overlay" src={wheel.imageOverlay} alt="" aria-hidden="true" loading="lazy" />}
                 <span className="build-brand-card__badge">{VEHICLE_MAKES.find(item => item.value === wheel.brand)?.label}</span>
                 <span className="build-brand-card__corner" aria-hidden="true" />
               </div>

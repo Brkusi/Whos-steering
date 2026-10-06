@@ -11,7 +11,7 @@ export const WHEEL_STYLES = [
   {brand:'MERCEDES', style:'Mercedes 2010–2015', label:'Mercedes 2010–2015', image:'/models/mercedes-2010/source/round.webp', detail:'Mercedes · 2010–2015', price:699.99},
   {brand:'TOYOTA', style:'Supra GR', label:'Supra GR', image:'/models/supra-gr/source/flat-round.webp', detail:'Toyota Supra GR · 2020+', price:899},
   {brand:'PORSCHE', style:'911 Performance (991)', label:'911 Performance (991)', image:'/models/porsche-991/source/flat-round.webp', detail:'Porsche 911 · 2012–2019', price:1399},
-  {brand:'PORSCHE', style:'911 Performance (992)', label:'911 Performance (992)', image:'/models/porsche-992/source/flat-round.webp', detail:'Porsche 911 · 2019+', price:1399},
+  {brand:'PORSCHE', style:'911 Performance (992)', label:'911 Performance (992)', image:'/models/porsche-992/source/flat-round.webp', imageOverlay:'/models/porsche-992/source/cf/flat-round-glossy.webp', detail:'Porsche 911 · 2019+', price:1399},
   {brand:'DODGE_SRT', style:'SRT', label:'SRT', image:'/models/dodge-srt/source/round.webp', detail:'Dodge SRT performance wheel', price:899},
 ];
 

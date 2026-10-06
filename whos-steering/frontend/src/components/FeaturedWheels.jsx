@@ -8,7 +8,7 @@ const BRANDS = ['BMW', 'AUDI', 'MERCEDES', 'TOYOTA', 'PORSCHE', 'DODGE', 'INFINI
 const STYLE_BRANDS = {MERCEDES:'MERCEDES',TOYOTA:'TOYOTA',PORSCHE:'PORSCHE',DODGE:'DODGE_SRT'};
 const styleWheels = brand => WHEEL_STYLES.filter(wheel => wheel.brand === brand).map(wheel => ({
   id: `${wheel.brand}-${wheel.style}`, brand:wheel.brand === 'DODGE_SRT' ? 'DODGE' : wheel.brand,
-  name:`${wheel.label} Style`, base_price:wheel.price, images:[wheel.image], compat:wheel.detail,
+  name:`${wheel.label} Style`, base_price:wheel.price, images:[wheel.image], imageOverlay:wheel.imageOverlay, compat:wheel.detail,
   buildBrand:wheel.brand,
 }));
 
@@ -256,6 +256,7 @@ export default function FeaturedWheels() {
                   draggable="false"
                   style={{ cursor: 'pointer' }}
                 />
+                {wheel.imageOverlay && <img src={wheel.imageOverlay} alt="" aria-hidden="true" className="featured-wheel-card__image featured-wheel-card__image--overlay" loading="lazy" draggable="false" />}
 
                 <span className="featured-wheel-card__brand">
                   {wheel.brand}

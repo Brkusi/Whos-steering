@@ -227,6 +227,12 @@
   transition: transform 350ms ease, filter 350ms ease;
 }
 
+.featured-wheel-card__image--overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
 .featured-wheel-card:hover .featured-wheel-card__image {
   transform: none;
   filter: brightness(1.05);
