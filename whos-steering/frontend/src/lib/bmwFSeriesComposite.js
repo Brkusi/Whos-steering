@@ -47,7 +47,7 @@ export function createFSeriesCompositor(family = 'bmw-fseries') {
     return assets.get(path);
   }
   const source = path => image(`${ROOT}/source/${path}.webp`);
-  function silhouette(shape,base) {
+  function silhouette(shape,base,guide) {
     if(silhouettes.has(shape))return silhouettes.get(shape);
     const mask=canvas(),ctx=mask.getContext('2d',{willReadFrequently:true});
     ctx.drawImage(base,0,0,SIZE,SIZE);
@@ -58,7 +58,11 @@ export function createFSeriesCompositor(family = 'bmw-fseries') {
       p[i]=p[i+1]=p[i+2]=255;
       p[i+3]=opacity;
     }
-    ctx.putImageData(pixels,0,0);silhouettes.set(shape,mask);return mask;
+    ctx.putImageData(pixels,0,0);
+    // The Porsche full-top grip is a separate source layer. The 992 base
+    // photograph has no upper arc, so its mask must include that layer.
+    if(guide)ctx.drawImage(guide,0,0,SIZE,SIZE);
+    silhouettes.set(shape,mask);return mask;
   }
   async function dodgePreWrap(key,color) {
     const original=await source(`pre/${key}-9800`),out=canvas(),ctx=out.getContext('2d',{willReadFrequently:true});
@@ -88,15 +92,17 @@ export function createFSeriesCompositor(family = 'bmw-fseries') {
   }
   async function carbon(a) {
     const key=JSON.stringify([a.shape,a.top,a.carbonSwatch,a.carbonCustomTint]);if(layers.has(key))return layers.get(key);
-    const [mask,texture]=await Promise.all([wrap(`${a.shape}-${a.topZone}-smooth`,'#ffffff','#ffffff',true),image(`${process.env.PUBLIC_URL || ''}${a.carbonSwatch}`)]);
+    const finish=a.top.material==='Forged Carbon'?'forged':a.top.material==='Matte Carbon'?'matte':'glossy';
+    const reference=await source(`cf/${a.shape}-${finish}`).catch(()=>null);
+    const neutral=a.carbonSwatch===(finish==='forged'?'/forged/forged-classic.jpeg':'/classic/classic-black.png')&&!a.carbonCustomTint;
+    // Use the photographed carbon layer for its real weave, flake scale,
+    // edge highlights and gloss. The F-Series keeps its requested G-Series
+    // print, and colored swatches still need the mapped texture below.
+    if(reference&&neutral&&family!=='bmw-fseries')return reference;
+    const [mask,texture]=await Promise.all([reference || wrap(`${a.shape}-${a.topZone}-smooth`,'#ffffff','#ffffff',true),image(`${process.env.PUBLIC_URL || ''}${a.carbonSwatch}`)]);
     const out=canvas(),ctx=out.getContext('2d',{willReadFrequently:true});ctx.drawImage(mask,0,0,SIZE,SIZE);
     const pixels=ctx.getImageData(0,0,SIZE,SIZE);
-    // Both families use the Pre LCI carbon finish calibration, while retaining
-    // their own rim mask and lighting map. Carbon reference overlays can
-    // have different edges from the underlying wheel photograph.
     const coordinates=carbonCoordinates(pixels.data,SIZE);
-    const light=canvas(),lc=light.getContext('2d',{willReadFrequently:true});lc.filter='blur(3px)';lc.drawImage(mask,0,0,SIZE,SIZE);
-    const lighting=lc.getImageData(0,0,SIZE,SIZE).data;
     // Small copies of the actual selection swatch keep the weave/flakes fine.
     const tileSize=96, tile=canvas(tileSize),tc=tile.getContext('2d',{willReadFrequently:true});
     tc.drawImage(texture,0,0,tileSize,tileSize);const pattern=tc.getImageData(0,0,tileSize,tileSize).data;
@@ -106,8 +112,9 @@ export function createFSeriesCompositor(family = 'bmw-fseries') {
       const i=(y*SIZE+x)*4;if(!pixels.data[i+3])continue;
       const [along,across]=coordinates(x,y);
       const u=((Math.floor(along)%tileSize)+tileSize)%tileSize,v=((Math.floor(across)%tileSize)+tileSize)%tileSize,j=(v*tileSize+u)*4;
-      const luminance=(lighting[i]*.2126+lighting[i+1]*.7152+lighting[i+2]*.0722)/255;
-      for(let c=0;c<3;c++)pixels.data[i+c]=Math.min(255,pattern[j+c]*(.45+luminance*.9)*multiplier[c]+Math.max(0,luminance-.65)*(a.top.material==='Matte Carbon'?12:35));
+      const luminance=(pixels.data[i]*.2126+pixels.data[i+1]*.7152+pixels.data[i+2]*.0722)/255;
+      const shine=reference?Math.pow(Math.max(0,(luminance-.27)/.73),2)*(finish==='matte'?105:210):0;
+      for(let c=0;c<3;c++)pixels.data[i+c]=Math.min(255,pattern[j+c]*(.53+luminance*.75)*multiplier[c]+shine);
     }
     ctx.putImageData(pixels,0,0);layers.set(key,out);if(layers.size>8)layers.delete(layers.keys().next().value);return out;
   }
@@ -126,7 +133,7 @@ export function createFSeriesCompositor(family = 'bmw-fseries') {
     ctx.putImageData(data,0,0);return out;
   }
   async function render(a) {
-    const [base,paddles,side,top,trim,cover,logo,dodgeTrim,dodgeLogo,ring,led]=await Promise.all([
+    const [base,paddles,side,top,trim,cover,logo,dodgeTrim,dodgeLogo,ring,led,guide]=await Promise.all([
       source(a.shape),a.paddle?source(`paddles/${a.paddle}`):null,
       wrap(`${a.shape}-side-${sourceMaterial(a.side.material)}`,a.side.color,a.stitch),
       a.top.material.includes('Carbon')?carbon(a):wrap(`${a.shape}-${a.topZone}-${sourceMaterial(a.top.material)}`,a.top.color,a.stitch),
@@ -136,16 +143,21 @@ export function createFSeriesCompositor(family = 'bmw-fseries') {
       a.cover && family==='dodge-srt'?wrap('airbag-trim',a.dodgeAirbagTrim,a.airbagStitch):null,
       a.cover && family==='dodge-srt'?wrap('srt-logo',a.dodgeLogo,a.airbagStitch):null,
       a.stripes.length?marker(a):null,a.led?source(`led/${a.shape}`):null,
+      family.startsWith('porsche-')&&a.shape!=='yoke'?source(`cf/${a.shape}-glossy`):null,
     ]);
     if(disposed)return null;
     const out=canvas(),ctx=out.getContext('2d');
     ctx.drawImage(base,0,0,SIZE,SIZE);
+    // The 991 base contains its original carbon top at a different outline
+    // from the selectable grip layers. Clear that rim before repainting it;
+    // this also removes the small exposed carbon fragments on the 992.
+    if(guide){ctx.clearRect(0,0,SIZE,SIZE*.28);ctx.clearRect(0,SIZE*.91,SIZE,SIZE*.09);}
     // This is the reference's exact composition order. Lighten places the
     // paddles behind the wheel while retaining the source's black background.
     if(paddles){ctx.globalCompositeOperation='lighten';ctx.drawImage(paddles,0,0,SIZE,SIZE);ctx.globalCompositeOperation='source-over';}
     const materials=canvas(),mc=materials.getContext('2d');
     [side,top,trim,cover,logo,dodgeTrim,dodgeLogo].filter(Boolean).forEach(layer=>mc.drawImage(layer,0,0,SIZE,SIZE));
-    mc.globalCompositeOperation='destination-in';mc.drawImage(silhouette(a.shape,base),0,0,SIZE,SIZE);
+    mc.globalCompositeOperation='destination-in';mc.drawImage(silhouette(a.shape,base,guide),0,0,SIZE,SIZE);
     ctx.drawImage(materials,0,0,SIZE,SIZE);
     if(ring)ctx.drawImage(ring,0,0,SIZE,SIZE);
     if(led)ctx.drawImage(led,0,0,SIZE,SIZE);
