@@ -426,6 +426,7 @@ function currentWheelOptions(config) {
   const dodgeNoCarbon = config.brand === 'DODGE_SRT' && ['Round','Yoke'].includes(bmwShape) && config.topBottomMat?.includes('Carbon');
   return {
     ...next,
+    paddleFinish: config.paddleFinish === 'Stealth' ? 'Stealth' : 'Normal',
     ...(dodgeNoCarbon ? {topBottomMat:'Smooth Leather',topBottomCarbonCol:null} : {}),
     ...(!source2D && ['Matte Carbon','Perforated Leather'].includes(config.topBottomMat) ? {topBottomMat:config.topBottomMat === 'Matte Carbon' ? 'Classic Carbon' : 'Smooth Leather'} : {}),
     ...(source2D && bmwShape === 'Yoke' ? {stripeConceptId:'C-1',stripeCustomColor:''} : {}),
@@ -784,6 +785,9 @@ export default function Configure() {
       cfg.paddleShifters === 'Magnetic'
         ? ['Paddle Length', cfg.paddleLength || 'Short']
         : null,
+      cfg.brand === 'AUDI' && cfg.wheelStyleType === 'B9' && cfg.paddleShifters === 'Standard'
+        ? ['Paddle Finish', cfg.paddleFinish === 'Stealth' ? 'Black (all black)' : 'Classic (silver & black)']
+        : null,
 
       ['Top & Bottom Grip Material', cfg.topBottomMat],
       ['Top & Bottom Color', topColor],
@@ -1065,7 +1069,10 @@ export default function Configure() {
           {/* The wheel was chosen with the vehicle details on the build page. */}
           <Sect label="Selected Wheel" value={bmwStyleLabel(cfg.wheelStyleType)}>
             <div style={{display:'flex',alignItems:'center',gap:16,padding:12,border:'1px solid #343434',background:'#101010',flexWrap:'wrap'}}>
-              <img src={wheelStyle(cfg.brand,cfg.wheelStyleType)?.image} alt={`${bmwStyleLabel(cfg.wheelStyleType)} steering wheel`} style={{width:110,height:100,objectFit:'contain',background:'#090909'}} />
+              <span className="selected-wheel-image">
+                <img src={wheelStyle(cfg.brand,cfg.wheelStyleType)?.image} alt={`${bmwStyleLabel(cfg.wheelStyleType)} steering wheel`} />
+                {wheelStyle(cfg.brand,cfg.wheelStyleType)?.imageOverlay && <img src={wheelStyle(cfg.brand,cfg.wheelStyleType).imageOverlay} alt="" aria-hidden="true" />}
+              </span>
               <div style={{flex:'1 1 180px'}}>
                 <strong style={{display:'block',fontFamily:'Barlow Condensed, sans-serif',fontSize:25,fontStyle:'italic',color:'var(--y)'}}>{bmwStyleLabel(cfg.wheelStyleType)} STYLE</strong>
                 <span style={{fontSize:13,color:'var(--t)'}}>{wheelStyle(cfg.brand,cfg.wheelStyleType)?.detail}</span>
@@ -1087,7 +1094,10 @@ export default function Configure() {
           {usesSource2D(cfg) && <Sect label="Wheel Shape" value={cfg.bmwShape || 'Round'}>
             <div className="fseries-shape-grid">
               {sourceWheelShapes(cfg).map(shape => <button key={shape} type="button" className={`fseries-shape${(cfg.bmwShape || 'Round') === shape ? ' on' : ''}`} aria-pressed={(cfg.bmwShape || 'Round') === shape} onClick={() => set('bmwShape', shape)}>
-                <img src={`/models/${bmwAssetFamily(cfg)}/source/${F_SERIES_SHAPE_IDS[shape]}.webp`} alt=""/><span>{shape}</span>
+                <span className="fseries-shape-image">
+                  <img src={`/models/${bmwAssetFamily(cfg)}/source/${F_SERIES_SHAPE_IDS[shape]}.webp`} alt=""/>
+                  {bmwAssetFamily(cfg) === 'porsche-992' && shape === 'Flat bottom' && <img src="/models/porsche-992/source/cf/flat-round-glossy.webp" alt="" aria-hidden="true" />}
+                </span><span>{shape}</span>
               </button>)}
             </div>
             {cfg.bmwShape === 'Yoke' && <p style={{color:'var(--t)',fontSize:13}}>The open top has no center stripe or RPM display.</p>}
@@ -1141,7 +1151,7 @@ export default function Configure() {
           )}
 
           {/* Paddles */}
-          {sourceWheelHasPaddles(cfg) && <Sect label="Paddle Shifters" value={cfg.paddleShifters + (cfg.paddleShifters === 'Magnetic' ? ` · ${cfg.paddleLength}` : '')}>
+          {sourceWheelHasPaddles(cfg) && <Sect label="Paddle Shifters" value={cfg.paddleShifters + (cfg.paddleShifters === 'Magnetic' ? ` · ${cfg.paddleLength}` : isAudi && cfg.wheelStyleType === 'B9' ? ` · ${cfg.paddleFinish === 'Stealth' ? 'Black' : 'Classic'}` : '')}>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7 }}>
               {(usesSource2D(cfg) ? F_SERIES_PADDLES : ['Standard', 'Magnetic']).map(o => (
                 <button key={o} aria-pressed={cfg.paddleShifters === o} className={`ob${cfg.paddleShifters === o ? ' on' : ''}`} onClick={() => set('paddleShifters', o)}>
@@ -1149,6 +1159,19 @@ export default function Configure() {
                 </button>
               ))}
             </div>
+            {isAudi && cfg.wheelStyleType === 'B9' && cfg.paddleShifters === 'Standard' && (
+              <div style={{ marginTop: 14 }}>
+                <div style={{ fontSize: 14, color: 'var(--t)', letterSpacing: 1, textTransform: 'uppercase', marginBottom: 8 }}>Standard Paddle Finish</div>
+                <div role="group" aria-label="Standard paddle finish" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 8 }}>
+                  {[['Normal', 'Classic', 'Silver & black'], ['Stealth', 'Black', 'All black']].map(([value, label, description]) => (
+                    <button key={value} aria-pressed={cfg.paddleFinish === value} className={`ob${cfg.paddleFinish === value ? ' on' : ''}`} onClick={() => set('paddleFinish', value)} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '12px 10px', textAlign: 'left', minWidth: 0 }}>
+                      <span aria-hidden="true" style={{ flexShrink: 0, width: 16, height: 30, borderRadius: '5px 8px 8px 5px', background: value === 'Stealth' ? 'linear-gradient(110deg, #36383b, #0c0d0f)' : 'linear-gradient(110deg, #737a80, #eef0f2 48%, #93999e)', border: '1px solid #565a60', boxShadow: '-3px 0 0 #101114' }} />
+                      <span><span style={{ display: 'block' }}>{label}</span><span style={{ display: 'block', fontSize: 12, fontWeight: 400, letterSpacing: 0, textTransform: 'none', color: 'var(--t)', marginTop: 3 }}>{description}</span></span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
             {cfg.paddleShifters === 'Magnetic' && (
               <div style={{ marginTop: 12 }}>
                 <div style={{ fontSize: 14, color: 'rgba(232,184,0,.7)', letterSpacing: 1, marginBottom: 8, padding: '6px 10px', background: 'rgba(232,184,0,.06)', border: '1px solid rgba(232,184,0,.2)' }}>
