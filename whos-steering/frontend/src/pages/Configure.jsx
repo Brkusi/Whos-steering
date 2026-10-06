@@ -467,6 +467,10 @@ export default function Configure() {
   const [compatibilityMake, setCompatibilityMake] = useState(initBrand);
   const [cfg, setCfg] = useState({
     ...DEFAULT_CONFIG,
+    ...(initBrand === 'PORSCHE' && initStyle === '911 Performance (991)' ? {
+      topBottomMat: 'Perforated Leather', topBottomCol: '#111111',
+      sideMat: 'Perforated Leather', sideCol: '#111111', stitchColor: '#111111',
+    } : {}),
     brand: initBrand,
     vehicleYear: initYear,
     vehicleModel: initModel,
@@ -873,7 +877,7 @@ export default function Configure() {
     <div style={{
       paddingTop: 0,
       paddingBottom: isMobileViewport ? 88 : 0,
-      minHeight: '100vh',
+      minHeight: isMobileViewport ? '100vh' : 'calc(100dvh - 120px)',
       background: 'var(--d)',
     }}>
       <div style={{
