@@ -151,12 +151,26 @@ export function createFSeriesCompositor(family = 'bmw-fseries') {
     // The 991 base contains its original carbon top at a different outline
     // from the selectable grip layers. Clear that rim before repainting it;
     // this also removes the small exposed carbon fragments on the 992.
-    if(guide){ctx.clearRect(0,0,SIZE,SIZE*.28);ctx.clearRect(0,SIZE*.91,SIZE,SIZE*.09);}
+    const porsche991FlatBottom=family==='porsche-991'&&a.shape==='flat-round';
+    if(guide){ctx.clearRect(0,0,SIZE,SIZE*(porsche991FlatBottom?.32:.28));ctx.clearRect(0,SIZE*.91,SIZE,SIZE*.09);}
     // This is the reference's exact composition order. Lighten places the
     // paddles behind the wheel while retaining the source's black background.
     if(paddles){ctx.globalCompositeOperation='lighten';ctx.drawImage(paddles,0,0,SIZE,SIZE);ctx.globalCompositeOperation='source-over';}
     const materials=canvas(),mc=materials.getContext('2d');
-    [side,top,trim,cover,logo,dodgeTrim,dodgeLogo].filter(Boolean).forEach(layer=>mc.drawImage(layer,0,0,SIZE,SIZE));
+    if(porsche991FlatBottom){
+      mc.drawImage(top,0,0,SIZE,SIZE);
+      mc.clearRect(0,0,SIZE,SIZE*.32);
+      // The 991 flat-bottom base photo has a taller upper arc than its
+      // material maps. Extend only the upper wrap to the photographed rim;
+      // the lower wrap and centre spoke retain their original proportions.
+      mc.save();mc.beginPath();mc.rect(0,0,SIZE,SIZE*.32);mc.clip();
+      mc.translate(0,SIZE*.32);mc.scale(1,1.14);mc.translate(0,-SIZE*.32);
+      mc.drawImage(top,0,0,SIZE,SIZE);mc.restore();
+      mc.drawImage(side,0,0,SIZE,SIZE);
+      [trim,cover,logo,dodgeTrim,dodgeLogo].filter(Boolean).forEach(layer=>mc.drawImage(layer,0,0,SIZE,SIZE));
+    }else{
+      [side,top,trim,cover,logo,dodgeTrim,dodgeLogo].filter(Boolean).forEach(layer=>mc.drawImage(layer,0,0,SIZE,SIZE));
+    }
     mc.globalCompositeOperation='destination-in';mc.drawImage(silhouette(a.shape,base,guide),0,0,SIZE,SIZE);
     ctx.drawImage(materials,0,0,SIZE,SIZE);
     if(ring)ctx.drawImage(ring,0,0,SIZE,SIZE);
