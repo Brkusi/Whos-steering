@@ -10,6 +10,12 @@ export const VEHICLE_MAKES = [
 ];
 
 export const isConfigurableMake = make => VEHICLE_MAKES.some(item => item.value === make && item.available);
+export const BMW_CHASSIS = [
+  { value: 'F', label: 'F chassis' },
+  { value: 'G', label: 'G chassis' },
+  { value: 'E90', label: 'E90' },
+  { value: 'OTHER', label: 'Other / not sure' },
+];
 
 // The label reflects the published make/year coverage; the customer's photo
 // still receives final fitment review before production.
@@ -17,16 +23,14 @@ export function wheelMatchesVehicle(config, style) {
   const year = Number(config.vehicleYear);
   if (!Number.isInteger(year) || !vehicleYears(config.brand).includes(String(year)) || !String(config.vehicleModel || '').trim()) return false;
   if (config.brand === 'AUDI') {
-    if (style === 'RS 2020+') return year >= 2020 && /^RS\s?\d+/i.test(config.vehicleModel.trim());
-    if (style === 'B9') return year >= 2011;
-    return false;
+    return year >= 2011 && ['B9', 'RS 2020+', 'R8'].includes(style);
   }
   if (config.brand === 'BMW') {
-    const model = config.vehicleModel.trim().toUpperCase();
-    if (style === 'F-Series') return /\b(?:F10|F30|F80|E90)\b/.test(model);
-    if (style === 'G-Series' || style === 'G-Series Pre LCI') return /\b(?:G20|G30|G22|G42|G80|G82|G87)\b/.test(model);
+    const chassis = config.vehicleChassis || (/\b(E90|F\d{2}|G\d{2})\b/i.exec(config.vehicleModel)?.[1] || '').toUpperCase();
+    if (style === 'F-Series') return chassis === 'F' || chassis === 'E90' || /^F\d{2}$/.test(chassis);
+    if (style === 'G-Series' || style === 'G-Series Pre LCI') return chassis === 'F' || chassis === 'G' || /^F\d{2}$/.test(chassis) || /^G\d{2}$/.test(chassis);
   }
-  if (config.brand === 'TOYOTA') return style === 'Supra GR' && year >= 2020 && /\bSupra\b/i.test(config.vehicleModel);
+  if (config.brand === 'TOYOTA') return style === 'Supra GR' && year >= 2020 && /^(?:GR\s+)?Supra(?:\s+GR)?$/i.test(config.vehicleModel.trim());
   if (config.brand === 'PORSCHE') {
     if (!/^911\b/i.test(config.vehicleModel.trim())) return false;
     if (style === '911 Performance (991)') return year >= 2012 && year <= 2019;

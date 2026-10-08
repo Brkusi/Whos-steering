@@ -35,4 +35,32 @@ test('compatibility guides make, year, then model and filters wheel styles', asy
   choose('build-vehicle-model', 'A4');
   expect(container.querySelector('.vehicle-field.is-next')).toBeNull();
   expect(container.textContent).toContain('Vehicle details added');
+  expect(container.querySelectorAll('.build-brand-card')).toHaveLength(3);
+});
+
+test('BMW chassis selection filters families and highlights the next field', async () => {
+  await act(async () => root.render(<MemoryRouter><BuildStart /></MemoryRouter>));
+  choose('compatible-make', 'BMW');
+  choose('build-vehicle-year', '2018');
+  const firstModel = container.querySelector('#build-vehicle-model option:not([value=""])').value;
+  choose('build-vehicle-model', firstModel);
+  expect(document.activeElement.id).toBe('build-vehicle-chassis');
+  choose('build-vehicle-chassis', 'G');
+  expect(container.querySelectorAll('.build-brand-card')).toHaveLength(2);
+  choose('build-vehicle-chassis', 'F');
+  expect(container.querySelectorAll('.build-brand-card')).toHaveLength(3);
+  choose('build-vehicle-chassis', 'E90');
+  expect(container.querySelectorAll('.build-brand-card')).toHaveLength(1);
+});
+
+test('Toyota Supra is the only Toyota with an online wheel; other models reach contact', async () => {
+  await act(async () => root.render(<MemoryRouter><BuildStart /></MemoryRouter>));
+  choose('compatible-make', 'TOYOTA');
+  choose('build-vehicle-year', '2024');
+  choose('build-vehicle-model', 'Camry');
+  expect(container.querySelectorAll('.build-brand-card')).toHaveLength(0);
+  expect(container.textContent).toContain('we currently do not offer online customization');
+  expect(container.querySelector('.build-start__unavailable a').getAttribute('href')).toBe('/contact?brand=TOYOTA&year=2024&model=Camry');
+  choose('build-vehicle-model', 'Supra');
+  expect(container.querySelectorAll('.build-brand-card')).toHaveLength(1);
 });

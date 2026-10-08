@@ -1,30 +1,7 @@
 import { useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { VEHICLE_MAKES } from '../lib/vehicleCompatibility';
-
-const EMAILJS_SERVICE  = 'service_b5oz67d';
-const EMAILJS_TEMPLATE = 'template_akep1pv';
-const EMAILJS_PUBLIC   = 'Q47wFG6Du93lcGe_O';
-
-// Load EmailJS script once
-let emailjsLoaded = false;
-function loadEmailJS() {
-  return new Promise((resolve, reject) => {
-    if (window.emailjs) { resolve(window.emailjs); return; }
-    if (emailjsLoaded) {
-      const check = setInterval(() => {
-        if (window.emailjs) { clearInterval(check); resolve(window.emailjs); }
-      }, 100);
-      return;
-    }
-    emailjsLoaded = true;
-    const s = document.createElement('script');
-    s.src = 'https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js';
-    s.onload = () => { window.emailjs.init(EMAILJS_PUBLIC); resolve(window.emailjs); };
-    s.onerror = reject;
-    document.head.appendChild(s);
-  });
-}
+import { apiFetch } from '../lib/api';
 
 export default function Contact() {
   const [params] = useSearchParams();
@@ -44,29 +21,18 @@ export default function Contact() {
 
   const handleSend = async () => {
     const e = {};
-    if (!form.email) e.email = true;
-    if (!form.message) e.message = true;
+    if (!/^\S+@\S+\.\S+$/.test(form.email.trim())) e.email = true;
+    if (!form.message.trim()) e.message = true;
     if (Object.keys(e).length) { setErrors(e); return; }
 
     setSending(true);
     setSendError('');
 
     try {
-      const ejs = await loadEmailJS();
-      const result = await ejs.send(EMAILJS_SERVICE, EMAILJS_TEMPLATE, {
-        subject:    `Who's Steering Inquiry${form.vehicle ? ' - ' + form.vehicle : ''}`,
-        from_name:  form.name || 'Website Visitor',
-        from_email: form.email,
-        email:      form.email,
-        name:       form.name || 'Website Visitor',
-        vehicle:    form.vehicle || 'Not specified',
-        message:    form.message,
-      });
-      console.log('EmailJS result:', result);
+      await apiFetch('/api/contact', { method: 'POST', body: JSON.stringify(form) });
       setSent(true);
     } catch (err) {
-      console.error('EmailJS error:', err);
-      setSendError(`Failed to send (${err?.text || err?.message || 'unknown error'}). Please email us directly at service@whossteering.com`);
+      setSendError(err?.message || 'Your message could not be sent. Please email service@whossteering.com directly.');
     } finally {
       setSending(false);
     }

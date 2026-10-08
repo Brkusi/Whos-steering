@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 import { vehicleModels, vehicleYears } from '../lib/vehicleCatalog';
+import { BMW_CHASSIS } from '../lib/vehicleCompatibility';
 
 const OTHER = '__other__';
 
-export default function VehicleYearModelFields({ make, year, model, onYearChange, onModelChange, idPrefix, errors = {}, required = false, activeField, yearRef, modelRef, stepNumbers = false }) {
+export default function VehicleYearModelFields({ make, year, model, chassis = '', onYearChange, onModelChange, onChassisChange, idPrefix, errors = {}, required = false, activeField, yearRef, modelRef, chassisRef, stepNumbers = false }) {
   const [otherSelected, setOtherSelected] = useState(false);
   const manualRef = useRef(null);
   const years = vehicleYears(make);
@@ -42,6 +43,15 @@ export default function VehicleYearModelFields({ make, year, model, onYearChange
           placeholder="Enter your model" style={{marginTop:8}} />}
         {errors.model && <div className="err-msg">Select or enter a model</div>}
       </div>
+      {make === 'BMW' && onChassisChange && <div className={`vehicle-field${activeField === 'chassis' ? ' is-next' : ''}`}>
+        <label className="fl" htmlFor={`${idPrefix}-chassis`}>{stepNumbers && <span className="vehicle-field__number">04</span>}Chassis {required && <span className="req">*</span>}</label>
+        <select ref={chassisRef} id={`${idPrefix}-chassis`} className={`fi${errors.chassis ? ' error' : ''}`} value={chassis}
+          disabled={!model.trim()} onChange={event => onChassisChange(event.target.value)}>
+          <option value="">Select chassis</option>
+          {BMW_CHASSIS.map(item => <option value={item.value} key={item.value}>{item.label}</option>)}
+        </select>
+        {errors.chassis && <div className="err-msg">Select your chassis</div>}
+      </div>}
     </div>
   );
 }

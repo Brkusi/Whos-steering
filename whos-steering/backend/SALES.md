@@ -5,7 +5,9 @@ Additive schema migration runs before the API starts. Sales tables have RLS enab
 Configure Render environment variables to activate sending:
 - RESEND_API_KEY: send-only API key for a verified domain.
 - Verify whossteering.com in Resend. The sender, reply-to, and owner notification recipient are service@whossteering.com.
-- SALES_POSTAL_ADDRESS: business mailing address included in reminder footers.
+- SALES_POSTAL_ADDRESS: complete business street address, registered PO box, or registered private mailbox included in reminder footers. A city and state alone are not enough.
+
+Saved-build links, fitment notifications, recovery reminders, and contact-form inquiries all send through the API's Resend adapter from `Who's Steering <service@whossteering.com>`. Contact inquiries go to that same address with the visitor's address as Reply-To. The contact form returns a delivery error when Resend does not accept a message.
 
 Without the sender, saving still returns a private link and fitment requests appear in Admin → Sales & fitment. The reminder opt-in is hidden until all settings exist. Do not claim emails are sent when the provider fails.
 
