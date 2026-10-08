@@ -2,10 +2,10 @@ const pool = require('../db/pool');
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
+const mail = require('./mail');
 const site = 'https://whossteering.com';
-const from = "Who's Steering <service@whossteering.com>";
-const mailReady = () => Boolean(process.env.RESEND_API_KEY);
-const recoveryReady = () => mailReady() && Boolean(process.env.SALES_POSTAL_ADDRESS);
+const mailReady = mail.mailReady;
+const recoveryReady = () => mailReady() && Boolean(process.env.SALES_POSTAL_ADDRESS?.trim());
 const escape = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const resumeUrl = id => `${site}/resume#${id}`;
 async function send(lead, recovery = false) {
@@ -13,14 +13,9 @@ async function send(lead, recovery = false) {
   const subjects = ['Your wheel build is saved', 'Your custom wheel is waiting', 'Need help confirming fitment?', 'Ready to finish your wheel?'];
   const stage = recovery ? lead.stage : 0;
   const body = stage === 2 ? 'Reply with your vehicle year and model if you need help confirming fitment before ordering.' : 'Return to your saved selections whenever you are ready. Current pricing will be confirmed at checkout.';
-  const response = await fetch('https://api.resend.com/emails', {
-    method:'POST', signal:AbortSignal.timeout(15000),
-    headers:{Authorization:`Bearer ${process.env.RESEND_API_KEY}`, 'Content-Type':'application/json','Idempotency-Key':`sales-${lead.id}-${stage}`},
-    body:JSON.stringify({from,to:[lead.email],reply_to:'service@whossteering.com',
-      subject:subjects[stage] || subjects[3],
-      html:`<h1>${subjects[stage] || subjects[3]}</h1><p>${body}</p><p><a href="${resumeUrl(lead.id)}">Return to your wheel</a></p><p>This private link expires after 30 days. Please do not share it.</p>${recovery ? `<p>Who's Steering · ${escape(process.env.SALES_POSTAL_ADDRESS)}</p><p><a href="${site}/unsubscribe#${lead.id}">Unsubscribe from build reminders</a></p>` : ''}`})
-  });
-  if (!response.ok) throw new Error(`Email provider returned ${response.status}`);
+  await mail.sendEmail({to:lead.email,idempotencyKey:`sales-${lead.id}-${stage}`,
+    subject:subjects[stage] || subjects[3],
+    html:`<h1>${subjects[stage] || subjects[3]}</h1><p>${body}</p><p><a href="${resumeUrl(lead.id)}">Return to your wheel</a></p><p>This private link expires after 30 days. Please do not share it.</p>${recovery ? `<p>Who's Steering · ${escape(process.env.SALES_POSTAL_ADDRESS)}</p><p><a href="${site}/unsubscribe#${lead.id}">Unsubscribe from build reminders</a></p>` : ''}`});
   return true;
 }
 async function save(email,kind,payload,consent) {
@@ -29,8 +24,7 @@ async function save(email,kind,payload,consent) {
   let emailed = false;
   if(kind==='fitment' && mailReady()) {
     try {
-      const response=await fetch('https://api.resend.com/emails',{method:'POST',signal:AbortSignal.timeout(15000),headers:{Authorization:`Bearer ${process.env.RESEND_API_KEY}`,'Content-Type':'application/json','Idempotency-Key':`fitment-${id}`},body:JSON.stringify({from,to:['service@whossteering.com'],reply_to:'service@whossteering.com',subject:'New steering wheel fitment inquiry',html:`<p>A customer requested fitment help for ${escape(payload.brand)} ${escape(payload.year)} ${escape(payload.model)}.</p><p>Customer: ${escape(email)}</p><p><a href="${site}/admin">Review the request and wheel photo in your admin inbox</a></p>`})});
-      if(!response.ok)throw new Error(`Email provider returned ${response.status}`);
+      await mail.sendEmail({to:mail.ADDRESS,idempotencyKey:`fitment-${id}`,subject:'New steering wheel fitment inquiry',html:`<p>A customer requested fitment help for ${escape(payload.brand)} ${escape(payload.year)} ${escape(payload.model)}.</p><p>Customer: ${escape(email)}</p><p><a href="${site}/admin">Review the request and wheel photo in your admin inbox</a></p>`});
     }catch(e){console.error('Fitment notification failed:',e.message);}
   }
   if(kind!=='fitment') {

@@ -10,16 +10,21 @@ test('make selection separates available wheels from requests for fitment', () =
   expect(VEHICLE_MAKES.filter(item => isConfigurableMake(item.value)).map(item => item.label)).toEqual(['Audi','BMW','Dodge','Mercedes','Toyota','Porsche']);
 });
 
-test('compatibility label needs a fitting year and model', () => {
+test('compatibility follows the published style coverage and selected BMW chassis', () => {
   expect(wheelMatchesVehicle({brand:'AUDI',vehicleYear:'2022',vehicleModel:'RS 6'},'RS 2020+')).toBe(true);
-  expect(wheelMatchesVehicle({brand:'AUDI',vehicleYear:'2018',vehicleModel:'RS 6'},'RS 2020+')).toBe(false);
-  expect(wheelMatchesVehicle({brand:'AUDI',vehicleYear:'2022',vehicleModel:'A4'},'RS 2020+')).toBe(false);
+  expect(wheelMatchesVehicle({brand:'AUDI',vehicleYear:'2011',vehicleModel:'A4'},'RS 2020+')).toBe(true);
+  expect(wheelMatchesVehicle({brand:'AUDI',vehicleYear:'2022',vehicleModel:'A4'},'R8')).toBe(true);
   expect(wheelMatchesVehicle({brand:'AUDI',vehicleYear:'2022',vehicleModel:'A4'},'B9')).toBe(true);
   expect(wheelMatchesVehicle({brand:'AUDI',vehicleYear:'2026',vehicleModel:'A4'},'B9')).toBe(false);
-  expect(wheelMatchesVehicle({brand:'BMW',vehicleYear:'2018',vehicleModel:'F30'},'F-Series')).toBe(true);
-  expect(wheelMatchesVehicle({brand:'BMW',vehicleYear:'2018',vehicleModel:'G20'},'F-Series')).toBe(false);
+  expect(wheelMatchesVehicle({brand:'BMW',vehicleYear:'2018',vehicleModel:'320i',vehicleChassis:'F'},'F-Series')).toBe(true);
+  expect(wheelMatchesVehicle({brand:'BMW',vehicleYear:'2018',vehicleModel:'320i',vehicleChassis:'F'},'G-Series')).toBe(true);
+  expect(wheelMatchesVehicle({brand:'BMW',vehicleYear:'2024',vehicleModel:'330i',vehicleChassis:'G'},'G-Series Pre LCI')).toBe(true);
+  expect(wheelMatchesVehicle({brand:'BMW',vehicleYear:'2018',vehicleModel:'320i',vehicleChassis:'G'},'F-Series')).toBe(false);
+  expect(wheelMatchesVehicle({brand:'BMW',vehicleYear:'2011',vehicleModel:'328i',vehicleChassis:'E90'},'F-Series')).toBe(true);
+  expect(wheelMatchesVehicle({brand:'BMW',vehicleYear:'2011',vehicleModel:'328i',vehicleChassis:'E90'},'G-Series')).toBe(false);
   expect(wheelMatchesVehicle({brand:'TOYOTA',vehicleYear:'2024',vehicleModel:'Supra'},'Supra GR')).toBe(true);
   expect(wheelMatchesVehicle({brand:'TOYOTA',vehicleYear:'2024',vehicleModel:'Camry'},'Supra GR')).toBe(false);
+  expect(wheelMatchesVehicle({brand:'TOYOTA',vehicleYear:'2024',vehicleModel:'Supra Sedan'},'Supra GR')).toBe(false);
   expect(wheelMatchesVehicle({brand:'MERCEDES',vehicleYear:'2021',vehicleModel:'AMG GT'},'AMG Performance')).toBe(true);
   expect(wheelMatchesVehicle({brand:'MERCEDES',vehicleYear:'2019',vehicleModel:'GLC-Class'},'Mercedes 2015–2023')).toBe(true);
   expect(wheelMatchesVehicle({brand:'MERCEDES',vehicleYear:'2012',vehicleModel:'GLK-Class'},'Mercedes 2010–2015')).toBe(true);

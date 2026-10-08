@@ -113,6 +113,7 @@ app.use('/api/orders/track', rateLimit({ windowMs: 15 * 60 * 1000, max: 30 }));
 
 // ── Routes ────────────────────────────────────────────────────
 app.use('/api/sales', require('./routes/sales'));
+app.use('/api/contact', require('./routes/contact'));
 app.use('/api/auth',     require('./routes/auth'));
 app.use('/api/products', require('./routes/products'));
 app.use('/api/checkout', require('./routes/checkout'));

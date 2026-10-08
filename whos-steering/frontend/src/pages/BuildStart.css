@@ -57,7 +57,7 @@
 .build-start__make-select:hover, .build-start__vehicle-fields .fi:hover:not(:disabled) { border-color: #a58a2e; }
 .build-start__make-select:focus-visible, .build-start__vehicle-fields .fi:focus-visible { outline: 2px solid var(--y); outline-offset: 2px; }
 .build-start__vehicle-fields { min-width: 0; }
-.build-start__vehicle-fields > div { grid-template-columns: repeat(2, minmax(0,1fr)) !important; margin-bottom: 0 !important; gap: 12px !important; }
+.build-start__vehicle-fields > div { grid-template-columns: repeat(auto-fit, minmax(160px,1fr)) !important; margin-bottom: 0 !important; gap: 12px !important; }
 .build-start__vehicle-fields .fi:disabled { opacity: .52; cursor: not-allowed; }
 .build-start__vehicle-fields input.fi { background-image: none; cursor: text; }
 .build-start__next-step { min-height: 20px; margin-top: 15px; color: var(--y); font-family: Rajdhani, sans-serif; font-size: 14px; font-weight: 700; letter-spacing: .05em; }
