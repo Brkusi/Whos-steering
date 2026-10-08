@@ -1,8 +1,9 @@
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
-import { BMW_CHASSIS, VEHICLE_MAKES, wheelMatchesVehicle } from '../lib/vehicleCompatibility';
+import { VEHICLE_MAKES, wheelMatchesVehicle } from '../lib/vehicleCompatibility';
 import { hasVehicleCatalog, vehicleInquiryPath, vehicleYears } from '../lib/vehicleCatalog';
 import { WHEEL_STYLES } from '../lib/wheelStyles';
+import { bmwVehicleFamilies } from '../lib/bmwVehicleFamilies';
 import VehicleYearModelFields from '../components/VehicleYearModelFields';
 import './BuildStart.css';
 
@@ -14,24 +15,21 @@ export default function BuildStart() {
   const [make, setMake] = useState(initialMake);
   const [year, setYear] = useState(initialYear);
   const [model, setModel] = useState(initialYear ? (params.get('model') || '').slice(0,80) : '');
-  const [chassis, setChassis] = useState(initialMake === 'BMW' && BMW_CHASSIS.some(item => item.value === params.get('chassis')) ? params.get('chassis') : '');
   const makeRef = useRef(null);
   const yearRef = useRef(null);
   const modelRef = useRef(null);
-  const chassisRef = useRef(null);
-  const nextField = !make ? 'make' : !year ? 'year' : !model ? 'model' : make === 'BMW' && !chassis ? 'chassis' : 'wheel';
-  const matchingWheels = WHEEL_STYLES.filter(wheel => (!make || wheel.brand === make) && (nextField !== 'wheel' || wheelMatchesVehicle({brand:make,vehicleYear:year,vehicleModel:model,vehicleChassis:chassis},wheel.style)));
+  const nextField = !make ? 'make' : !year ? 'year' : !model ? 'model' : 'wheel';
+  const matchingWheels = WHEEL_STYLES.filter(wheel => (!make || wheel.brand === make) && (nextField !== 'wheel' || wheelMatchesVehicle({brand:make,vehicleYear:year,vehicleModel:model},wheel.style)));
 
   useEffect(() => {
-    const target = nextField === 'make' ? makeRef.current : nextField === 'year' ? yearRef.current : nextField === 'model' ? modelRef.current : nextField === 'chassis' ? chassisRef.current : null;
+    const target = nextField === 'make' ? makeRef.current : nextField === 'year' ? yearRef.current : nextField === 'model' ? modelRef.current : null;
     target?.focus({preventScroll:true});
-  }, [make, year, model, chassis, nextField]);
+  }, [make, year, model, nextField]);
 
   const startBuild = wheel => {
     const query = new URLSearchParams({brand:wheel.brand,style:wheel.style});
     if (make === wheel.brand && year) query.set('year',year);
     if (make === wheel.brand && model) query.set('model',model);
-    if (make === wheel.brand && chassis) query.set('chassis',chassis);
     nav(`/configure?${query}`);
   };
 
@@ -50,24 +48,24 @@ export default function BuildStart() {
           <div className="build-start__compatibility-fields">
             <div className={`build-start__field${nextField === 'make' ? ' is-next' : ''}`}>
               <label className="build-start__make-label" htmlFor="compatible-make"><span className="vehicle-field__number">01</span>Vehicle make</label>
-              <select ref={makeRef} id="compatible-make" className="build-start__make-select" value={make} onChange={event => {setMake(event.target.value);setYear('');setModel('');setChassis('');}}>
+              <select ref={makeRef} id="compatible-make" className="build-start__make-select" value={make} onChange={event => {setMake(event.target.value);setYear('');setModel('');}}>
                 <option value="">Select your make</option>
                 {VEHICLE_MAKES.map(item => <option value={item.value} key={item.value}>{item.label}</option>)}
               </select>
             </div>
             <div className="build-start__vehicle-fields">
-              {hasVehicleCatalog(make) && <VehicleYearModelFields key={make} make={make} year={year} model={model} chassis={chassis} idPrefix="build-vehicle"
-                onYearChange={value => {setYear(value);setModel('');setChassis('');}} onModelChange={value => {setModel(value);setChassis('');}} onChassisChange={setChassis}
-                activeField={nextField} yearRef={yearRef} modelRef={modelRef} chassisRef={chassisRef} stepNumbers />}
+              {hasVehicleCatalog(make) && <VehicleYearModelFields key={make} make={make} year={year} model={model} idPrefix="build-vehicle"
+                onYearChange={value => {setYear(value);setModel('');}} onModelChange={setModel}
+                activeField={nextField} yearRef={yearRef} modelRef={modelRef} stepNumbers />}
             </div>
           </div>
           <div className="build-start__next-step" role="status" aria-live="polite">
             {nextField === 'make' ? '01  Select your make to see matching wheel styles.' :
               nextField === 'year' ? '02  Now choose your vehicle year.' :
-              nextField === 'model' ? '03  Choose your model to continue the compatibility check.' :
-              nextField === 'chassis' ? '04  Select your BMW chassis to see compatible wheel styles.' :
+              nextField === 'model' ? '03  Choose your model to complete the compatibility check.' :
               matchingWheels.length ? '✓  Vehicle details added. Choose a wheel style below.' : 'No online wheel styles currently match this vehicle.'}
           </div>
+          {make === 'BMW' && bmwVehicleFamilies(year, model).length > 1 && <p className="build-start__generation-note">This model year spans BMW generations. We’ll confirm your wheel from its photo before building.</p>}
         </div>
 
         <div className="build-start__section-heading">{make ? `${VEHICLE_MAKES.find(item => item.value === make)?.label} wheel styles` : 'Choose a wheel style'}</div>

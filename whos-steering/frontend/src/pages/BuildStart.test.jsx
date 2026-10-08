@@ -38,19 +38,25 @@ test('compatibility guides make, year, then model and filters wheel styles', asy
   expect(container.querySelectorAll('.build-brand-card')).toHaveLength(3);
 });
 
-test('BMW chassis selection filters families and highlights the next field', async () => {
+test('BMW styles follow model and year without a chassis field', async () => {
   await act(async () => root.render(<MemoryRouter><BuildStart /></MemoryRouter>));
   choose('compatible-make', 'BMW');
+  expect(container.querySelector('#build-vehicle-chassis')).toBeNull();
   choose('build-vehicle-year', '2018');
-  const firstModel = container.querySelector('#build-vehicle-model option:not([value=""])').value;
-  choose('build-vehicle-model', firstModel);
-  expect(document.activeElement.id).toBe('build-vehicle-chassis');
-  choose('build-vehicle-chassis', 'G');
-  expect(container.querySelectorAll('.build-brand-card')).toHaveLength(2);
-  choose('build-vehicle-chassis', 'F');
+  choose('build-vehicle-model', '330i');
   expect(container.querySelectorAll('.build-brand-card')).toHaveLength(3);
-  choose('build-vehicle-chassis', 'E90');
+  choose('build-vehicle-year', '2011');
+  choose('build-vehicle-model', '328i');
   expect(container.querySelectorAll('.build-brand-card')).toHaveLength(1);
+  choose('build-vehicle-year', '2012');
+  choose('build-vehicle-model', '328i');
+  expect(container.querySelectorAll('.build-brand-card')).toHaveLength(3);
+  expect(container.textContent).toContain('spans BMW generations');
+  choose('build-vehicle-year', '2024');
+  choose('build-vehicle-model', '330i');
+  expect(container.querySelectorAll('.build-brand-card')).toHaveLength(2);
+  choose('build-vehicle-model', 'X1');
+  expect(container.querySelectorAll('.build-brand-card')).toHaveLength(0);
 });
 
 test('Toyota Supra is the only Toyota with an online wheel; other models reach contact', async () => {
