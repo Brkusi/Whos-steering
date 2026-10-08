@@ -16,12 +16,12 @@ test('compatibility follows the published style coverage and selected BMW chassi
   expect(wheelMatchesVehicle({brand:'AUDI',vehicleYear:'2022',vehicleModel:'A4'},'R8')).toBe(true);
   expect(wheelMatchesVehicle({brand:'AUDI',vehicleYear:'2022',vehicleModel:'A4'},'B9')).toBe(true);
   expect(wheelMatchesVehicle({brand:'AUDI',vehicleYear:'2026',vehicleModel:'A4'},'B9')).toBe(false);
-  expect(wheelMatchesVehicle({brand:'BMW',vehicleYear:'2018',vehicleModel:'320i',vehicleChassis:'F'},'F-Series')).toBe(true);
-  expect(wheelMatchesVehicle({brand:'BMW',vehicleYear:'2018',vehicleModel:'320i',vehicleChassis:'F'},'G-Series')).toBe(true);
-  expect(wheelMatchesVehicle({brand:'BMW',vehicleYear:'2024',vehicleModel:'330i',vehicleChassis:'G'},'G-Series Pre LCI')).toBe(true);
-  expect(wheelMatchesVehicle({brand:'BMW',vehicleYear:'2018',vehicleModel:'320i',vehicleChassis:'G'},'F-Series')).toBe(false);
-  expect(wheelMatchesVehicle({brand:'BMW',vehicleYear:'2011',vehicleModel:'328i',vehicleChassis:'E90'},'F-Series')).toBe(true);
-  expect(wheelMatchesVehicle({brand:'BMW',vehicleYear:'2011',vehicleModel:'328i',vehicleChassis:'E90'},'G-Series')).toBe(false);
+  expect(wheelMatchesVehicle({brand:'BMW',vehicleYear:'2018',vehicleModel:'320i'},'F-Series')).toBe(true);
+  expect(wheelMatchesVehicle({brand:'BMW',vehicleYear:'2018',vehicleModel:'320i'},'G-Series')).toBe(true);
+  expect(wheelMatchesVehicle({brand:'BMW',vehicleYear:'2024',vehicleModel:'330i'},'G-Series Pre LCI')).toBe(true);
+  expect(wheelMatchesVehicle({brand:'BMW',vehicleYear:'2024',vehicleModel:'330i'},'F-Series')).toBe(false);
+  expect(wheelMatchesVehicle({brand:'BMW',vehicleYear:'2011',vehicleModel:'328i'},'F-Series')).toBe(true);
+  expect(wheelMatchesVehicle({brand:'BMW',vehicleYear:'2011',vehicleModel:'328i'},'G-Series')).toBe(false);
   expect(wheelMatchesVehicle({brand:'TOYOTA',vehicleYear:'2024',vehicleModel:'Supra'},'Supra GR')).toBe(true);
   expect(wheelMatchesVehicle({brand:'TOYOTA',vehicleYear:'2024',vehicleModel:'Camry'},'Supra GR')).toBe(false);
   expect(wheelMatchesVehicle({brand:'TOYOTA',vehicleYear:'2024',vehicleModel:'Supra Sedan'},'Supra GR')).toBe(false);

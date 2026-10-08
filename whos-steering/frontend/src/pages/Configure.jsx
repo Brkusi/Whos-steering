@@ -13,7 +13,7 @@ import { F_SERIES_SHAPE_IDS, F_SERIES_PADDLES, sourceWheelStyle, sourceWheelShap
 import { calcPrice, apiFetch } from '../lib/api';
 import { useCart } from '../context';
 
-import { BMW_CHASSIS, VEHICLE_MAKES, isConfigurableMake, wheelMatchesVehicle } from '../lib/vehicleCompatibility';
+import { VEHICLE_MAKES, isConfigurableMake, wheelMatchesVehicle } from '../lib/vehicleCompatibility';
 import { defaultWheelStyle, wheelStyle } from '../lib/wheelStyles';
 import { hasVehicleCatalog, vehicleInquiryPath, vehicleYears } from '../lib/vehicleCatalog';
 import VehicleYearModelFields from '../components/VehicleYearModelFields';
@@ -464,7 +464,6 @@ export default function Configure() {
   const initStyle = wheelStyle(initBrand, params.get('style'))?.style || defaultWheelStyle(initBrand);
   const initYear = vehicleYears(initBrand).includes(params.get('year')) ? params.get('year') : '';
   const initModel = initYear ? (params.get('model') || '').slice(0, 80) : '';
-  const initChassis = initBrand === 'BMW' && BMW_CHASSIS.some(item => item.value === params.get('chassis')) ? params.get('chassis') : '';
   const [compatibilityMake, setCompatibilityMake] = useState(initBrand);
   const [cfg, setCfg] = useState({
     ...DEFAULT_CONFIG,
@@ -475,7 +474,6 @@ export default function Configure() {
     brand: initBrand,
     vehicleYear: initYear,
     vehicleModel: initModel,
-    vehicleChassis: initChassis,
     wheelStyleType: initStyle,
     bmwShape: ['TOYOTA','PORSCHE'].includes(initBrand) ? 'Flat bottom' : 'Round',
   });
@@ -586,7 +584,6 @@ export default function Configure() {
     const query = new URLSearchParams({brand:cfg.brand});
     if (cfg.vehicleYear) query.set('year',cfg.vehicleYear);
     if (cfg.vehicleModel) query.set('model',cfg.vehicleModel);
-    if (cfg.vehicleChassis) query.set('chassis',cfg.vehicleChassis);
     nav(`/build?${query}`);
   };
 
@@ -601,18 +598,13 @@ export default function Configure() {
   };
 
   const setVehicleYear = year => {
-    setCfg(prev => currentWheelOptions({...prev,vehicleYear:year,vehicleModel:'',vehicleChassis:''}));
-    setErrors(prev => ({...prev,year:false,model:false,chassis:false}));
+    setCfg(prev => currentWheelOptions({...prev,vehicleYear:year,vehicleModel:''}));
+    setErrors(prev => ({...prev,year:false,model:false}));
   };
 
   const setVehicleModel = model => {
-    setCfg(prev => currentWheelOptions({...prev,vehicleModel:model,vehicleChassis:''}));
-    setErrors(prev => ({...prev,model:false,chassis:false}));
-  };
-
-  const setVehicleChassis = chassis => {
-    set('vehicleChassis',chassis);
-    setErrors(prev => ({...prev,chassis:false}));
+    set('vehicleModel',model);
+    setErrors(prev => ({...prev,model:false}));
   };
 
   const setAirbagCover = (enabled) => {
@@ -680,7 +672,6 @@ export default function Configure() {
 
     if (!vehicleYears(cfg.brand).includes(String(cfg.vehicleYear))) e.year = true;
     if (!textValue(cfg.vehicleModel)) e.model = true;
-    if (cfg.brand === 'BMW' && !cfg.vehicleChassis) e.chassis = true;
     if (!photo && !cfg.photoUrl) e.photo = true;
 
     const topMaterial = (usesSource2D(cfg) ? F_SERIES_TOP_MATS : TOP_BOTTOM_MATS).find(m => m.n === cfg.topBottomMat);
@@ -726,7 +717,7 @@ export default function Configure() {
     setErrors(e);
 
     if (Object.keys(e).length > 0) {
-      const vehicleErrors = e.year || e.model || e.chassis || e.photo;
+      const vehicleErrors = e.year || e.model || e.photo;
       const styleErrors = e.stitchColor;
       const materialErrors =
         e.topBottomColor || e.sideColor ||
@@ -769,7 +760,6 @@ export default function Configure() {
       ['Brand', VEHICLE_MAKES.find(make => make.value === cfg.brand)?.label || cfg.brand],
       ['Vehicle Year', cfg.vehicleYear],
       ['Vehicle Model', cfg.vehicleModel],
-      cfg.brand === 'BMW' ? ['BMW Chassis', BMW_CHASSIS.find(item => item.value === cfg.vehicleChassis)?.label || cfg.vehicleChassis] : null,
       ['Current Wheel Photo', photo || cfg.photoUrl ? 'Attached' : 'Missing'],
 
       ['Wheel Style Type', bmwStyleLabel(cfg.wheelStyleType)],
@@ -1063,8 +1053,8 @@ export default function Configure() {
                 {cfg.wheelStyleType} wheel family · final fitment checked from your current wheel photo
               </div>
             )}
-            <VehicleYearModelFields key={compatibilityMake} make={compatibilityMake} year={cfg.vehicleYear} model={cfg.vehicleModel} chassis={cfg.vehicleChassis}
-              idPrefix="configure-vehicle" onYearChange={setVehicleYear} onModelChange={setVehicleModel} onChassisChange={setVehicleChassis}
+            <VehicleYearModelFields key={compatibilityMake} make={compatibilityMake} year={cfg.vehicleYear} model={cfg.vehicleModel}
+              idPrefix="configure-vehicle" onYearChange={setVehicleYear} onModelChange={setVehicleModel}
               errors={errors} required />
             <label className="fl">Current Wheel Photo <span className="req">*</span></label>
             <label style={{ display: 'block', border: `2px dashed ${errors.photo ? '#CC3300' : photo ? '#3DB85A' : 'var(--b)'}`, padding: 16, textAlign: 'center', cursor: 'pointer', transition: 'all .2s', marginTop: 6, background: photo ? 'rgba(61,184,90,.04)' : 'transparent' }}>
