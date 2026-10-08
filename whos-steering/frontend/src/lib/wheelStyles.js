@@ -1,10 +1,10 @@
 // Styles and source photographs shared by the build landing page and configurator.
 export const WHEEL_STYLES = [
-  {brand:'BMW', style:'G-Series', label:'G-Series LCI', image:'/BMW_PRESET_1.png', detail:'Modern BMW G-Series LCI wheel', price:549.99},
+  {brand:'BMW', style:'G-Series', label:'G-Series LCI', image:'/configure-g-series-lci.png', detail:'BMW G-Series LCI wheel', price:549.99},
   {brand:'BMW', style:'G-Series Pre LCI', label:'G-Series Pre LCI', image:'/models/bmw-gseries/source/round.webp', detail:'BMW G-Series Pre LCI · live 2D preview', price:549.99},
   {brand:'BMW', style:'F-Series', label:'F-Series', image:'/models/bmw-fseries/source/round.webp', detail:'Classic BMW F-Series · live 2D preview', price:449.99},
-  {brand:'AUDI', style:'B9', label:'B9', image:'/PRESET_1.png', detail:'Classic Audi B9 sport profile', price:699.99},
-  {brand:'AUDI', style:'RS 2020+', label:'Audi B9.5', image:'/models/audi-rs-2020/source/round.webp', detail:'Audi B9.5 · 2020+', price:799.99},
+  {brand:'AUDI', style:'B9', label:'B9', image:'/configure-audi-b9.png', detail:'Audi B9 Style', price:699.99},
+  {brand:'AUDI', style:'RS 2020+', label:'Audi B9.5', image:'/models/audi-rs-2020/source/round.webp', detail:'Audi B9.5 steering wheel', price:799.99},
   {brand:'AUDI', style:'R8', label:'R8', image:'/r8-reference.png', detail:'Audi R8 inspired profile', price:799.99},
   {brand:'MERCEDES', style:'AMG Performance', label:'AMG Performance', image:'/models/mercedes-amg/source/round.webp', detail:'Mercedes-AMG · 2019–2024', price:799.99},
   {brand:'MERCEDES', style:'Mercedes 2015–2023', label:'Mercedes 2015–2023', image:'/models/mercedes-2015/source/round.webp', detail:'Mercedes · 2015–2023', price:799.99},

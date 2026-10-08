@@ -13,7 +13,7 @@ import { F_SERIES_SHAPE_IDS, F_SERIES_PADDLES, sourceWheelStyle, sourceWheelShap
 import { calcPrice, apiFetch } from '../lib/api';
 import { useCart } from '../context';
 
-import { VEHICLE_MAKES, isConfigurableMake, wheelMatchesVehicle } from '../lib/vehicleCompatibility';
+import { VEHICLE_MAKES, isConfigurableMake } from '../lib/vehicleCompatibility';
 import { defaultWheelStyle, wheelStyle } from '../lib/wheelStyles';
 import { hasVehicleCatalog, vehicleInquiryPath, vehicleYears } from '../lib/vehicleCatalog';
 import VehicleYearModelFields from '../components/VehicleYearModelFields';
@@ -920,7 +920,7 @@ export default function Configure() {
               overflow: isMobileViewport ? 'visible' : 'hidden',
             }}>
               <img
-                src="/g-series-reference.png"
+                src="/configure-g-series-lci.png"
                 alt="BMW G-Series LCI Steering Wheel customization options"
                 style={{
                   position: isMobileViewport ? 'relative' : 'absolute',
@@ -1071,29 +1071,21 @@ export default function Configure() {
           {/* Style */}
           <div ref={styleRef} data-step="style" style={{ scrollMarginTop: stepScrollMargin }}>
           {/* The wheel was chosen with the vehicle details on the build page. */}
-          <Sect label="Selected Wheel" value={bmwStyleLabel(cfg.wheelStyleType)}>
-            <div style={{display:'flex',alignItems:'center',gap:16,padding:12,border:'1px solid #343434',background:'#101010',flexWrap:'wrap'}}>
-              <span className="selected-wheel-image">
-                <img src={wheelStyle(cfg.brand,cfg.wheelStyleType)?.image} alt={`${bmwStyleLabel(cfg.wheelStyleType)} steering wheel`} />
-                {wheelStyle(cfg.brand,cfg.wheelStyleType)?.imageOverlay && <img src={wheelStyle(cfg.brand,cfg.wheelStyleType).imageOverlay} alt="" aria-hidden="true" />}
-              </span>
-              <div style={{flex:'1 1 180px'}}>
-                <strong style={{display:'block',fontFamily:'Barlow Condensed, sans-serif',fontSize:25,fontStyle:'italic',color:'var(--y)'}}>{bmwStyleLabel(cfg.wheelStyleType)} STYLE</strong>
-                <span style={{fontSize:13,color:'var(--t)'}}>{wheelStyle(cfg.brand,cfg.wheelStyleType)?.detail}</span>
-                {wheelMatchesVehicle(cfg,cfg.wheelStyleType) && <span style={{display:'block',marginTop:6,fontSize:12,fontWeight:700,color:'#77d28b'}}>✓ Compatible with your vehicle</span>}
-              </div>
+          <Sect label="Selected Wheel">
+            <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',gap:16,flexWrap:'wrap'}}>
+              <strong style={{fontFamily:'Barlow Condensed, sans-serif',fontSize:25,fontStyle:'italic',color:'var(--y)'}}>{bmwStyleLabel(cfg.wheelStyleType)} STYLE</strong>
               <button type="button" className="ob" onClick={changeWheel}>CHANGE WHEEL →</button>
             </div>
-            <p style={{fontSize:13,color:'var(--t)',margin:'0 0 8px'}}>Compatibility shown here is based on your make, model, and year. We confirm final fitment from your current wheel photo.</p>
-            {isAudi && cfg.wheelStyleType === 'R8' && (
-              <Toggle
-                label="Start / Stop & Drive Select Buttons"
-                sub="+$40.00"
-                value={cfg.startStopButtons}
-                onChange={v => set('startStopButtons', v)}
-              />
-            )}
           </Sect>
+
+          {isAudi && cfg.wheelStyleType === 'R8' && <Sect label="Start / Stop & Drive Select Buttons">
+            <Toggle
+              label="Add Buttons"
+              sub="+$40.00"
+              value={cfg.startStopButtons}
+              onChange={v => set('startStopButtons', v)}
+            />
+          </Sect>}
 
           {usesSource2D(cfg) && <Sect label="Wheel Shape" value={cfg.bmwShape || 'Round'}>
             <div className="fseries-shape-grid">
