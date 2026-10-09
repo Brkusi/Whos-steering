@@ -63,13 +63,21 @@ export async function loadAudiB9(signal) {
   let extras;
   try { extras = await createB9Extras(root, byNode); }
   catch(error) { disposeTree(root, [...originalMaterials, ...parts.flatMap(part => part.originals)]); throw error; }
+  // The blue option swatch contains isolated blue flakes in otherwise neutral
+  // carbon. Keep those flakes small and aligned to the wheel's forged UVs.
+  const blueSwatch = await new Promise(resolve => {
+    const image = new Image();
+    image.onload = () => resolve(image);
+    image.onerror = () => resolve(null);
+    image.src = `${process.env.PUBLIC_URL || ''}/forged/forged-blue.jpeg`;
+  });
   // Color the highlights in the model's photographed forged fibers, rather
   // than projecting the enlarged option swatch over the wheel. The black
   // resin and small flake detail stay anchored to the original UV map.
   const forgedAccents = new Map([
     ['#1a0a2e', [145, 72, 165]],
     ['#0a2e10', [55, 140, 76]],
-    ['#0a1428', [66, 111, 175]],
+    ['#0a1428', [35, 100, 205]],
   ]);
   const forgedTextures = new Map();
   function coloredForgedTexture(source, color) {
@@ -81,11 +89,31 @@ export async function loadAudiB9(signal) {
     context.drawImage(image, 0, 0);
     const pixels = context.getImageData(0, 0, canvas.width, canvas.height);
     const accent = forgedAccents.get(color), data = pixels.data;
+    let bluePixels;
+    if (color === '#0a1428' && blueSwatch) {
+      const swatchCanvas = document.createElement('canvas');
+      swatchCanvas.width = canvas.width; swatchCanvas.height = canvas.height;
+      const swatchContext = swatchCanvas.getContext('2d', {willReadFrequently:true});
+      const tileWidth = canvas.width / 4, tileHeight = canvas.height / 4;
+      for (let y = 0; y < 4; y++) for (let x = 0; x < 4; x++)
+        swatchContext.drawImage(blueSwatch, x * tileWidth, y * tileHeight, tileWidth, tileHeight);
+      bluePixels = swatchContext.getImageData(0, 0, canvas.width, canvas.height).data;
+    }
     for (let i = 0; i < data.length; i += 4) {
       const light = data[i] * .2126 + data[i + 1] * .7152 + data[i + 2] * .0722;
       const flake = Math.pow(Math.max(0, Math.min(1, (light - 18) / 210)), 1.15);
-      for (let channel = 0; channel < 3; channel++)
-        data[i + channel] = Math.min(255, light * .38 + accent[channel] * flake * .68);
+      if (bluePixels) {
+        const blue = Math.max(0, Math.min(1, (bluePixels[i + 2] - bluePixels[i] - 15) / 90))
+          * Math.max(0, Math.min(1, (bluePixels[i + 2] - bluePixels[i + 1] - 5) / 80));
+        const blueFlake = blue * Math.pow(Math.max(0, Math.min(1, (light - 10) / 95)), .75);
+        const carbonBase = light * .62;
+        for (let channel = 0; channel < 3; channel++)
+          data[i + channel] = Math.min(255,
+            carbonBase * (1 - blueFlake * .8) + accent[channel] * (flake * .28 + blueFlake * .95));
+      } else {
+        for (let channel = 0; channel < 3; channel++)
+          data[i + channel] = Math.min(255, light * .38 + accent[channel] * flake * .68);
+      }
     }
     context.putImageData(pixels, 0, 0);
     const texture = new THREE.CanvasTexture(canvas);

@@ -7,11 +7,12 @@ export default function PaymentPolicy() {
       <div style={{ maxWidth: 860, margin: '0 auto', padding: '48px 24px 80px' }}>
         <div style={{ fontFamily: 'Arial, sans-serif', fontSize: 14, letterSpacing: .6, color: 'var(--y)', marginBottom: 10 }}>LEGAL</div>
         <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 52, marginBottom: 8 }}>PAYMENT POLICY</div>
-        <div style={{ fontSize: 14, color: 'var(--t)', marginBottom: 40, borderBottom: '1px solid var(--b)', paddingBottom: 24 }}>Last updated: June 25, 2026</div>
+        <div style={{ fontSize: 14, color: 'var(--t)', marginBottom: 40, borderBottom: '1px solid var(--b)', paddingBottom: 24 }}>Last updated: October 9, 2026</div>
 
         <Legal h="ACCEPTED PAYMENT METHODS">
           <p>We accept the following payment methods for all orders:</p>
           <p>• Visa, Mastercard, American Express, and Discover (credit & debit cards)</p>
+          <p>• Apple Pay, when available on your device and browser</p>
           <p>• All payments are processed securely through <strong style={{ color: 'var(--w)' }}>Stripe</strong>, a PCI-DSS Level 1 certified payment processor.</p>
           <p>Your card details are handled exclusively by Stripe and are never stored on our servers. All transactions use industry-standard TLS encryption.</p>
         </Legal>
