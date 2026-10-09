@@ -17,7 +17,6 @@ import { VEHICLE_MAKES, isConfigurableMake } from '../lib/vehicleCompatibility';
 import { defaultWheelStyle, wheelStyle } from '../lib/wheelStyles';
 import { hasVehicleCatalog, vehicleInquiryPath, vehicleYears } from '../lib/vehicleCatalog';
 import VehicleYearModelFields from '../components/VehicleYearModelFields';
-import Porsche991FlatBottomImage from '../components/Porsche991FlatBottomImage';
 
 const FSeriesPreview = lazy(() => import('../components/FSeriesPreview'));
 const AudiB9Preview = lazy(() => import('../components/B9ModelPreview'));
@@ -468,10 +467,6 @@ export default function Configure() {
   const [compatibilityMake, setCompatibilityMake] = useState(initBrand);
   const [cfg, setCfg] = useState({
     ...DEFAULT_CONFIG,
-    ...(initBrand === 'PORSCHE' && initStyle === '911 Performance (991)' ? {
-      topBottomMat: 'Perforated Leather', topBottomCol: '#111111',
-      sideMat: 'Perforated Leather', sideCol: '#111111', stitchColor: '#111111',
-    } : {}),
     brand: initBrand,
     vehicleYear: initYear,
     vehicleModel: initModel,
@@ -921,7 +916,7 @@ export default function Configure() {
               overflow: isMobileViewport ? 'visible' : 'hidden',
             }}>
               <img
-                src="/configure-g-series-lci.png"
+                src="/g-series-reference.png"
                 alt="BMW G-Series LCI Steering Wheel customization options"
                 style={{
                   position: isMobileViewport ? 'relative' : 'absolute',
@@ -1092,9 +1087,7 @@ export default function Configure() {
             <div className="fseries-shape-grid">
               {sourceWheelShapes(cfg).map(shape => <button key={shape} type="button" className={`fseries-shape${(cfg.bmwShape || 'Round') === shape ? ' on' : ''}`} aria-pressed={(cfg.bmwShape || 'Round') === shape} onClick={() => set('bmwShape', shape)}>
                 <span className="fseries-shape-image">
-                  {bmwAssetFamily(cfg) === 'porsche-991' && shape === 'Flat bottom'
-                    ? <Porsche991FlatBottomImage />
-                    : <img src={`/models/${bmwAssetFamily(cfg)}/source/${F_SERIES_SHAPE_IDS[shape]}.webp`} alt=""/>}
+                  <img src={`/models/${bmwAssetFamily(cfg)}/source/${F_SERIES_SHAPE_IDS[shape]}.webp`} alt=""/>
                   {bmwAssetFamily(cfg) === 'porsche-992' && shape === 'Flat bottom' && <img src="/models/porsche-992/source/cf/flat-round-glossy.webp" alt="" aria-hidden="true" />}
                 </span><span>{shape}</span>
               </button>)}

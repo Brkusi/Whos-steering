@@ -27,7 +27,6 @@ export function wheelMatchesVehicle(config, style) {
   if (config.brand === 'TOYOTA') return style === 'Supra GR' && year >= 2020 && /^(?:GR\s+)?Supra(?:\s+GR)?$/i.test(config.vehicleModel.trim());
   if (config.brand === 'PORSCHE') {
     if (!/^911\b/i.test(config.vehicleModel.trim())) return false;
-    if (style === '911 Performance (991)') return year >= 2012 && year <= 2019;
     if (style === '911 Performance (992)') return year >= 2019;
   }
   // The SRT source does not specify a year/model fitment range. The wheel

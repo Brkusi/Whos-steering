@@ -12,7 +12,6 @@ export const SOURCE_WHEEL_STYLES = {
     'Mercedes 2010–2015': {family:'mercedes-2010', shapes:F_SERIES_SHAPES, led:['Round','Flat top & bottom','Flat bottom'], paddles:true},
   },
   PORSCHE: {
-    '911 Performance (991)': {family:'porsche-991', shapes:['Yoke','Flat top & bottom','Flat bottom'], led:['Flat top & bottom','Flat bottom'], paddles:true},
     '911 Performance (992)': {family:'porsche-992', shapes:['Yoke','Flat top & bottom','Flat bottom'], led:['Flat top & bottom','Flat bottom'], paddles:true, airbagStitch:false},
   },
   DODGE_SRT: {

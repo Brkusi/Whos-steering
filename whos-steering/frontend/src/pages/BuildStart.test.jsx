@@ -21,7 +21,7 @@ const choose = (id, value) => act(() => {
 test('compatibility guides make, year, then model and filters wheel styles', async () => {
   await act(async () => root.render(<MemoryRouter><BuildStart /></MemoryRouter>));
   expect(document.activeElement.id).toBe('compatible-make');
-  expect(container.querySelectorAll('.build-brand-card')).toHaveLength(13);
+  expect(container.querySelectorAll('.build-brand-card')).toHaveLength(12);
 
   choose('compatible-make', 'AUDI');
   expect(document.activeElement.id).toBe('build-vehicle-year');
@@ -69,4 +69,14 @@ test('Toyota Supra is the only Toyota with an online wheel; other models reach c
   expect(container.querySelector('.build-start__unavailable a').getAttribute('href')).toBe('/contact?brand=TOYOTA&year=2024&model=Camry');
   choose('build-vehicle-model', 'Supra');
   expect(container.querySelectorAll('.build-brand-card')).toHaveLength(1);
+});
+
+test('Porsche 991 is no longer offered for online customization', async () => {
+  await act(async () => root.render(<MemoryRouter><BuildStart /></MemoryRouter>));
+  choose('compatible-make', 'PORSCHE');
+  expect(container.textContent).not.toContain('Performance (991)');
+  choose('build-vehicle-year', '2018');
+  choose('build-vehicle-model', '911');
+  expect(container.querySelectorAll('.build-brand-card')).toHaveLength(0);
+  expect(container.querySelector('.build-start__unavailable a').getAttribute('href')).toBe('/contact?brand=PORSCHE&year=2018&model=911');
 });

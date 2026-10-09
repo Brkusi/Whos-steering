@@ -346,7 +346,7 @@ export default function Checkout() {
             </div>
           )}
 
-          <SalesTools items={items} />
+          {step === 1 && <SalesTools items={items} />}
           {/* Step 2 — Stripe */}
           {step === 2 && clientSecret && (
             <div className="checkout-step">
