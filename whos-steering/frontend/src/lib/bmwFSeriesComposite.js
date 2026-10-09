@@ -22,6 +22,14 @@ export function wheelSilhouetteOpacity(red,green,blue,alpha,opaqueBlackBackgroun
   const brightness=Math.max(red,green,blue);
   return Math.round(alpha*Math.max(0,Math.min(1,(brightness-5)/18)));
 }
+const smoothEdge = (start,end,value) => Math.max(0,Math.min(1,(value-start)/(end-start)));
+export function gripZoneOpacity(x,y,zone,shape='round') {
+  const dx=Math.abs(x-.5),dy=y-.5;
+  const rim=smoothEdge(.265,.305,Math.hypot(dx,dy));
+  if(zone==='side')return rim*smoothEdge(.22,.275,dx);
+  if(shape==='yoke')return rim*smoothEdge(.69,.75,y);
+  return rim*Math.max(1-smoothEdge(.28,.34,y),smoothEdge(.67,.74,y));
+}
 const SOURCE_CALIBRATIONS = {'audi-rs-2020':AUDI_RS_CALIBRATION,'supra-gr':SUPRA_CALIBRATION,
   'mercedes-amg':MERCEDES_AMG_CALIBRATION,'mercedes-2015':MERCEDES_2015_CALIBRATION,'mercedes-2010':MERCEDES_2010_CALIBRATION,
   'porsche-991':PORSCHE_991_CALIBRATION,'porsche-992':PORSCHE_992_CALIBRATION,'dodge-srt':DODGE_SRT_CALIBRATION,
@@ -38,7 +46,7 @@ const SOURCE_MAP_FALLBACKS = {
 export function createFSeriesCompositor(family = 'bmw-fseries') {
   const ROOT = `${process.env.PUBLIC_URL || ''}/models/${family}`;
   const CALIBRATION = SOURCE_CALIBRATIONS[family] || F_CALIBRATION;
-  const assets=new Map(), layers=new Map(), silhouettes=new Map(), materialRenderer=new SourceMaterialRenderer(12);
+  const assets=new Map(), layers=new Map(), silhouettes=new Map(), gripMasks=new WeakMap(), materialRenderer=new SourceMaterialRenderer(12);
   let disposed=false;
   function image(path) {
     if(!assets.has(path))assets.set(path,new Promise((resolve,reject)=>{
@@ -47,6 +55,21 @@ export function createFSeriesCompositor(family = 'bmw-fseries') {
     return assets.get(path);
   }
   const source = path => image(`${ROOT}/source/${path}.webp`);
+  function gripLayer(original,zone,shape) {
+    const key=`${zone}:${shape}`;
+    if(gripMasks.get(original)?.has(key))return gripMasks.get(original).get(key);
+    const out=canvas(),ctx=out.getContext('2d',{willReadFrequently:true});
+    ctx.drawImage(original,0,0,SIZE,SIZE);
+    const pixels=ctx.getImageData(0,0,SIZE,SIZE),p=pixels.data;
+    for(let y=0;y<SIZE;y++)for(let x=0;x<SIZE;x++){
+      const i=(y*SIZE+x)*4;
+      if(p[i+3])p[i+3]=Math.round(p[i+3]*gripZoneOpacity(x/SIZE,y/SIZE,zone,shape));
+    }
+    ctx.putImageData(pixels,0,0);
+    if(!gripMasks.has(original))gripMasks.set(original,new Map());
+    gripMasks.get(original).set(key,out);
+    return out;
+  }
   function silhouette(shape,base,guide) {
     if(silhouettes.has(shape))return silhouettes.get(shape);
     const mask=canvas(),ctx=mask.getContext('2d',{willReadFrequently:true});
@@ -135,8 +158,8 @@ export function createFSeriesCompositor(family = 'bmw-fseries') {
   async function render(a) {
     const [base,paddles,side,top,trim,cover,logo,dodgeTrim,dodgeLogo,ring,led,guide]=await Promise.all([
       source(a.shape),a.paddle?source(`paddles/${a.paddle}`):null,
-      wrap(`${a.shape}-side-${sourceMaterial(a.side.material)}`,a.side.color,a.stitch),
-      a.top.material.includes('Carbon')?carbon(a):wrap(`${a.shape}-${a.topZone}-${sourceMaterial(a.top.material)}`,a.top.color,a.stitch),
+      wrap(`${a.shape}-side-${sourceMaterial(a.side.material)}`,a.side.color,a.stitch).then(layer=>gripLayer(layer,'side',a.shape)),
+      (a.top.material.includes('Carbon')?carbon(a):wrap(`${a.shape}-${a.topZone}-${sourceMaterial(a.top.material)}`,a.top.color,a.stitch)).then(layer=>gripLayer(layer,'top',a.shape)),
       a.lowerTrim?source(`trims/${a.lowerTrim}`):null,
       a.cover?wrap(`airbag-${sourceMaterial(a.airbag.material)}`,a.airbag.color,a.airbagStitch):null,
       a.cover && family!=='dodge-srt'?source(`neutral/airbag-${sourceMaterial(a.airbag.material)}-logo`):null,
@@ -152,26 +175,32 @@ export function createFSeriesCompositor(family = 'bmw-fseries') {
     // from the selectable grip layers. Clear that rim before repainting it;
     // this also removes the small exposed carbon fragments on the 992.
     const porsche991FlatBottom=family==='porsche-991'&&a.shape==='flat-round';
-    if(guide){ctx.clearRect(0,0,SIZE,SIZE*(porsche991FlatBottom?.32:.28));ctx.clearRect(0,SIZE*.91,SIZE,SIZE*.09);}
+    if(guide&&!porsche991FlatBottom){ctx.clearRect(0,0,SIZE,SIZE*.28);ctx.clearRect(0,SIZE*.91,SIZE,SIZE*.09);}
+    if(porsche991FlatBottom){
+      // The source photograph carries a second marker at six o'clock. Fill
+      // that narrow strip from the adjacent rim before applying the finish.
+      ctx.drawImage(out,SIZE*.452,SIZE*.86,SIZE*.038,SIZE*.095,SIZE*.49,SIZE*.86,SIZE*.038,SIZE*.095);
+    }
     // This is the reference's exact composition order. Lighten places the
     // paddles behind the wheel while retaining the source's black background.
     if(paddles){ctx.globalCompositeOperation='lighten';ctx.drawImage(paddles,0,0,SIZE,SIZE);ctx.globalCompositeOperation='source-over';}
     const materials=canvas(),mc=materials.getContext('2d');
     if(porsche991FlatBottom){
       mc.drawImage(top,0,0,SIZE,SIZE);
-      mc.clearRect(0,0,SIZE,SIZE*.32);
-      // The 991 flat-bottom base photo has a taller upper arc than its
-      // material maps. Extend only the upper wrap to the photographed rim;
-      // the lower wrap and centre spoke retain their original proportions.
+      // Fit the finish to the photographed round top and flat bottom. Keep
+      // the base silhouette as the final outline instead of the flatter map.
       mc.save();mc.beginPath();mc.rect(0,0,SIZE,SIZE*.32);mc.clip();
       mc.translate(0,SIZE*.32);mc.scale(1,1.14);mc.translate(0,-SIZE*.32);
+      mc.drawImage(top,0,0,SIZE,SIZE);mc.restore();
+      mc.save();mc.beginPath();mc.rect(0,SIZE*.76,SIZE,SIZE*.24);mc.clip();
+      mc.translate(0,SIZE*.76);mc.scale(1,1.10);mc.translate(0,-SIZE*.76);
       mc.drawImage(top,0,0,SIZE,SIZE);mc.restore();
       mc.drawImage(side,0,0,SIZE,SIZE);
       [trim,cover,logo,dodgeTrim,dodgeLogo].filter(Boolean).forEach(layer=>mc.drawImage(layer,0,0,SIZE,SIZE));
     }else{
       [side,top,trim,cover,logo,dodgeTrim,dodgeLogo].filter(Boolean).forEach(layer=>mc.drawImage(layer,0,0,SIZE,SIZE));
     }
-    mc.globalCompositeOperation='destination-in';mc.drawImage(silhouette(a.shape,base,guide),0,0,SIZE,SIZE);
+    mc.globalCompositeOperation='destination-in';mc.drawImage(silhouette(a.shape,base,porsche991FlatBottom?null:guide),0,0,SIZE,SIZE);
     ctx.drawImage(materials,0,0,SIZE,SIZE);
     if(ring)ctx.drawImage(ring,0,0,SIZE,SIZE);
     if(led)ctx.drawImage(led,0,0,SIZE,SIZE);

@@ -26,6 +26,12 @@ const S0 = 4,
   U0 = new Uint8Array(Q + 1);
 for (let e = 0; e <= Q; e++) U0[e] = Math.round(f2(b2(e / Q * S0)) * 255);
 const s1 = Q / S0;
+export function stitchMaskWeight(red, diffuse) {
+  // The source WebPs compress the stitch channel into diffuse edges and broad
+  // non-grip areas. Only the saturated stitch core should take thread color.
+  return Math.max(0, Math.min(1, (red - 170) / 70)) *
+    Math.max(0, Math.min(1, (red - diffuse + 20) / 55));
+}
 function k1(e, a = 1) {
   const s = new Float32Array(256);
   for (let o = 0; o < 256; o++) {
@@ -67,7 +73,7 @@ function x2(e, a, s, o, r) {
     }
     // The downloaded WebP maps contain faint red compression noise away from
     // the sewn seams. Treat only the deliberate red mask as stitching.
-    const Y = Math.max(0, Math.min(1, (i[T] - 48) / 176)),
+    const Y = stitchMaskWeight(i[T], i[T + 1]),
       s0 = g[i[T + 1]],
       R0 = H[i[T + 2]] * H0,
       S = R0 * G * D0;

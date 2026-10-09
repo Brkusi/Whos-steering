@@ -38,9 +38,9 @@ export function calcPrice(config, rules = {}) {
       ? (rules.base_mercedes_2010 ?? 699.99)
       : (rules.base_mercedes_modern ?? 799.99)) + (isCarbonTop ? 40 : 0);
   } else if (config.brand === 'TOYOTA') {
-    price = (rules.base_toyota ?? 899) + (isCarbonTop ? 40 : 0);
+    price = (rules.base_toyota_gr ?? 699.99) + (isCarbonTop ? 40 : 0);
   } else if (config.brand === 'PORSCHE' || config.brand === 'DODGE_SRT') {
-    price = (config.brand === 'PORSCHE' ? 1399 : 899) + (isCarbonTop ? 40 : 0);
+    price = (config.brand === 'PORSCHE' ? (rules.base_porsche_911 ?? 899.99) : (rules.base_dodge_srt ?? 699.99)) + (isCarbonTop ? 40 : 0);
   } else {
     // BMW base: G-Series $549.99, F-Series $449.99; +$40 if carbon top
     if (config.wheelStyleType === 'F-Series') {

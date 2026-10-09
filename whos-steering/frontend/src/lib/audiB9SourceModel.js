@@ -4,6 +4,7 @@ import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 import PARTS from './audiB9Parts.json';
 import { audiB9Parts } from './audiB9Configuration';
 import { createB9Extras } from './audiB9Extras';
+import { FORGED_CARBON_COLORS } from './data';
 
 export const B9_ASSETS = `${process.env.PUBLIC_URL || ''}/models/audi-b9/v4`;
 export const B9_TARGET = new THREE.Vector3(-.012138549, .374767253, .027438419);
@@ -63,6 +64,29 @@ export async function loadAudiB9(signal) {
   let extras;
   try { extras = await createB9Extras(root, byNode); }
   catch(error) { disposeTree(root, [...originalMaterials, ...parts.flatMap(part => part.originals)]); throw error; }
+  // The source forged map is grayscale. Its dark pixels suppress the blue,
+  // green and purple swatches when multiplied by a material color. Use the
+  // actual selection textures for those finishes on the source UVs.
+  const forgedTextures = new Map();
+  const forgedTint = new Map([
+    ['#1a0a2e','#ecd0f2'],
+    ['#0a2e10','#c7e8c7'],
+    ['#0a1428','#c5d9f0'],
+  ]);
+  const textureLoader = new THREE.TextureLoader();
+  await Promise.all(FORGED_CARBON_COLORS.filter(swatch => ['Purple','Green','Blue'].includes(swatch.n)).map(async swatch => {
+    try {
+      const texture = await textureLoader.loadAsync(`${process.env.PUBLIC_URL || ''}${swatch.img}`);
+      texture.colorSpace = THREE.SRGBColorSpace;
+      texture.flipY = false;
+      texture.wrapS = THREE.RepeatWrapping;
+      texture.wrapT = THREE.RepeatWrapping;
+      texture.repeat.set(4,4);
+      texture.anisotropy = 4;
+      texture.needsUpdate = true;
+      forgedTextures.set(swatch.h.toLowerCase(),texture);
+    } catch (_) { /* Keep the original forged map if a swatch is unavailable. */ }
+  }));
   let lastAppearance = '';
   function paint(node, color) { byNode.get(node)?.primitives.forEach(mesh => mesh.material.color.set(color)); }
   function finish(node, appearance, selected) {
@@ -72,6 +96,17 @@ export async function loadAudiB9(signal) {
     }
     if (!selected) return;
     if (appearance.material.includes('Carbon')) {
+      const selectedForged = appearance.material === 'Forged Carbon' && forgedTextures.get(appearance.color.toLowerCase());
+      if (selectedForged) {
+        part.primitives.forEach(mesh => {
+          mesh.material.map = selectedForged;
+          mesh.material.color.set(forgedTint.get(appearance.color.toLowerCase()));
+          mesh.material.metalness = .08;
+          mesh.material.roughness = .32;
+          mesh.material.needsUpdate = true;
+        });
+        return;
+      }
       const color = new THREE.Color(appearance.color), max = Math.max(color.r, color.g, color.b);
       // Black/classic is the original fiber map, not a black multiplier that
       // obscures it. Colored fiber keeps the source's black weave underneath.
@@ -104,6 +139,7 @@ export async function loadAudiB9(signal) {
   function dispose() {
     extras.dispose();
     disposeTree(root, [...originalMaterials, ...parts.flatMap(part => part.originals)]);
+    forgedTextures.forEach(texture => texture.dispose());
   }
   if (signal?.aborted) { dispose(); throw new DOMException('Aborted', 'AbortError'); }
   return {root, update, dispose};
