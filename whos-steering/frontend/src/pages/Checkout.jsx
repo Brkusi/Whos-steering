@@ -2,7 +2,7 @@ import SalesTools, {trackSales} from '../components/SalesTools';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { loadStripe } from '@stripe/stripe-js';
-import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
+import { Elements, ExpressCheckoutElement, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { useCart } from '../context';
 import { useAuth } from '../context';
 import { apiFetch } from '../lib/api';
@@ -23,6 +23,7 @@ function PaymentForm({ total, orderId, email }) {
   const [error, setError] = useState('');
   const [elementReady, setElementReady] = useState(false);
   const [elementLoadError, setElementLoadError] = useState('');
+  const [applePayAvailable, setApplePayAvailable] = useState(false);
 
   const handlePay = async () => {
     if (!stripe || !elements) return;
@@ -41,6 +42,22 @@ function PaymentForm({ total, orderId, email }) {
 
   return (
     <div>
+      <div style={{ marginBottom: applePayAvailable ? 24 : 0 }}>
+        {applePayAvailable && (
+          <div style={{ color: 'var(--y)', fontSize: 13, fontWeight: 700, letterSpacing: 1.2, marginBottom: 12 }}>
+            EXPRESS CHECKOUT
+          </div>
+        )}
+        <ExpressCheckoutElement
+          options={{ paymentMethods: { applePay: 'always', googlePay: 'never' }, buttonTheme: { applePay: 'white-outline' } }}
+          onReady={(event) => setApplePayAvailable(Boolean(event?.availablePaymentMethods?.applePay))}
+          onConfirm={handlePay}
+          onLoadError={() => setApplePayAvailable(false)}
+        />
+        {applePayAvailable && (
+          <div style={{ color: 'var(--t)', fontSize: 12, textAlign: 'center', marginTop: 18 }}>OR PAY WITH CARD</div>
+        )}
+      </div>
       {!elementReady && !elementLoadError && (
         <div style={{ padding: '30px 0', textAlign: 'center', fontSize: 14, color: 'var(--t)', letterSpacing: 1 }}>
           Loading payment form...
