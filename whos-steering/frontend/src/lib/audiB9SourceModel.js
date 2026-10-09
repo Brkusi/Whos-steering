@@ -4,7 +4,6 @@ import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 import PARTS from './audiB9Parts.json';
 import { audiB9Parts } from './audiB9Configuration';
 import { createB9Extras } from './audiB9Extras';
-import { FORGED_CARBON_COLORS } from './data';
 
 export const B9_ASSETS = `${process.env.PUBLIC_URL || ''}/models/audi-b9/v4`;
 export const B9_TARGET = new THREE.Vector3(-.012138549, .374767253, .027438419);
@@ -64,29 +63,42 @@ export async function loadAudiB9(signal) {
   let extras;
   try { extras = await createB9Extras(root, byNode); }
   catch(error) { disposeTree(root, [...originalMaterials, ...parts.flatMap(part => part.originals)]); throw error; }
-  // The source forged map is grayscale. Its dark pixels suppress the blue,
-  // green and purple swatches when multiplied by a material color. Use the
-  // actual selection textures for those finishes on the source UVs.
-  const forgedTextures = new Map();
-  const forgedTint = new Map([
-    ['#1a0a2e','#ecd0f2'],
-    ['#0a2e10','#c7e8c7'],
-    ['#0a1428','#c5d9f0'],
+  // Color the highlights in the model's photographed forged fibers, rather
+  // than projecting the enlarged option swatch over the wheel. The black
+  // resin and small flake detail stay anchored to the original UV map.
+  const forgedAccents = new Map([
+    ['#1a0a2e', [145, 72, 165]],
+    ['#0a2e10', [55, 140, 76]],
+    ['#0a1428', [66, 111, 175]],
   ]);
-  const textureLoader = new THREE.TextureLoader();
-  await Promise.all(FORGED_CARBON_COLORS.filter(swatch => ['Purple','Green','Blue'].includes(swatch.n)).map(async swatch => {
-    try {
-      const texture = await textureLoader.loadAsync(`${process.env.PUBLIC_URL || ''}${swatch.img}`);
-      texture.colorSpace = THREE.SRGBColorSpace;
-      texture.flipY = false;
-      texture.wrapS = THREE.RepeatWrapping;
-      texture.wrapT = THREE.RepeatWrapping;
-      texture.repeat.set(4,4);
-      texture.anisotropy = 4;
-      texture.needsUpdate = true;
-      forgedTextures.set(swatch.h.toLowerCase(),texture);
-    } catch (_) { /* Keep the original forged map if a swatch is unavailable. */ }
-  }));
+  const forgedTextures = new Map();
+  function coloredForgedTexture(source, color) {
+    const key = `${source.uuid}:${color}`;
+    if (forgedTextures.has(key)) return forgedTextures.get(key);
+    const image = source.image, canvas = document.createElement('canvas');
+    canvas.width = image.width; canvas.height = image.height;
+    const context = canvas.getContext('2d', {willReadFrequently:true});
+    context.drawImage(image, 0, 0);
+    const pixels = context.getImageData(0, 0, canvas.width, canvas.height);
+    const accent = forgedAccents.get(color), data = pixels.data;
+    for (let i = 0; i < data.length; i += 4) {
+      const light = data[i] * .2126 + data[i + 1] * .7152 + data[i + 2] * .0722;
+      const flake = Math.pow(Math.max(0, Math.min(1, (light - 18) / 210)), 1.15);
+      for (let channel = 0; channel < 3; channel++)
+        data[i + channel] = Math.min(255, light * .38 + accent[channel] * flake * .68);
+    }
+    context.putImageData(pixels, 0, 0);
+    const texture = new THREE.CanvasTexture(canvas);
+    texture.colorSpace = source.colorSpace;
+    texture.flipY = source.flipY;
+    texture.wrapS = source.wrapS; texture.wrapT = source.wrapT;
+    texture.repeat.copy(source.repeat); texture.offset.copy(source.offset);
+    texture.center.copy(source.center); texture.rotation = source.rotation;
+    texture.anisotropy = source.anisotropy;
+    texture.needsUpdate = true;
+    forgedTextures.set(key, texture);
+    return texture;
+  }
   let lastAppearance = '';
   function paint(node, color) { byNode.get(node)?.primitives.forEach(mesh => mesh.material.color.set(color)); }
   function finish(node, appearance, selected) {
@@ -96,14 +108,18 @@ export async function loadAudiB9(signal) {
     }
     if (!selected) return;
     if (appearance.material.includes('Carbon')) {
-      const selectedForged = appearance.material === 'Forged Carbon' && forgedTextures.get(appearance.color.toLowerCase());
-      if (selectedForged) {
-        part.primitives.forEach(mesh => {
-          mesh.material.map = selectedForged;
-          mesh.material.color.set(forgedTint.get(appearance.color.toLowerCase()));
-          mesh.material.metalness = .08;
-          mesh.material.roughness = .32;
-          mesh.material.needsUpdate = true;
+      const accent = appearance.material === 'Forged Carbon' && forgedAccents.get(appearance.color.toLowerCase());
+      if (accent) {
+        part.primitives.forEach((mesh, index) => {
+          const originalMap = part.originals[index].map;
+          if (originalMap?.image) {
+            mesh.material.map = coloredForgedTexture(originalMap, appearance.color.toLowerCase());
+            mesh.material.color.set('#ffffff');
+            mesh.material.metalness = .18;
+            mesh.material.roughness = .26;
+            mesh.material.envMapIntensity = .55;
+            mesh.material.needsUpdate = true;
+          } else mesh.material.color.set(appearance.color);
         });
         return;
       }

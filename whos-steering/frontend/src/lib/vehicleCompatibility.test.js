@@ -29,7 +29,8 @@ test('compatibility follows the published style coverage and selected BMW chassi
   expect(wheelMatchesVehicle({brand:'MERCEDES',vehicleYear:'2019',vehicleModel:'GLC-Class'},'Mercedes 2015–2023')).toBe(true);
   expect(wheelMatchesVehicle({brand:'MERCEDES',vehicleYear:'2012',vehicleModel:'GLK-Class'},'Mercedes 2010–2015')).toBe(true);
   expect(wheelMatchesVehicle({brand:'MERCEDES',vehicleYear:'2022',vehicleModel:'GLK-Class'},'Mercedes 2010–2015')).toBe(false);
-  expect(wheelMatchesVehicle({brand:'PORSCHE',vehicleYear:'2018',vehicleModel:'911'},'911 Performance (991)')).toBe(true);
+  expect(wheelMatchesVehicle({brand:'PORSCHE',vehicleYear:'2018',vehicleModel:'911'},'911 Performance (991)')).toBe(false);
+  expect(wheelStyle('PORSCHE','911 Performance (991)')).toBeUndefined();
   expect(wheelMatchesVehicle({brand:'PORSCHE',vehicleYear:'2024',vehicleModel:'911'},'911 Performance (992)')).toBe(true);
   expect(wheelMatchesVehicle({brand:'PORSCHE',vehicleYear:'2024',vehicleModel:'Macan'},'911 Performance (992)')).toBe(false);
   expect(wheelMatchesVehicle({brand:'DODGE_SRT',vehicleYear:'2020',vehicleModel:'Charger'},'SRT')).toBe(false);
@@ -41,7 +42,6 @@ test('source styles expose their reference shapes, LEDs, paddles, and original a
     ['MERCEDES','AMG Performance','mercedes-amg','Flat bottom',true],
     ['MERCEDES','Mercedes 2015–2023','mercedes-2015','Round',false],
     ['MERCEDES','Mercedes 2010–2015','mercedes-2010','Round',true],
-    ['PORSCHE','911 Performance (991)','porsche-991','Flat bottom',true],
     ['PORSCHE','911 Performance (992)','porsche-992','Flat bottom',true],
     ['DODGE_SRT','SRT','dodge-srt','Flat bottom',false],
   ];

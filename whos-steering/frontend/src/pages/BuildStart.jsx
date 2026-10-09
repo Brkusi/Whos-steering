@@ -5,7 +5,6 @@ import { hasVehicleCatalog, vehicleInquiryPath, vehicleYears } from '../lib/vehi
 import { WHEEL_STYLES } from '../lib/wheelStyles';
 import { bmwVehicleFamilies } from '../lib/bmwVehicleFamilies';
 import VehicleYearModelFields from '../components/VehicleYearModelFields';
-import Porsche991FlatBottomImage from '../components/Porsche991FlatBottomImage';
 import './BuildStart.css';
 
 export default function BuildStart() {
@@ -77,9 +76,7 @@ export default function BuildStart() {
           {matchingWheels.map(wheel => (
             <button type="button" className="build-brand-card" key={`${wheel.brand}-${wheel.style}`} onClick={() => startBuild(wheel)}>
               <div className="build-brand-card__media">
-                {wheel.style === '911 Performance (991)'
-                  ? <Porsche991FlatBottomImage alt="Porsche 911 Performance (991) flat-bottom steering wheel" />
-                  : <img src={wheel.image} alt={`${wheel.label.startsWith('Audi') ? '' : `${VEHICLE_MAKES.find(item => item.value === wheel.brand)?.label} `}${wheel.label} steering wheel`} loading="lazy" />}
+                <img src={wheel.image} alt={`${wheel.label.startsWith('Audi') ? '' : `${VEHICLE_MAKES.find(item => item.value === wheel.brand)?.label} `}${wheel.label} steering wheel`} loading="lazy" />
                 {wheel.imageOverlay && <img className="build-brand-card__overlay" src={wheel.imageOverlay} alt="" aria-hidden="true" loading="lazy" />}
                 <span className="build-brand-card__badge">{VEHICLE_MAKES.find(item => item.value === wheel.brand)?.label}</span>
                 <span className="build-brand-card__corner" aria-hidden="true" />
