@@ -49,7 +49,7 @@ test('source styles expose their reference shapes, LEDs, paddles, and original a
     const cfg={...DEFAULT_CONFIG,brand,wheelStyleType,bmwShape,ledDisplay:true,paddleShifters:'Forged Carbon',heated:false,laneAssist:false};
     expect(bmwFSeriesConfiguration(cfg,()=>null)).toMatchObject({family,led:sourceWheelSupportsLed(cfg),paddle:paddles?'forged':null,lowerTrim:null});
     expect(sourceWheelHasPaddles(cfg)).toBe(paddles);
-    const basePrice=brand==='PORSCHE'?1399:brand==='MERCEDES'?(wheelStyleType==='Mercedes 2010–2015'?699.99:799.99):899;
+    const basePrice=brand==='PORSCHE'?899.99:brand==='MERCEDES'?(wheelStyleType==='Mercedes 2010–2015'?699.99:799.99):brand==='TOYOTA'||brand==='DODGE_SRT'?699.99:899;
     expect(calcPrice({...cfg,airbagCompat:false})).toBe(basePrice+25*(paddles?1:0)+100);
     const root=path.join(process.cwd(),`public/models/${family}/source`);
     const assets=JSON.parse(fs.readFileSync(path.join(root,'manifest.json'),'utf8'));

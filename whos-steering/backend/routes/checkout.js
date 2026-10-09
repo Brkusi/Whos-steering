@@ -477,9 +477,9 @@ async function calcServerPrice(cfg) {
       ? (rules.base_mercedes_2010 ?? 699.99)
       : (rules.base_mercedes_modern ?? 799.99)) + (isCarbonTop ? 40 : 0);
   } else if (cfg.brand === 'TOYOTA') {
-    price = (rules.base_toyota ?? 899) + (isCarbonTop ? 40 : 0);
+    price = (rules.base_toyota_gr ?? 699.99) + (isCarbonTop ? 40 : 0);
   } else if (cfg.brand === 'PORSCHE' || cfg.brand === 'DODGE_SRT') {
-    price = (cfg.brand === 'PORSCHE' ? 1399 : 899) + (isCarbonTop ? 40 : 0);
+    price = (cfg.brand === 'PORSCHE' ? (rules.base_porsche_911 ?? 899.99) : (rules.base_dodge_srt ?? 699.99)) + (isCarbonTop ? 40 : 0);
   } else {
     if (cfg.wheelStyleType === 'F-Series') {
       price = rules.base_bmw_f || 449.99;

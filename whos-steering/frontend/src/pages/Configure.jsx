@@ -17,6 +17,7 @@ import { VEHICLE_MAKES, isConfigurableMake } from '../lib/vehicleCompatibility';
 import { defaultWheelStyle, wheelStyle } from '../lib/wheelStyles';
 import { hasVehicleCatalog, vehicleInquiryPath, vehicleYears } from '../lib/vehicleCatalog';
 import VehicleYearModelFields from '../components/VehicleYearModelFields';
+import Porsche991FlatBottomImage from '../components/Porsche991FlatBottomImage';
 
 const FSeriesPreview = lazy(() => import('../components/FSeriesPreview'));
 const AudiB9Preview = lazy(() => import('../components/B9ModelPreview'));
@@ -1091,7 +1092,9 @@ export default function Configure() {
             <div className="fseries-shape-grid">
               {sourceWheelShapes(cfg).map(shape => <button key={shape} type="button" className={`fseries-shape${(cfg.bmwShape || 'Round') === shape ? ' on' : ''}`} aria-pressed={(cfg.bmwShape || 'Round') === shape} onClick={() => set('bmwShape', shape)}>
                 <span className="fseries-shape-image">
-                  <img src={`/models/${bmwAssetFamily(cfg)}/source/${F_SERIES_SHAPE_IDS[shape]}.webp`} alt=""/>
+                  {bmwAssetFamily(cfg) === 'porsche-991' && shape === 'Flat bottom'
+                    ? <Porsche991FlatBottomImage />
+                    : <img src={`/models/${bmwAssetFamily(cfg)}/source/${F_SERIES_SHAPE_IDS[shape]}.webp`} alt=""/>}
                   {bmwAssetFamily(cfg) === 'porsche-992' && shape === 'Flat bottom' && <img src="/models/porsche-992/source/cf/flat-round-glossy.webp" alt="" aria-hidden="true" />}
                 </span><span>{shape}</span>
               </button>)}

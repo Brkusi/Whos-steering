@@ -42,7 +42,7 @@ test('Toyota and Mercedes source wheels use their own base price and available p
     ['MERCEDES','Mercedes 2010–2015',true],
   ]){
     const cfg={...base,brand,wheelStyleType};
-    const starting=brand==='MERCEDES'?(wheelStyleType==='Mercedes 2010–2015'?69999:79999):89900;
+    const starting=brand==='MERCEDES'?(wheelStyleType==='Mercedes 2010–2015'?69999:79999):69999;
     assert.equal(await serverPrice()(cfg),starting);
     assert.equal(await serverPrice()({...cfg,paddleShifters:'Forged Carbon'}),starting+(hasPaddles?2500:0));
     assert.equal(await serverPrice()({...cfg,topBottomMat:'Classic Carbon',ledDisplay:true}),starting+14000);
@@ -60,10 +60,10 @@ test('Porsche and Dodge source wheels use their listed bases and paddle rules',a
   const base={airbagCompat:false,heated:false,laneAssist:false};
   for(const wheelStyleType of ['911 Performance (991)','911 Performance (992)']) {
     const cfg={...base,brand:'PORSCHE',wheelStyleType};
-    assert.equal(await serverPrice()(cfg),139900);
-    assert.equal(await serverPrice()({...cfg,paddleShifters:'Forged Carbon'}),142400);
+    assert.equal(await serverPrice()(cfg),89999);
+    assert.equal(await serverPrice()({...cfg,paddleShifters:'Forged Carbon'}),92499);
   }
   const dodge={...base,brand:'DODGE_SRT',wheelStyleType:'SRT'};
-  assert.equal(await serverPrice()(dodge),89900);
-  assert.equal(await serverPrice()({...dodge,paddleShifters:'Forged Carbon'}),89900);
+  assert.equal(await serverPrice()(dodge),69999);
+  assert.equal(await serverPrice()({...dodge,paddleShifters:'Forged Carbon'}),69999);
 });

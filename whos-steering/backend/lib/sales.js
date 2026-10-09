@@ -68,7 +68,7 @@ async function captureCheckout(email,items) {
   await save(email,'checkout',{items},true);
 }
 async function initialize() {
-  const migrationFiles = ['20260908_sales.sql','20260929_wheel_brands.sql'];
+  const migrationFiles = ['20260908_sales.sql','20260929_wheel_brands.sql','20261008_wheel_base_prices.sql'];
   const migrations = migrationFiles.map(file => fs.readFileSync(path.join(__dirname,'../db/migrations',file),'utf8')).join('\n');
   await pool.query('BEGIN; SELECT pg_advisory_xact_lock(8391205); ' + migrations + '; COMMIT;');
   const interval=setInterval(tick,60000); interval.unref(); tick();
