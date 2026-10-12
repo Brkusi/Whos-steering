@@ -282,5 +282,41 @@
     "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/dodge-srt/pre/yoke-bottom-smooth-9800.webp?v=5",
     "bytes": 41874,
     "sha256": "67d77ab8213f14e46e86f5045cc3c1aeb083cf3adaecacc19763c5e16d168798"
+  },
+  {
+    "path": "pre/round-tb-smooth-9801.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/dodge-srt/pre/round-tb-smooth-9801.webp?v=5",
+    "bytes": 47322,
+    "sha256": "4679fd7e32e7b7aa06c6d06477a026c143c93940596ef316fa6873df7d072e12"
+  },
+  {
+    "path": "pre/round-tb-alcantara-9801.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/dodge-srt/pre/round-tb-alcantara-9801.webp?v=5",
+    "bytes": 80976,
+    "sha256": "9073ab70a1d7da2d478e8f8fada615c5872ec8cd4012436aac0a099b84a2788e"
+  },
+  {
+    "path": "pre/round-tb-perforated-9801.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/dodge-srt/pre/round-tb-perforated-9801.webp?v=5",
+    "bytes": 66198,
+    "sha256": "db55628c06bbccb32b80432ec4e7d294191589c57dfd36a8de2e557e5f3ea94c"
+  },
+  {
+    "path": "pre/yoke-bottom-smooth-9801.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/dodge-srt/pre/yoke-bottom-smooth-9801.webp?v=5",
+    "bytes": 57898,
+    "sha256": "96dd746ac623f46305acd1d45adac61d9522d199f620d5284f9977d7d048af78"
+  },
+  {
+    "path": "pre/yoke-bottom-alcantara-9801.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/dodge-srt/pre/yoke-bottom-alcantara-9801.webp?v=5",
+    "bytes": 40404,
+    "sha256": "bcc5735d32898840a2ae3d84126e14e16baaf45a8edd5afb8b70aa71d376218c"
+  },
+  {
+    "path": "pre/yoke-bottom-perforated-9801.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/dodge-srt/pre/yoke-bottom-perforated-9801.webp?v=5",
+    "bytes": 42080,
+    "sha256": "7294abbacbc7c2e2e43d902b170390e74524068731474f933ce81e4968f42fa8"
   }
 ]

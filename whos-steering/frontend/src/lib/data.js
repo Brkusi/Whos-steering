@@ -1,3 +1,4 @@
+import b85Assets from './audiB85Assets.json';
 // ── Leather / Alcantara colors ────────────────────────────────────────────────
 export const COLORS = [
   { n: 'Black',       h: '#111111' },
@@ -85,11 +86,10 @@ export const FORGED_CARBON_COLORS = [
   { n: 'Blue',     h: '#0A1428', img: '/forged/forged-blue.jpeg'    },
 ];
 export const B85_FORGED_CARBON_COLORS = [
-  ...FORGED_CARBON_COLORS,
-  {n:'Red', h:'#6E0000'},
-  {n:'White', h:'#D0D0D0'},
-  {n:'Pink', h:'#A6326C'},
-];
+  ['Classic','#111111','Simple'], ['Purple','#1A0A2E','Violet'],
+  ['Green','#0A2E10','Vert'], ['Gold','#3A2800','Or'], ['Blue','#0A1428','Bleu'],
+  ['Red','#6E0000','Rouge'], ['White','#D0D0D0','Blanc'], ['Pink','#A6326C','Rose'],
+].map(([n,h,key]) => ({n,h,img:'/models/audi-b85/source/'+b85Assets.top[key],fit:'contain'}));
 
 // ── Honeycomb Carbon colors ────────────────────────────────────────────────────
 export const HONEYCOMB_CARBON_COLORS = [

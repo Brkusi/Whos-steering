@@ -74,3 +74,15 @@ test('G-Series Pre LCI selects its own assets and keeps G-Series pricing',()=>{
   const calibration=require('./bmwGSeriesCalibration.json');
   for(const shape of Object.values(F_SERIES_SHAPE_IDS))for(const zone of ['side',shape==='yoke'?'bottom':'tb'])for(const mat of ['smooth','perforated','alcantara'])expect(calibration[`${shape}-${zone}-${mat}`]).toBeDefined();
 });
+
+
+test('stale or omitted shapes resolve to assets supported by each source family',()=>{
+  for(const [brand,wheelStyleType] of [['TOYOTA','Supra GR'],['PORSCHE','911 Performance (992)']]){
+    for(const bmwShape of [undefined,'Round','invalid']){
+      const a=bmwFSeriesConfiguration({...base,brand,wheelStyleType,bmwShape,ledDisplay:true,stripeConceptId:'C-6'},parse);
+      expect(a).toMatchObject({shape:'yoke',topZone:'bottom',led:false,stripes:[]});
+      expect(fs.existsSync(path.join(process.cwd(),`public/models/${a.family}/source/${a.shape}.webp`))).toBe(true);
+    }
+  }
+  expect(bmwFSeriesConfiguration({...base,bmwShape:'invalid'},parse).shape).toBe('round');
+});

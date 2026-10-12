@@ -17,10 +17,10 @@ const SIZE = 1024;
 const canvas = (size=SIZE) => {const c=document.createElement('canvas');c.width=c.height=size;return c;};
 export const stripeColorIndex = (x, left, right, count) => Math.max(0, Math.min(count - 1, Math.floor((x - left) / Math.max(1, right - left + 1) * count)));
 const rgb = hex => [1,3,5].map(start=>parseInt(hex.slice(start,start+2),16));
-export function wheelSilhouetteOpacity(red,green,blue,alpha,opaqueBlackBackground) {
-  if (!opaqueBlackBackground) return alpha;
+export function wheelSilhouetteOpacity(red,green,blue,alpha,opaqueBlackBackground,rimAlpha=0) {
+  if (!opaqueBlackBackground) return Math.max(alpha,rimAlpha);
   const brightness=Math.max(red,green,blue);
-  return Math.round(alpha*Math.max(0,Math.min(1,(brightness-5)/18)));
+  return Math.max(rimAlpha,Math.round(alpha*Math.max(0,Math.min(1,(brightness-5)/18))));
 }
 const smoothEdge = (start,end,value) => Math.max(0,Math.min(1,(value-start)/(end-start)));
 export function gripZoneOpacity(x,y,zone,shape='round') {
@@ -34,14 +34,23 @@ const SOURCE_CALIBRATIONS = {'audi-rs-2020':AUDI_RS_CALIBRATION,'supra-gr':SUPRA
   'mercedes-amg':MERCEDES_AMG_CALIBRATION,'mercedes-2015':MERCEDES_2015_CALIBRATION,'mercedes-2010':MERCEDES_2010_CALIBRATION,
   'porsche-991':PORSCHE_991_CALIBRATION,'porsche-992':PORSCHE_992_CALIBRATION,'dodge-srt':DODGE_SRT_CALIBRATION,
   'bmw-gseries':G_CALIBRATION,'bmw-fseries':F_CALIBRATION};
-// These four maps are absent on the source server. Use the closest map from
-// the same shape and grip zone so every advertised option can still preview.
-const SOURCE_MAP_FALLBACKS = {
-  'mercedes-amg:round-tb-alcantara':'round-tb-smooth',
-  'mercedes-2015:flat-round-side-perforated':'flat-round-side-smooth',
-  'mercedes-2010:round-side-smooth':'round-side-perforated',
-  'mercedes-2010:round-tb-perforated':'round-tb-smooth',
-};
+// Their map files are absent, but the source publishes the actual materials
+// as photographs. Preserve those textures instead of substituting leather types.
+const SOURCE_PRE_MATERIALS = new Set([
+  'mercedes-amg:round-tb-alcantara',
+  'mercedes-2015:flat-round-side-perforated',
+  'mercedes-2010:round-side-smooth',
+  'mercedes-2010:round-tb-perforated',
+]);
+export function recolorSourcePhotographs(dark,light,color) {
+  const target=rgb(color),black=rgb('#17181b'),white=rgb('#dcded0');
+  const mix=target.map((value,c)=>(value-black[c])/(white[c]-black[c]));
+  for(let i=0;i<dark.length;i+=4) {
+    if(!dark[i+3])continue;
+    for(let c=0;c<3;c++)dark[i+c]=Math.max(0,Math.min(255,dark[i+c]+(light[i+c]-dark[i+c])*mix[c]));
+  }
+  return dark;
+}
 
 export function createFSeriesCompositor(family = 'bmw-fseries') {
   const ROOT = `${process.env.PUBLIC_URL || ''}/models/${family}`;
@@ -73,40 +82,51 @@ export function createFSeriesCompositor(family = 'bmw-fseries') {
   function silhouette(shape,base,guide) {
     if(silhouettes.has(shape))return silhouettes.get(shape);
     const mask=canvas(),ctx=mask.getContext('2d',{willReadFrequently:true});
+    let rimPixels=null;
+    if(guide){ctx.drawImage(guide,0,0,SIZE,SIZE);rimPixels=ctx.getImageData(0,0,SIZE,SIZE).data;ctx.clearRect(0,0,SIZE,SIZE);}
     ctx.drawImage(base,0,0,SIZE,SIZE);
     const pixels=ctx.getImageData(0,0,SIZE,SIZE),p=pixels.data;
     const opaqueBlackBackground=p[3]>250&&Math.max(p[0],p[1],p[2])<10;
     for(let i=0;i<p.length;i+=4){
-      const opacity=wheelSilhouetteOpacity(p[i],p[i+1],p[i+2],p[i+3],opaqueBlackBackground);
+      const opacity=wheelSilhouetteOpacity(p[i],p[i+1],p[i+2],p[i+3],opaqueBlackBackground,rimPixels?.[i+3] || 0);
       p[i]=p[i+1]=p[i+2]=255;
       p[i+3]=opacity;
     }
     ctx.putImageData(pixels,0,0);
-    // The Porsche full-top grip is a separate source layer. The 992 base
-    // photograph has no upper arc, so its mask must include that layer.
-    if(guide)ctx.drawImage(guide,0,0,SIZE,SIZE);
+    // The source rim alpha defines physical coverage independently of its
+    // dark carbon texture. Luminance alone punches holes in colored leather.
+    // It also restores the Porsche 992 upper arc absent from the base photo.
     silhouettes.set(shape,mask);return mask;
   }
-  async function dodgePreWrap(key,color) {
-    const original=await source(`pre/${key}-9800`),out=canvas(),ctx=out.getContext('2d',{willReadFrequently:true});
-    ctx.drawImage(original,0,0,SIZE,SIZE);
-    if(color && !['#292929','#111111'].includes(color.toLowerCase())) {
-      const data=ctx.getImageData(0,0,SIZE,SIZE),p=data.data,tint=rgb(color);
-      for(let i=0;i<p.length;i+=4){
-        if(p[i+3]<8)continue;
-        // Keep the neutral backing and highlights from the source photograph.
-        const chroma=Math.max(p[i],p[i+1],p[i+2])-Math.min(p[i],p[i+1],p[i+2]);
-        if(chroma<3)continue;
-        const lum=(p[i]*.2126+p[i+1]*.7152+p[i+2]*.0722)/255;
-        for(let c=0;c<3;c++)p[i+c]=Math.min(255,tint[c]*(.25+lum*1.15));
+  async function photographedWrap(key,color,stitch) {
+    const cacheKey=JSON.stringify(['photo',key,color,stitch]);
+    if(layers.has(cacheKey))return layers.get(cacheKey);
+    const [dark,light,seam]=await Promise.all([
+      source(`pre/${key}-9800`),source(`pre/${key}-9801`),
+      family==='dodge-srt'?null:source(`stitch/${key.replace(/-(alcantara|smooth|perforated)$/,'')}`),
+    ]);
+    const out=canvas(),ctx=out.getContext('2d',{willReadFrequently:true});
+    ctx.drawImage(light,0,0,SIZE,SIZE);const lightPixels=ctx.getImageData(0,0,SIZE,SIZE);
+    ctx.clearRect(0,0,SIZE,SIZE);ctx.drawImage(dark,0,0,SIZE,SIZE);
+    const pixels=ctx.getImageData(0,0,SIZE,SIZE);
+    recolorSourcePhotographs(pixels.data,lightPixels.data,color);ctx.putImageData(pixels,0,0);
+    if(seam) {
+      const stitchCanvas=canvas(),sc=stitchCanvas.getContext('2d',{willReadFrequently:true});
+      sc.drawImage(seam,0,0,SIZE,SIZE);const threads=sc.getImageData(0,0,SIZE,SIZE),tint=rgb(stitch);
+      for(let i=0;i<threads.data.length;i+=4) {
+        if(!threads.data[i+3])continue;
+        const gain=.22+.78*(threads.data[i]*.2126+threads.data[i+1]*.7152+threads.data[i+2]*.0722)/255;
+        for(let c=0;c<3;c++)threads.data[i+c]=tint[c]*gain;
       }
-      ctx.putImageData(data,0,0);
+      sc.putImageData(threads,0,0);ctx.drawImage(stitchCanvas,0,0);
     }
+    layers.set(cacheKey,out);if(layers.size>8)layers.delete(layers.keys().next().value);
     return out;
   }
   async function wrap(key,color,stitch,carbonFinish=false) {
-    if(family==='dodge-srt' && /^(?:round-tb|yoke-bottom)-(?:smooth|alcantara|perforated)$/.test(key)) return dodgePreWrap(key,color);
-    const mapKey=SOURCE_MAP_FALLBACKS[`${family}:${key}`] || key;
+    if(family==='dodge-srt' && /^(?:round-tb|yoke-bottom)-(?:smooth|alcantara|perforated)$/.test(key)) return photographedWrap(key,color,stitch);
+    if(SOURCE_PRE_MATERIALS.has(`${family}:${key}`))return photographedWrap(key,color,stitch);
+    const mapKey=key;
     const carbonCalibration=family.startsWith('bmw-') ? G_CALIBRATION : CALIBRATION;
     const result=await materialRenderer.render(`${carbonFinish ? 'carbon:' : ''}${mapKey}`,`${ROOT}/source/grips/${mapKey}-map.webp`,SIZE,(carbonFinish ? carbonCalibration : CALIBRATION)[mapKey],color,stitch).catch(error=>{materialRenderer.invalidate();throw error;});
     // Bound retained source pixel buffers as well as the rendered color cache.
@@ -166,7 +186,13 @@ export function createFSeriesCompositor(family = 'bmw-fseries') {
       a.cover && family==='dodge-srt'?wrap('airbag-trim',a.dodgeAirbagTrim,a.airbagStitch):null,
       a.cover && family==='dodge-srt'?wrap('srt-logo',a.dodgeLogo,a.airbagStitch):null,
       a.stripes.length?marker(a):null,a.led?source(`led/${a.shape}`):null,
-      family.startsWith('porsche-')&&a.shape!=='yoke'?source(`cf/${a.shape}-glossy`):null,
+      // Only verified cutout layers can supplement the base silhouette; some
+      // other families' carbon sources include opaque rectangular backing.
+      family.startsWith('porsche-')&&a.shape!=='yoke'?source(`cf/${a.shape}-glossy`)
+        :((family==='audi-rs-2020'&&a.shape==='flat-flat')
+          ||(family==='bmw-gseries'&&a.shape==='flat-round')
+          ||(family==='mercedes-2015'&&['flat-flat','yoke'].includes(a.shape)))
+          ?source(`cf/${a.shape}-glossy`).then(layer=>gripLayer(layer,'top',a.shape)):null,
     ]);
     if(disposed)return null;
     const out=canvas(),ctx=out.getContext('2d');
@@ -175,7 +201,7 @@ export function createFSeriesCompositor(family = 'bmw-fseries') {
     // from the selectable grip layers. Clear that rim before repainting it;
     // this also removes the small exposed carbon fragments on the 992.
     const porsche991FlatBottom=family==='porsche-991'&&a.shape==='flat-round';
-    if(guide&&!porsche991FlatBottom){ctx.clearRect(0,0,SIZE,SIZE*.28);ctx.clearRect(0,SIZE*.91,SIZE,SIZE*.09);}
+    if(guide&&family.startsWith('porsche-')&&a.shape!=='yoke'&&!porsche991FlatBottom){ctx.clearRect(0,0,SIZE,SIZE*.28);ctx.clearRect(0,SIZE*.91,SIZE,SIZE*.09);}
     if(porsche991FlatBottom){
       // The source photograph carries a second marker at six o'clock. Fill
       // that narrow strip from the adjacent rim before applying the finish.

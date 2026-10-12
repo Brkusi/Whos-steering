@@ -312,5 +312,41 @@
     "url": "https://build.miamicarbondesigns.com/wheels/mercedes-2010/paddles/forged.webp",
     "bytes": 48388,
     "sha256": "51aab045292eef34f59ceccec690427dd8e37d42f0f1c997715b8a9475dc909e"
+  },
+  {
+    "path": "pre/round-side-smooth-9800.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/mercedes-2010/pre/round-side-smooth-9800.webp?v=5",
+    "bytes": 29572,
+    "sha256": "ee573e6f92c4508a5e438414794e5d2aa28a7737fe8f0040e06b060439fab68a"
+  },
+  {
+    "path": "pre/round-side-smooth-9801.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/mercedes-2010/pre/round-side-smooth-9801.webp?v=5",
+    "bytes": 43412,
+    "sha256": "c6b33b9381b16bbc996474a1539e4a82e8fa468064be5f8b9481da83b9850460"
+  },
+  {
+    "path": "stitch/round-side.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/mercedes-2010/stitch/round-side.webp",
+    "bytes": 42512,
+    "sha256": "709b84d2c82e851bb4997d8319e4913d68d0008eef6a03f9a1c5ad1c3596df5a"
+  },
+  {
+    "path": "pre/round-tb-perforated-9800.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/mercedes-2010/pre/round-tb-perforated-9800.webp?v=5",
+    "bytes": 77018,
+    "sha256": "f28ca435842f50c36df7dee94cfebcb2e1e1a9f2aa12ec38dfcf13ed9a960234"
+  },
+  {
+    "path": "pre/round-tb-perforated-9801.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/mercedes-2010/pre/round-tb-perforated-9801.webp?v=5",
+    "bytes": 108282,
+    "sha256": "9ffb3c2ca234f5a2c6d76de8cf9fbf323c6fe4ef12ba07fb4eefea47d1336b11"
+  },
+  {
+    "path": "stitch/round-tb.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/mercedes-2010/stitch/round-tb.webp",
+    "bytes": 42216,
+    "sha256": "768050df9ecb90821378c33adf43871432d24def5c70f7dd2d631c37cd796399"
   }
 ]

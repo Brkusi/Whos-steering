@@ -1,3 +1,4 @@
+import { normalizeB85Options, B85_LED } from '../lib/audiB85Configuration';
 import SalesTools, {trackSales} from '../components/SalesTools';
 import useViewport from '../hooks/useViewport';
 import { useState, useEffect, useCallback, useRef, lazy, Suspense } from 'react';
@@ -54,8 +55,8 @@ function ColorGrid({ colors, selected, onSelect }) {
   return (
     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 6, marginTop: 8 }}>
       {colors.map(c => (
-        <div key={c.h} title={c.n} onClick={() => onSelect(c.h)}
-          style={{ position: 'relative', aspectRatio: 1, borderRadius: 3, cursor: 'pointer',
+        <button type="button" key={c.h} title={c.n} aria-label={c.n} aria-pressed={selected === c.h} onClick={() => onSelect(c.h)}
+          style={{ padding:0, background:'transparent', position: 'relative', aspectRatio: 1, borderRadius: 3, cursor: 'pointer',
             border: `2px solid ${selected === c.h ? 'var(--y)' : 'transparent'}`,
             boxShadow: selected === c.h ? '0 0 0 1px var(--y)' : 'none',
             overflow: 'hidden', transition: 'border-color .15s' }}>
@@ -68,7 +69,7 @@ function ColorGrid({ colors, selected, onSelect }) {
               <span style={{ fontSize: 14, color: 'var(--y)' }}>✓</span>
             </div>
           )}
-        </div>
+        </button>
       ))}
     </div>
   );
@@ -93,7 +94,7 @@ function Toggle({ label, sub, value, onChange }) {
       </div>
       <div style={{ display: 'flex', flexShrink: 0 }}>
         {['YES','NO'].map((v, i) => (
-          <button key={v} onClick={() => onChange(v === 'YES')}
+          <button type="button" key={v} aria-label={`${label}: ${v}`} aria-pressed={value === (v === 'YES')} onClick={() => onChange(v === 'YES')}
             style={{ padding: '6px 16px', border: '1px solid var(--b)', background: value === (v === 'YES') ? 'var(--y)' : 'transparent', color: value === (v === 'YES') ? '#000' : 'var(--t)', cursor: 'pointer', fontFamily: 'Rajdhani, sans-serif', fontSize: 14, fontWeight: 700, letterSpacing: 1, transition: 'all .2s', borderRight: i === 0 ? 'none' : undefined }}>
             {v}
           </button>
@@ -107,8 +108,8 @@ function StripeConcept({ concept, selected, onSelect }) {
   const { id, label, img } = concept;
   const isSelected = selected === id;
   return (
-    <div onClick={() => onSelect(id)}
-      style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 5, cursor: 'pointer' }}>
+    <button type="button" aria-label={label} aria-pressed={isSelected} onClick={() => onSelect(id)}
+      style={{ padding:0, border:0, background:'transparent', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 5, cursor: 'pointer' }}>
       <div style={{ width: 80, height: 52, border: `2px solid ${isSelected ? 'var(--y)' : '#2A2A2A'}`,
         borderRadius: 4, overflow: 'hidden', position: 'relative',
         boxShadow: isSelected ? '0 0 0 1px var(--y)' : 'none', transition: 'border-color .15s' }}>
@@ -126,24 +127,23 @@ function StripeConcept({ concept, selected, onSelect }) {
       </div>
       <div style={{ fontSize: 14, color: isSelected ? 'var(--y)' : 'var(--t)', letterSpacing: .5,
         textAlign: 'center', maxWidth: 80, lineHeight: 1.3 }}>{label}</div>
-    </div>
+    </button>
   );
 }
 
 function CarbonColorGrid({ colors, selected, onSelect }) {
-  const [starPressed, setStarPressed] = useState(null);
   return (
     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))', gap: 8, marginTop: 8 }}>
       {colors.map(c => {
         const isSel = selected === c.h;
         return (
-          <div key={c.h} onClick={() => onSelect(c.h)}
-            style={{ cursor: 'pointer', border: `2px solid ${isSel ? 'var(--y)' : '#2A2A2A'}`,
+          <button type="button" key={c.h} aria-label={c.n} aria-pressed={isSel} onClick={() => onSelect(c.h)}
+            style={{ padding:0, background:'#111', cursor: 'pointer', border: `2px solid ${isSel ? 'var(--y)' : '#2A2A2A'}`,
               borderRadius: 4, overflow: 'hidden', position: 'relative',
               boxShadow: isSel ? '0 0 0 1px var(--y)' : 'none', transition: 'border-color .15s' }}>
             {c.img
               ? <img src={c.img} alt={c.n}
-                  style={{ width: '100%', height: 100, objectFit: 'cover', display: 'block' }} />
+                  style={{ width: '100%', height: 100, objectFit: c.fit || 'cover', display: 'block' }} />
               : <div style={{ height: 100, background: c.h, position: 'relative', overflow: 'hidden' }}>
                   {[...Array(6)].map((_, i) => (
                     <div key={i} style={{ position: 'absolute', left: i*14, top: 0, width: 8,
@@ -153,19 +153,11 @@ function CarbonColorGrid({ colors, selected, onSelect }) {
             }
             {c.rec && (
               <div
-                onClick={e => { e.stopPropagation(); setStarPressed(p => p === c.n ? null : c.n); }}
                 title="Recommended"
                 style={{ position: 'absolute', top: 6, left: 6, width: 20, height: 20,
                   display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer',
                   filter: 'drop-shadow(0 1px 2px rgba(0,0,0,.6))', zIndex: 2 }}>
                 <span style={{ fontSize: 16, color: '#FFD500', lineHeight: 1 }}>★</span>
-              </div>
-            )}
-            {c.rec && starPressed === c.n && (
-              <div style={{ position: 'absolute', top: 28, left: 6, background: '#FFD500', color: '#000',
-                fontSize: 14, fontWeight: 700, letterSpacing: .5, padding: '2px 6px', borderRadius: 3,
-                zIndex: 2, whiteSpace: 'nowrap' }}>
-                Recommended
               </div>
             )}
             {isSel && (
@@ -178,7 +170,7 @@ function CarbonColorGrid({ colors, selected, onSelect }) {
               letterSpacing: .5, textAlign: 'center', fontWeight: isSel ? 700 : 400 }}>
               {c.n}
             </div>
-          </div>
+          </button>
         );
       })}
     </div>
@@ -237,7 +229,7 @@ function MatSection({ label, matKey, colKey, carbonColKey, customColKey, cfg, se
             />
           )}
         </>
-      ) : selectedMat?.col ? (
+      ) : selectedMat?.col && !isAudiB85(cfg) ? (
         <>
           <div style={{ fontSize: 14, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 4, color: 'var(--t)' }}>
             Color <span className="req">*</span>: {cfg[customColKey] ? cfg[customColKey] : colorName(cfg[colKey])}
@@ -425,6 +417,7 @@ function ConfigProgress({ activeStep, onStep }) {
 }
 
 function currentWheelOptions(config) {
+  config = normalizeB85Options(config);
   const source2D = usesSource2D(config);
   const bmwShape = source2D && !sourceWheelShapes(config).includes(config.bmwShape)
     ? sourceWheelShapes(config)[0] : (config.bmwShape || 'Round');
@@ -449,6 +442,12 @@ function currentWheelOptions(config) {
 
 export default function Configure() {
   const viewportWidth = useViewport();
+  const [shortViewport, setShortViewport] = useState(() => window.innerHeight < 700);
+  useEffect(() => {
+    const updateHeight = () => setShortViewport(window.innerHeight < 700);
+    window.addEventListener('resize', updateHeight);
+    return () => window.removeEventListener('resize', updateHeight);
+  }, []);
   const [params] = useSearchParams();
   const nav = useNavigate();
   const { addItem, cartOpen } = useCart();
@@ -472,7 +471,7 @@ export default function Configure() {
   const initYear = vehicleYears(initBrand).includes(params.get('year')) ? params.get('year') : '';
   const initModel = initYear ? (params.get('model') || '').slice(0, 80) : '';
   const [compatibilityMake, setCompatibilityMake] = useState(initBrand);
-  const [cfg, setCfg] = useState({
+  const [cfg, setCfg] = useState(() => currentWheelOptions({
     ...DEFAULT_CONFIG,
     brand: initBrand,
     vehicleYear: initYear,
@@ -480,7 +479,7 @@ export default function Configure() {
     wheelStyleType: initStyle,
     wheelStyle: initStyle === 'B8.5' ? 'Sport' : DEFAULT_CONFIG.wheelStyle,
     bmwShape: ['TOYOTA','PORSCHE'].includes(initBrand) || (initBrand === 'AUDI' && initStyle === 'B8.5') ? 'Flat bottom' : 'Round',
-  });
+  }));
 
   useEffect(() => {
     trackSales('configure_started');
@@ -546,7 +545,7 @@ export default function Configure() {
     if (!tracked.length || typeof IntersectionObserver === 'undefined') return;
 
     const isMobileViewport = viewportWidth < 980;
-    const hasPinnedPreview = isMobileViewport && ((cfg.brand === 'AUDI' && cfg.wheelStyleType === 'B9') || usesSource2D(cfg));
+    const hasPinnedPreview = isMobileViewport && !shortViewport && ((cfg.brand === 'AUDI' && cfg.wheelStyleType === 'B9') || usesSource2D(cfg));
 
     const observer = new IntersectionObserver(
       () => {
@@ -565,7 +564,7 @@ export default function Configure() {
 
     tracked.forEach(node => observer.observe(node));
     return () => observer.disconnect();
-  }, [viewportWidth, cfg.brand, cfg.wheelStyleType]);
+  }, [viewportWidth, shortViewport, cfg.brand, cfg.wheelStyleType]);
 
   const scrollToStep = (step) => {
     const targets = {
@@ -709,7 +708,7 @@ export default function Configure() {
       if (!cfg.airbagCol && !textValue(cfg.airbagCustomColor)) e.airbagColor = true;
       if (sourceWheelStyle(cfg)?.airbagStitch !== false && !cfg.airbagStitchColor && !textValue(cfg.airbagStitchCustomColor)) e.airbagStitchColor = true;
 
-      if (cfg.brand === 'AUDI' && !cfg.audiLogoCol && !textValue(cfg.audiLogoCustomColor)) {
+      if (cfg.brand === 'AUDI' && !isAudiB85(cfg) && !cfg.audiLogoCol && !textValue(cfg.audiLogoCustomColor)) {
         e.audiLogoColor = true;
       }
       if (cfg.brand === 'DODGE_SRT') {
@@ -797,6 +796,7 @@ export default function Configure() {
         ? ['Paddle Finish', cfg.paddleFinish === 'Stealth' ? 'Black (all black)' : 'Classic (silver & black)']
         : null,
 
+      ...(isAudiB85(cfg) && cfg.paddleShifters?.startsWith('Racing Style') ? [['Paddle Finish',cfg.b85PaddleMaterial], ...(cfg.b85PaddleMaterial === 'Forged Carbon' ? [['Paddle Carbon',B85_FORGED_CARBON_COLORS.find(c => c.h === cfg.b85PaddleCarbonCol)?.n]] : []), ['Paddle Symbols',colorName(cfg.b85PaddleSymbolCol)]] : []),
       ['Top & Bottom Grip Material', cfg.topBottomMat],
       ['Top & Bottom Color', topColor],
       ['Side Grip Material', cfg.sideMat],
@@ -827,7 +827,7 @@ export default function Configure() {
       cfg.airbagCompat && sourceWheelStyle(cfg)?.airbagStitch !== false
         ? ['Airbag Stitch Color', configuredColor(cfg.airbagStitchColor, cfg.airbagStitchCustomColor, 'stitch')]
         : null,
-      cfg.brand === 'AUDI' && cfg.airbagCompat
+      cfg.brand === 'AUDI' && !isAudiB85(cfg) && cfg.airbagCompat
         ? ['Audi Logo Color', configuredColor(cfg.audiLogoCol, cfg.audiLogoCustomColor)]
         : null,
       cfg.brand === 'DODGE_SRT' && cfg.airbagCompat
@@ -857,7 +857,7 @@ export default function Configure() {
   const isAudi = cfg.brand === 'AUDI';
   const isMobileViewport = viewportWidth < 980;
   const previewMediaMaxHeight = isMobileViewport ? 440 : 'none';
-  const mobile3D = isMobileViewport && ((isAudi && cfg.wheelStyleType === 'B9') || usesSource2D(cfg));
+  const mobile3D = isMobileViewport && !shortViewport && ((isAudi && cfg.wheelStyleType === 'B9') || usesSource2D(cfg));
   // The document already contributes 140px of scroll padding.
   const mobilePreviewTop = viewportWidth < 780 ? 108 : 120;
   const stepScrollMargin = mobile3D ? mobilePreviewTop + 280 : isMobileViewport ? 205 : 88;
@@ -1013,14 +1013,14 @@ export default function Configure() {
 
           {/* Sticky heading + progress */}
           <div style={{
-            position: 'sticky',
+            position: isMobileViewport && shortViewport ? 'relative' : 'sticky',
 
             /*
               Desktop options are already inside a scroll column that begins
               BELOW the 120px site header, so desktop must stick at 0.
               Mobile scrolls in the page viewport, so it still needs 120px.
             */
-            top: mobile3D ? mobilePreviewTop + (usesBmw2D(cfg) ? 240 : 300) : isMobileViewport ? 120 : 0,
+            top: isMobileViewport && shortViewport ? 0 : mobile3D ? mobilePreviewTop + (usesSource2D(cfg) ? 240 : 300) : isMobileViewport ? mobilePreviewTop : 0,
 
             zIndex: 30,
             background: 'var(--d)',
@@ -1122,14 +1122,12 @@ export default function Configure() {
               <div style={{ marginTop: 12, display: 'flex', alignItems: 'center', gap: 12 }}>
                 <div style={{ flexShrink: 0, border: '1px solid var(--b)', overflow: 'hidden', background: '#0A0A0A', width: 120, height: 80 }}>
                   {isAudiB85(cfg)
-                    ? <div role="img" aria-label="Audi-style shift lights and gear display" style={{height:'100%',display:'flex',alignItems:'center',justifyContent:'center',gap:4,background:'radial-gradient(ellipse at center,#26303a,#07090b 75%)'}}>
-                        <span style={{color:'#348de3',fontSize:15,letterSpacing:-2}}>••••</span><strong style={{color:'#e9f3ff',border:'1px solid #75808b',padding:'2px 4px',fontSize:12}}>3 RPM</strong><span style={{color:'#e22938',fontSize:15,letterSpacing:-2}}>••••</span>
-                      </div>
+                    ? <svg viewBox="310 160 980 280" role="img" aria-label="Audi LED display" style={{width:'100%',height:'100%'}}><image href={B85_LED} width="1600" height="1600" /></svg>
                     : <img src="/led-display.png" alt={isAudi ? 'LED Display Strip' : 'RPM Gauge'}
                         style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 30%', display: 'block' }} />}
                 </div>
                 <div style={{ fontSize: 14, color: 'var(--t)', lineHeight: 1.7 }}>
-                  {isAudiB85(cfg) ? 'Audi-style curved shift lights with a central gear and RPM readout, integrated into the upper rim.' : 'Integrated LED RPM shift-light strip with live speed and gear display — embedded directly into the steering wheel, visible without moving your eyes from the road.'}
+                  {isAudiB85(cfg) ? 'Audi-style curved shift lights with a central RPM and speed display, integrated into the upper rim.' : 'Integrated LED RPM shift-light strip with live speed and gear display — embedded directly into the steering wheel, visible without moving your eyes from the road.'}
                 </div>
               </div>
             )}
@@ -1147,6 +1145,7 @@ export default function Configure() {
 
           {/* Stitch */}
           {sourceWheelStyle(cfg)?.stitch !== false && <Sect label="Stitch Color *" value={cfg.stitchColor ? stitchColorName(cfg.stitchColor) : cfg.stitchCustomColor || '—'}>
+            {isAudiB85(cfg) && <p style={{fontSize:14,color:'var(--t)',lineHeight:1.5}}>Stitch color is saved for your build. This preview does not display stitching changes.</p>}
             <ColorGrid colors={isAudiB85(cfg) ? B85_STITCH_COLORS : STITCH_COLORS} selected={cfg.stitchColor} onSelect={v => { set('stitchColor', v); set('stitchCustomColor', ''); }} />
             {!isAudiB85(cfg) && <CustomColorInput label="Type Any Stitch Color (Max Two):" value={cfg.stitchCustomColor} onChange={v => { set('stitchCustomColor', v); set('stitchColor', null); }} placeholder="e.g. Gold, Magenta, Dual Colors..." />}
             {errors.stitchColor && <div className="err-msg" style={{ marginTop: 8 }}>Please choose a stitch color.</div>}
@@ -1160,7 +1159,7 @@ export default function Configure() {
           )}
 
           {/* Paddles */}
-          {sourceWheelHasPaddles(cfg) && <Sect label="Paddle Shifters" value={cfg.paddleShifters + (cfg.paddleShifters === 'Magnetic' ? ` · ${cfg.paddleLength}` : isAudi && cfg.wheelStyleType === 'B9' ? ` · ${cfg.paddleFinish === 'Stealth' ? 'Black' : 'Classic'}` : '')}>
+          {sourceWheelHasPaddles(cfg) && <Sect label="Paddle Shifters" value={cfg.paddleShifters + (cfg.paddleShifters === 'Magnetic' && !isAudiB85(cfg) ? ` · ${cfg.paddleLength}` : isAudi && cfg.wheelStyleType === 'B9' ? ` · ${cfg.paddleFinish === 'Stealth' ? 'Black' : 'Classic'}` : '')}>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7 }}>
               {(isAudiB85(cfg) ? B85_PADDLES : usesSource2D(cfg) ? F_SERIES_PADDLES : ['Standard', 'Magnetic']).map(o => (
                 <button key={o} aria-pressed={cfg.paddleShifters === o} className={`ob${cfg.paddleShifters === o ? ' on' : ''}`} onClick={() => set('paddleShifters', o)}>
@@ -1168,6 +1167,13 @@ export default function Configure() {
                 </button>
               ))}
             </div>
+            {isAudiB85(cfg) && cfg.paddleShifters?.startsWith('Racing Style') && <div style={{marginTop:16}}>
+              <div className="fl">Paddle finish</div>
+              <div style={{display:'flex',gap:8,marginBottom:12}}>{['Classic Carbon','Forged Carbon'].map(finish => <button type="button" key={finish} className={`ob${cfg.b85PaddleMaterial === finish ? ' on' : ''}`} aria-pressed={cfg.b85PaddleMaterial === finish} onClick={() => set('b85PaddleMaterial', finish)}>{finish}</button>)}</div>
+              {cfg.b85PaddleMaterial === 'Forged Carbon' && <CarbonColorGrid colors={B85_FORGED_CARBON_COLORS} selected={cfg.b85PaddleCarbonCol} onSelect={v => set('b85PaddleCarbonCol',v)} />}
+              <div className="fl" style={{marginTop:12}}>Paddle + / − color</div>
+              <ColorGrid colors={B85_MATERIAL_COLORS} selected={cfg.b85PaddleSymbolCol} onSelect={v => set('b85PaddleSymbolCol',v)} />
+            </div>}
             {isAudi && cfg.wheelStyleType === 'B9' && cfg.paddleShifters === 'Standard' && (
               <div style={{ marginTop: 14 }}>
                 <div style={{ fontSize: 14, color: 'var(--t)', letterSpacing: 1, textTransform: 'uppercase', marginBottom: 8 }}>Standard Paddle Finish</div>
@@ -1295,27 +1301,28 @@ export default function Configure() {
                     </button>
                   ))}
                 </div>
+                {isAudiB85(cfg) && <p style={{fontSize:14,color:'var(--t)'}}>Black cover with your choice of stitching below.</p>}
                 {errors.airbagMaterial && <div className="err-msg" style={{ margin: '-6px 0 10px' }}>Please choose an airbag material.</div>}
-                {cfg.airbagMat && (
+                {cfg.airbagMat && !isAudiB85(cfg) && (
                   <>
                     <div style={{ fontSize: 14, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 4, color: 'var(--t)' }}>
                       Color <span className="req">*</span>: {configuredColor(cfg.airbagCol, cfg.airbagCustomColor)}
                     </div>
-                    <ColorGrid colors={COLORS} selected={cfg.airbagCol} onSelect={v => { set('airbagCol', v); set('airbagCustomColor', ''); }} />
-                    <CustomColorInput label="Type Any Color:" value={cfg.airbagCustomColor} onChange={v => { set('airbagCustomColor', v); set('airbagCol', null); }} />
+                    <ColorGrid colors={isAudiB85(cfg) ? B85_MATERIAL_COLORS : COLORS} selected={cfg.airbagCol} onSelect={v => { set('airbagCol', v); set('airbagCustomColor', ''); }} />
+                    {!isAudiB85(cfg) && <CustomColorInput label="Type Any Color:" value={cfg.airbagCustomColor} onChange={v => { set('airbagCustomColor', v); set('airbagCol', null); }} />}
                     {errors.airbagColor && <div className="err-msg" style={{ marginTop: 8 }}>Please choose an airbag color.</div>}
                   </>
                 )}
                 {sourceWheelStyle(cfg)?.airbagStitch !== false && <><div style={{ fontSize: 14, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase', margin: '16px 0 4px', color: 'var(--t)' }}>
                   Airbag Stitch Color <span className="req">*</span>: {configuredColor(cfg.airbagStitchColor, cfg.airbagStitchCustomColor, 'stitch')}
                 </div>
-                <ColorGrid colors={STITCH_COLORS} selected={cfg.airbagStitchColor} onSelect={v => { set('airbagStitchColor', v); set('airbagStitchCustomColor', ''); }} />
-                <CustomColorInput label="Type Any Stitch Color:" value={cfg.airbagStitchCustomColor} onChange={v => { set('airbagStitchCustomColor', v); set('airbagStitchColor', null); }} placeholder="e.g. Gold, Magenta, Dual Colors..." />
+                <ColorGrid colors={isAudiB85(cfg) ? B85_STITCH_COLORS : STITCH_COLORS} selected={cfg.airbagStitchColor} onSelect={v => { set('airbagStitchColor', v); set('airbagStitchCustomColor', ''); }} />
+                {!isAudiB85(cfg) && <CustomColorInput label="Type Any Stitch Color:" value={cfg.airbagStitchCustomColor} onChange={v => { set('airbagStitchCustomColor', v); set('airbagStitchColor', null); }} placeholder="e.g. Gold, Magenta, Dual Colors..." />}
                 {errors.airbagStitchColor && <div className="err-msg" style={{ marginTop: 8 }}>Please choose an airbag stitch color.</div>}</>}
               </div>
             )}
 
-            {isAudi && cfg.airbagCompat && (
+            {isAudi && !isAudiB85(cfg) && cfg.airbagCompat && (
               <div style={{ marginTop: 14, paddingTop: 14, borderTop: '1px solid #1A1A1A' }}>
                 <div style={{ fontSize: 14, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 4, color: 'var(--t)' }}>
                   Audi Logo Color <span className="req">*</span>: {configuredColor(cfg.audiLogoCol, cfg.audiLogoCustomColor)}

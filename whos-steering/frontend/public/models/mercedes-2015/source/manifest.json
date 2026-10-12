@@ -296,5 +296,23 @@
     "url": "https://build.miamicarbondesigns.com/wheels/mercedes-2015/neutral/airbag-alcantara-logo.webp",
     "bytes": 23394,
     "sha256": "9c4ae3d0a6b0d4bd60b9cf8ca75ccbfb2d0adb5b78960417895b54c6503df5c7"
+  },
+  {
+    "path": "pre/flat-round-side-perforated-9800.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/mercedes-2015/pre/flat-round-side-perforated-9800.webp?v=5",
+    "bytes": 92840,
+    "sha256": "6708ab18bbe28816a7ad2bdb84325da51f155ca8821b4dca68ffae2da06d9c75"
+  },
+  {
+    "path": "pre/flat-round-side-perforated-9801.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/mercedes-2015/pre/flat-round-side-perforated-9801.webp?v=5",
+    "bytes": 118850,
+    "sha256": "5102767cabe6bc88ddf68e35bb2c06d46ef824fdb6f59779a33564196858aea1"
+  },
+  {
+    "path": "stitch/flat-round-side.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/mercedes-2015/stitch/flat-round-side.webp",
+    "bytes": 46096,
+    "sha256": "0a13aaa03bad2b9982c198289cb35d42dfb1880964df2a855684bb6a65ace86e"
   }
 ]
