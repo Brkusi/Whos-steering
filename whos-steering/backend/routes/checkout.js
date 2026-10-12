@@ -67,7 +67,7 @@ function validateRequiredColors(cfg) {
     missing.push('Stitch Color');
   }
 
-  if (cfg.brand === 'AUDI' && cfg.wheelStyleType !== 'RS 2020+') {
+  if (cfg.brand === 'AUDI' && !['RS 2020+','B8.5'].includes(cfg.wheelStyleType)) {
     if (!(cfg.plasticTrimCol || hasText(cfg.plasticTrimCustomColor))) {
       missing.push('Plastic Trim Color');
     }
@@ -464,7 +464,7 @@ async function calcServerPrice(cfg) {
   const isCarbonTop = cfg.topBottomMat && cfg.topBottomMat.toLowerCase().includes('carbon');
   const isBmwFSeries = cfg.brand === 'BMW' && cfg.wheelStyleType === 'F-Series';
   const usesBmw2D = cfg.brand === 'BMW' && ['F-Series', 'G-Series Pre LCI'].includes(cfg.wheelStyleType);
-  const hasSourcePaddles = usesBmw2D || (cfg.brand === 'TOYOTA' && cfg.wheelStyleType === 'Supra GR') ||
+  const hasSourcePaddles = usesBmw2D || (cfg.brand === 'AUDI' && cfg.wheelStyleType === 'B8.5') || (cfg.brand === 'TOYOTA' && cfg.wheelStyleType === 'Supra GR') ||
     (cfg.brand === 'MERCEDES' && ['AMG Performance','Mercedes 2010–2015'].includes(cfg.wheelStyleType)) ||
     cfg.brand === 'PORSCHE';
 
@@ -495,7 +495,7 @@ async function calcServerPrice(cfg) {
   if (cfg.airbagUpgrade === true)    price += (rules.airbag_upgrade  || 75);
 
   // Magnetic paddle shifters: +$25 for all brands/styles
-  if (cfg.paddleShifters === 'Magnetic' || (hasSourcePaddles && ['Glossy Carbon', 'Matte Carbon', 'Forged Carbon'].includes(cfg.paddleShifters))) price += (rules.paddle_magnetic || 25);
+  if (cfg.paddleShifters === 'Magnetic' || (hasSourcePaddles && ['Glossy Carbon', 'Matte Carbon', 'Forged Carbon', 'Racing Style 1', 'Racing Style 2'].includes(cfg.paddleShifters))) price += (rules.paddle_magnetic || 25);
 
   if (usesBmw2D && ['Glossy Carbon','Matte Carbon','Forged Carbon'].includes(cfg.bmwLowerTrim)) price += (rules.bmw_lower_trim ?? 50);
 

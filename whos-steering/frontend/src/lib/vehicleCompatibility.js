@@ -17,6 +17,12 @@ export function wheelMatchesVehicle(config, style) {
   const year = Number(config.vehicleYear);
   if (!Number.isInteger(year) || !vehicleYears(config.brand).includes(String(year)) || !String(config.vehicleModel || '').trim()) return false;
   if (config.brand === 'AUDI') {
+    if (style === 'B8.5') {
+      const match = /^(?:A|S|RS)\s?([3-8])\b/i.exec(config.vehicleModel.trim());
+      const series = Number(match?.[1]);
+      return series >= 3 && series <= 5 ? year >= 2010 && year <= 2016
+        : series >= 6 && series <= 8 && year >= 2012 && year <= 2018;
+    }
     return year >= 2011 && ['B9', 'RS 2020+', 'R8'].includes(style);
   }
   if (config.brand === 'BMW') {

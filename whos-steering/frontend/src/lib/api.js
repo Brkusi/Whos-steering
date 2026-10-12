@@ -57,7 +57,7 @@ export function calcPrice(config, rules = {}) {
   if (config.airbagUpgrade === true) price += (rules.airbag_upgrade ?? 75);
 
   // Carbon paddle shifters: +$25 for the source 2D wheels and magnetic paddles.
-  if (config.paddleShifters === 'Magnetic' || hasCarbonPaddles(config)) price += (rules.paddle_magnetic ?? 25);
+  if (config.paddleShifters === 'Magnetic' || hasCarbonPaddles(config) || (config.brand === 'AUDI' && config.wheelStyleType === 'B8.5' && ['Racing Style 1','Racing Style 2'].includes(config.paddleShifters))) price += (rules.paddle_magnetic ?? 25);
 
   if (usesBmw2D(config) && ['Glossy Carbon','Matte Carbon','Forged Carbon'].includes(config.bmwLowerTrim)) price += (rules.bmw_lower_trim ?? 50);
 
