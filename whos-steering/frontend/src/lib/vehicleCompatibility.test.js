@@ -16,6 +16,10 @@ test('compatibility follows the published style coverage and selected BMW chassi
   expect(wheelMatchesVehicle({brand:'AUDI',vehicleYear:'2022',vehicleModel:'A4'},'R8')).toBe(true);
   expect(wheelMatchesVehicle({brand:'AUDI',vehicleYear:'2022',vehicleModel:'A4'},'B9')).toBe(true);
   expect(wheelMatchesVehicle({brand:'AUDI',vehicleYear:'2026',vehicleModel:'A4'},'B9')).toBe(false);
+  for (const [year, model] of [['2010','A3'],['2016','RS 5'],['2012','A6'],['2018','S8']])
+    expect(wheelMatchesVehicle({brand:'AUDI',vehicleYear:year,vehicleModel:model},'B8.5')).toBe(true);
+  for (const [year, model] of [['2010','A6'],['2017','A5'],['2019','A8'],['2015','Q5'],['2014','R8']])
+    expect(wheelMatchesVehicle({brand:'AUDI',vehicleYear:year,vehicleModel:model},'B8.5')).toBe(false);
   expect(wheelMatchesVehicle({brand:'BMW',vehicleYear:'2018',vehicleModel:'320i'},'F-Series')).toBe(true);
   expect(wheelMatchesVehicle({brand:'BMW',vehicleYear:'2018',vehicleModel:'320i'},'G-Series')).toBe(true);
   expect(wheelMatchesVehicle({brand:'BMW',vehicleYear:'2024',vehicleModel:'330i'},'G-Series Pre LCI')).toBe(true);
@@ -90,4 +94,12 @@ test('Audi B9.5 and Mercedes style prices match the advertised starting prices',
   expect(wheelStyle('MERCEDES','Mercedes 2010–2015').price).toBe(699.99);
   expect(calcPrice({...noOptions,brand:'MERCEDES',wheelStyleType:'Mercedes 2010–2015'})).toBe(699.99);
   expect(calcPrice({...noOptions,brand:'AUDI',wheelStyleType:'RS 2020+',airbagCompat:true,airbagUpgrade:true})).toBe(899.99);
+});
+
+test('Audi B8.5 price follows its paddle selections', () => {
+  const cfg={...DEFAULT_CONFIG,brand:'AUDI',wheelStyleType:'B8.5',airbagCompat:false};
+  expect(wheelStyle('AUDI','B8.5')).toMatchObject({price:699.99});
+  expect(calcPrice({...cfg,paddleShifters:'Standard'})).toBe(699.99);
+  expect(calcPrice({...cfg,paddleShifters:'Racing Style 1'})).toBe(724.99);
+  expect(calcPrice({...cfg,paddleShifters:'Magnetic'})).toBe(724.99);
 });

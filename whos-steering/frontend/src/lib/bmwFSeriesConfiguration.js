@@ -5,6 +5,7 @@ export const F_SERIES_SHAPES = ['Round', 'Yoke', 'Flat top & bottom', 'Flat bott
 export const F_SERIES_SHAPE_IDS = {Round:'round', Yoke:'yoke', 'Flat top & bottom':'flat-flat', 'Flat bottom':'flat-round'};
 export const F_SERIES_PADDLES = ['Standard', 'None', 'Glossy Carbon', 'Matte Carbon', 'Forged Carbon'];
 export const SOURCE_WHEEL_STYLES = {
+  AUDI: {'B8.5': {family:'audi-b85', shapes:['Flat bottom'], led:['Flat bottom'], paddles:true, airbagStitch:false}},
   TOYOTA: {'Supra GR': {family:'supra-gr', shapes:F_SERIES_SHAPES.filter(shape => shape !== 'Round'), led:['Flat top & bottom','Flat bottom'], paddles:true}},
   MERCEDES: {
     'AMG Performance': {family:'mercedes-amg', shapes:F_SERIES_SHAPES, led:['Flat bottom'], paddles:true},

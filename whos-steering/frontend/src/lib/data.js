@@ -15,6 +15,7 @@ export const COLORS = [
   { n: 'Purple',      h: '#6A1FA8' },
   { n: 'Brown',       h: '#6B3A2A' },
 ];
+export const B85_MATERIAL_COLORS = COLORS.filter(color => ['Black','Red','White','Blue','Dark Green','Purple','Yellow'].includes(color.n));
 
 // ── Stripe concepts (image-based) ────────────────────────────────────────────
 export const STRIPE_CONCEPTS = [
@@ -33,6 +34,17 @@ export const STRIPE_CONCEPTS = [
   { id: 'C-13', label: 'German Tri Color',img: '/stripes/stripe-german-tri.jpg',  stripes: ['#000000','#DD0000','#FFCC00'], tri: true, triKey: 'germany' },
 ];
 
+// The B8.5 reference offers single-color 12 o'clock markers only.
+export const B85_STRIPE_CONCEPTS = [
+  STRIPE_CONCEPTS[0], STRIPE_CONCEPTS[1], STRIPE_CONCEPTS[5],
+  {...STRIPE_CONCEPTS[3], label:'Blue'},
+  {id:'B85-W', label:'White', stripes:['#F0F0F0']},
+  STRIPE_CONCEPTS[9],
+  {...STRIPE_CONCEPTS[7], label:'Green'},
+  {id:'B85-Y', label:'Yellow', stripes:['#E8B800']},
+  STRIPE_CONCEPTS[2],
+];
+
 // ── Stitch colors with real photos ───────────────────────────────────────────
 export const STITCH_COLORS = [
   { n: 'Black',       h: '#111111', img: '/stitches/stitch-black.jpg' },
@@ -49,6 +61,7 @@ export const STITCH_COLORS = [
   { n: 'White',       h: '#F0F0F0', img: '/stitches/stitch-white.jpg' },
   { n: 'Yellow',      h: '#E8B800', img: '/stitches/stitch-yellow.jpg' },
 ];
+export const B85_STITCH_COLORS = STITCH_COLORS.filter(color => ['Black','Red','Dark Blue','White','Purple','Dark Green','Yellow'].includes(color.n));
 
 // ── Classic Carbon colors (image-based) ────────────────────────────────────
 export const CLASSIC_CARBON_COLORS = [
@@ -70,6 +83,12 @@ export const FORGED_CARBON_COLORS = [
   { n: 'Green',    h: '#0A2E10', img: '/forged/forged-green.jpeg'   },
   { n: 'Gold',     h: '#3A2800', img: '/forged/forged-gold.jpeg'    },
   { n: 'Blue',     h: '#0A1428', img: '/forged/forged-blue.jpeg'    },
+];
+export const B85_FORGED_CARBON_COLORS = [
+  ...FORGED_CARBON_COLORS,
+  {n:'Red', h:'#6E0000'},
+  {n:'White', h:'#D0D0D0'},
+  {n:'Pink', h:'#A6326C'},
 ];
 
 // ── Honeycomb Carbon colors ────────────────────────────────────────────────────

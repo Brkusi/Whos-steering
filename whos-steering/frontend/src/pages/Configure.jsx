@@ -4,9 +4,9 @@ import { useState, useEffect, useCallback, useRef, lazy, Suspense } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import WheelPreview from '../components/WheelPreview';
 import {
-  COLORS, MATS, TRIS, DEFAULT_CONFIG, colorName,
-  STRIPE_CONCEPTS, STITCH_COLORS,
-  CLASSIC_CARBON_COLORS, FORGED_CARBON_COLORS, HONEYCOMB_CARBON_COLORS,
+  COLORS, B85_MATERIAL_COLORS, MATS, TRIS, DEFAULT_CONFIG, colorName,
+  STRIPE_CONCEPTS, STITCH_COLORS, B85_STRIPE_CONCEPTS, B85_STITCH_COLORS,
+  CLASSIC_CARBON_COLORS, FORGED_CARBON_COLORS, B85_FORGED_CARBON_COLORS, HONEYCOMB_CARBON_COLORS,
   TOP_BOTTOM_MATS, SIDE_MATS, AIRBAG_MATS,
 } from '../lib/data';
 import { F_SERIES_SHAPE_IDS, F_SERIES_PADDLES, sourceWheelStyle, sourceWheelShapes, sourceWheelHasPaddles, sourceWheelSupportsLed, usesBmw2D, usesSource2D, isAudiRS2020, bmwAssetFamily, bmwStyleLabel } from '../lib/bmwFSeriesConfiguration';
@@ -19,8 +19,12 @@ import { hasVehicleCatalog, vehicleInquiryPath, vehicleYears } from '../lib/vehi
 import VehicleYearModelFields from '../components/VehicleYearModelFields';
 
 const FSeriesPreview = lazy(() => import('../components/FSeriesPreview'));
+const AudiB85Preview = lazy(() => import('../components/AudiB85Preview'));
 const AudiB9Preview = lazy(() => import('../components/B9ModelPreview'));
 const F_SERIES_TOP_MATS = [...TOP_BOTTOM_MATS.filter(m => m.n !== 'Honeycomb Carbon'), SIDE_MATS.find(m => m.n === 'Perforated Leather'), {n:'Matte Carbon',d:'#111111',col:false,carbon:true,cType:'classic'}];
+const B85_TOP_MATS = F_SERIES_TOP_MATS.filter(m => m.n !== 'Perforated Leather');
+const B85_PADDLES = ['None','Standard','Racing Style 1','Racing Style 2','Magnetic'];
+const isAudiB85 = cfg => cfg.brand === 'AUDI' && cfg.wheelStyleType === 'B8.5';
 
 function Sect({ label, value, children, badge }) {
   return (
@@ -111,7 +115,7 @@ function StripeConcept({ concept, selected, onSelect }) {
         {img
           ? <img src={img} alt={label} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
           : <div style={{ width: '100%', height: '100%', background: '#111', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <span style={{ fontSize: 14, color: '#555' }}>NONE</span>
+              <span style={{ fontSize: 14, color: concept.stripes?.[0] || '#555' }}>{concept.stripes?.length ? '▌' : 'NONE'}</span>
             </div>
         }
         {isSelected && (
@@ -195,7 +199,9 @@ function MatSection({ label, matKey, colKey, carbonColKey, customColKey, cfg, se
   const selectedMat = matList.find(m => m.n === mat);
   const isCarbon = selectedMat?.carbon;
   const cType = selectedMat?.cType;
-  const carbonColors = cType === 'classic' ? CLASSIC_CARBON_COLORS : cType === 'forged' ? FORGED_CARBON_COLORS : HONEYCOMB_CARBON_COLORS;
+  const carbonColors = isAudiB85(cfg) && cType === 'classic' ? CLASSIC_CARBON_COLORS.slice(0,1)
+    : isAudiB85(cfg) && cType === 'forged' ? B85_FORGED_CARBON_COLORS
+    : cType === 'classic' ? CLASSIC_CARBON_COLORS : cType === 'forged' ? FORGED_CARBON_COLORS : HONEYCOMB_CARBON_COLORS;
   const carbonLabel = cType === 'classic' ? 'Classic Carbon Color' : cType === 'forged' ? 'Forged Carbon Flakes' : 'Honeycomb Carbon Flakes';
 
   return (
@@ -223,7 +229,7 @@ function MatSection({ label, matKey, colKey, carbonColKey, customColKey, cfg, se
             selected={cfg[carbonColKey]}
             onSelect={v => { set(carbonColKey, v); set(customColKey, ''); }}
           />
-          {cType !== 'honeycomb' && (
+          {cType !== 'honeycomb' && !isAudiB85(cfg) && (
             <CustomColorInput
               label="Type Any Color:"
               value={cfg[customColKey]}
@@ -236,8 +242,8 @@ function MatSection({ label, matKey, colKey, carbonColKey, customColKey, cfg, se
           <div style={{ fontSize: 14, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 4, color: 'var(--t)' }}>
             Color <span className="req">*</span>: {cfg[customColKey] ? cfg[customColKey] : colorName(cfg[colKey])}
           </div>
-          <ColorGrid colors={COLORS} selected={cfg[colKey]} onSelect={v => { set(colKey, v); set(customColKey, ''); }} />
-          <CustomColorInput label="Type Any Color:" value={cfg[customColKey]} onChange={v => { set(customColKey, v); set(colKey, null); }} />
+          <ColorGrid colors={isAudiB85(cfg) ? B85_MATERIAL_COLORS : COLORS} selected={cfg[colKey]} onSelect={v => { set(colKey, v); set(customColKey, ''); }} />
+          {!isAudiB85(cfg) && <CustomColorInput label="Type Any Color:" value={cfg[customColKey]} onChange={v => { set(customColKey, v); set(colKey, null); }} />}
         </>
       ) : null}
       {colorError && <div className="err-msg" style={{ marginTop: 8 }}>Please choose a color option.</div>}
@@ -260,7 +266,7 @@ function carbonColorName(material, hex) {
   const list = (material === 'Classic Carbon' || material === 'Matte Carbon')
     ? CLASSIC_CARBON_COLORS
     : material === 'Forged Carbon'
-      ? FORGED_CARBON_COLORS
+      ? B85_FORGED_CARBON_COLORS
       : HONEYCOMB_CARBON_COLORS;
 
   return list.find(c => c.h === hex)?.n || hex;
@@ -422,7 +428,7 @@ function currentWheelOptions(config) {
   const source2D = usesSource2D(config);
   const bmwShape = source2D && !sourceWheelShapes(config).includes(config.bmwShape)
     ? sourceWheelShapes(config)[0] : (config.bmwShape || 'Round');
-  const next = {...config,bmwShape};
+  const next = {...config,bmwShape,wheelStyle:isAudiB85(config)?'Sport':config.wheelStyle};
   const dodgeNoCarbon = config.brand === 'DODGE_SRT' && ['Round','Yoke'].includes(bmwShape) && config.topBottomMat?.includes('Carbon');
   return {
     ...next,
@@ -433,6 +439,7 @@ function currentWheelOptions(config) {
     ...(source2D && !sourceWheelSupportsLed(next) ? {ledDisplay:false} : {}),
     ...(usesBmw2D(config) && config.paddleShifters === 'Magnetic' ? {paddleShifters:'Glossy Carbon'} : {}),
     ...(isAudiRS2020(config) ? {paddleShifters:'Standard',bmwLowerTrim:'Original'} : {}),
+    ...(isAudiB85(config) && !B85_PADDLES.includes(config.paddleShifters) ? {paddleShifters:'Standard'} : {}),
     ...(source2D && !sourceWheelHasPaddles(config) ? {paddleShifters:'Standard'} : {}),
     ...(!source2D && !['Standard','Magnetic'].includes(config.paddleShifters) ? {paddleShifters:'Standard'} : {}),
     innerTrimMatchCarbon:false,
@@ -471,7 +478,8 @@ export default function Configure() {
     vehicleYear: initYear,
     vehicleModel: initModel,
     wheelStyleType: initStyle,
-    bmwShape: ['TOYOTA','PORSCHE'].includes(initBrand) ? 'Flat bottom' : 'Round',
+    wheelStyle: initStyle === 'B8.5' ? 'Sport' : DEFAULT_CONFIG.wheelStyle,
+    bmwShape: ['TOYOTA','PORSCHE'].includes(initBrand) || (initBrand === 'AUDI' && initStyle === 'B8.5') ? 'Flat bottom' : 'Round',
   });
 
   useEffect(() => {
@@ -686,7 +694,7 @@ export default function Configure() {
       e.stitchColor = true;
     }
 
-    if (cfg.brand === 'AUDI' && !isAudiRS2020(cfg)) {
+    if (cfg.brand === 'AUDI' && !isAudiRS2020(cfg) && !isAudiB85(cfg)) {
       if (!cfg.plasticTrimCol && !textValue(cfg.plasticTrimCustomColor)) {
         e.plasticTrimColor = true;
       }
@@ -735,7 +743,7 @@ export default function Configure() {
 
   const showToast = (msg) => { setToast(msg); setTimeout(() => setToast(''), 2400); };
 
-  const selectedStripeConcept = STRIPE_CONCEPTS.find(s => s.id === cfg.stripeConceptId) || STRIPE_CONCEPTS[0];
+  const selectedStripeConcept = (isAudiB85(cfg) ? B85_STRIPE_CONCEPTS : STRIPE_CONCEPTS).find(s => s.id === cfg.stripeConceptId) || STRIPE_CONCEPTS[0];
 
   const buildSummary = () => {
     const topColor = configuredMaterialColor(
@@ -782,7 +790,7 @@ export default function Configure() {
       usesSource2D(cfg) ? ['Wheel Shape', cfg.bmwShape || 'Round'] : null,
       usesBmw2D(cfg) ? ['Lower Trim', cfg.bmwLowerTrim || 'Original'] : null,
       sourceWheelHasPaddles(cfg) ? ['Paddle Shifters', cfg.paddleShifters] : null,
-      cfg.paddleShifters === 'Magnetic'
+      cfg.paddleShifters === 'Magnetic' && !isAudiB85(cfg)
         ? ['Paddle Length', cfg.paddleLength || 'Short']
         : null,
       cfg.brand === 'AUDI' && cfg.wheelStyleType === 'B9' && cfg.paddleShifters === 'Standard'
@@ -795,10 +803,10 @@ export default function Configure() {
       ['Side Grip Color', sideColor],
 
       cfg.brand === 'AUDI' && !isAudiRS2020(cfg) ? ['Lower Badge', cfg.audiBadge] : null,
-      cfg.brand === 'AUDI' && !isAudiRS2020(cfg)
+      cfg.brand === 'AUDI' && !isAudiRS2020(cfg) && !isAudiB85(cfg)
         ? ['Plastic Trim Color', configuredColor(cfg.plasticTrimCol, cfg.plasticTrimCustomColor)]
         : null,
-      cfg.brand === 'AUDI' && !isAudiRS2020(cfg)
+      cfg.brand === 'AUDI' && !isAudiRS2020(cfg) && !isAudiB85(cfg)
         ? ['Inner Trim Color',
             configuredColor(cfg.innerTrimCol, cfg.innerTrimCustomColor)]
         : null,
@@ -931,6 +939,10 @@ export default function Configure() {
                 }}
               />
             </div>
+          ) : isAudiB85(cfg) ? (
+            <Suspense fallback={<div style={{ padding: 40, textAlign: 'center' }} role="status">Loading wheel preview…</div>}>
+              <AudiB85Preview config={cfg} />
+            </Suspense>
           ) : usesSource2D(cfg) ? (
             <Suspense fallback={<div style={{ padding: 40, textAlign: 'center' }} role="status">Loading wheel preview…</div>}>
               <FSeriesPreview config={cfg} />
@@ -1083,7 +1095,8 @@ export default function Configure() {
             />
           </Sect>}
 
-          {usesSource2D(cfg) && <Sect label="Wheel Shape" value={cfg.bmwShape || 'Round'}>
+          {isAudiB85(cfg) && <Sect label="Wheel Style" value="Sport"><p style={{color:'var(--t)',margin:0}}>Sport flat-bottom shape with standard steering wheel buttons included.</p></Sect>}
+          {usesSource2D(cfg) && !isAudiB85(cfg) && <Sect label="Wheel Shape" value={cfg.bmwShape || 'Round'}>
             <div className="fseries-shape-grid">
               {sourceWheelShapes(cfg).map(shape => <button key={shape} type="button" className={`fseries-shape${(cfg.bmwShape || 'Round') === shape ? ' on' : ''}`} aria-pressed={(cfg.bmwShape || 'Round') === shape} onClick={() => set('bmwShape', shape)}>
                 <span className="fseries-shape-image">
@@ -1121,17 +1134,17 @@ export default function Configure() {
           {/* Stripe */}
           {!(usesSource2D(cfg) && cfg.bmwShape === 'Yoke') && <Sect label="Top Stripe" value={selectedStripeConcept.label}>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(72px,1fr))', gap: 10, marginBottom: 14 }}>
-              {STRIPE_CONCEPTS.map(sc => (
+              {(isAudiB85(cfg) ? B85_STRIPE_CONCEPTS : STRIPE_CONCEPTS).map(sc => (
                 <StripeConcept key={sc.id} concept={sc} selected={cfg.stripeConceptId} onSelect={v => set('stripeConceptId', v)} />
               ))}
             </div>
-            <CustomColorInput label="Type Any Stripe Color:" value={cfg.stripeCustomColor} onChange={v => set('stripeCustomColor', v)} />
+            {!isAudiB85(cfg) && <CustomColorInput label="Type Any Stripe Color:" value={cfg.stripeCustomColor} onChange={v => set('stripeCustomColor', v)} />}
           </Sect>}
 
           {/* Stitch */}
           {sourceWheelStyle(cfg)?.stitch !== false && <Sect label="Stitch Color *" value={cfg.stitchColor ? stitchColorName(cfg.stitchColor) : cfg.stitchCustomColor || '—'}>
-            <ColorGrid colors={STITCH_COLORS} selected={cfg.stitchColor} onSelect={v => { set('stitchColor', v); set('stitchCustomColor', ''); }} />
-            <CustomColorInput label="Type Any Stitch Color (Max Two):" value={cfg.stitchCustomColor} onChange={v => { set('stitchCustomColor', v); set('stitchColor', null); }} placeholder="e.g. Gold, Magenta, Dual Colors..." />
+            <ColorGrid colors={isAudiB85(cfg) ? B85_STITCH_COLORS : STITCH_COLORS} selected={cfg.stitchColor} onSelect={v => { set('stitchColor', v); set('stitchCustomColor', ''); }} />
+            {!isAudiB85(cfg) && <CustomColorInput label="Type Any Stitch Color (Max Two):" value={cfg.stitchCustomColor} onChange={v => { set('stitchCustomColor', v); set('stitchColor', null); }} placeholder="e.g. Gold, Magenta, Dual Colors..." />}
             {errors.stitchColor && <div className="err-msg" style={{ marginTop: 8 }}>Please choose a stitch color.</div>}
           </Sect>}
 
@@ -1145,9 +1158,9 @@ export default function Configure() {
           {/* Paddles */}
           {sourceWheelHasPaddles(cfg) && <Sect label="Paddle Shifters" value={cfg.paddleShifters + (cfg.paddleShifters === 'Magnetic' ? ` · ${cfg.paddleLength}` : isAudi && cfg.wheelStyleType === 'B9' ? ` · ${cfg.paddleFinish === 'Stealth' ? 'Black' : 'Classic'}` : '')}>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7 }}>
-              {(usesSource2D(cfg) ? F_SERIES_PADDLES : ['Standard', 'Magnetic']).map(o => (
+              {(isAudiB85(cfg) ? B85_PADDLES : usesSource2D(cfg) ? F_SERIES_PADDLES : ['Standard', 'Magnetic']).map(o => (
                 <button key={o} aria-pressed={cfg.paddleShifters === o} className={`ob${cfg.paddleShifters === o ? ' on' : ''}`} onClick={() => set('paddleShifters', o)}>
-                  {o === 'Standard' && usesSource2D(cfg) ? 'Original paddles' : o === 'None' ? 'No paddles' : o}{o === 'Magnetic' || o.includes('Carbon') ? ' (+$25.00)' : ''}
+                  {o === 'Standard' && usesSource2D(cfg) ? 'Original paddles' : o === 'None' ? 'No paddles' : o}{o === 'Magnetic' || o.includes('Carbon') || o.startsWith('Racing Style') ? ' (+$25.00)' : ''}
                 </button>
               ))}
             </div>
@@ -1164,7 +1177,7 @@ export default function Configure() {
                 </div>
               </div>
             )}
-            {cfg.paddleShifters === 'Magnetic' && (
+            {cfg.paddleShifters === 'Magnetic' && !isAudiB85(cfg) && (
               <div style={{ marginTop: 12 }}>
                 <div style={{ fontSize: 14, color: 'rgba(232,184,0,.7)', letterSpacing: 1, marginBottom: 8, padding: '6px 10px', background: 'rgba(232,184,0,.06)', border: '1px solid rgba(232,184,0,.2)' }}>
                   ✦ All of our magnetic paddle shifters are carbon fiber
@@ -1183,7 +1196,7 @@ export default function Configure() {
           <MatSection label="Top & Bottom Grip Material"
             matKey="topBottomMat" colKey="topBottomCol"
             carbonColKey="topBottomCarbonCol" customColKey="topBottomCustomColor"
-            cfg={cfg} set={set} matsOverride={cfg.brand === 'DODGE_SRT' && ['Round','Yoke'].includes(cfg.bmwShape) ? F_SERIES_TOP_MATS.filter(m => !m.carbon) : usesSource2D(cfg) ? F_SERIES_TOP_MATS : TOP_BOTTOM_MATS}
+            cfg={cfg} set={set} matsOverride={cfg.brand === 'DODGE_SRT' && ['Round','Yoke'].includes(cfg.bmwShape) ? F_SERIES_TOP_MATS.filter(m => !m.carbon) : isAudiB85(cfg) ? B85_TOP_MATS : usesSource2D(cfg) ? F_SERIES_TOP_MATS : TOP_BOTTOM_MATS}
             colorError={errors.topBottomColor} />
 
           {/* Side Mat — restricted to match Top/Bottom carbon type when applicable */}
@@ -1212,7 +1225,7 @@ export default function Configure() {
               ))}
             </div>
           </Sect>
-              <Sect label="Plastic Trim Color *" value={configuredColor(cfg.plasticTrimCol, cfg.plasticTrimCustomColor)}>
+              {!isAudiB85(cfg) && <><Sect label="Plastic Trim Color *" value={configuredColor(cfg.plasticTrimCol, cfg.plasticTrimCustomColor)}>
                 <ColorGrid colors={COLORS} selected={cfg.plasticTrimCol} onSelect={v => { set('plasticTrimCol', v); set('plasticTrimCustomColor', ''); }} />
                 <CustomColorInput label="Type Any Color:" value={cfg.plasticTrimCustomColor || ''} onChange={v => { set('plasticTrimCustomColor', v); set('plasticTrimCol', null); }} />
                 {errors.plasticTrimColor && <div className="err-msg" style={{ marginTop: 8 }}>Please choose a plastic trim color.</div>}
@@ -1221,7 +1234,7 @@ export default function Configure() {
                 <ColorGrid colors={COLORS} selected={cfg.innerTrimCol} onSelect={v => { set('innerTrimCol', v); set('innerTrimCustomColor', ''); }} />
                 <CustomColorInput label="Type Any Color:" value={cfg.innerTrimCustomColor || ''} onChange={v => { set('innerTrimCustomColor', v); set('innerTrimCol', null); }} />
                 {errors.innerTrimColor && <div className="err-msg" style={{ marginTop: 8 }}>Please choose an inner trim color.</div>}
-              </Sect>
+              </Sect></>}
             </>
           )}
 

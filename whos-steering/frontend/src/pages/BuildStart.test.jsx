@@ -21,12 +21,12 @@ const choose = (id, value) => act(() => {
 test('compatibility guides make, year, then model and filters wheel styles', async () => {
   await act(async () => root.render(<MemoryRouter><BuildStart /></MemoryRouter>));
   expect(document.activeElement.id).toBe('compatible-make');
-  expect(container.querySelectorAll('.build-brand-card')).toHaveLength(12);
+  expect(container.querySelectorAll('.build-brand-card')).toHaveLength(13);
 
   choose('compatible-make', 'AUDI');
   expect(document.activeElement.id).toBe('build-vehicle-year');
   expect(container.querySelector('.vehicle-field.is-next select').id).toBe('build-vehicle-year');
-  expect(container.querySelectorAll('.build-brand-card')).toHaveLength(3);
+  expect(container.querySelectorAll('.build-brand-card')).toHaveLength(4);
 
   choose('build-vehicle-year', '2020');
   expect(document.activeElement.id).toBe('build-vehicle-model');
@@ -57,6 +57,19 @@ test('BMW styles follow model and year without a chassis field', async () => {
   expect(container.querySelectorAll('.build-brand-card')).toHaveLength(2);
   choose('build-vehicle-model', 'X1');
   expect(container.querySelectorAll('.build-brand-card')).toHaveLength(0);
+});
+
+test('Audi B8.5 appears only for the specified series and years', async () => {
+  await act(async () => root.render(<MemoryRouter><BuildStart /></MemoryRouter>));
+  choose('compatible-make', 'AUDI');
+  choose('build-vehicle-year', '2010');
+  choose('build-vehicle-model', 'A3');
+  expect(container.textContent).toContain('B8.5 Flat Bottom Style');
+  choose('build-vehicle-year', '2018');
+  choose('build-vehicle-model', 'A6');
+  expect(container.textContent).toContain('B8.5 Flat Bottom Style');
+  choose('build-vehicle-model', 'A4');
+  expect(container.textContent).not.toContain('B8.5 Flat Bottom Style');
 });
 
 test('Toyota Supra is the only Toyota with an online wheel; other models reach contact', async () => {

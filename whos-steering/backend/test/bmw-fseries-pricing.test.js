@@ -56,6 +56,14 @@ test('Audi B9.5 pricing includes optional cover and full airbag unit',async()=>{
   assert.equal(await serverPrice()({...cfg,airbagCompat:true,airbagUpgrade:true}),89999);
 });
 
+test('Audi B8.5 racing and magnetic paddles agree with its listed base price',async()=>{
+  const cfg={brand:'AUDI',wheelStyleType:'B8.5',airbagCompat:false};
+  assert.equal(await serverPrice()(cfg),69999);
+  for(const paddleShifters of ['Racing Style 1','Racing Style 2','Magnetic'])
+    assert.equal(await serverPrice()({...cfg,paddleShifters}),72499);
+  assert.equal(await serverPrice()({...cfg,paddleShifters:'None'}),69999);
+});
+
 test('Porsche and Dodge source wheels use their listed bases and paddle rules',async()=>{
   const base={airbagCompat:false,heated:false,laneAssist:false};
   for(const wheelStyleType of ['911 Performance (991)','911 Performance (992)']) {
