@@ -302,5 +302,23 @@
     "url": "https://build.miamicarbondesigns.com/wheels/mercedes-amg/paddles/forged.webp",
     "bytes": 49602,
     "sha256": "9e312eff18bdd62f11db8f66da7fec3cfdb593918b5cc57dbe6e9158598ecef5"
+  },
+  {
+    "path": "pre/round-tb-alcantara-9800.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/mercedes-amg/pre/round-tb-alcantara-9800.webp?v=5",
+    "bytes": 69218,
+    "sha256": "951038d4d469a20f97480d36a51640e634c9d2da96a202aa34476e2c2221128d"
+  },
+  {
+    "path": "pre/round-tb-alcantara-9801.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/mercedes-amg/pre/round-tb-alcantara-9801.webp?v=5",
+    "bytes": 98228,
+    "sha256": "1efe72418be9731e355351d28328b688c570dbad543545faef597550a25ed41d"
+  },
+  {
+    "path": "stitch/round-tb.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/mercedes-amg/stitch/round-tb.webp",
+    "bytes": 43532,
+    "sha256": "c1da196e4be51ab8356b559490f4cec5096f751073574655c07e3fa0eff0180c"
   }
 ]

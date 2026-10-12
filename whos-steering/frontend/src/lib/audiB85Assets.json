@@ -1,0 +1,105 @@
+{
+  "sides": {
+    "Alcantara": "32z7lw.png",
+    "Cuir nappa": "32zays.png",
+    "Cuir nappa perfor\u00e9": "32zebo.png"
+  },
+  "top": {
+    "Cuir nappa": "32zl1g.png",
+    "Alcantara": "33056s.png",
+    "Carbone brillant": "3308jo.png",
+    "Carbone mat": "330bwk.png",
+    "Simple": "3q3ok3.png",
+    "Rouge": "3q3rwz.png",
+    "Blanc": "3q3v9v.png",
+    "Bleu": "3q3ymr.png",
+    "Rose": "3q41zn.png",
+    "Or": "3q2hhv.png",
+    "Vert": "3q2kur.png",
+    "Violet": "3q2o7n.png"
+  },
+  "airbagLeather": {
+    "Noir": "3q2uxf.png",
+    "Rouge": "5qonnq.png",
+    "Blanc": "3q2yab.png",
+    "Bleu": "3q31n7.png",
+    "Vert": "3q3503.png",
+    "Violet": "3q38cz.png",
+    "Jaune": "3q3bpv.png"
+  },
+  "airbagAlcantara": {
+    "Noir": "379m8i.png",
+    "Rouge": "37a30y.png",
+    "Blanc": "37a9qq.png",
+    "Bleu": "37ad3m.png",
+    "Vert": "37aggi.png",
+    "Violet": "37acpu.png",
+    "Jaune": "37ajfm.png"
+  },
+  "stripe": {
+    "Noir": "45zk0n.png",
+    "Rouge": "45zndj.png",
+    "Bleu": "45zqqf.png",
+    "Blanc": "45zu3b.png",
+    "Violet": "45zxg7.png",
+    "Vert": "4600t3.png",
+    "Jaune": "46045z.png",
+    "Rose": "3d6e9u.png"
+  },
+  "badge": {
+    "Sline": "378v5u.png",
+    "RS": "378yiq.png"
+  },
+  "buttons": {
+    "Oui": "5qo6va.png"
+  },
+  "racing1Finish": {
+    "Carbone": "3798sy.png"
+  },
+  "racing2Finish": {
+    "Carbone": "379ln6.png"
+  },
+  "racing1Forged": {
+    "Simple": "4uz2kx.png",
+    "Blanc": "4uyz81.png",
+    "Rouge": "4uyvv5.png",
+    "Bleu": "4uysi9.png",
+    "Or": "4uyp5d.png",
+    "Violet": "4uylsh.png",
+    "Vert": "4uypj5.png",
+    "Rose": "4uym69.png"
+  },
+  "racing2Forged": {
+    "Simple": "37815e.png",
+    "Blanc": "3787v6.png",
+    "Rouge": "378b82.png",
+    "Bleu": "378eky.png",
+    "Or": "378hxu.png",
+    "Violet": "378laq.png",
+    "Vert": "378onm.png",
+    "Rose": "378s0i.png"
+  },
+  "racing1Symbols": {
+    "Noir": "0qa0o6.png",
+    "Rouge": "0qa412.png",
+    "Bleu": "0qa7dy.png",
+    "Blanc": "0qaaqu.png",
+    "Violet": "0qae3q.png",
+    "Vert": "0qahgm.png",
+    "Jaune": "0qakti.png",
+    "Rose": "0qauw6.png"
+  },
+  "racing2Symbols": {
+    "Noir": "559kfn.png",
+    "Rouge": "559nsj.png",
+    "Bleu": "559r5f.png",
+    "Blanc": "559uib.png",
+    "Violet": "559xv7.png",
+    "Vert": "55a183.png",
+    "Jaune": "55a4kz.png",
+    "Rose": "559dpv.png"
+  },
+  "magneticSymbols": {
+    "Blanc": "8f0w77.png"
+  }
+}

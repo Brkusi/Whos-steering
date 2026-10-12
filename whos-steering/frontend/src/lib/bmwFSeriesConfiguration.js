@@ -5,7 +5,7 @@ export const F_SERIES_SHAPES = ['Round', 'Yoke', 'Flat top & bottom', 'Flat bott
 export const F_SERIES_SHAPE_IDS = {Round:'round', Yoke:'yoke', 'Flat top & bottom':'flat-flat', 'Flat bottom':'flat-round'};
 export const F_SERIES_PADDLES = ['Standard', 'None', 'Glossy Carbon', 'Matte Carbon', 'Forged Carbon'];
 export const SOURCE_WHEEL_STYLES = {
-  AUDI: {'B8.5': {family:'audi-b85', shapes:['Flat bottom'], led:['Flat bottom'], paddles:true, airbagStitch:false}},
+  AUDI: {'B8.5': {family:'audi-b85', shapes:['Flat bottom'], led:['Flat bottom'], paddles:true, airbagStitch:true}},
   TOYOTA: {'Supra GR': {family:'supra-gr', shapes:F_SERIES_SHAPES.filter(shape => shape !== 'Round'), led:['Flat top & bottom','Flat bottom'], paddles:true}},
   MERCEDES: {
     'AMG Performance': {family:'mercedes-amg', shapes:F_SERIES_SHAPES, led:['Flat bottom'], paddles:true},
@@ -21,10 +21,11 @@ export const SOURCE_WHEEL_STYLES = {
 };
 export const sourceWheelStyle = cfg => SOURCE_WHEEL_STYLES[cfg.brand]?.[cfg.wheelStyleType];
 export const sourceWheelShapes = cfg => sourceWheelStyle(cfg)?.shapes || F_SERIES_SHAPES;
+export const sourceWheelShape = cfg => sourceWheelShapes(cfg).includes(cfg.bmwShape) ? cfg.bmwShape : sourceWheelShapes(cfg)[0];
 export const sourceWheelHasPaddles = cfg => sourceWheelStyle(cfg)?.paddles ?? !isAudiRS2020(cfg);
 export const sourceWheelSupportsLed = cfg => sourceWheelStyle(cfg)
-  ? sourceWheelStyle(cfg).led.includes(cfg.bmwShape || 'Round')
-  : (cfg.bmwShape || 'Round') === 'Flat bottom';
+  ? sourceWheelStyle(cfg).led.includes(sourceWheelShape(cfg))
+  : sourceWheelShape(cfg) === 'Flat bottom';
 export const bmwStyleLabel = style => style === 'G-Series' ? 'G-Series LCI' : style === 'RS 2020+' ? 'Audi B9.5' : style;
 export const isFSeries = cfg => cfg.brand === 'BMW' && cfg.wheelStyleType === 'F-Series';
 export const isGSeriesPreLCI = cfg => cfg.brand === 'BMW' && cfg.wheelStyleType === 'G-Series Pre LCI';
@@ -37,7 +38,8 @@ export const sourceMaterial = material => ({'Smooth Leather':'smooth',Leather:'s
 
 export function bmwFSeriesConfiguration(cfg, parseColor) {
   const appearance=wheelAppearance(cfg,parseColor);
-  const shape=F_SERIES_SHAPE_IDS[cfg.bmwShape] || 'round';
+  // Saved builds and callers outside the configurator also need an existing asset.
+  const shape=F_SERIES_SHAPE_IDS[sourceWheelShape(cfg)];
   const paddle=sourceWheelHasPaddles(cfg) ? ({'Glossy Carbon':'glossy','Matte Carbon':'matte','Forged Carbon':'forged',Magnetic:'glossy'})[cfg.paddleShifters] || null : null;
   const swatches = appearance.top.material === 'Forged Carbon' ? FORGED_CARBON_COLORS
     : appearance.top.material === 'Honeycomb Carbon' ? HONEYCOMB_CARBON_COLORS : CLASSIC_CARBON_COLORS;

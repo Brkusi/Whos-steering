@@ -1,4 +1,4 @@
-import { gripZoneOpacity, stripeColorIndex, wheelSilhouetteOpacity } from './bmwFSeriesComposite';
+import { recolorSourcePhotographs, gripZoneOpacity, stripeColorIndex, wheelSilhouetteOpacity } from './bmwFSeriesComposite';
 import { stitchMaskWeight } from './bmwFSeriesSourceRenderer';
 
 test('material layers stop at the photographed wheel silhouette', () => {
@@ -35,4 +35,25 @@ test('compressed red noise in source maps does not become stitching', () => {
   expect(stitchMaskWeight(145,200)).toBe(0);
   expect(stitchMaskWeight(255,220)).toBe(1);
   expect(stitchMaskWeight(255,65)).toBe(1);
+});
+
+
+test('photographed missing-map materials preserve alpha and both source color endpoints',()=>{
+  const dark=new Uint8ClampedArray([20,30,40,255,0,0,0,0]);
+  const light=new Uint8ClampedArray([180,190,200,255,250,250,250,0]);
+  expect([...recolorSourcePhotographs(dark.slice(),light,'#17181b')]).toEqual([...dark]);
+  expect([...recolorSourcePhotographs(dark.slice(),light,'#dcded0')]).toEqual([180,190,200,255,0,0,0,0]);
+  const red=recolorSourcePhotographs(dark.slice(),light,'#ff0000');
+  expect(red[0]).toBeGreaterThan(red[1]);expect(red[0]).toBeGreaterThan(red[2]);
+  expect(red[3]).toBe(255);expect(red[7]).toBe(0);
+});
+
+
+test('rim coverage keeps dark carbon texture from punching holes in leather masks',()=>{
+  expect(wheelSilhouetteOpacity(2,3,2,255,true,255)).toBe(255);
+  expect(wheelSilhouetteOpacity(12,10,9,255,true,255)).toBe(255);
+  // Neither the outside background nor open cutouts gain coverage without rim alpha.
+  expect(wheelSilhouetteOpacity(0,0,0,255,true,0)).toBe(0);
+  expect(wheelSilhouetteOpacity(0,0,0,0,false,0)).toBe(0);
+  expect(wheelSilhouetteOpacity(0,0,0,255,true,80)).toBe(80);
 });
