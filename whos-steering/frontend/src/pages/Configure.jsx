@@ -1121,11 +1121,15 @@ export default function Configure() {
             {cfg.ledDisplay && (
               <div style={{ marginTop: 12, display: 'flex', alignItems: 'center', gap: 12 }}>
                 <div style={{ flexShrink: 0, border: '1px solid var(--b)', overflow: 'hidden', background: '#0A0A0A', width: 120, height: 80 }}>
-                  <img src="/led-display.png" alt={isAudi ? 'LED Display Strip' : 'RPM Gauge'}
-                    style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 30%', display: 'block' }} />
+                  {isAudiB85(cfg)
+                    ? <div role="img" aria-label="Audi-style shift lights and gear display" style={{height:'100%',display:'flex',alignItems:'center',justifyContent:'center',gap:4,background:'radial-gradient(ellipse at center,#26303a,#07090b 75%)'}}>
+                        <span style={{color:'#348de3',fontSize:15,letterSpacing:-2}}>••••</span><strong style={{color:'#e9f3ff',border:'1px solid #75808b',padding:'2px 4px',fontSize:12}}>3 RPM</strong><span style={{color:'#e22938',fontSize:15,letterSpacing:-2}}>••••</span>
+                      </div>
+                    : <img src="/led-display.png" alt={isAudi ? 'LED Display Strip' : 'RPM Gauge'}
+                        style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 30%', display: 'block' }} />}
                 </div>
                 <div style={{ fontSize: 14, color: 'var(--t)', lineHeight: 1.7 }}>
-                  Integrated LED RPM shift-light strip with live speed and gear display — embedded directly into the steering wheel, visible without moving your eyes from the road.
+                  {isAudiB85(cfg) ? 'Audi-style curved shift lights with a central gear and RPM readout, integrated into the upper rim.' : 'Integrated LED RPM shift-light strip with live speed and gear display — embedded directly into the steering wheel, visible without moving your eyes from the road.'}
                 </div>
               </div>
             )}
