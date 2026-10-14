@@ -37,18 +37,28 @@ test('LED replaces the stripe and cover changes replace only the airbag layer', 
   const cover=render({stripeConceptId:'C-6',airbagCompat:true,airbagMat:'Alcantara',airbagStitchColor:'#CC2200'});
   expect(cover.filter((layer,i)=>layer.src!==baseline[i].src)).toHaveLength(1);
 });
-test('stale options cannot expose unsupported colors, shapes, or badges', () => {
+test('stale structural options normalize while production colors are preserved', () => {
   const cfg=normalizeB85Options({...defaults,bmwShape:'Yoke',topBottomMat:'Honeycomb Carbon',sideCol:'#ff0000',audiBadge:'RS3',paddleShifters:'LED'});
-  expect(cfg).toMatchObject({bmwShape:'Flat bottom',wheelStyle:'Sport',topBottomMat:'Smooth Leather',sideCol:'#111111',audiBadge:'RS',paddleShifters:'Standard'});
+  expect(cfg).toMatchObject({bmwShape:'Flat bottom',wheelStyle:'Sport',topBottomMat:'Smooth Leather',sideCol:'#ff0000',audiBadge:'RS',paddleShifters:'Standard'});
 });
 
 test('airbag color variants alter stitching, while cover material remains black', () => {
   const cfg=normalizeB85Options({...defaults,airbagCompat:true,airbagCol:'#CC2200',airbagStitchColor:'#E8B800'});
-  expect(cfg.airbagCol).toBe('#111111');
+  expect(cfg.airbagCol).toBe('#CC2200');
   expect(audiB85Layers(cfg).map(l=>l.src)).toContain(B85_ROOT+assets.airbagLeather.Jaune);
 });
 
-test('restored builds cannot retain hidden custom stitching or a stripe alongside LEDs', () => {
+test('restored builds preserve custom stitching but clear stripes alongside LEDs', () => {
   const cfg=normalizeB85Options({...defaults,ledDisplay:true,stripeConceptId:'C-6',stitchColor:'#FF69B4',stitchCustomColor:'Orange',airbagCompat:false,airbagUpgrade:true});
-  expect(cfg).toMatchObject({stripeConceptId:'C-1',stitchColor:null,stitchCustomColor:'',airbagUpgrade:false});
+  expect(cfg).toMatchObject({stripeConceptId:'C-1',stitchColor:'#FF69B4',stitchCustomColor:'Orange',airbagUpgrade:false});
+});
+
+
+test('custom production colors survive normalization and preview fallback', () => {
+  const custom = {topBottomCustomColor:'Pearl gold',sideCustomColor:'Beige',stitchCustomColor:'Teal and silver',stripeCustomColor:'Champagne',airbagCustomColor:'Ivory',airbagStitchCustomColor:'Copper',b85PaddleCarbonCustomColor:'Bronze',b85PaddleSymbolCustomColor:'Coral'};
+  const cfg = normalizeB85Options({...defaults,...custom,airbagCompat:true});
+  expect(cfg).toMatchObject(custom);
+  expect(normalizeB85Options(cfg)).toMatchObject(custom);
+  expect(audiB85Layers(cfg).every(layer => layer.src && !layer.src.includes('undefined'))).toBe(true);
+  expect(cfg).toMatchObject(custom);
 });

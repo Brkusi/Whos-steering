@@ -1,3 +1,4 @@
+import { B85_STRIPE_CONCEPTS } from './data';
 import assets from './audiB85Assets.json';
 
 export const B85_ROOT = '/models/audi-b85/source/';
@@ -41,19 +42,19 @@ export function normalizeB85Options(config) {
   if (config.brand !== 'AUDI' || config.wheelStyleType !== 'B8.5') return config;
   const topBottomMat = ['Smooth Leather','Alcantara','Classic Carbon','Matte Carbon','Forged Carbon'].includes(config.topBottomMat) ? config.topBottomMat : 'Smooth Leather';
   return {...config, wheelStyle:'Sport', bmwShape:'Flat bottom', topBottomMat,
-    topBottomCol:'#111111', topBottomCustomColor:'', sideCol:'#111111', sideCustomColor:'',
+    topBottomCol:config.topBottomCol ?? '#111111', sideCol:config.sideCol ?? '#111111',
     sideMat: ['Smooth Leather','Perforated Leather','Alcantara'].includes(config.sideMat) ? config.sideMat : 'Perforated Leather',
     topBottomCarbonCol:topBottomMat === 'Forged Carbon' ? (forged[config.topBottomCarbonCol] ? config.topBottomCarbonCol : '#111111') : '#111111',
     paddleShifters:['None','Standard','Racing Style 1','Racing Style 2','Magnetic'].includes(config.paddleShifters) ? config.paddleShifters : 'Standard',
     b85PaddleMaterial:config.b85PaddleMaterial === 'Forged Carbon' ? 'Forged Carbon' : 'Classic Carbon',
     b85PaddleCarbonCol:forged[config.b85PaddleCarbonCol] ? config.b85PaddleCarbonCol : '#111111',
     b85PaddleSymbolCol:colors[config.b85PaddleSymbolCol] ? config.b85PaddleSymbolCol : '#F0F0F0',
-    stripeConceptId:!config.ledDisplay && stripes[config.stripeConceptId] ? config.stripeConceptId : 'C-1', stripeCustomColor:'',
-    stitchColor:['#111111','#CC2200','#F0F0F0','#0A1F6E','#1A5C2A','#6A1FA8','#E8B800'].includes(config.stitchColor) ? config.stitchColor : null, stitchCustomColor:'',
+    stripeConceptId:!config.ledDisplay && B85_STRIPE_CONCEPTS.some(c => c.id === config.stripeConceptId) ? config.stripeConceptId : 'C-1',
+    stripeCustomColor:config.ledDisplay ? '' : config.stripeCustomColor,
     airbagMat:config.airbagMat && !['Smooth Leather','Alcantara'].includes(config.airbagMat) ? 'Smooth Leather' : config.airbagMat,
     airbagUpgrade:Boolean(config.airbagCompat && config.airbagUpgrade),
-    audiBadge:config.audiBadge === 'S' ? 'S' : 'RS', audiLogoCol:'#111111', audiLogoCustomColor:'',
-    airbagCol:'#111111', airbagCustomColor:'',
-    airbagStitchColor:colors[config.airbagStitchColor] ? config.airbagStitchColor : '#111111', airbagStitchCustomColor:'',
+    audiBadge:config.audiBadge === 'S' ? 'S' : 'RS', audiLogoCol:config.audiLogoCol ?? '#111111',
+    airbagCol:config.airbagCol ?? '#111111',
+    airbagStitchColor:config.airbagStitchColor ?? '#111111',
   };
 }

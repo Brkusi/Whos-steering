@@ -18,6 +18,13 @@ export const COLORS = [
 ];
 export const B85_MATERIAL_COLORS = COLORS.filter(color => ['Black','Red','White','Blue','Dark Green','Purple','Yellow'].includes(color.n));
 
+// Additional production colors shared by stitching and stripe selections.
+const EXTRA_ACCENT_COLORS = [
+  {n:'Gold',h:'#D4AF37'}, {n:'Silver',h:'#C0C0C0'}, {n:'Beige',h:'#D8C3A5'},
+  {n:'Tan',h:'#C19A6B'}, {n:'Burgundy',h:'#800020'}, {n:'Teal',h:'#008080'},
+  {n:'Turquoise',h:'#40E0D0'}, {n:'Magenta',h:'#CC00CC'}, {n:'Lavender',h:'#B79CED'},
+];
+
 // ── Stripe concepts (image-based) ────────────────────────────────────────────
 export const STRIPE_CONCEPTS = [
   { id: 'C-1',  label: 'No Stripe',       img: '/stripes/stripe-none.jpg',       stripes: [] },
@@ -33,18 +40,13 @@ export const STRIPE_CONCEPTS = [
   { id: 'C-11', label: 'Brown',           img: '/stripes/stripe-brown.jpg',       stripes: ['#6B3A2A'] },
   { id: 'C-12', label: 'BMW Tri Color',   img: '/stripes/stripe-bmw-tri.jpg',     stripes: ['#87CEEB','#003DA5','#CC0000'], tri: true, triKey: 'bmw' },
   { id: 'C-13', label: 'German Tri Color',img: '/stripes/stripe-german-tri.jpg',  stripes: ['#000000','#DD0000','#FFCC00'], tri: true, triKey: 'germany' },
+  {id:'B85-W', label:'White', stripes:['#F0F0F0']},
+  {id:'B85-Y', label:'Yellow', stripes:['#E8B800']},
+  ...[{n:'Gray',h:'#888888'}, ...EXTRA_ACCENT_COLORS].map(c => ({id:`accent-${c.n.toLowerCase()}`,label:c.n,stripes:[c.h]})),
 ];
 
-// The B8.5 reference offers single-color 12 o'clock markers only.
-export const B85_STRIPE_CONCEPTS = [
-  STRIPE_CONCEPTS[0], STRIPE_CONCEPTS[1], STRIPE_CONCEPTS[5],
-  {...STRIPE_CONCEPTS[3], label:'Blue'},
-  {id:'B85-W', label:'White', stripes:['#F0F0F0']},
-  STRIPE_CONCEPTS[9],
-  {...STRIPE_CONCEPTS[7], label:'Green'},
-  {id:'B85-Y', label:'Yellow', stripes:['#E8B800']},
-  STRIPE_CONCEPTS[2],
-];
+// Single-color markers; unsupported preview colors remain saved for production.
+export const B85_STRIPE_CONCEPTS = STRIPE_CONCEPTS.filter(c => !c.tri);
 
 // ── Stitch colors with real photos ───────────────────────────────────────────
 export const STITCH_COLORS = [
@@ -61,8 +63,9 @@ export const STITCH_COLORS = [
   { n: 'Red',         h: '#CC2200', img: '/stitches/stitch-red.jpg' },
   { n: 'White',       h: '#F0F0F0', img: '/stitches/stitch-white.jpg' },
   { n: 'Yellow',      h: '#E8B800', img: '/stitches/stitch-yellow.jpg' },
+  ...EXTRA_ACCENT_COLORS,
 ];
-export const B85_STITCH_COLORS = STITCH_COLORS.filter(color => ['Black','Red','Dark Blue','White','Purple','Dark Green','Yellow'].includes(color.n));
+export const B85_STITCH_COLORS = STITCH_COLORS;
 
 // ── Classic Carbon colors (image-based) ────────────────────────────────────
 export const CLASSIC_CARBON_COLORS = [

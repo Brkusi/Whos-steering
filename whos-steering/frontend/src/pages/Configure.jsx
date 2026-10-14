@@ -1,7 +1,7 @@
 import { normalizeB85Options, B85_LED } from '../lib/audiB85Configuration';
 import SalesTools, {trackSales} from '../components/SalesTools';
 import useViewport from '../hooks/useViewport';
-import { useState, useEffect, useCallback, useRef, lazy, Suspense } from 'react';
+import { useState, useEffect, useCallback, useRef, useId, lazy, Suspense } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import WheelPreview from '../components/WheelPreview';
 import {
@@ -51,7 +51,18 @@ function OptionRow({ options, selected, onSelect }) {
   );
 }
 
-function ColorGrid({ colors, selected, onSelect }) {
+// Identical geometry keeps samples comparable; only thread or marker color changes.
+function AccentSample({ colors, stitch = false }) {
+  return <svg viewBox="0 0 100 66" width="100%" height="100%" aria-hidden="true" style={{display:'block',background:'#151515'}}>
+    <path d="M-10 62 Q50 -12 110 62" fill="none" stroke="#353535" strokeWidth="32" />
+    <path d="M-10 62 Q50 -12 110 62" fill="none" stroke="#202020" strokeWidth="26" />
+    {stitch ? <path d="M-10 62 Q50 -12 110 62" fill="none" stroke={colors[0]} strokeWidth="3" strokeDasharray="3 4" />
+      : colors.map((color, i) => <path key={i} d={`M${44 + i * 12 / colors.length} 13 L${44 + i * 12 / colors.length} 43`} stroke={color} strokeWidth={12 / colors.length} />)}
+    {!stitch && !colors.length && <text x="50" y="60" textAnchor="middle" fill="#aaa" fontSize="9">NO STRIPE</text>}
+  </svg>;
+}
+
+function ColorGrid({ colors, selected, onSelect, stitch = false }) {
   return (
     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 6, marginTop: 8 }}>
       {colors.map(c => (
@@ -60,7 +71,7 @@ function ColorGrid({ colors, selected, onSelect }) {
             border: `2px solid ${selected === c.h ? 'var(--y)' : 'transparent'}`,
             boxShadow: selected === c.h ? '0 0 0 1px var(--y)' : 'none',
             overflow: 'hidden', transition: 'border-color .15s' }}>
-          {c.img
+          {stitch ? <AccentSample colors={[c.h]} stitch /> : c.img
             ? <img src={c.img} alt={c.n} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
             : <div style={{ width: '100%', height: '100%', background: c.h }} />
           }
@@ -76,10 +87,11 @@ function ColorGrid({ colors, selected, onSelect }) {
 }
 
 function CustomColorInput({ label, value, onChange, placeholder }) {
+  const id = useId();
   return (
     <div style={{ marginTop: 10 }}>
-      <label className="fl">{label || 'Type Any Color:'}</label>
-      <input className="fi" type="text" value={value} onChange={e => onChange(e.target.value)}
+      <label className="fl" htmlFor={id}>{label || 'Type Any Color:'}</label>
+      <input id={id} className="fi" type="text" value={value || ''} onChange={e => onChange(e.target.value)}
         placeholder={placeholder || 'e.g. Gold, Magenta, Beige...'} style={{ marginTop: 4 }} />
     </div>
   );
@@ -105,7 +117,7 @@ function Toggle({ label, sub, value, onChange }) {
 }
 
 function StripeConcept({ concept, selected, onSelect }) {
-  const { id, label, img } = concept;
+  const { id, label } = concept;
   const isSelected = selected === id;
   return (
     <button type="button" aria-label={label} aria-pressed={isSelected} onClick={() => onSelect(id)}
@@ -113,12 +125,7 @@ function StripeConcept({ concept, selected, onSelect }) {
       <div style={{ width: 80, height: 52, border: `2px solid ${isSelected ? 'var(--y)' : '#2A2A2A'}`,
         borderRadius: 4, overflow: 'hidden', position: 'relative',
         boxShadow: isSelected ? '0 0 0 1px var(--y)' : 'none', transition: 'border-color .15s' }}>
-        {img
-          ? <img src={img} alt={label} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-          : <div style={{ width: '100%', height: '100%', background: '#111', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <span style={{ fontSize: 14, color: concept.stripes?.[0] || '#555' }}>{concept.stripes?.length ? '▌' : 'NONE'}</span>
-            </div>
-        }
+        <AccentSample colors={concept.stripes || []} />
         {isSelected && (
           <div style={{ position: 'absolute', inset: 0, background: 'rgba(232,184,0,.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <span style={{ fontSize: 14, color: 'var(--y)' }}>✓</span>
@@ -221,21 +228,19 @@ function MatSection({ label, matKey, colKey, carbonColKey, customColKey, cfg, se
             selected={cfg[carbonColKey]}
             onSelect={v => { set(carbonColKey, v); set(customColKey, ''); }}
           />
-          {cType !== 'honeycomb' && !isAudiB85(cfg) && (
-            <CustomColorInput
-              label="Type Any Color:"
-              value={cfg[customColKey]}
-              onChange={v => { set(customColKey, v); set(carbonColKey, null); }}
-            />
-          )}
+          <CustomColorInput
+            label="Type Any Color:"
+            value={cfg[customColKey]}
+            onChange={v => { set(customColKey, v); set(carbonColKey, null); }}
+          />
         </>
-      ) : selectedMat?.col && !isAudiB85(cfg) ? (
+      ) : selectedMat?.col ? (
         <>
           <div style={{ fontSize: 14, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 4, color: 'var(--t)' }}>
             Color <span className="req">*</span>: {cfg[customColKey] ? cfg[customColKey] : colorName(cfg[colKey])}
           </div>
           <ColorGrid colors={isAudiB85(cfg) ? B85_MATERIAL_COLORS : COLORS} selected={cfg[colKey]} onSelect={v => { set(colKey, v); set(customColKey, ''); }} />
-          {!isAudiB85(cfg) && <CustomColorInput label="Type Any Color:" value={cfg[customColKey]} onChange={v => { set(customColKey, v); set(colKey, null); }} />}
+          <CustomColorInput label="Type Any Color:" value={cfg[customColKey]} onChange={v => { set(customColKey, v); set(colKey, null); }} />
         </>
       ) : null}
       {colorError && <div className="err-msg" style={{ marginTop: 8 }}>Please choose a color option.</div>}
@@ -489,6 +494,7 @@ export default function Configure() {
   const set = useCallback((key, val) => {
     setCfg(prev => currentWheelOptions({ ...prev, [key]: val,
       ...(key === 'ledDisplay' && val ? {stripeConceptId:'C-1',stripeCustomColor:''} : {}),
+      ...(key === 'stripeCustomColor' && val.trim() ? {ledDisplay:false} : {}),
       ...(key === 'stripeConceptId' && val !== 'C-1' ? {ledDisplay:false} : {}),
     }));
 
@@ -796,7 +802,7 @@ export default function Configure() {
         ? ['Paddle Finish', cfg.paddleFinish === 'Stealth' ? 'Black (all black)' : 'Classic (silver & black)']
         : null,
 
-      ...(isAudiB85(cfg) && cfg.paddleShifters?.startsWith('Racing Style') ? [['Paddle Finish',cfg.b85PaddleMaterial], ...(cfg.b85PaddleMaterial === 'Forged Carbon' ? [['Paddle Carbon',B85_FORGED_CARBON_COLORS.find(c => c.h === cfg.b85PaddleCarbonCol)?.n]] : []), ['Paddle Symbols',colorName(cfg.b85PaddleSymbolCol)]] : []),
+      ...(isAudiB85(cfg) && cfg.paddleShifters?.startsWith('Racing Style') ? [['Paddle Finish',cfg.b85PaddleMaterial], ...(cfg.b85PaddleMaterial === 'Forged Carbon' ? [['Paddle Carbon',cfg.b85PaddleCarbonCustomColor || B85_FORGED_CARBON_COLORS.find(c => c.h === cfg.b85PaddleCarbonCol)?.n]] : []), ['Paddle Symbols',configuredColor(cfg.b85PaddleSymbolCol, cfg.b85PaddleSymbolCustomColor)]] : []),
       ['Top & Bottom Grip Material', cfg.topBottomMat],
       ['Top & Bottom Color', topColor],
       ['Side Grip Material', cfg.sideMat],
@@ -910,6 +916,7 @@ export default function Configure() {
           borderRight: isMobileViewport ? 'none' : '1px solid var(--b)', overflow: 'hidden',
           order: 1,
         }}>
+          <p style={{margin:0,padding:'8px 12px',fontSize:12,lineHeight:1.5,color:'var(--t)',flexShrink:0}}>Preview is a visual guide and may not exactly match your finished wheel. Colors, materials, and details may vary. Custom color requests are saved even when they aren’t shown.</p>
           {!isAudi && cfg.wheelStyleType === 'G-Series' ? (
             <div style={{
               position: 'relative',
@@ -1134,20 +1141,20 @@ export default function Configure() {
           </Sect>}
 
           {/* Stripe */}
-          {!(usesSource2D(cfg) && cfg.bmwShape === 'Yoke') && <Sect label="Top Stripe" value={selectedStripeConcept.label}>
+          {!(usesSource2D(cfg) && cfg.bmwShape === 'Yoke') && <Sect label="Top Stripe" value={cfg.stripeCustomColor || selectedStripeConcept.label}>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(72px,1fr))', gap: 10, marginBottom: 14 }}>
               {(isAudiB85(cfg) ? B85_STRIPE_CONCEPTS : STRIPE_CONCEPTS).map(sc => (
-                <StripeConcept key={sc.id} concept={sc} selected={cfg.stripeConceptId} onSelect={v => set('stripeConceptId', v)} />
+                <StripeConcept key={sc.id} concept={sc} selected={cfg.stripeCustomColor ? null : cfg.stripeConceptId} onSelect={v => { set('stripeConceptId', v); set('stripeCustomColor', ''); }} />
               ))}
             </div>
-            {!isAudiB85(cfg) && <CustomColorInput label="Type Any Stripe Color:" value={cfg.stripeCustomColor} onChange={v => set('stripeCustomColor', v)} />}
+            <CustomColorInput label="Type Any Stripe Color:" value={cfg.stripeCustomColor} onChange={v => set('stripeCustomColor', v)} />
           </Sect>}
 
           {/* Stitch */}
           {sourceWheelStyle(cfg)?.stitch !== false && <Sect label="Stitch Color *" value={cfg.stitchColor ? stitchColorName(cfg.stitchColor) : cfg.stitchCustomColor || '—'}>
             {isAudiB85(cfg) && <p style={{fontSize:14,color:'var(--t)',lineHeight:1.5}}>Stitch color is saved for your build. This preview does not display stitching changes.</p>}
-            <ColorGrid colors={isAudiB85(cfg) ? B85_STITCH_COLORS : STITCH_COLORS} selected={cfg.stitchColor} onSelect={v => { set('stitchColor', v); set('stitchCustomColor', ''); }} />
-            {!isAudiB85(cfg) && <CustomColorInput label="Type Any Stitch Color (Max Two):" value={cfg.stitchCustomColor} onChange={v => { set('stitchCustomColor', v); set('stitchColor', null); }} placeholder="e.g. Gold, Magenta, Dual Colors..." />}
+            <ColorGrid stitch colors={isAudiB85(cfg) ? B85_STITCH_COLORS : STITCH_COLORS} selected={cfg.stitchColor} onSelect={v => { set('stitchColor', v); set('stitchCustomColor', ''); }} />
+            <CustomColorInput label="Type Any Stitch Color (Max Two):" value={cfg.stitchCustomColor} onChange={v => { set('stitchCustomColor', v); set('stitchColor', null); }} placeholder="e.g. Gold, Magenta, Dual Colors..." />
             {errors.stitchColor && <div className="err-msg" style={{ marginTop: 8 }}>Please choose a stitch color.</div>}
           </Sect>}
 
@@ -1170,9 +1177,11 @@ export default function Configure() {
             {isAudiB85(cfg) && cfg.paddleShifters?.startsWith('Racing Style') && <div style={{marginTop:16}}>
               <div className="fl">Paddle finish</div>
               <div style={{display:'flex',gap:8,marginBottom:12}}>{['Classic Carbon','Forged Carbon'].map(finish => <button type="button" key={finish} className={`ob${cfg.b85PaddleMaterial === finish ? ' on' : ''}`} aria-pressed={cfg.b85PaddleMaterial === finish} onClick={() => set('b85PaddleMaterial', finish)}>{finish}</button>)}</div>
-              {cfg.b85PaddleMaterial === 'Forged Carbon' && <CarbonColorGrid colors={B85_FORGED_CARBON_COLORS} selected={cfg.b85PaddleCarbonCol} onSelect={v => set('b85PaddleCarbonCol',v)} />}
+              {cfg.b85PaddleMaterial === 'Forged Carbon' && <CarbonColorGrid colors={B85_FORGED_CARBON_COLORS} selected={cfg.b85PaddleCarbonCol} onSelect={v => { set('b85PaddleCarbonCol',v); set('b85PaddleCarbonCustomColor',''); }} />}
               <div className="fl" style={{marginTop:12}}>Paddle + / − color</div>
-              <ColorGrid colors={B85_MATERIAL_COLORS} selected={cfg.b85PaddleSymbolCol} onSelect={v => set('b85PaddleSymbolCol',v)} />
+              <ColorGrid colors={B85_MATERIAL_COLORS} selected={cfg.b85PaddleSymbolCol} onSelect={v => { set('b85PaddleSymbolCol',v); set('b85PaddleSymbolCustomColor',''); }} />
+              {cfg.b85PaddleMaterial === 'Forged Carbon' && <CustomColorInput label="Type Any Paddle Carbon Color:" value={cfg.b85PaddleCarbonCustomColor} onChange={v => set('b85PaddleCarbonCustomColor', v)} />}
+              <CustomColorInput label="Type Any Paddle Symbol Color:" value={cfg.b85PaddleSymbolCustomColor} onChange={v => set('b85PaddleSymbolCustomColor', v)} />
             </div>}
             {isAudi && cfg.wheelStyleType === 'B9' && cfg.paddleShifters === 'Standard' && (
               <div style={{ marginTop: 14 }}>
@@ -1301,23 +1310,23 @@ export default function Configure() {
                     </button>
                   ))}
                 </div>
-                {isAudiB85(cfg) && <p style={{fontSize:14,color:'var(--t)'}}>Black cover with your choice of stitching below.</p>}
+                {isAudiB85(cfg) && <p style={{fontSize:14,color:'var(--t)'}}>The preview shows a black cover. Your selected cover and stitching colors are saved for your build.</p>}
                 {errors.airbagMaterial && <div className="err-msg" style={{ margin: '-6px 0 10px' }}>Please choose an airbag material.</div>}
-                {cfg.airbagMat && !isAudiB85(cfg) && (
+                {cfg.airbagMat && (
                   <>
                     <div style={{ fontSize: 14, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 4, color: 'var(--t)' }}>
                       Color <span className="req">*</span>: {configuredColor(cfg.airbagCol, cfg.airbagCustomColor)}
                     </div>
                     <ColorGrid colors={isAudiB85(cfg) ? B85_MATERIAL_COLORS : COLORS} selected={cfg.airbagCol} onSelect={v => { set('airbagCol', v); set('airbagCustomColor', ''); }} />
-                    {!isAudiB85(cfg) && <CustomColorInput label="Type Any Color:" value={cfg.airbagCustomColor} onChange={v => { set('airbagCustomColor', v); set('airbagCol', null); }} />}
+                    <CustomColorInput label="Type Any Color:" value={cfg.airbagCustomColor} onChange={v => { set('airbagCustomColor', v); set('airbagCol', null); }} />
                     {errors.airbagColor && <div className="err-msg" style={{ marginTop: 8 }}>Please choose an airbag color.</div>}
                   </>
                 )}
                 {sourceWheelStyle(cfg)?.airbagStitch !== false && <><div style={{ fontSize: 14, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase', margin: '16px 0 4px', color: 'var(--t)' }}>
                   Airbag Stitch Color <span className="req">*</span>: {configuredColor(cfg.airbagStitchColor, cfg.airbagStitchCustomColor, 'stitch')}
                 </div>
-                <ColorGrid colors={isAudiB85(cfg) ? B85_STITCH_COLORS : STITCH_COLORS} selected={cfg.airbagStitchColor} onSelect={v => { set('airbagStitchColor', v); set('airbagStitchCustomColor', ''); }} />
-                {!isAudiB85(cfg) && <CustomColorInput label="Type Any Stitch Color:" value={cfg.airbagStitchCustomColor} onChange={v => { set('airbagStitchCustomColor', v); set('airbagStitchColor', null); }} placeholder="e.g. Gold, Magenta, Dual Colors..." />}
+                <ColorGrid stitch colors={isAudiB85(cfg) ? B85_STITCH_COLORS : STITCH_COLORS} selected={cfg.airbagStitchColor} onSelect={v => { set('airbagStitchColor', v); set('airbagStitchCustomColor', ''); }} />
+                <CustomColorInput label="Type Any Stitch Color:" value={cfg.airbagStitchCustomColor} onChange={v => { set('airbagStitchCustomColor', v); set('airbagStitchColor', null); }} placeholder="e.g. Gold, Magenta, Dual Colors..." />
                 {errors.airbagStitchColor && <div className="err-msg" style={{ marginTop: 8 }}>Please choose an airbag stitch color.</div>}</>}
               </div>
             )}
