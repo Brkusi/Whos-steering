@@ -40,9 +40,9 @@ export const STRIPE_CONCEPTS = [
   { id: 'C-11', label: 'Brown',           img: '/stripes/stripe-brown.jpg',       stripes: ['#6B3A2A'] },
   { id: 'C-12', label: 'BMW Tri Color',   img: '/stripes/stripe-bmw-tri.jpg',     stripes: ['#87CEEB','#003DA5','#CC0000'], tri: true, triKey: 'bmw' },
   { id: 'C-13', label: 'German Tri Color',img: '/stripes/stripe-german-tri.jpg',  stripes: ['#000000','#DD0000','#FFCC00'], tri: true, triKey: 'germany' },
-  {id:'B85-W', label:'White', stripes:['#F0F0F0']},
-  {id:'B85-Y', label:'Yellow', stripes:['#E8B800']},
-  ...[{n:'Gray',h:'#888888'}, ...EXTRA_ACCENT_COLORS].map(c => ({id:`accent-${c.n.toLowerCase()}`,label:c.n,stripes:[c.h]})),
+  {id:'B85-W', label:'White', img:'/stripes/stripe-white.jpg', stripes:['#F0F0F0']},
+  {id:'B85-Y', label:'Yellow', img:'/stripes/stripe-yellow.jpg', stripes:['#E8B800']},
+  ...[{n:'Gray',h:'#888888'}, ...EXTRA_ACCENT_COLORS].map(c => ({id:`accent-${c.n.toLowerCase()}`,label:c.n,img:`/stripes/stripe-${c.n.toLowerCase()}.jpg`,stripes:[c.h]})),
 ];
 
 // Single-color markers; unsupported preview colors remain saved for production.
@@ -63,7 +63,7 @@ export const STITCH_COLORS = [
   { n: 'Red',         h: '#CC2200', img: '/stitches/stitch-red.jpg' },
   { n: 'White',       h: '#F0F0F0', img: '/stitches/stitch-white.jpg' },
   { n: 'Yellow',      h: '#E8B800', img: '/stitches/stitch-yellow.jpg' },
-  ...EXTRA_ACCENT_COLORS,
+  ...EXTRA_ACCENT_COLORS.map(c => ({...c,img:`/stitches/stitch-${c.n.toLowerCase()}.jpg`})),
 ];
 export const B85_STITCH_COLORS = STITCH_COLORS;
 

@@ -51,18 +51,7 @@ function OptionRow({ options, selected, onSelect }) {
   );
 }
 
-// Identical geometry keeps samples comparable; only thread or marker color changes.
-function AccentSample({ colors, stitch = false }) {
-  return <svg viewBox="0 0 100 66" width="100%" height="100%" aria-hidden="true" style={{display:'block',background:'#151515'}}>
-    <path d="M-10 62 Q50 -12 110 62" fill="none" stroke="#353535" strokeWidth="32" />
-    <path d="M-10 62 Q50 -12 110 62" fill="none" stroke="#202020" strokeWidth="26" />
-    {stitch ? <path d="M-10 62 Q50 -12 110 62" fill="none" stroke={colors[0]} strokeWidth="3" strokeDasharray="3 4" />
-      : colors.map((color, i) => <path key={i} d={`M${44 + i * 12 / colors.length} 13 L${44 + i * 12 / colors.length} 43`} stroke={color} strokeWidth={12 / colors.length} />)}
-    {!stitch && !colors.length && <text x="50" y="60" textAnchor="middle" fill="#aaa" fontSize="9">NO STRIPE</text>}
-  </svg>;
-}
-
-function ColorGrid({ colors, selected, onSelect, stitch = false }) {
+function ColorGrid({ colors, selected, onSelect }) {
   return (
     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 6, marginTop: 8 }}>
       {colors.map(c => (
@@ -71,7 +60,7 @@ function ColorGrid({ colors, selected, onSelect, stitch = false }) {
             border: `2px solid ${selected === c.h ? 'var(--y)' : 'transparent'}`,
             boxShadow: selected === c.h ? '0 0 0 1px var(--y)' : 'none',
             overflow: 'hidden', transition: 'border-color .15s' }}>
-          {stitch ? <AccentSample colors={[c.h]} stitch /> : c.img
+          {c.img
             ? <img src={c.img} alt={c.n} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
             : <div style={{ width: '100%', height: '100%', background: c.h }} />
           }
@@ -117,7 +106,7 @@ function Toggle({ label, sub, value, onChange }) {
 }
 
 function StripeConcept({ concept, selected, onSelect }) {
-  const { id, label } = concept;
+  const { id, label, img } = concept;
   const isSelected = selected === id;
   return (
     <button type="button" aria-label={label} aria-pressed={isSelected} onClick={() => onSelect(id)}
@@ -125,7 +114,7 @@ function StripeConcept({ concept, selected, onSelect }) {
       <div style={{ width: 80, height: 52, border: `2px solid ${isSelected ? 'var(--y)' : '#2A2A2A'}`,
         borderRadius: 4, overflow: 'hidden', position: 'relative',
         boxShadow: isSelected ? '0 0 0 1px var(--y)' : 'none', transition: 'border-color .15s' }}>
-        <AccentSample colors={concept.stripes || []} />
+        <img src={img} alt={label} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
         {isSelected && (
           <div style={{ position: 'absolute', inset: 0, background: 'rgba(232,184,0,.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <span style={{ fontSize: 14, color: 'var(--y)' }}>✓</span>
@@ -1153,7 +1142,7 @@ export default function Configure() {
           {/* Stitch */}
           {sourceWheelStyle(cfg)?.stitch !== false && <Sect label="Stitch Color *" value={cfg.stitchColor ? stitchColorName(cfg.stitchColor) : cfg.stitchCustomColor || '—'}>
             {isAudiB85(cfg) && <p style={{fontSize:14,color:'var(--t)',lineHeight:1.5}}>Stitch color is saved for your build. This preview does not display stitching changes.</p>}
-            <ColorGrid stitch colors={isAudiB85(cfg) ? B85_STITCH_COLORS : STITCH_COLORS} selected={cfg.stitchColor} onSelect={v => { set('stitchColor', v); set('stitchCustomColor', ''); }} />
+            <ColorGrid colors={isAudiB85(cfg) ? B85_STITCH_COLORS : STITCH_COLORS} selected={cfg.stitchColor} onSelect={v => { set('stitchColor', v); set('stitchCustomColor', ''); }} />
             <CustomColorInput label="Type Any Stitch Color (Max Two):" value={cfg.stitchCustomColor} onChange={v => { set('stitchCustomColor', v); set('stitchColor', null); }} placeholder="e.g. Gold, Magenta, Dual Colors..." />
             {errors.stitchColor && <div className="err-msg" style={{ marginTop: 8 }}>Please choose a stitch color.</div>}
           </Sect>}
@@ -1325,7 +1314,7 @@ export default function Configure() {
                 {sourceWheelStyle(cfg)?.airbagStitch !== false && <><div style={{ fontSize: 14, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase', margin: '16px 0 4px', color: 'var(--t)' }}>
                   Airbag Stitch Color <span className="req">*</span>: {configuredColor(cfg.airbagStitchColor, cfg.airbagStitchCustomColor, 'stitch')}
                 </div>
-                <ColorGrid stitch colors={isAudiB85(cfg) ? B85_STITCH_COLORS : STITCH_COLORS} selected={cfg.airbagStitchColor} onSelect={v => { set('airbagStitchColor', v); set('airbagStitchCustomColor', ''); }} />
+                <ColorGrid colors={isAudiB85(cfg) ? B85_STITCH_COLORS : STITCH_COLORS} selected={cfg.airbagStitchColor} onSelect={v => { set('airbagStitchColor', v); set('airbagStitchCustomColor', ''); }} />
                 <CustomColorInput label="Type Any Stitch Color:" value={cfg.airbagStitchCustomColor} onChange={v => { set('airbagStitchCustomColor', v); set('airbagStitchColor', null); }} placeholder="e.g. Gold, Magenta, Dual Colors..." />
                 {errors.airbagStitchColor && <div className="err-msg" style={{ marginTop: 8 }}>Please choose an airbag stitch color.</div>}</>}
               </div>
