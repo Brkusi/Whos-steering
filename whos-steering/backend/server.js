@@ -134,6 +134,18 @@ app.use((err, req, res, next) => {
 });
 
 const PORT = process.env.PORT || 3001;
-require('./lib/sales').initialize().then(() => {
-  app.listen(PORT, () => console.log(`Who's Steering API running on :${PORT}`));
-}).catch(err => { console.error('Sales schema initialization failed:', err.message); process.exit(1); });
+app.listen(PORT, () => console.log(`Who's Steering API running on :${PORT}`));
+
+// Sales setup is optional for account access. A temporary database or migration
+// failure must not stop Render from starting the entire API. Retry until it is
+// ready so saved builds and reminder jobs recover without another deploy.
+async function initializeSales() {
+  try {
+    await require('./lib/sales').initialize();
+  } catch (err) {
+    console.error('Sales schema initialization failed; retrying in 60 seconds:', err);
+    const retry = setTimeout(initializeSales, 60000);
+    retry.unref();
+  }
+}
+initializeSales();

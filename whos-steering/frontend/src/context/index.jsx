@@ -68,10 +68,12 @@ export function AuthProvider({ children }) {
           const storage = localStorage.getItem('ws_token') ? localStorage : sessionStorage;
           storage.setItem('ws_user', JSON.stringify(normalized));
         })
-        .catch(() => {
-          localStorage.removeItem('ws_token'); localStorage.removeItem('ws_user');
-          sessionStorage.removeItem('ws_token'); sessionStorage.removeItem('ws_user');
-          setUser(null);
+        .catch((error) => {
+          if (error.status === 401 || error.status === 403) {
+            localStorage.removeItem('ws_token'); localStorage.removeItem('ws_user');
+            sessionStorage.removeItem('ws_token'); sessionStorage.removeItem('ws_user');
+            setUser(null);
+          }
         })
         .finally(() => setLoading(false));
     } else {

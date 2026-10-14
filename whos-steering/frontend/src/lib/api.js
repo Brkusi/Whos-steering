@@ -9,16 +9,29 @@ export function authToken() {
 
 export async function apiFetch(path, opts = {}) {
   const token = authToken();
-  const res = await fetch(`${BASE}${path}`, {
-    headers: {
-      'Content-Type': 'application/json',
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      ...opts.headers,
-    },
-    ...opts,
-  });
+  let res;
+  try {
+    res = await fetch(`${BASE}${path}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        ...opts.headers,
+      },
+      ...opts,
+    });
+  } catch (cause) {
+    const error = new Error('The account service is temporarily unavailable. Please try again shortly.');
+    error.code = 'NETWORK_ERROR';
+    throw error;
+  }
   const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(data.error || `Request failed (${res.status})`);
+  if (!res.ok) {
+    const error = new Error(res.status >= 500
+      ? 'The account service is temporarily unavailable. Please try again shortly.'
+      : data.error || `Request failed (${res.status})`);
+    error.status = res.status;
+    throw error;
+  }
   return data;
 }
 
