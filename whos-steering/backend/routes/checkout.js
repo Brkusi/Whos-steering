@@ -52,7 +52,7 @@ function validateRequiredColors(cfg) {
   const topIsCarbon = hasText(cfg.topBottomMat) && cfg.topBottomMat.toLowerCase().includes('carbon');
   const sideIsCarbon = hasText(cfg.sideMat) && cfg.sideMat.toLowerCase().includes('carbon');
 
-  if (!(cfg.brand === 'BMW' && cfg.wheelStyleType === 'BMW 2010–2019' && topIsCarbon) && cfg.topBottomMat !== 'Matte Carbon' && !(topIsCarbon
+  if (cfg.topBottomMat !== 'Matte Carbon' && !(topIsCarbon
     ? (cfg.topBottomCarbonCol || hasText(cfg.topBottomCustomColor))
     : (cfg.topBottomCol || hasText(cfg.topBottomCustomColor)))) {
     missing.push('Top & Bottom Color');
@@ -466,19 +466,7 @@ async function calcServerPrice(cfg) {
   let price;
   const isCarbonTop = cfg.topBottomMat && cfg.topBottomMat.toLowerCase().includes('carbon');
   const isBmwFSeries = cfg.brand === 'BMW' && cfg.wheelStyleType === 'F-Series';
-  const isBmw2010 = cfg.brand === 'BMW' && cfg.wheelStyleType === 'BMW 2010–2019';
-  if (isBmw2010) {
-    let total = 899;
-    if (cfg.topBottomMat === 'Forged Carbon') total += 175;
-    if (['Glossy Carbon','Matte Carbon','Forged Carbon'].includes(cfg.bmwLowerTrim)) total += 50;
-    if (cfg.airbagCompat) total += 200;
-    if (['Glossy Carbon','Matte Carbon','Forged Carbon'].includes(cfg.paddleShifters)) total += 200;
-    if (['Magnetic','Urus Style'].includes(cfg.paddleShifters)) total += (rules.paddle_magnetic || 25);
-    if (cfg.heated) total += 125;
-    if (cfg.ledDisplay) total += (rules.rpm_gauge_bmw || 100);
-    return Math.round(total * 100);
-  }
-  const usesBmw2D = cfg.brand === 'BMW' && ['F-Series', 'G-Series Pre LCI'].includes(cfg.wheelStyleType);
+  const usesBmw2D = cfg.brand === 'BMW' && ['F-Series', 'G-Series Pre LCI', 'BMW 2010–2019'].includes(cfg.wheelStyleType);
   const hasSourcePaddles = usesBmw2D || (cfg.brand === 'AUDI' && cfg.wheelStyleType === 'B8.5') || (cfg.brand === 'TOYOTA' && cfg.wheelStyleType === 'Supra GR') ||
     (cfg.brand === 'MERCEDES' && ['AMG Performance','Mercedes 2010–2015'].includes(cfg.wheelStyleType)) ||
     cfg.brand === 'PORSCHE';

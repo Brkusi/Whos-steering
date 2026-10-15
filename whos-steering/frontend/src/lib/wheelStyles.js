@@ -3,7 +3,7 @@ export const WHEEL_STYLES = [
   {brand:'BMW', style:'G-Series', label:'G-Series LCI', image:'/configure-g-series-lci.png', detail:'BMW G-Series LCI wheel', price:549.99},
   {brand:'BMW', style:'G-Series Pre LCI', label:'G-Series Pre LCI', image:'/models/bmw-gseries/source/round.webp', detail:'BMW G-Series Pre LCI · live 2D preview', price:549.99},
   {brand:'BMW', style:'F-Series', label:'F-Series', image:'/models/bmw-fseries/source/round.webp', detail:'Classic BMW F-Series · live 2D preview', price:449.99},
-  {brand:'BMW', style:'BMW 2010–2019', label:'BMW 2010–2019', image:'/models/bmw-2010/source/round.webp', detail:'BMW 3 · 4 · 5 · 6 · 7 · X3 · X4 · X5 · X6 · live 2D preview', price:899},
+  {brand:'BMW', style:'BMW 2010–2019', label:'BMW 2010–2019', image:'/models/bmw-2010/source/round.webp', detail:'BMW 3 · 4 · 5 · 6 · 7 · X3 · X4 · X5 · X6 · live 2D preview', price:549.99},
   {brand:'AUDI', style:'B9', label:'B9', image:'/configure-audi-b9.png', detail:'Audi B9 Style', price:699.99},
   {brand:'AUDI', style:'B8.5', label:'B8.5 Flat Bottom', image:'/models/audi-b85/source/base.png', imageOverlays:['top-classic.png','32zebo.png','airbag.png','378yiq.png'].map(file => '/models/audi-b85/source/'+file), detail:'Audi B8.5 Sport · flat bottom · live 2D preview', price:699.99},
   {brand:'AUDI', style:'RS 2020+', label:'Audi B9.5', image:'/models/audi-rs-2020/source/round.webp', detail:'Audi B9.5 steering wheel', price:799.99},
