@@ -23,9 +23,8 @@ export const sourceWheelStyle = cfg => SOURCE_WHEEL_STYLES[cfg.brand]?.[cfg.whee
 export const sourceWheelShapes = cfg => sourceWheelStyle(cfg)?.shapes || F_SERIES_SHAPES;
 export const sourceWheelShape = cfg => sourceWheelShapes(cfg).includes(cfg.bmwShape) ? cfg.bmwShape : sourceWheelShapes(cfg)[0];
 export const sourceWheelHasPaddles = cfg => sourceWheelStyle(cfg)?.paddles ?? !isAudiRS2020(cfg);
-export const sourceWheelSupportsLed = cfg => sourceWheelStyle(cfg)
-  ? sourceWheelStyle(cfg).led.includes(sourceWheelShape(cfg))
-  : sourceWheelShape(cfg) === 'Flat bottom';
+// Open-top yokes have no upper rim to house the B9 display.
+export const sourceWheelSupportsLed = cfg => sourceWheelShape(cfg) !== 'Yoke';
 export const bmwStyleLabel = style => style === 'G-Series' ? 'G-Series LCI' : style === 'RS 2020+' ? 'Audi B9.5' : style;
 export const isFSeries = cfg => cfg.brand === 'BMW' && cfg.wheelStyleType === 'F-Series';
 export const isGSeriesPreLCI = cfg => cfg.brand === 'BMW' && cfg.wheelStyleType === 'G-Series Pre LCI';

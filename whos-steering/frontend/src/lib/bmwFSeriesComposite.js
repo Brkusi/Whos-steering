@@ -1,3 +1,4 @@
+import { createLedArtwork, drawLedDisplay, rimLedPlacement } from './ledDisplay';
 import { carbonCoordinates } from './bmwFSeriesCarbonUV';
 import F_CALIBRATION from './bmwFSeriesCalibration.json';
 import G_CALIBRATION from './bmwGSeriesCalibration.json';
@@ -57,6 +58,7 @@ export function createFSeriesCompositor(family = 'bmw-fseries') {
   const CALIBRATION = SOURCE_CALIBRATIONS[family] || F_CALIBRATION;
   const assets=new Map(), layers=new Map(), silhouettes=new Map(), gripMasks=new WeakMap(), materialRenderer=new SourceMaterialRenderer(12);
   let disposed=false;
+  const ledArtwork=createLedArtwork();
   function image(path) {
     if(!assets.has(path))assets.set(path,new Promise((resolve,reject)=>{
       const img=new Image();img.decoding='async';img.onload=()=>resolve(img);img.onerror=()=>{assets.delete(path);reject(new Error(`Wheel image unavailable: ${path}`));};img.src=path;
@@ -176,7 +178,7 @@ export function createFSeriesCompositor(family = 'bmw-fseries') {
     ctx.putImageData(data,0,0);return out;
   }
   async function render(a) {
-    const [base,paddles,side,top,trim,cover,logo,dodgeTrim,dodgeLogo,ring,led,guide]=await Promise.all([
+    const [base,paddles,side,top,trim,cover,logo,dodgeTrim,dodgeLogo,ring,guide]=await Promise.all([
       source(a.shape),a.paddle?source(`paddles/${a.paddle}`):null,
       wrap(`${a.shape}-side-${sourceMaterial(a.side.material)}`,a.side.color,a.stitch).then(layer=>gripLayer(layer,'side',a.shape)),
       (a.top.material.includes('Carbon')?carbon(a):wrap(`${a.shape}-${a.topZone}-${sourceMaterial(a.top.material)}`,a.top.color,a.stitch)).then(layer=>gripLayer(layer,'top',a.shape)),
@@ -185,7 +187,7 @@ export function createFSeriesCompositor(family = 'bmw-fseries') {
       a.cover && family!=='dodge-srt'?source(`neutral/airbag-${sourceMaterial(a.airbag.material)}-logo`):null,
       a.cover && family==='dodge-srt'?wrap('airbag-trim',a.dodgeAirbagTrim,a.airbagStitch):null,
       a.cover && family==='dodge-srt'?wrap('srt-logo',a.dodgeLogo,a.airbagStitch):null,
-      a.stripes.length?marker(a):null,a.led?source(`led/${a.shape}`):null,
+      !a.led && a.stripes.length?marker(a):null,
       // Only verified cutout layers can supplement the base silhouette; some
       // other families' carbon sources include opaque rectangular backing.
       family.startsWith('porsche-')&&a.shape!=='yoke'?source(`cf/${a.shape}-glossy`)
@@ -229,7 +231,7 @@ export function createFSeriesCompositor(family = 'bmw-fseries') {
     mc.globalCompositeOperation='destination-in';mc.drawImage(silhouette(a.shape,base,porsche991FlatBottom?null:guide),0,0,SIZE,SIZE);
     ctx.drawImage(materials,0,0,SIZE,SIZE);
     if(ring)ctx.drawImage(ring,0,0,SIZE,SIZE);
-    if(led)ctx.drawImage(led,0,0,SIZE,SIZE);
+    if(a.led)drawLedDisplay(ctx,ledArtwork,rimLedPlacement(silhouette(a.shape,base,guide)));
     return out;
   }
   return {render,dispose(){disposed=true;assets.clear();layers.clear();silhouettes.clear();materialRenderer.invalidate();}};

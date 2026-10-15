@@ -86,3 +86,16 @@ test('stale or omitted shapes resolve to assets supported by each source family'
   }
   expect(bmwFSeriesConfiguration({...base,bmwShape:'invalid'},parse).shape).toBe('round');
 });
+
+
+test('all closed-rim styles offer the LED display on every available shape', () => {
+  const {SOURCE_WHEEL_STYLES,sourceWheelShapes,sourceWheelSupportsLed}=require('./bmwFSeriesConfiguration');
+  const cases=[['BMW','F-Series'],['BMW','G-Series Pre LCI'],['AUDI','RS 2020+'],
+    ...Object.entries(SOURCE_WHEEL_STYLES).flatMap(([brand,styles])=>Object.keys(styles).map(style=>[brand,style]))];
+  for(const [brand,wheelStyleType] of cases)for(const bmwShape of sourceWheelShapes({brand,wheelStyleType})) {
+    const cfg={...base,brand,wheelStyleType,bmwShape,ledDisplay:true};
+    expect(sourceWheelSupportsLed(cfg)).toBe(bmwShape!=='Yoke');
+    expect(bmwFSeriesConfiguration(cfg,parse).led).toBe(bmwShape!=='Yoke');
+    expect(bmwFSeriesConfiguration({...cfg,ledDisplay:false},parse).led).toBe(false);
+  }
+});

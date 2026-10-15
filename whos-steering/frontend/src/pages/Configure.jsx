@@ -1,4 +1,6 @@
-import { normalizeB85Options, B85_LED } from '../lib/audiB85Configuration';
+import LedDisplay from '../components/LedDisplay';
+import ReferenceWheelPreview from '../components/ReferenceWheelPreview';
+import { normalizeB85Options } from '../lib/audiB85Configuration';
 import SalesTools, {trackSales} from '../components/SalesTools';
 import useViewport from '../hooks/useViewport';
 import { useState, useEffect, useCallback, useRef, useId, lazy, Suspense } from 'react';
@@ -919,7 +921,7 @@ export default function Configure() {
               minHeight: 0,
               overflow: isMobileViewport ? 'visible' : 'hidden',
             }}>
-              <img
+              <ReferenceWheelPreview led={cfg.ledDisplay}
                 src="/g-series-reference.png"
                 alt="BMW G-Series LCI Steering Wheel customization options"
                 style={{
@@ -960,7 +962,7 @@ export default function Configure() {
               minHeight: 0,
               overflow: isMobileViewport ? 'visible' : 'hidden',
             }}>
-              <img
+              <ReferenceWheelPreview led={cfg.ledDisplay}
                 src="/r8-reference.png"
                 alt="Audi R8 Steering Wheel customization options"
                 style={{
@@ -1105,22 +1107,19 @@ export default function Configure() {
           </Sect>}
 
           {/* LED / RPM Display Strip — both brands, price differs by brand */}
-          {(!usesSource2D(cfg) || sourceWheelSupportsLed(cfg)) && <Sect label={isAudi ? 'LED Display Strip' : 'RPM Gauge'}
+          {(!usesSource2D(cfg) || sourceWheelSupportsLed(cfg)) && <Sect label="LED Display"
             value={cfg.ledDisplay ? `Yes · +$${isAudi ? '50' : '100'}` : 'No'}
             badge={cfg.ledDisplay ? 'ADDED' : undefined}>
             <Toggle
-              label={isAudi ? 'Add LED Display Strip' : 'Add RPM Gauge'}
+              label="Add LED Display"
               sub={isAudi ? '+$50.00' : '+$100.00'}
               value={cfg.ledDisplay}
               onChange={v => set('ledDisplay', v)}
             />
             {cfg.ledDisplay && (
               <div style={{ marginTop: 12, display: 'flex', alignItems: 'center', gap: 12 }}>
-                <div style={{ flexShrink: 0, border: '1px solid var(--b)', overflow: 'hidden', background: '#0A0A0A', width: 120, height: 80 }}>
-                  {isAudiB85(cfg)
-                    ? <svg viewBox="310 160 980 280" role="img" aria-label="Audi LED display" style={{width:'100%',height:'100%'}}><image href={B85_LED} width="1600" height="1600" /></svg>
-                    : <img src="/led-display.png" alt={isAudi ? 'LED Display Strip' : 'RPM Gauge'}
-                        style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 30%', display: 'block' }} />}
+                <div style={{ flexShrink: 0, border: '1px solid var(--b)', overflow: 'hidden', background: '#0A0A0A', width: 180, padding: '12px 4px' }}>
+                  <LedDisplay />
                 </div>
                 <div style={{ fontSize: 14, color: 'var(--t)', lineHeight: 1.7 }}>
                   {isAudiB85(cfg) ? 'Audi-style curved shift lights with a central RPM and speed display, integrated into the upper rim.' : 'Integrated LED RPM shift-light strip with live speed and gear display — embedded directly into the steering wheel, visible without moving your eyes from the road.'}

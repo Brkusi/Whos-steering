@@ -1,5 +1,6 @@
+import { createLedArtwork, drawLedDisplay } from '../lib/ledDisplay';
 import { useEffect, useRef, useState } from 'react';
-import { audiB85Layers, normalizeB85Options } from '../lib/audiB85Configuration';
+import { audiB85Layers, normalizeB85Options, B85_LED } from '../lib/audiB85Configuration';
 import './FSeriesPreview.css';
 
 export default function AudiB85Preview({config}) {
@@ -8,7 +9,8 @@ export default function AudiB85Preview({config}) {
   const [zoom, setZoom] = useState(false);
   const [status, setStatus] = useState('loading');
   const [retry, setRetry] = useState(0);
-  const key = JSON.stringify(audiB85Layers(normalizeB85Options(config)));
+  const key = JSON.stringify(audiB85Layers(normalizeB85Options(config)).filter(layer => layer.src !== B85_LED));
+  const led = !!config.ledDisplay;
   useEffect(() => {
     let active = true;
     setStatus('loading');
@@ -33,10 +35,11 @@ export default function AudiB85Preview({config}) {
         if (layer.crop) ctx.drawImage(images[i], ...layer.crop, ...layer.rect);
         else ctx.drawImage(images[i], 0, 0, 1080, 1080);
       });
+      if(led)drawLedDisplay(ctx,createLedArtwork(),{x:245,y:95,width:590,height:46,rise:85});
       setStatus('ready');
     }).catch(() => { if (active) setStatus('error'); });
     return () => { active = false; };
-  }, [key, retry]);
+  }, [key, retry, led]);
   return <section className={`fseries-preview${zoom ? ' is-zoomed' : ''}`} aria-label="Audi B8.5 flat-bottom live wheel preview" aria-busy={status === 'loading'}>
     <div className="fseries-preview-heading"><span>LIVE PREVIEW</span><button type="button" aria-label={zoom ? 'Zoom out wheel preview' : 'Zoom in wheel preview'} aria-pressed={zoom} onClick={() => setZoom(!zoom)}>{zoom ? '−' : '+'}</button></div>
     <div className="fseries-preview-stage"><canvas ref={output} role="img" aria-label={`Audi B8.5 Sport flat-bottom wheel with ${config.topBottomMat}, ${config.sideMat}, and ${config.paddleShifters} paddles`} /></div>

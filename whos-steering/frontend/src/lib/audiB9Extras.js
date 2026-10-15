@@ -1,3 +1,4 @@
+import { drawLedArtwork } from './ledDisplay';
 import * as THREE from 'three';
 import { createB9Paddles } from './audiB9Paddles';
 
@@ -35,11 +36,7 @@ export async function createB9Extras(root, parts) {
     if(i<48){const k=i*2;index.push(k,k+2,k+1,k+1,k+2,k+3);}
   }
   const ledGeometry=new THREE.BufferGeometry();ledGeometry.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));ledGeometry.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));ledGeometry.setIndex(index);ledGeometry.computeVertexNormals();
-  const ledMap=canvasMap(1536,160,(ctx,w,h)=>{
-    ctx.fillStyle='#090a0c';ctx.fillRect(0,0,w,h);ctx.strokeStyle='#36383b';ctx.lineWidth=5;ctx.strokeRect(2,2,w-4,h-4);
-    ctx.fillStyle='#202a38';ctx.fillRect(612,12,312,136);ctx.font='36px Arial';ctx.fillStyle='#e6edf5';ctx.textAlign='center';ctx.fillText('3000 rpm',768,66);ctx.font='29px Arial';ctx.fillText('80 km/h',768,114);
-    for(let i=0;i<8;i++)for(const sign of [-1,1]){const distance=190+i*59,x=w/2+sign*distance-22;ctx.fillStyle=i<2?'#e52623':i<5?'#f6c524':'#35df65';ctx.fillRect(x,45,40,66);}
-  });
+  const ledMap=canvasMap(1536,160,drawLedArtwork);
   const led=add(ledGeometry,new THREE.MeshBasicMaterial({map:ledMap,side:THREE.DoubleSide}),'LED_display_preview',new THREE.Vector3());
   function update(appearance,sideNode) {
     led.visible=appearance.led;
