@@ -46,8 +46,8 @@ export function bmwFSeriesConfiguration(cfg, parseColor) {
   return {
     ...appearance, shape, paddle,
     family: bmwAssetFamily(cfg),
-    carbonSwatch: swatch.img,
-    carbonCustomTint: !!cfg.topBottomCustomColor,
+    carbonSwatch: appearance.top.material === 'Matte Carbon' ? '/matte-carbon-gseries.png' : swatch.img,
+    carbonCustomTint: appearance.top.material !== 'Matte Carbon' && !!cfg.topBottomCustomColor,
     topZone:shape==='yoke'?'bottom':'tb',
     led:appearance.led && sourceWheelSupportsLed(cfg),
     stripes:shape==='yoke'?[]:appearance.stripes,

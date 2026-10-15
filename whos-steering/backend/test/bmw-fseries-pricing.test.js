@@ -75,3 +75,12 @@ test('Porsche and Dodge source wheels use their listed bases and paddle rules',a
   assert.equal(await serverPrice()(dodge),69999);
   assert.equal(await serverPrice()({...dodge,paddleShifters:'Forged Carbon'}),69999);
 });
+
+test('universal paddles use the same upgrade price on every configurable make',async()=>{
+  for(const [brand,wheelStyleType] of [['BMW','G-Series Pre LCI'],['AUDI','B9'],['AUDI','B8.5'],['AUDI','RS 2020+'],['DODGE_SRT','SRT'],['MERCEDES','Mercedes 2015–2023'],['TOYOTA','Supra GR'],['PORSCHE','911 Performance (992)']]){
+    const cfg={brand,wheelStyleType,airbagCompat:false,heated:false,laneAssist:false};
+    const base=await serverPrice()(cfg);
+    for(const paddleShifters of ['Magnetic','Urus Style'])assert.equal(await serverPrice()({...cfg,paddleShifters}),base+2500);
+    assert.equal(await serverPrice()({...cfg,topBottomMat:'Matte Carbon'}),base+4000);
+  }
+});

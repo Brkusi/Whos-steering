@@ -134,6 +134,14 @@ export async function loadAudiB9(signal) {
     if (appearance.material === 'Honeycomb Carbon') {
       part.primitives.forEach(mesh => { mesh.material.map = extras.honeycomb; mesh.material.needsUpdate = true; });
     }
+    if (appearance.material === 'Matte Carbon') {
+      part.primitives.forEach(mesh => {
+        mesh.material.map=extras.matteCarbon;mesh.material.color.set('#ffffff');
+        mesh.material.roughness=.9;mesh.material.metalness=0;mesh.material.envMapIntensity=.25;
+        mesh.material.clearcoat=0;mesh.material.needsUpdate=true;
+      });
+      return;
+    }
     if (!selected) return;
     if (appearance.material.includes('Carbon')) {
       const accent = appearance.material === 'Forged Carbon' && forgedAccents.get(appearance.color.toLowerCase());

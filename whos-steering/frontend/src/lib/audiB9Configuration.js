@@ -22,7 +22,7 @@ export function audiB9Configuration(config, parseColor) {
 
 const TOP = {
   'Smooth Leather': [3,17], Leather: [3,17],
-  'Classic Carbon': [1,15], 'Forged Carbon': [2,16],
+  'Matte Carbon': [1,15], 'Classic Carbon': [1,15], 'Forged Carbon': [2,16],
   'Honeycomb Carbon': [1,15], Alcantara: [0,14],
   'Perforated Leather': [4,18],
 };

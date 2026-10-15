@@ -24,3 +24,11 @@ test('retired badge and carbon-trim selections cannot enter a new order',async()
     const res=response();await checkoutRoutes()['/create-intent']({body:{cartItems:[{config,quantity:1}],customer:{email:'test@example.com'}}},res);assert.equal(res.statusCode,400);assert.match(res.body.error,/lower badge|inner trim color/);
   }
 });
+
+test('Drift gives exactly ten percent off regardless of case or surrounding spaces',()=>{
+  const route=checkoutRoutes()['/validate-promo'];
+  for(const code of ['Drift','DRIFT',' drift ']){
+    const res=response();route({body:{code}},res);
+    assert.equal(res.body.valid,true);assert.equal(res.body.percentOff,10);assert.equal(res.body.code,'Drift');
+  }
+});

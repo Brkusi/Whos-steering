@@ -1,3 +1,4 @@
+import { paddleOptions, paddleLabel, isUniversalPaddle, URUS_PADDLE_COLORS, normalizePaddleDetails } from '../lib/paddleOptions';
 import LedDisplay from '../components/LedDisplay';
 import ReferenceWheelPreview from '../components/ReferenceWheelPreview';
 import { normalizeB85Options } from '../lib/audiB85Configuration';
@@ -24,9 +25,9 @@ import VehicleYearModelFields from '../components/VehicleYearModelFields';
 const FSeriesPreview = lazy(() => import('../components/FSeriesPreview'));
 const AudiB85Preview = lazy(() => import('../components/AudiB85Preview'));
 const AudiB9Preview = lazy(() => import('../components/B9ModelPreview'));
-const F_SERIES_TOP_MATS = [...TOP_BOTTOM_MATS.filter(m => m.n !== 'Honeycomb Carbon'), SIDE_MATS.find(m => m.n === 'Perforated Leather'), {n:'Matte Carbon',d:'#111111',col:false,carbon:true,cType:'classic'}];
+const F_SERIES_TOP_MATS = [...TOP_BOTTOM_MATS.filter(m => m.n !== 'Honeycomb Carbon'), SIDE_MATS.find(m => m.n === 'Perforated Leather')];
 const B85_TOP_MATS = F_SERIES_TOP_MATS.filter(m => m.n !== 'Perforated Leather');
-const B85_PADDLES = ['None','Standard','Racing Style 1','Racing Style 2','Magnetic'];
+const B85_PADDLES = ['None','Standard','Racing Style 1','Racing Style 2','Magnetic','Urus Style'];
 const isAudiB85 = cfg => cfg.brand === 'AUDI' && cfg.wheelStyleType === 'B8.5';
 
 function Sect({ label, value, children, badge }) {
@@ -206,7 +207,7 @@ function MatSection({ label, matKey, colKey, carbonColKey, customColKey, cfg, se
           </button>
         ))}
       </div>
-      {isCarbon ? (
+      {mat === 'Matte Carbon' ? <p style={{fontSize:14,color:'var(--t)'}}>Matte carbon fiber · Natural black finish</p> : isCarbon ? (
         <>
           <div style={{ fontSize: 14, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 4, color: 'var(--t)' }}>
             {carbonLabel} <span className="req">*</span>
@@ -410,24 +411,24 @@ function ConfigProgress({ activeStep, onStep }) {
 }
 
 function currentWheelOptions(config) {
-  config = normalizeB85Options(config);
+  config = normalizePaddleDetails(normalizeB85Options(config));
   const source2D = usesSource2D(config);
   const bmwShape = source2D && !sourceWheelShapes(config).includes(config.bmwShape)
     ? sourceWheelShapes(config)[0] : (config.bmwShape || 'Round');
   const next = {...config,bmwShape,wheelStyle:isAudiB85(config)?'Sport':config.wheelStyle};
-  const dodgeNoCarbon = config.brand === 'DODGE_SRT' && ['Round','Yoke'].includes(bmwShape) && config.topBottomMat?.includes('Carbon');
+  const dodgeNoCarbon = config.brand === 'DODGE_SRT' && ['Round','Yoke'].includes(bmwShape) && config.topBottomMat?.includes('Carbon') && config.topBottomMat !== 'Matte Carbon';
   return {
     ...next,
     paddleFinish: config.paddleFinish === 'Stealth' ? 'Stealth' : 'Normal',
     ...(dodgeNoCarbon ? {topBottomMat:'Smooth Leather',topBottomCarbonCol:null} : {}),
-    ...(!source2D && ['Matte Carbon','Perforated Leather'].includes(config.topBottomMat) ? {topBottomMat:config.topBottomMat === 'Matte Carbon' ? 'Classic Carbon' : 'Smooth Leather'} : {}),
+    ...(!source2D && config.topBottomMat === 'Perforated Leather' ? {topBottomMat:'Smooth Leather'} : {}),
+    ...(config.topBottomMat === 'Matte Carbon' ? {topBottomCol:null,topBottomCarbonCol:null,topBottomCustomColor:''} : {}),
     ...(source2D && bmwShape === 'Yoke' ? {stripeConceptId:'C-1',stripeCustomColor:''} : {}),
     ...(source2D && !sourceWheelSupportsLed(next) ? {ledDisplay:false} : {}),
-    ...(usesBmw2D(config) && config.paddleShifters === 'Magnetic' ? {paddleShifters:'Glossy Carbon'} : {}),
-    ...(isAudiRS2020(config) ? {paddleShifters:'Standard',bmwLowerTrim:'Original'} : {}),
+    ...(isAudiRS2020(config) ? {bmwLowerTrim:'Original'} : {}),
     ...(isAudiB85(config) && !B85_PADDLES.includes(config.paddleShifters) ? {paddleShifters:'Standard'} : {}),
-    ...(source2D && !sourceWheelHasPaddles(config) ? {paddleShifters:'Standard'} : {}),
-    ...(!source2D && !['Standard','Magnetic'].includes(config.paddleShifters) ? {paddleShifters:'Standard'} : {}),
+    ...(source2D && !sourceWheelHasPaddles(config) && !isUniversalPaddle(config.paddleShifters) ? {paddleShifters:'Standard'} : {}),
+    ...(!source2D && !['Standard','Magnetic','Urus Style'].includes(config.paddleShifters) ? {paddleShifters:'Standard'} : {}),
     innerTrimMatchCarbon:false,
     audiBadge:config.audiBadge === 'R8' && config.wheelStyleType !== 'R8' ? 'RS' : config.audiBadge,
   };
@@ -672,9 +673,9 @@ export default function Configure() {
     if (!photo && !cfg.photoUrl) e.photo = true;
 
     const topMaterial = (usesSource2D(cfg) ? F_SERIES_TOP_MATS : TOP_BOTTOM_MATS).find(m => m.n === cfg.topBottomMat);
-    const topColorSelected = topMaterial?.carbon
+    const topColorSelected = cfg.topBottomMat === 'Matte Carbon' || (topMaterial?.carbon
       ? Boolean(cfg.topBottomCarbonCol || textValue(cfg.topBottomCustomColor))
-      : Boolean(cfg.topBottomCol || textValue(cfg.topBottomCustomColor));
+      : Boolean(cfg.topBottomCol || textValue(cfg.topBottomCustomColor)));
     if (!topColorSelected) e.topBottomColor = true;
 
     const sideMaterial = SIDE_MATS.find(m => m.n === cfg.sideMat);
@@ -782,8 +783,9 @@ export default function Configure() {
 
       usesSource2D(cfg) ? ['Wheel Shape', cfg.bmwShape || 'Round'] : null,
       usesBmw2D(cfg) ? ['Lower Trim', cfg.bmwLowerTrim || 'Original'] : null,
-      sourceWheelHasPaddles(cfg) ? ['Paddle Shifters', cfg.paddleShifters] : null,
-      cfg.paddleShifters === 'Magnetic' && !isAudiB85(cfg)
+      ['Paddle Shifters', paddleLabel(cfg.paddleShifters)],
+      cfg.paddleShifters === 'Urus Style' ? ['Urus Style Color', cfg.urusPaddleColor] : null,
+      cfg.paddleShifters === 'Magnetic'
         ? ['Paddle Length', cfg.paddleLength || 'Short']
         : null,
       cfg.brand === 'AUDI' && cfg.wheelStyleType === 'B9' && cfg.paddleShifters === 'Standard'
@@ -792,7 +794,7 @@ export default function Configure() {
 
       ...(isAudiB85(cfg) && cfg.paddleShifters?.startsWith('Racing Style') ? [['Paddle Finish',cfg.b85PaddleMaterial], ...(cfg.b85PaddleMaterial === 'Forged Carbon' ? [['Paddle Carbon',cfg.b85PaddleCarbonCustomColor || B85_FORGED_CARBON_COLORS.find(c => c.h === cfg.b85PaddleCarbonCol)?.n]] : []), ['Paddle Symbols',configuredColor(cfg.b85PaddleSymbolCol, cfg.b85PaddleSymbolCustomColor)]] : []),
       ['Top & Bottom Grip Material', materialLabel(cfg.topBottomMat)],
-      ['Top & Bottom Color', topColor],
+      cfg.topBottomMat !== 'Matte Carbon' ? ['Top & Bottom Color', topColor] : null,
       ['Side Grip Material', materialLabel(cfg.sideMat)],
       ['Side Grip Color', sideColor],
 
@@ -918,7 +920,7 @@ export default function Configure() {
               minHeight: 0,
               overflow: isMobileViewport ? 'visible' : 'hidden',
             }}>
-              <ReferenceWheelPreview led={cfg.ledDisplay}
+              <ReferenceWheelPreview led={cfg.ledDisplay} matte={cfg.topBottomMat === 'Matte Carbon'}
                 src="/g-series-reference.png"
                 alt="BMW G-Series LCI Steering Wheel customization options"
                 style={{
@@ -959,7 +961,7 @@ export default function Configure() {
               minHeight: 0,
               overflow: isMobileViewport ? 'visible' : 'hidden',
             }}>
-              <ReferenceWheelPreview led={cfg.ledDisplay}
+              <ReferenceWheelPreview led={cfg.ledDisplay} matte={cfg.topBottomMat === 'Matte Carbon'}
                 src="/r8-reference.png"
                 alt="Audi R8 Steering Wheel customization options"
                 style={{
@@ -1151,14 +1153,19 @@ export default function Configure() {
           )}
 
           {/* Paddles */}
-          {sourceWheelHasPaddles(cfg) && <Sect label="Paddle Shifters" value={cfg.paddleShifters + (cfg.paddleShifters === 'Magnetic' && !isAudiB85(cfg) ? ` · ${cfg.paddleLength}` : isAudi && cfg.wheelStyleType === 'B9' ? ` · ${cfg.paddleFinish === 'Stealth' ? 'Black' : 'Classic'}` : '')}>
+          {<Sect label="Paddle Shifters" value={paddleLabel(cfg.paddleShifters) + (cfg.paddleShifters === 'Magnetic' ? ` · ${cfg.paddleLength}` : isAudi && cfg.wheelStyleType === 'B9' && cfg.paddleShifters === 'Standard' ? ` · ${cfg.paddleFinish === 'Stealth' ? 'Black' : 'Classic'}` : '')}>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7 }}>
-              {(isAudiB85(cfg) ? B85_PADDLES : usesSource2D(cfg) ? F_SERIES_PADDLES : ['Standard', 'Magnetic']).map(o => (
+              {paddleOptions(!sourceWheelHasPaddles(cfg) ? ['Standard'] : isAudiB85(cfg) ? B85_PADDLES : usesSource2D(cfg) ? F_SERIES_PADDLES : ['Standard']).map(o => (
                 <button key={o} aria-pressed={cfg.paddleShifters === o} className={`ob${cfg.paddleShifters === o ? ' on' : ''}`} onClick={() => set('paddleShifters', o)}>
-                  {o === 'Standard' && usesSource2D(cfg) ? 'Original paddles' : o === 'None' ? 'No paddles' : o}{o === 'Magnetic' || o.includes('Carbon') || o.startsWith('Racing Style') ? ' (+$25.00)' : ''}
+                  {o === 'Standard' && usesSource2D(cfg) ? 'Original paddles' : o === 'None' ? 'No paddles' : paddleLabel(o)}{isUniversalPaddle(o) || o.includes('Carbon') || o.startsWith('Racing Style') ? ' (+$25.00)' : ''}
                 </button>
               ))}
             </div>
+            {cfg.paddleShifters === 'Urus Style' && <div style={{marginTop:12}}>
+              <div className="fl">Urus Style Color</div>
+              <OptionRow options={URUS_PADDLE_COLORS} selected={cfg.urusPaddleColor} onSelect={v => set('urusPaddleColor', v)} />
+              <p style={{fontSize:14,color:'var(--t)'}}>Your paddle style and color are saved for your build. Urus Style paddles are not shown in the preview yet.</p>
+            </div>}
             {isAudiB85(cfg) && cfg.paddleShifters?.startsWith('Racing Style') && <div style={{marginTop:16}}>
               <div className="fl">Paddle finish</div>
               <div style={{display:'flex',gap:8,marginBottom:12}}>{['Classic Carbon','Forged Carbon'].map(finish => <button type="button" key={finish} className={`ob${cfg.b85PaddleMaterial === finish ? ' on' : ''}`} aria-pressed={cfg.b85PaddleMaterial === finish} onClick={() => set('b85PaddleMaterial', finish)}>{finish}</button>)}</div>
@@ -1181,7 +1188,7 @@ export default function Configure() {
                 </div>
               </div>
             )}
-            {cfg.paddleShifters === 'Magnetic' && !isAudiB85(cfg) && (
+            {cfg.paddleShifters === 'Magnetic' && (
               <div style={{ marginTop: 12 }}>
                 <div style={{ fontSize: 14, color: 'rgba(232,184,0,.7)', letterSpacing: 1, marginBottom: 8, padding: '6px 10px', background: 'rgba(232,184,0,.06)', border: '1px solid rgba(232,184,0,.2)' }}>
                   ✦ All of our magnetic paddle shifters are carbon fiber
@@ -1200,7 +1207,7 @@ export default function Configure() {
           <MatSection label="Top & Bottom Grip Material"
             matKey="topBottomMat" colKey="topBottomCol"
             carbonColKey="topBottomCarbonCol" customColKey="topBottomCustomColor"
-            cfg={cfg} set={set} matsOverride={cfg.brand === 'DODGE_SRT' && ['Round','Yoke'].includes(cfg.bmwShape) ? F_SERIES_TOP_MATS.filter(m => !m.carbon) : isAudiB85(cfg) ? B85_TOP_MATS : usesSource2D(cfg) ? F_SERIES_TOP_MATS : TOP_BOTTOM_MATS}
+            cfg={cfg} set={set} matsOverride={cfg.brand === 'DODGE_SRT' && ['Round','Yoke'].includes(cfg.bmwShape) ? F_SERIES_TOP_MATS.filter(m => !m.carbon || m.n === 'Matte Carbon') : isAudiB85(cfg) ? B85_TOP_MATS : usesSource2D(cfg) ? F_SERIES_TOP_MATS : TOP_BOTTOM_MATS}
             colorError={errors.topBottomColor} />
 
           {/* Side Mat — restricted to match Top/Bottom carbon type when applicable */}

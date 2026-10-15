@@ -13,7 +13,7 @@ export function wheelAppearance(cfg, parseColor) {
   }
   const topMat = cfg.topBottomMat || 'Smooth Leather';
   const sideMat = cfg.sideMat || 'Alcantara';
-  const top = { material: topMat, color: color(cfg.topBottomCustomColor || (topMat.includes('Carbon') ? cfg.topBottomCarbonCol : cfg.topBottomCol), '#292929') };
+  const top = { material: topMat, color: topMat === 'Matte Carbon' ? '#111111' : color(cfg.topBottomCustomColor || (topMat.includes('Carbon') ? cfg.topBottomCarbonCol : cfg.topBottomCol), '#292929') };
   const side = { material: sideMat, color: color(cfg.sideCustomColor || (sideMat.includes('Carbon') ? cfg.sideCarbonCol : cfg.sideCol), '#292929') };
   const stripe = STRIPE_CONCEPTS.find(s => s.id === cfg.stripeConceptId);
   const stripes = cfg.stripeCustomColor ? [color(cfg.stripeCustomColor, stripe?.stripes[0] || '#222222')] : stripe?.stripes || [];

@@ -67,6 +67,7 @@ export function createFSeriesCompositor(family = 'bmw-fseries') {
   }
   const source = path => image(`${ROOT}/source/${path}.webp`);
   function gripLayer(original,zone,shape) {
+    if(family === 'bmw-gseries')return original;
     const key=`${zone}:${shape}`;
     if(gripMasks.get(original)?.has(key))return gripMasks.get(original).get(key);
     const out=canvas(),ctx=out.getContext('2d',{willReadFrequently:true});
@@ -111,7 +112,11 @@ export function createFSeriesCompositor(family = 'bmw-fseries') {
     ctx.drawImage(light,0,0,SIZE,SIZE);const lightPixels=ctx.getImageData(0,0,SIZE,SIZE);
     ctx.clearRect(0,0,SIZE,SIZE);ctx.drawImage(dark,0,0,SIZE,SIZE);
     const pixels=ctx.getImageData(0,0,SIZE,SIZE);
-    recolorSourcePhotographs(pixels.data,lightPixels.data,color);ctx.putImageData(pixels,0,0);
+    // The storefront black/white swatches use the reference photographs exactly.
+    if(family==='bmw-gseries' && ['#111111','#17181b'].includes(color.toLowerCase())) {}
+    else if(family==='bmw-gseries' && ['#f0f0f0','#dcded0'].includes(color.toLowerCase()))pixels.data.set(lightPixels.data);
+    else recolorSourcePhotographs(pixels.data,lightPixels.data,color);
+    ctx.putImageData(pixels,0,0);
     if(seam) {
       const stitchCanvas=canvas(),sc=stitchCanvas.getContext('2d',{willReadFrequently:true});
       sc.drawImage(seam,0,0,SIZE,SIZE);const threads=sc.getImageData(0,0,SIZE,SIZE),tint=rgb(stitch);
@@ -126,6 +131,7 @@ export function createFSeriesCompositor(family = 'bmw-fseries') {
     return out;
   }
   async function wrap(key,color,stitch,carbonFinish=false) {
+    if(family==='bmw-gseries' && /^(round|flat-round|flat-flat|yoke)-(side|tb|bottom)-(smooth|perforated|alcantara)$/.test(key))return photographedWrap(key,color,stitch);
     if(family==='dodge-srt' && /^(?:round-tb|yoke-bottom)-(?:smooth|alcantara|perforated)$/.test(key)) return photographedWrap(key,color,stitch);
     if(SOURCE_PRE_MATERIALS.has(`${family}:${key}`))return photographedWrap(key,color,stitch);
     const mapKey=key;
@@ -139,11 +145,11 @@ export function createFSeriesCompositor(family = 'bmw-fseries') {
     const key=JSON.stringify([a.shape,a.top,a.carbonSwatch,a.carbonCustomTint]);if(layers.has(key))return layers.get(key);
     const finish=a.top.material==='Forged Carbon'?'forged':a.top.material==='Matte Carbon'?'matte':'glossy';
     const reference=await source(`cf/${a.shape}-${finish}`).catch(()=>null);
-    const neutral=a.carbonSwatch===(finish==='forged'?'/forged/forged-classic.jpeg':'/classic/classic-black.png')&&!a.carbonCustomTint;
+    const neutral=finish==='matte'||a.carbonSwatch===(finish==='forged'?'/forged/forged-classic.jpeg':'/classic/classic-black.png')&&!a.carbonCustomTint;
     // Use the photographed carbon layer for its real weave, flake scale,
     // edge highlights and gloss. The F-Series keeps its requested G-Series
     // print, and colored swatches still need the mapped texture below.
-    if(reference&&neutral&&family!=='bmw-fseries')return reference;
+    if(reference&&neutral&&(family!=='bmw-fseries'||finish==='matte'))return reference;
     const [mask,texture]=await Promise.all([reference || wrap(`${a.shape}-${a.topZone}-smooth`,'#ffffff','#ffffff',true),image(`${process.env.PUBLIC_URL || ''}${a.carbonSwatch}`)]);
     const out=canvas(),ctx=out.getContext('2d',{willReadFrequently:true});ctx.drawImage(mask,0,0,SIZE,SIZE);
     const pixels=ctx.getImageData(0,0,SIZE,SIZE);
@@ -179,7 +185,7 @@ export function createFSeriesCompositor(family = 'bmw-fseries') {
   }
   async function render(a) {
     const [base,paddles,side,top,trim,cover,logo,dodgeTrim,dodgeLogo,ring,guide]=await Promise.all([
-      source(a.shape),a.paddle?source(`paddles/${a.paddle}`):null,
+      source(a.shape),a.magnetic?image(`${process.env.PUBLIC_URL || ''}/models/audi-b85/source/paddles-magnetic.png`):a.paddle?source(`paddles/${a.paddle}`):null,
       wrap(`${a.shape}-side-${sourceMaterial(a.side.material)}`,a.side.color,a.stitch).then(layer=>gripLayer(layer,'side',a.shape)),
       (a.top.material.includes('Carbon')?carbon(a):wrap(`${a.shape}-${a.topZone}-${sourceMaterial(a.top.material)}`,a.top.color,a.stitch)).then(layer=>gripLayer(layer,'top',a.shape)),
       a.lowerTrim?source(`trims/${a.lowerTrim}`):null,
@@ -192,7 +198,6 @@ export function createFSeriesCompositor(family = 'bmw-fseries') {
       // other families' carbon sources include opaque rectangular backing.
       family.startsWith('porsche-')&&a.shape!=='yoke'?source(`cf/${a.shape}-glossy`)
         :((family==='audi-rs-2020'&&a.shape==='flat-flat')
-          ||(family==='bmw-gseries'&&a.shape==='flat-round')
           ||(family==='mercedes-2015'&&['flat-flat','yoke'].includes(a.shape)))
           ?source(`cf/${a.shape}-glossy`).then(layer=>gripLayer(layer,'top',a.shape)):null,
     ]);
@@ -211,7 +216,17 @@ export function createFSeriesCompositor(family = 'bmw-fseries') {
     }
     // This is the reference's exact composition order. Lighten places the
     // paddles behind the wheel while retaining the source's black background.
-    if(paddles){ctx.globalCompositeOperation='lighten';ctx.drawImage(paddles,0,0,SIZE,SIZE);ctx.globalCompositeOperation='source-over';}
+    if(paddles){
+      const paddleLayer=canvas(),pc=paddleLayer.getContext('2d');
+      const height=a.magnetic&&a.longPaddles?SIZE*1.22:SIZE;
+      pc.drawImage(paddles,0,(SIZE-height)/2,SIZE,height);
+      if(a.magnetic){
+        pc.globalCompositeOperation='destination-out';
+        pc.drawImage(silhouette(a.shape,base,guide),0,0,SIZE,SIZE);
+      }
+      ctx.globalCompositeOperation='lighten';ctx.drawImage(paddleLayer,0,0);
+      ctx.globalCompositeOperation='source-over';
+    }
     const materials=canvas(),mc=materials.getContext('2d');
     if(porsche991FlatBottom){
       mc.drawImage(top,0,0,SIZE,SIZE);
@@ -228,7 +243,7 @@ export function createFSeriesCompositor(family = 'bmw-fseries') {
     }else{
       [side,top,trim,cover,logo,dodgeTrim,dodgeLogo].filter(Boolean).forEach(layer=>mc.drawImage(layer,0,0,SIZE,SIZE));
     }
-    mc.globalCompositeOperation='destination-in';mc.drawImage(silhouette(a.shape,base,porsche991FlatBottom?null:guide),0,0,SIZE,SIZE);
+    if(family!=='bmw-gseries'){mc.globalCompositeOperation='destination-in';mc.drawImage(silhouette(a.shape,base,porsche991FlatBottom?null:guide),0,0,SIZE,SIZE);}
     ctx.drawImage(materials,0,0,SIZE,SIZE);
     if(ring)ctx.drawImage(ring,0,0,SIZE,SIZE);
     if(a.led)drawLedDisplay(ctx,ledArtwork,rimLedPlacement(silhouette(a.shape,base,guide)));

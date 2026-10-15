@@ -22,6 +22,7 @@ export function audiB85Layers(config) {
   } else if (config.paddleShifters === 'Magnetic') {
     add('paddles-magnetic.png');
     add(assets.magneticSymbols.Blanc);
+    if(config.paddleLength === 'Long')layers.forEach(layer => {layer.rect=[0,-119,1080,1318];});
   } else if (config.paddleShifters !== 'None') add('paddles-original.png');
   add('base.png');
   add(config.topBottomMat === 'Forged Carbon'
@@ -45,7 +46,7 @@ export function normalizeB85Options(config) {
     topBottomCol:config.topBottomCol ?? '#111111', sideCol:config.sideCol ?? '#111111',
     sideMat: ['Smooth Leather','Perforated Leather','Alcantara'].includes(config.sideMat) ? config.sideMat : 'Perforated Leather',
     topBottomCarbonCol:topBottomMat === 'Forged Carbon' ? (forged[config.topBottomCarbonCol] ? config.topBottomCarbonCol : '#111111') : '#111111',
-    paddleShifters:['None','Standard','Racing Style 1','Racing Style 2','Magnetic'].includes(config.paddleShifters) ? config.paddleShifters : 'Standard',
+    paddleShifters:['None','Standard','Racing Style 1','Racing Style 2','Magnetic','Urus Style'].includes(config.paddleShifters) ? config.paddleShifters : 'Standard',
     b85PaddleMaterial:config.b85PaddleMaterial === 'Forged Carbon' ? 'Forged Carbon' : 'Classic Carbon',
     b85PaddleCarbonCol:forged[config.b85PaddleCarbonCol] ? config.b85PaddleCarbonCol : '#111111',
     b85PaddleSymbolCol:colors[config.b85PaddleSymbolCol] ? config.b85PaddleSymbolCol : '#F0F0F0',

@@ -322,5 +322,341 @@
     "url": "https://build.miamicarbondesigns.com/wheels/bmw-g/trims/forged.webp",
     "bytes": 196324,
     "sha256": "dec19bfbf35869383ca60f3bfb0e34d2caceec7af47055fc1f1ca74caca13746"
+  },
+  {
+    "path": "stitch/round-side.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/bmw-g/stitch/round-side.webp",
+    "bytes": 51214,
+    "sha256": "a6eb470cb1d998133041fb0d846d14a43e119c6af6882b1f637a286df6009baa"
+  },
+  {
+    "path": "pre/round-side-smooth-9800.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-g/pre/round-side-smooth-9800.webp?v=5",
+    "bytes": 47684,
+    "sha256": "3d6e6ec273be7b1fa6d5c0d5504adf3df94cdc0b5a1922ca3cad9d6f2c3cb3ca"
+  },
+  {
+    "path": "pre/round-side-smooth-9801.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-g/pre/round-side-smooth-9801.webp?v=5",
+    "bytes": 64310,
+    "sha256": "9324dd55faea1542d4257510eb45a63cfbf365018c2485591a09e87832c7db9f"
+  },
+  {
+    "path": "pre/round-side-perforated-9800.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-g/pre/round-side-perforated-9800.webp?v=5",
+    "bytes": 53966,
+    "sha256": "05ef24c28b008f10331df49e7da97d9c0439907a9dc714139d098eb2dafe8ac1"
+  },
+  {
+    "path": "pre/round-side-perforated-9801.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-g/pre/round-side-perforated-9801.webp?v=5",
+    "bytes": 77552,
+    "sha256": "0f68c1dbeea1e537801a83e787977b051125f298c53678e512aae72e89f7f661"
+  },
+  {
+    "path": "pre/round-side-alcantara-9800.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-g/pre/round-side-alcantara-9800.webp?v=5",
+    "bytes": 76478,
+    "sha256": "5d91700bc93ea5e46ea4a250f6e91a017a81349993386ce5a8cadacf91bc0073"
+  },
+  {
+    "path": "pre/round-side-alcantara-9801.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-g/pre/round-side-alcantara-9801.webp?v=5",
+    "bytes": 108578,
+    "sha256": "2e5fdd69712ecf7dde6aa9c5242f472bcde1b06d7d6467488041ded82569e193"
+  },
+  {
+    "path": "stitch/round-tb.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/bmw-g/stitch/round-tb.webp",
+    "bytes": 50952,
+    "sha256": "7d15ee0fb8b0cbc1c2a070157ff93164d8d2b7584b6b622ac1cb90418ac4acca"
+  },
+  {
+    "path": "pre/round-tb-smooth-9800.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-g/pre/round-tb-smooth-9800.webp?v=5",
+    "bytes": 24796,
+    "sha256": "7972d49d0701ec219c947bd42119508cc8998a0c3960c81f73a201e4f2984627"
+  },
+  {
+    "path": "pre/round-tb-smooth-9801.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-g/pre/round-tb-smooth-9801.webp?v=5",
+    "bytes": 31722,
+    "sha256": "8527ea3bc1bf60a0cfaa3e0ac56e2de48de3a677c72eaf496136df78e2f49a83"
+  },
+  {
+    "path": "pre/round-tb-perforated-9800.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-g/pre/round-tb-perforated-9800.webp?v=5",
+    "bytes": 34890,
+    "sha256": "e3d18a3d99bb9810d0070b7ee497d5b28beaefc91cbdeb0a9851bb8ab2776659"
+  },
+  {
+    "path": "pre/round-tb-perforated-9801.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-g/pre/round-tb-perforated-9801.webp?v=5",
+    "bytes": 47496,
+    "sha256": "0d37a617a9ea3c7e56f8f9e06b8dc6e5f4406f7f1d3c67ed8ac21b99dc957958"
+  },
+  {
+    "path": "pre/round-tb-alcantara-9800.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-g/pre/round-tb-alcantara-9800.webp?v=5",
+    "bytes": 39270,
+    "sha256": "0dc755333e481dd1758468521e9ddba5a4cc8d4e9449a9e0880f75e2e9702a57"
+  },
+  {
+    "path": "pre/round-tb-alcantara-9801.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-g/pre/round-tb-alcantara-9801.webp?v=5",
+    "bytes": 50604,
+    "sha256": "1273d568d96f60d80ec3ff77933942d2b845c3f6e01bcc799e94b1e784ef055b"
+  },
+  {
+    "path": "stitch/flat-flat-side.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/bmw-g/stitch/flat-flat-side.webp",
+    "bytes": 31296,
+    "sha256": "26e4141f4c69757aef5fc036e41618d8a4b8da0bebc0befeb209cf8381ba7eab"
+  },
+  {
+    "path": "pre/flat-flat-side-smooth-9800.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-g/pre/flat-flat-side-smooth-9800.webp?v=5",
+    "bytes": 38644,
+    "sha256": "dfd178663f811696068d514274d84ce7cbe18cd395c0ef80aa62b492749e31e9"
+  },
+  {
+    "path": "pre/flat-flat-side-smooth-9801.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-g/pre/flat-flat-side-smooth-9801.webp?v=5",
+    "bytes": 47626,
+    "sha256": "5d6cd8008985bf2c61659b11f5ac9223e1ac8264e49227074108710883553de9"
+  },
+  {
+    "path": "pre/flat-flat-side-perforated-9800.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-g/pre/flat-flat-side-perforated-9800.webp?v=5",
+    "bytes": 44314,
+    "sha256": "d4289ac96fc9f4b2636ba9b2a56abc79928c1ea9e53be5d53f6d400070a7c758"
+  },
+  {
+    "path": "pre/flat-flat-side-perforated-9801.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-g/pre/flat-flat-side-perforated-9801.webp?v=5",
+    "bytes": 68416,
+    "sha256": "780fa00b8faaca6336cbcfdcca25ea4bb7c243aac7cf1345c8324257666204f0"
+  },
+  {
+    "path": "pre/flat-flat-side-alcantara-9800.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-g/pre/flat-flat-side-alcantara-9800.webp?v=5",
+    "bytes": 75762,
+    "sha256": "50a300baadeab57bbb6ee1bd9479eec3978c8558741c1ff46d86c7511539a492"
+  },
+  {
+    "path": "pre/flat-flat-side-alcantara-9801.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-g/pre/flat-flat-side-alcantara-9801.webp?v=5",
+    "bytes": 104344,
+    "sha256": "7fceada5567c005c275902c7e992881d19af321c538515fb5e2f18c308874bc9"
+  },
+  {
+    "path": "stitch/flat-flat-tb.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/bmw-g/stitch/flat-flat-tb.webp",
+    "bytes": 51908,
+    "sha256": "e26a5983a166b017a7f3ee0f43a7eeb5954e4b52dbe8340ff09dd511cf96ad82"
+  },
+  {
+    "path": "pre/flat-flat-tb-smooth-9800.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-g/pre/flat-flat-tb-smooth-9800.webp?v=5",
+    "bytes": 34096,
+    "sha256": "550106dc0459468be7a462f6fd06bcf541a801c200d69dd8fb7393db9ccc279a"
+  },
+  {
+    "path": "pre/flat-flat-tb-smooth-9801.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-g/pre/flat-flat-tb-smooth-9801.webp?v=5",
+    "bytes": 44878,
+    "sha256": "9a98679051ce40c08c83c2a67465d586ddd506356ece85fe8e210e5dfb1772f9"
+  },
+  {
+    "path": "pre/flat-flat-tb-perforated-9800.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-g/pre/flat-flat-tb-perforated-9800.webp?v=5",
+    "bytes": 49830,
+    "sha256": "dd170f06982e42534a0a52c7ab8fca60b9f36e3ed2f206016bdbf5cca7b7210c"
+  },
+  {
+    "path": "pre/flat-flat-tb-perforated-9801.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-g/pre/flat-flat-tb-perforated-9801.webp?v=5",
+    "bytes": 71928,
+    "sha256": "d423053a22668e243fc711d68f5e6f81ea7c3cbb093222e4bc782a15d585da16"
+  },
+  {
+    "path": "pre/flat-flat-tb-alcantara-9800.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-g/pre/flat-flat-tb-alcantara-9800.webp?v=5",
+    "bytes": 44092,
+    "sha256": "857c91faeb282e08e52f4e37e7e855ec7f0646f0b74c74dcbe1ca1d3c24ea65b"
+  },
+  {
+    "path": "pre/flat-flat-tb-alcantara-9801.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-g/pre/flat-flat-tb-alcantara-9801.webp?v=5",
+    "bytes": 62268,
+    "sha256": "039ec350f1fe0732d65316e6c88eebdc3d260fb472f521fe3d21b8bf82493a73"
+  },
+  {
+    "path": "stitch/flat-round-side.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/bmw-g/stitch/flat-round-side.webp",
+    "bytes": 39528,
+    "sha256": "02709dcf2b7746c015d1bc297c7c7ed654b2ed719b660b09f27f5a68cde02d8c"
+  },
+  {
+    "path": "pre/flat-round-side-smooth-9800.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-g/pre/flat-round-side-smooth-9800.webp?v=5",
+    "bytes": 43474,
+    "sha256": "a19070de6984020d66aef0652f3274c43b62562047a84dced21b526860d7b586"
+  },
+  {
+    "path": "pre/flat-round-side-smooth-9801.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-g/pre/flat-round-side-smooth-9801.webp?v=5",
+    "bytes": 59838,
+    "sha256": "36df7ee7095691b96d5de78f5d0dfbf5106b2dddcbf4d5f7d7934327bf2c71b9"
+  },
+  {
+    "path": "pre/flat-round-side-perforated-9800.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-g/pre/flat-round-side-perforated-9800.webp?v=5",
+    "bytes": 58158,
+    "sha256": "566c1e7cb378e762c6a53b453912b9fb03abe380621412865c1c667812637870"
+  },
+  {
+    "path": "pre/flat-round-side-perforated-9801.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-g/pre/flat-round-side-perforated-9801.webp?v=5",
+    "bytes": 77882,
+    "sha256": "736e8f3b723aaf55432e60a1c3193d0a3542ace9b32ef081935fecb4c70eabd2"
+  },
+  {
+    "path": "pre/flat-round-side-alcantara-9800.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-g/pre/flat-round-side-alcantara-9800.webp?v=5",
+    "bytes": 83090,
+    "sha256": "f5ba9e3edc4b09c326113b2c78d8fe37585a75c59e071014bd2b72f7fd7fd6d3"
+  },
+  {
+    "path": "pre/flat-round-side-alcantara-9801.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-g/pre/flat-round-side-alcantara-9801.webp?v=5",
+    "bytes": 98804,
+    "sha256": "84eaf7bbd1d5ffd8521834d64beae2eb4c03d967684769577b29fe73feaa348c"
+  },
+  {
+    "path": "stitch/flat-round-tb.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/bmw-g/stitch/flat-round-tb.webp",
+    "bytes": 54690,
+    "sha256": "a5ffba6aece084ca8682b256e66943244190ea19478ab49fe7110e7910118440"
+  },
+  {
+    "path": "pre/flat-round-tb-smooth-9800.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-g/pre/flat-round-tb-smooth-9800.webp?v=5",
+    "bytes": 92316,
+    "sha256": "bf68657f584921d3677d1c9ca97e13af39d9861136241d92341e1702710a366a"
+  },
+  {
+    "path": "pre/flat-round-tb-smooth-9801.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-g/pre/flat-round-tb-smooth-9801.webp?v=5",
+    "bytes": 101556,
+    "sha256": "8e24fb25ec46c45230fc43fe14c3b295edbb30ebd321cfd5a553b3ef4d531ed7"
+  },
+  {
+    "path": "pre/flat-round-tb-perforated-9800.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-g/pre/flat-round-tb-perforated-9800.webp?v=5",
+    "bytes": 101220,
+    "sha256": "49839ced0a4a5fe1e916fac8d8e73cfd61b5a4a529d53d2e20587c1a8c654e2b"
+  },
+  {
+    "path": "pre/flat-round-tb-perforated-9801.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-g/pre/flat-round-tb-perforated-9801.webp?v=5",
+    "bytes": 124532,
+    "sha256": "ba6c86c5739f809ae440d55c8c5b67b28f1fee0f9c82dd5e21a038d6963fd66b"
+  },
+  {
+    "path": "pre/flat-round-tb-alcantara-9800.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-g/pre/flat-round-tb-alcantara-9800.webp?v=5",
+    "bytes": 108784,
+    "sha256": "f6ca6df26d6b44e5f2d8588c490759e4ca4c08c0e97bdeb10b5625117ce09c75"
+  },
+  {
+    "path": "pre/flat-round-tb-alcantara-9801.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-g/pre/flat-round-tb-alcantara-9801.webp?v=5",
+    "bytes": 138124,
+    "sha256": "3e713c4d6401bc4d2aaefb521eb0674c257cf3028e26282fe58940559f5f5d1d"
+  },
+  {
+    "path": "stitch/yoke-side.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/bmw-g/stitch/yoke-side.webp",
+    "bytes": 50178,
+    "sha256": "81f5e21eb6fe75312edbad53bfd685ae6fff501afd16494ce30ac63e095ff202"
+  },
+  {
+    "path": "pre/yoke-side-smooth-9800.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-g/pre/yoke-side-smooth-9800.webp?v=5",
+    "bytes": 93938,
+    "sha256": "3154aa72563c0a62d94511b7bc5d888766dfe3ee5e684dbf5597921739c78955"
+  },
+  {
+    "path": "pre/yoke-side-smooth-9801.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-g/pre/yoke-side-smooth-9801.webp?v=5",
+    "bytes": 120802,
+    "sha256": "a2e34604f2e2d608868217af20c6de0dcbb861c62166c85b4fc146b0ebce4953"
+  },
+  {
+    "path": "pre/yoke-side-perforated-9800.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-g/pre/yoke-side-perforated-9800.webp?v=5",
+    "bytes": 136718,
+    "sha256": "6e01b55d8f35bb909145a789ce94b04938a46e0d9162cc8208d0362405fd273d"
+  },
+  {
+    "path": "pre/yoke-side-perforated-9801.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-g/pre/yoke-side-perforated-9801.webp?v=5",
+    "bytes": 184502,
+    "sha256": "a453253061441673df370648767bc022cf97212c5ef1ce33556d2c7c916c1d05"
+  },
+  {
+    "path": "pre/yoke-side-alcantara-9800.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-g/pre/yoke-side-alcantara-9800.webp?v=5",
+    "bytes": 116624,
+    "sha256": "8c4b995090a31c5951178a2611d746d57155fdd2d262dc499a225f8601638bf2"
+  },
+  {
+    "path": "pre/yoke-side-alcantara-9801.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-g/pre/yoke-side-alcantara-9801.webp?v=5",
+    "bytes": 148726,
+    "sha256": "054adf6d0d66456ad47475e019fc996b743794cdcf8f90d933da504c36f5c336"
+  },
+  {
+    "path": "stitch/yoke-bottom.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/bmw-g/stitch/yoke-bottom.webp",
+    "bytes": 26422,
+    "sha256": "60d1753ee877a83cd7e34e7a053fb5639caec68059a957ac43f8387caa771939"
+  },
+  {
+    "path": "pre/yoke-bottom-smooth-9800.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-g/pre/yoke-bottom-smooth-9800.webp?v=5",
+    "bytes": 33650,
+    "sha256": "49bacdb14afbe31ccf3b38e392d144d321313063aa1677430ed9770dd0ae2327"
+  },
+  {
+    "path": "pre/yoke-bottom-smooth-9801.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-g/pre/yoke-bottom-smooth-9801.webp?v=5",
+    "bytes": 39340,
+    "sha256": "0fd2375b18a0641800a49f25abc58e707337828b11e36d9deed339d41dc4af9b"
+  },
+  {
+    "path": "pre/yoke-bottom-perforated-9800.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-g/pre/yoke-bottom-perforated-9800.webp?v=5",
+    "bytes": 47270,
+    "sha256": "2c99fb54c557653226960274514cf6b9f58b2b36670a6ff0635146dfb09a1bf0"
+  },
+  {
+    "path": "pre/yoke-bottom-perforated-9801.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-g/pre/yoke-bottom-perforated-9801.webp?v=5",
+    "bytes": 53512,
+    "sha256": "1583709d435737ec268b54a08ed2afdcfac2c464a0354519f60d56bbe47893e8"
+  },
+  {
+    "path": "pre/yoke-bottom-alcantara-9800.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-g/pre/yoke-bottom-alcantara-9800.webp?v=5",
+    "bytes": 40492,
+    "sha256": "909e37be37f2d228607f3ddfbbeabe1ab09916453ff811366fe8a222229cea0c"
+  },
+  {
+    "path": "pre/yoke-bottom-alcantara-9801.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-g/pre/yoke-bottom-alcantara-9801.webp?v=5",
+    "bytes": 52640,
+    "sha256": "f711a9220ed3aa87378a7ed6af1ab57cdb1ce58c594c79826f24b0d5aec363e0"
   }
 ]

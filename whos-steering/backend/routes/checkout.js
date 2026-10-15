@@ -5,6 +5,7 @@ const { safeHttpUrl } = require('../lib/security');
 const hasText = (value) => typeof value === 'string' && value.trim().length > 0;
 
 const PROMO_CODES = Object.freeze({
+  drift: {code:'Drift',percentOff:10,label:'10% OFF'},
   complaints: {
     code: 'complaints',
     percentOff: 10,
@@ -51,7 +52,7 @@ function validateRequiredColors(cfg) {
   const topIsCarbon = hasText(cfg.topBottomMat) && cfg.topBottomMat.toLowerCase().includes('carbon');
   const sideIsCarbon = hasText(cfg.sideMat) && cfg.sideMat.toLowerCase().includes('carbon');
 
-  if (!(topIsCarbon
+  if (cfg.topBottomMat !== 'Matte Carbon' && !(topIsCarbon
     ? (cfg.topBottomCarbonCol || hasText(cfg.topBottomCustomColor))
     : (cfg.topBottomCol || hasText(cfg.topBottomCustomColor)))) {
     missing.push('Top & Bottom Color');
@@ -92,6 +93,8 @@ function validateRequiredColors(cfg) {
     }
   }
 
+  if (cfg.paddleShifters === 'Urus Style' && !['Red','Blue','Yellow','Black'].includes(cfg.urusPaddleColor)) missing.push('Urus Style Color');
+  if (cfg.paddleShifters === 'Magnetic' && cfg.paddleLength && !['Short','Long'].includes(cfg.paddleLength)) missing.push('Paddle Length');
   return missing;
 }
 
@@ -495,7 +498,7 @@ async function calcServerPrice(cfg) {
   if (cfg.airbagUpgrade === true)    price += (rules.airbag_upgrade  || 75);
 
   // Magnetic paddle shifters: +$25 for all brands/styles
-  if (cfg.paddleShifters === 'Magnetic' || (hasSourcePaddles && ['Glossy Carbon', 'Matte Carbon', 'Forged Carbon', 'Racing Style 1', 'Racing Style 2'].includes(cfg.paddleShifters))) price += (rules.paddle_magnetic || 25);
+  if (['Magnetic','Urus Style'].includes(cfg.paddleShifters) || (hasSourcePaddles && ['Glossy Carbon', 'Matte Carbon', 'Forged Carbon', 'Racing Style 1', 'Racing Style 2'].includes(cfg.paddleShifters))) price += (rules.paddle_magnetic || 25);
 
   if (usesBmw2D && ['Glossy Carbon','Matte Carbon','Forged Carbon'].includes(cfg.bmwLowerTrim)) price += (rules.bmw_lower_trim ?? 50);
 

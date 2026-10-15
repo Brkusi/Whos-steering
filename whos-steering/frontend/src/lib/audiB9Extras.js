@@ -6,14 +6,17 @@ import { createB9Paddles } from './audiB9Paddles';
 // remain unchanged; these are visual approximations, not source geometry.
 export async function createB9Extras(root, parts) {
   const group = new THREE.Group(); group.name = 'WhosSteering_optional_extras'; root.add(group);
-  const [honeycomb,paddleTexture] = await Promise.all([
+  const [honeycomb,paddleTexture,matteCarbon] = await Promise.all([
     new THREE.TextureLoader().loadAsync(`${process.env.PUBLIC_URL || ''}/HoneyComb.jpeg`),
     new THREE.TextureLoader().loadAsync(`${process.env.PUBLIC_URL || ''}/classic/classic-black.png`),
+    new THREE.TextureLoader().loadAsync(`${process.env.PUBLIC_URL || ''}/matte-carbon-gseries.png`),
   ]);
   honeycomb.colorSpace = THREE.SRGBColorSpace; honeycomb.flipY = false;
   honeycomb.wrapS = honeycomb.wrapT = THREE.RepeatWrapping; honeycomb.repeat.set(4,4);
   paddleTexture.colorSpace=THREE.SRGBColorSpace;paddleTexture.wrapS=paddleTexture.wrapT=THREE.RepeatWrapping;
-  const textures = [honeycomb,paddleTexture];
+  matteCarbon.colorSpace=THREE.SRGBColorSpace;matteCarbon.flipY=false;
+  matteCarbon.wrapS=matteCarbon.wrapT=THREE.RepeatWrapping;matteCarbon.repeat.set(8,8);
+  const textures = [honeycomb,paddleTexture,matteCarbon];
   function canvasMap(width, height, draw) {
     const canvas = document.createElement('canvas'); canvas.width=width; canvas.height=height;
     draw(canvas.getContext('2d'), width, height);
@@ -43,5 +46,5 @@ export async function createB9Extras(root, parts) {
     paddles.update(appearance,sideNode);
   }
   // Geometries/materials are disposed with the containing source model.
-  return {honeycomb,update,dispose:()=>textures.forEach(texture=>texture.dispose())};
+  return {honeycomb,matteCarbon,update,dispose:()=>textures.forEach(texture=>texture.dispose())};
 }

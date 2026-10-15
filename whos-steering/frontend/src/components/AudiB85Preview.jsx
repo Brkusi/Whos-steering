@@ -33,6 +33,7 @@ export default function AudiB85Preview({config}) {
       const ctx = canvas.getContext('2d');
       layers.forEach((layer, i) => {
         if (layer.crop) ctx.drawImage(images[i], ...layer.crop, ...layer.rect);
+        else if(layer.rect)ctx.drawImage(images[i], ...layer.rect);
         else ctx.drawImage(images[i], 0, 0, 1080, 1080);
       });
       if(led)drawLedDisplay(ctx,createLedArtwork(),{x:245,y:95,width:590,height:46,rise:85});
