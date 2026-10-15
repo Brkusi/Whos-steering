@@ -7,7 +7,7 @@ import { useState, useEffect, useCallback, useRef, useId, lazy, Suspense } from 
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import WheelPreview from '../components/WheelPreview';
 import {
-  COLORS, B85_MATERIAL_COLORS, MATS, TRIS, DEFAULT_CONFIG, colorName,
+  COLORS, B85_MATERIAL_COLORS, MATS, TRIS, DEFAULT_CONFIG, colorName, materialLabel, materialChoices,
   STRIPE_CONCEPTS, STITCH_COLORS, B85_STRIPE_CONCEPTS, B85_STITCH_COLORS,
   CLASSIC_CARBON_COLORS, FORGED_CARBON_COLORS, B85_FORGED_CARBON_COLORS, HONEYCOMB_CARBON_COLORS,
   TOP_BOTTOM_MATS, SIDE_MATS, AIRBAG_MATS,
@@ -179,12 +179,9 @@ function MatSection({ label, matKey, colKey, carbonColKey, customColKey, cfg, se
   const mat = cfg[matKey];
   const fullList = matsOverride || MATS;
 
-  // If a linked material (e.g. Top/Bottom) has a carbon type selected, restrict
-  // this section's options to: the same carbon type, Alcantara, or Smooth Leather.
+  // Keep every side-grip leather option available with a carbon top.
   const linkedCarbonType = linkedMat?.carbon ? linkedMat.cType : null;
-  const matList = linkedCarbonType
-    ? fullList.filter(m => (m.carbon && m.cType === linkedCarbonType) || m.n === 'Alcantara' || m.n === 'Smooth Leather')
-    : fullList;
+  const matList = materialChoices(fullList, linkedCarbonType, matKey);
 
   const selectedMat = matList.find(m => m.n === mat);
   const isCarbon = selectedMat?.carbon;
@@ -195,17 +192,17 @@ function MatSection({ label, matKey, colKey, carbonColKey, customColKey, cfg, se
   const carbonLabel = cType === 'classic' ? 'Classic Carbon Color' : cType === 'forged' ? 'Forged Carbon Flakes' : 'Honeycomb Carbon Flakes';
 
   return (
-    <Sect label={label} value={mat}>
+    <Sect label={label} value={materialLabel(mat)}>
       {linkedCarbonType && (
         <div style={{ fontSize: 14, color: 'rgba(232,184,0,.7)', letterSpacing: .5, marginBottom: 10, padding: '6px 10px', background: 'rgba(232,184,0,.06)', border: '1px solid rgba(232,184,0,.2)' }}>
-          ✦ Limited to matching carbon, Alcantara, or Smooth Leather based on your other grip selection
+          ✦ Matching carbon, Alcantara/Suede, Smooth Leather, or Perforated Leather available
         </div>
       )}
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7, marginBottom: 14 }}>
         {matList.map(m => (
           <button key={m.n} className={`ob${mat === m.n ? ' on' : ''}`}
             onClick={() => { set(matKey, m.n); set(colKey, null); set(carbonColKey, null); set(customColKey, ''); }}>
-            {m.n}{m.carbon && <span style={{ marginLeft: 6, fontSize: 14, opacity: .75 }}>(+$40)</span>}
+            {materialLabel(m.n)}{m.carbon && <span style={{ marginLeft: 6, fontSize: 14, opacity: .75 }}>(+$40)</span>}
           </button>
         ))}
       </div>
@@ -794,9 +791,9 @@ export default function Configure() {
         : null,
 
       ...(isAudiB85(cfg) && cfg.paddleShifters?.startsWith('Racing Style') ? [['Paddle Finish',cfg.b85PaddleMaterial], ...(cfg.b85PaddleMaterial === 'Forged Carbon' ? [['Paddle Carbon',cfg.b85PaddleCarbonCustomColor || B85_FORGED_CARBON_COLORS.find(c => c.h === cfg.b85PaddleCarbonCol)?.n]] : []), ['Paddle Symbols',configuredColor(cfg.b85PaddleSymbolCol, cfg.b85PaddleSymbolCustomColor)]] : []),
-      ['Top & Bottom Grip Material', cfg.topBottomMat],
+      ['Top & Bottom Grip Material', materialLabel(cfg.topBottomMat)],
       ['Top & Bottom Color', topColor],
-      ['Side Grip Material', cfg.sideMat],
+      ['Side Grip Material', materialLabel(cfg.sideMat)],
       ['Side Grip Color', sideColor],
 
       cfg.brand === 'AUDI' && !isAudiRS2020(cfg) ? ['Lower Badge', cfg.audiBadge] : null,
@@ -817,7 +814,7 @@ export default function Configure() {
         ? ['Full Upgraded Airbag Unit', cfg.airbagUpgrade ? 'Yes (+$75)' : 'No']
         : null,
 
-      cfg.airbagCompat ? ['Airbag Material', cfg.airbagMat || '—'] : null,
+      cfg.airbagCompat ? ['Airbag Material', materialLabel(cfg.airbagMat) || '—'] : null,
       cfg.airbagCompat
         ? ['Airbag Color', configuredColor(cfg.airbagCol, cfg.airbagCustomColor)]
         : null,
@@ -1294,7 +1291,7 @@ export default function Configure() {
                   {AIRBAG_MATS.map(m => (
                     <button key={m.n} className={`ob${cfg.airbagMat === m.n ? ' on' : ''}`}
                       onClick={() => { set('airbagMat', m.n); set('airbagCol', null); set('airbagCustomColor', ''); }}>
-                      {m.n}
+                      {materialLabel(m.n)}
                     </button>
                   ))}
                 </div>

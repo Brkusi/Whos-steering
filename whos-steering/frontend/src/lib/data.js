@@ -131,6 +131,11 @@ export const SIDE_MATS = [
   { n: 'Alcantara',           d: '#3A3A3A', col: true,  carbon: false  },
 ];
 
+export const materialLabel = material => material === 'Alcantara' ? 'Alcantara/Suede' : material;
+export const materialChoices = (materials, linkedCarbonType, section) => !linkedCarbonType ? materials
+  : materials.filter(m => (m.carbon && m.cType === linkedCarbonType) || ['Alcantara', 'Smooth Leather'].includes(m.n)
+    || (section === 'sideMat' && m.n === 'Perforated Leather'));
+
 export const MAT_HEX = {
   'Alcantara':          '#2A2A2A',
   'Leather':            '#3A2010',
@@ -190,9 +195,9 @@ export const AUDI_PRESETS = [
     name: 'RS STEALTH',
     base_price: 679.99,
     compat: 'Fits 2011+ AUDI All Models',
-    features: ['Magnetic Paddle Shifters','Full Alcantara Grip','Carbon Fiber Accents','RS Badging','Airbag Cover Compatible','Heated Steering'],
+    features: ['Magnetic Paddle Shifters','Full Alcantara/Suede Grip','Carbon Fiber Accents','RS Badging','Airbag Cover Compatible','Heated Steering'],
     images: ['/PRESET_2.png', '/PRESET_2_2.png'],
-    desc: 'Blacked-out Alcantara all around with carbon fibre accents. Understated, aggressive, and purpose-built.',
+    desc: 'Blacked-out Alcantara/Suede all around with carbon fibre accents. Understated, aggressive, and purpose-built.',
     isPreset: true,
   },
   {
@@ -202,14 +207,14 @@ export const AUDI_PRESETS = [
     base_price: 799.99,
     compat: 'Fits All Audi Models 2011+',
     features: [
-      'Alcantara Sides & Airbag',
+      'Alcantara/Suede Sides & Airbag',
       'Carbon Fiber Top & Bottom',
       'Carbon Fiber Paddles',
       'Gloss Black Inlay',
       'Red 12 Stripe',
     ],
     images: ['/AUDI_PRESET_3.png'],
-    desc: 'Carbon fiber top and bottom with Alcantara sides, gloss black inlay, and a bold red stripe. The flagship Audi build.',
+    desc: 'Carbon fiber top and bottom with Alcantara/Suede sides, gloss black inlay, and a bold red stripe. The flagship Audi build.',
     isPreset: true,
   }
 ];
@@ -230,7 +235,7 @@ export const INFINITI_PRESETS = [
     vehicleModel: 'G25 / G35 / G37 / G37X',
     features: [
       'Purple Carbon Fiber',
-      'Alcantara Side Grips',
+      'Alcantara/Suede Side Grips',
       'Black Stitching',
     ],
     images: [
@@ -239,7 +244,7 @@ export const INFINITI_PRESETS = [
       '/infiniti/purple-rain-3.jpg',
       '/infiniti/purple-rain-4.jpg',
     ],
-    desc: 'A striking ready-to-ship Infiniti wheel finished in purple carbon fiber with Alcantara side grips and clean black stitching. Already built and ready to transform G25, G35, G37 and G37X models from 2009–2013 without the custom-build wait.',
+    desc: 'A striking ready-to-ship Infiniti wheel finished in purple carbon fiber with Alcantara/Suede side grips and clean black stitching. Already built and ready to transform G25, G35, G37 and G37X models from 2009–2013 without the custom-build wait.',
     isPreset: true,
     customizable: false,
     readyToShip: true,
@@ -250,7 +255,7 @@ export const INFINITI_PRESETS = [
     statusBadge: 'READY TO SHIP',
     productTypeLabel: 'INFINITI · READY TO SHIP',
     fixedInfoTitle: 'BUILT & READY TO SHIP',
-    fixedInfoBody: 'Purple Rain is already built and ready to ship exactly as shown. Purple carbon fiber and Alcantara create a bold premium finish without the custom-build wait. This listing does not include airbag, heated-steering, or lane-assist options.',
+    fixedInfoBody: 'Purple Rain is already built and ready to ship exactly as shown. Purple carbon fiber and Alcantara/Suede create a bold premium finish without the custom-build wait. This listing does not include airbag, heated-steering, or lane-assist options.',
     fixedBuildNote: 'Ready to ship · Already built',
     footerMeta: '🛡 6 Month Warranty · Ready to Ship · Already Built',
     fixedConfig: {
@@ -398,7 +403,7 @@ export const BMW_PRESETS = [
     compat: 'Fits F10, F30, G20, G30',
     features: [
       'G-Series Style',
-      'Fully Alcantara',
+      'Fully Alcantara/Suede',
       'Carbon Fiber Inlays',
       'Carbon Fiber Paddle Shifters',
       'Red Stripe at Top',
@@ -406,7 +411,7 @@ export const BMW_PRESETS = [
       'Red & Blue Dual Stitching',
     ],
     images: ['/BMW_PRESET_3.png'],
-    desc: 'Full Alcantara grip with carbon fiber inlays and a bold red stripe — the ultimate M stealth build. Aggressive without saying a word.',
+    desc: 'Full Alcantara/Suede grip with carbon fiber inlays and a bold red stripe — the ultimate M stealth build. Aggressive without saying a word.',
     isPreset: true,
   }
     ,
