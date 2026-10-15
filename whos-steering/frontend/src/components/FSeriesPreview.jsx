@@ -14,7 +14,7 @@ export default function FSeriesPreview({config}) {
   const [status,setStatus]=useState('loading'),[zoom,setZoom]=useState(false),[retry,setRetry]=useState(0);
   const appearance=bmwFSeriesConfiguration(config,parseColor),key=JSON.stringify(appearance),family=appearance.family;
   const shapeLabel=sourceWheelShape(config);
-  const label=config.brand === 'AUDI' ? `Audi ${config.wheelStyleType === 'RS 2020+' ? 'B9.5 Style' : config.wheelStyleType}` : config.brand === 'BMW' ? `BMW ${config.wheelStyleType}` : config.brand === 'TOYOTA' ? 'Toyota Supra GR' : config.brand === 'PORSCHE' ? `Porsche ${config.wheelStyleType}` : config.brand === 'DODGE_SRT' ? 'Dodge SRT' : config.wheelStyleType;
+  const label=config.brand === 'AUDI' ? `Audi ${config.wheelStyleType === 'RS 2020+' ? 'B9.5 Style' : config.wheelStyleType}` : config.brand === 'BMW' ? (config.wheelStyleType.startsWith('BMW ') ? config.wheelStyleType : `BMW ${config.wheelStyleType}`) : config.brand === 'TOYOTA' ? 'Toyota Supra GR' : config.brand === 'PORSCHE' ? `Porsche ${config.wheelStyleType}` : config.brand === 'DODGE_SRT' ? 'Dodge SRT' : config.wheelStyleType;
   useEffect(()=>{const compositor=createFSeriesCompositor(family);renderer.current=compositor;return()=>{version.current++;compositor.dispose();renderer.current=null;};},[family]);
   useEffect(()=>{
     const current=++version.current;setStatus('loading');

@@ -1,4 +1,5 @@
 import { COLORS, STITCH_COLORS, STRIPE_CONCEPTS } from './data';
+import { BMW_2010_COLORS } from './bmw2010Palette';
 
 // Free-text production instructions (e.g. dual colors) must never silently
 // pretend to have an exact visual match. Return them for the preview notice.
@@ -6,7 +7,7 @@ export function wheelAppearance(cfg, parseColor) {
   const unresolved = [];
   function color(value, fallback) {
     if (!value) return fallback;
-    const known = [...COLORS, ...STITCH_COLORS].find(c => c.n.toLowerCase() === value.trim().toLowerCase());
+    const known = [...COLORS, ...STITCH_COLORS, ...BMW_2010_COLORS].find(c => c.n.toLowerCase() === value.trim().toLowerCase());
     const resolved = known?.h || parseColor(value);
     if (!resolved) unresolved.push(value);
     return resolved || fallback;

@@ -84,3 +84,9 @@ test('universal paddles use the same upgrade price on every configurable make',a
     assert.equal(await serverPrice()({...cfg,topBottomMat:'Matte Carbon'}),base+4000);
   }
 });
+
+test('BMW 2010 reference options agree with the storefront total',async()=>{
+  const cfg={brand:'BMW',wheelStyleType:'BMW 2010–2019',airbagCompat:false,heated:false,laneAssist:false};
+  assert.equal(await serverPrice()(cfg),89900);
+  assert.equal(await serverPrice()({...cfg,topBottomMat:'Forged Carbon',bmwLowerTrim:'Glossy Carbon',airbagCompat:true,paddleShifters:'Matte Carbon',heated:true}),164900);
+});

@@ -1,4 +1,5 @@
 import b85Assets from './audiB85Assets.json';
+import { BMW_2010_COLORS } from './bmw2010Palette';
 // ── Leather / Alcantara colors ────────────────────────────────────────────────
 export const COLORS = [
   { n: 'Black',       h: '#111111' },
@@ -155,6 +156,7 @@ export const TRIS = {
 export const DEFAULT_CONFIG = {
   brand: 'BMW', vehicleYear: '', vehicleModel: '',
   wheelStyle: 'Standard', paddleShifters: 'Standard', paddleLength: 'Short', urusPaddleColor: '', paddleFinish: 'Normal',
+  bmwRing: false,
   topBottomMat: 'Smooth Leather', topBottomCol: null, topBottomCarbonCol: null, topBottomCustomColor: '',
   wheelStyleType: 'B9',
   startStopButtons: false,
@@ -174,7 +176,7 @@ export const DEFAULT_CONFIG = {
 
 export function colorName(h) {
   if (!h) return '—';
-  return COLORS.find(c => c.h === h)?.n || h;
+  return COLORS.find(c => c.h === h)?.n || BMW_2010_COLORS.find(c => c.h.toLowerCase() === String(h).toLowerCase())?.n || h;
 }
 
 // ── Audi preset products (frontend-only, no DB needed) ────────────────────────

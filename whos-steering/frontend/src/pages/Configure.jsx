@@ -1,4 +1,5 @@
 import { paddleOptions, paddleLabel, isUniversalPaddle, URUS_PADDLE_COLORS, normalizePaddleDetails } from '../lib/paddleOptions';
+import { BMW_2010_COLORS } from '../lib/bmw2010Palette';
 import LedDisplay from '../components/LedDisplay';
 import ReferenceWheelPreview from '../components/ReferenceWheelPreview';
 import { normalizeB85Options } from '../lib/audiB85Configuration';
@@ -13,7 +14,7 @@ import {
   CLASSIC_CARBON_COLORS, FORGED_CARBON_COLORS, B85_FORGED_CARBON_COLORS, HONEYCOMB_CARBON_COLORS,
   TOP_BOTTOM_MATS, SIDE_MATS, AIRBAG_MATS,
 } from '../lib/data';
-import { F_SERIES_SHAPE_IDS, F_SERIES_PADDLES, sourceWheelStyle, sourceWheelShapes, sourceWheelHasPaddles, sourceWheelSupportsLed, usesBmw2D, usesSource2D, isAudiRS2020, bmwAssetFamily, bmwStyleLabel } from '../lib/bmwFSeriesConfiguration';
+import { F_SERIES_SHAPE_IDS, F_SERIES_PADDLES, sourceWheelStyle, sourceWheelShapes, sourceWheelHasPaddles, sourceWheelSupportsLed, usesBmw2D, usesSource2D, isAudiRS2020, isBmw2010, bmwAssetFamily, bmwStyleLabel } from '../lib/bmwFSeriesConfiguration';
 import { calcPrice, apiFetch } from '../lib/api';
 import { useCart } from '../context';
 
@@ -29,6 +30,7 @@ const F_SERIES_TOP_MATS = [...TOP_BOTTOM_MATS.filter(m => m.n !== 'Honeycomb Car
 const B85_TOP_MATS = F_SERIES_TOP_MATS.filter(m => m.n !== 'Perforated Leather');
 const B85_PADDLES = ['None','Standard','Racing Style 1','Racing Style 2','Magnetic','Urus Style'];
 const isAudiB85 = cfg => cfg.brand === 'AUDI' && cfg.wheelStyleType === 'B8.5';
+const wheelMaterialLabel = (cfg, material) => isBmw2010(cfg) && material === 'Classic Carbon' ? 'Glossy Carbon' : materialLabel(material);
 
 function Sect({ label, value, children, badge }) {
   return (
@@ -58,7 +60,7 @@ function ColorGrid({ colors, selected, onSelect }) {
   return (
     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 6, marginTop: 8 }}>
       {colors.map(c => (
-        <button type="button" key={c.h} title={c.n} aria-label={c.n} aria-pressed={selected === c.h} onClick={() => onSelect(c.h)}
+        <button type="button" key={c.h} title={c.code ? `${c.n} · ${c.code}` : c.n} aria-label={c.code ? `${c.n} · ${c.code}` : c.n} aria-pressed={selected === c.h} onClick={() => onSelect(c.h)}
           style={{ padding:0, background:'transparent', position: 'relative', aspectRatio: 1, borderRadius: 3, cursor: 'pointer',
             border: `2px solid ${selected === c.h ? 'var(--y)' : 'transparent'}`,
             boxShadow: selected === c.h ? '0 0 0 1px var(--y)' : 'none',
@@ -193,7 +195,7 @@ function MatSection({ label, matKey, colKey, carbonColKey, customColKey, cfg, se
   const carbonLabel = cType === 'classic' ? 'Classic Carbon Color' : cType === 'forged' ? 'Forged Carbon Flakes' : 'Honeycomb Carbon Flakes';
 
   return (
-    <Sect label={label} value={materialLabel(mat)}>
+    <Sect label={label} value={wheelMaterialLabel(cfg,mat)}>
       {linkedCarbonType && (
         <div style={{ fontSize: 14, color: 'rgba(232,184,0,.7)', letterSpacing: .5, marginBottom: 10, padding: '6px 10px', background: 'rgba(232,184,0,.06)', border: '1px solid rgba(232,184,0,.2)' }}>
           ✦ Matching carbon, Alcantara/Suede, Smooth Leather, or Perforated Leather available
@@ -203,11 +205,11 @@ function MatSection({ label, matKey, colKey, carbonColKey, customColKey, cfg, se
         {matList.map(m => (
           <button key={m.n} className={`ob${mat === m.n ? ' on' : ''}`}
             onClick={() => { set(matKey, m.n); set(colKey, null); set(carbonColKey, null); set(customColKey, ''); }}>
-            {materialLabel(m.n)}{m.carbon && <span style={{ marginLeft: 6, fontSize: 14, opacity: .75 }}>(+$40)</span>}
+            {wheelMaterialLabel(cfg,m.n)}{m.carbon && <span style={{ marginLeft: 6, fontSize: 14, opacity: .75 }}>{isBmw2010(cfg) ? (m.n === 'Forged Carbon' ? '(+$175)' : '') : '(+$40)'}</span>}
           </button>
         ))}
       </div>
-      {mat === 'Matte Carbon' ? <p style={{fontSize:14,color:'var(--t)'}}>Matte carbon fiber · Natural black finish</p> : isCarbon ? (
+      {isBmw2010(cfg) && isCarbon ? <p style={{fontSize:14,color:'var(--t)'}}>Natural carbon finish</p> : mat === 'Matte Carbon' ? <p style={{fontSize:14,color:'var(--t)'}}>Matte carbon fiber · Natural black finish</p> : isCarbon ? (
         <>
           <div style={{ fontSize: 14, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 4, color: 'var(--t)' }}>
             {carbonLabel} <span className="req">*</span>
@@ -228,8 +230,8 @@ function MatSection({ label, matKey, colKey, carbonColKey, customColKey, cfg, se
           <div style={{ fontSize: 14, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 4, color: 'var(--t)' }}>
             Color <span className="req">*</span>: {cfg[customColKey] ? cfg[customColKey] : colorName(cfg[colKey])}
           </div>
-          <ColorGrid colors={isAudiB85(cfg) ? B85_MATERIAL_COLORS : COLORS} selected={cfg[colKey]} onSelect={v => { set(colKey, v); set(customColKey, ''); }} />
-          <CustomColorInput label="Type Any Color:" value={cfg[customColKey]} onChange={v => { set(customColKey, v); set(colKey, null); }} />
+          <ColorGrid colors={isBmw2010(cfg) ? BMW_2010_COLORS : isAudiB85(cfg) ? B85_MATERIAL_COLORS : COLORS} selected={cfg[colKey]} onSelect={v => { set(colKey, v); set(customColKey, ''); }} />
+          {!isBmw2010(cfg) && <CustomColorInput label="Type Any Color:" value={cfg[customColKey]} onChange={v => { set(customColKey, v); set(colKey, null); }} />}
         </>
       ) : null}
       {colorError && <div className="err-msg" style={{ marginTop: 8 }}>Please choose a color option.</div>}
@@ -419,6 +421,7 @@ function currentWheelOptions(config) {
   const dodgeNoCarbon = config.brand === 'DODGE_SRT' && ['Round','Yoke'].includes(bmwShape) && config.topBottomMat?.includes('Carbon') && config.topBottomMat !== 'Matte Carbon';
   return {
     ...next,
+    ...(isBmw2010(config) ? {topBottomCol:config.topBottomCol || '#17181B',sideCol:config.sideCol || '#17181B'} : {}),
     paddleFinish: config.paddleFinish === 'Stealth' ? 'Stealth' : 'Normal',
     ...(dodgeNoCarbon ? {topBottomMat:'Smooth Leather',topBottomCarbonCol:null} : {}),
     ...(!source2D && config.topBottomMat === 'Perforated Leather' ? {topBottomMat:'Smooth Leather'} : {}),
@@ -471,6 +474,7 @@ export default function Configure() {
     vehicleYear: initYear,
     vehicleModel: initModel,
     wheelStyleType: initStyle,
+    ...(initStyle === 'BMW 2010–2019' ? {topBottomMat:'Perforated Leather',sideMat:'Perforated Leather',topBottomCol:'#17181B',sideCol:'#17181B'} : {}),
     wheelStyle: initStyle === 'B8.5' ? 'Sport' : DEFAULT_CONFIG.wheelStyle,
     bmwShape: ['TOYOTA','PORSCHE'].includes(initBrand) || (initBrand === 'AUDI' && initStyle === 'B8.5') ? 'Flat bottom' : 'Round',
   }));
@@ -673,7 +677,7 @@ export default function Configure() {
     if (!photo && !cfg.photoUrl) e.photo = true;
 
     const topMaterial = (usesSource2D(cfg) ? F_SERIES_TOP_MATS : TOP_BOTTOM_MATS).find(m => m.n === cfg.topBottomMat);
-    const topColorSelected = cfg.topBottomMat === 'Matte Carbon' || (topMaterial?.carbon
+    const topColorSelected = (isBmw2010(cfg) && topMaterial?.carbon) || cfg.topBottomMat === 'Matte Carbon' || (topMaterial?.carbon
       ? Boolean(cfg.topBottomCarbonCol || textValue(cfg.topBottomCustomColor))
       : Boolean(cfg.topBottomCol || textValue(cfg.topBottomCustomColor)));
     if (!topColorSelected) e.topBottomColor = true;
@@ -769,8 +773,8 @@ export default function Configure() {
       [cfg.brand === 'AUDI' ? 'LED Display Strip' : 'RPM Gauge',
         cfg.ledDisplay ? `Yes (+$${cfg.brand === 'AUDI' ? '50' : '100'})` : 'No'],
 
-      ['Top Stripe', selectedStripeConcept.label],
-      textValue(cfg.stripeCustomColor)
+      isBmw2010(cfg) ? ["12 o'clock ring", cfg.bmwRing ? 'Added' : 'No ring'] : ['Top Stripe', selectedStripeConcept.label],
+      !isBmw2010(cfg) && textValue(cfg.stripeCustomColor)
         ? ['Custom Stripe Color', textValue(cfg.stripeCustomColor)]
         : null,
 
@@ -793,8 +797,8 @@ export default function Configure() {
         : null,
 
       ...(isAudiB85(cfg) && cfg.paddleShifters?.startsWith('Racing Style') ? [['Paddle Finish',cfg.b85PaddleMaterial], ...(cfg.b85PaddleMaterial === 'Forged Carbon' ? [['Paddle Carbon',cfg.b85PaddleCarbonCustomColor || B85_FORGED_CARBON_COLORS.find(c => c.h === cfg.b85PaddleCarbonCol)?.n]] : []), ['Paddle Symbols',configuredColor(cfg.b85PaddleSymbolCol, cfg.b85PaddleSymbolCustomColor)]] : []),
-      ['Top & Bottom Grip Material', materialLabel(cfg.topBottomMat)],
-      cfg.topBottomMat !== 'Matte Carbon' ? ['Top & Bottom Color', topColor] : null,
+      ['Top & Bottom Grip Material', wheelMaterialLabel(cfg,cfg.topBottomMat)],
+      cfg.topBottomMat !== 'Matte Carbon' && !(isBmw2010(cfg) && cfg.topBottomMat?.includes('Carbon')) ? ['Top & Bottom Color', topColor] : null,
       ['Side Grip Material', materialLabel(cfg.sideMat)],
       ['Side Grip Color', sideColor],
 
@@ -809,10 +813,10 @@ export default function Configure() {
 
       ['Airbag Cover',
         cfg.airbagCompat
-          ? (cfg.brand === 'BMW' && cfg.wheelStyleType === 'F-Series' ? 'Yes (FREE)' : 'Yes (+$25)')
+          ? (isBmw2010(cfg) ? 'Yes (+$200)' : cfg.brand === 'BMW' && cfg.wheelStyleType === 'F-Series' ? 'Yes (FREE)' : 'Yes (+$25)')
           : 'No'],
 
-      cfg.airbagCompat
+      cfg.airbagCompat && !isBmw2010(cfg)
         ? ['Full Upgraded Airbag Unit', cfg.airbagUpgrade ? 'Yes (+$75)' : 'No']
         : null,
 
@@ -920,7 +924,7 @@ export default function Configure() {
               minHeight: 0,
               overflow: isMobileViewport ? 'visible' : 'hidden',
             }}>
-              <ReferenceWheelPreview led={cfg.ledDisplay} matte={cfg.topBottomMat === 'Matte Carbon'}
+              <ReferenceWheelPreview led={cfg.ledDisplay}
                 src="/g-series-reference.png"
                 alt="BMW G-Series LCI Steering Wheel customization options"
                 style={{
@@ -961,7 +965,7 @@ export default function Configure() {
               minHeight: 0,
               overflow: isMobileViewport ? 'visible' : 'hidden',
             }}>
-              <ReferenceWheelPreview led={cfg.ledDisplay} matte={cfg.topBottomMat === 'Matte Carbon'}
+              <ReferenceWheelPreview led={cfg.ledDisplay}
                 src="/r8-reference.png"
                 alt="Audi R8 Steering Wheel customization options"
                 style={{
@@ -1050,10 +1054,10 @@ export default function Configure() {
             )}
             {cfg.brand === 'BMW' && (
               <div style={{ padding: '8px 12px', background: 'rgba(232,184,0,.05)', border: '1px solid rgba(232,184,0,.2)', marginBottom: 12, fontSize: 14, color: 'var(--t)', letterSpacing: 1 }}>
-                {cfg.wheelStyleType === 'F-Series' ? 'BMW F chassis and E90 wheel family' : 'BMW F and G chassis wheel family'} · final fitment checked from your current wheel photo
+                {isBmw2010(cfg) ? 'BMW 3 · 4 · 5 · 6 · 7 · X3 · X4 · X5 · X6 (2010–2019)' : cfg.wheelStyleType === 'F-Series' ? 'BMW F chassis and E90 wheel family' : 'BMW F and G chassis wheel family'} · final fitment checked from your current wheel photo
               </div>
             )}
-            {sourceWheelStyle(cfg) && (
+            {sourceWheelStyle(cfg) && cfg.brand !== 'BMW' && (
               <div style={{ padding: '8px 12px', background: 'rgba(232,184,0,.05)', border: '1px solid rgba(232,184,0,.2)', marginBottom: 12, fontSize: 14, color: 'var(--t)', letterSpacing: 1 }}>
                 {cfg.wheelStyleType} wheel family · final fitment checked from your current wheel photo
               </div>
@@ -1128,7 +1132,10 @@ export default function Configure() {
           </Sect>}
 
           {/* Stripe */}
-          {!(usesSource2D(cfg) && cfg.bmwShape === 'Yoke') && <Sect label="Top Stripe" value={cfg.stripeCustomColor || selectedStripeConcept.label}>
+          {isBmw2010(cfg) && cfg.bmwShape !== 'Yoke' && <Sect label="12 o'clock ring" value={cfg.bmwRing ? 'Added' : 'No ring'}>
+            <Toggle label="Add 12 o'clock ring" sub="Included" value={!!cfg.bmwRing} onChange={v => set('bmwRing',v)} />
+          </Sect>}
+          {!isBmw2010(cfg) && !(usesSource2D(cfg) && cfg.bmwShape === 'Yoke') && <Sect label="Top Stripe" value={cfg.stripeCustomColor || selectedStripeConcept.label}>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(72px,1fr))', gap: 10, marginBottom: 14 }}>
               {(isAudiB85(cfg) ? B85_STRIPE_CONCEPTS : STRIPE_CONCEPTS).map(sc => (
                 <StripeConcept key={sc.id} concept={sc} selected={cfg.stripeCustomColor ? null : cfg.stripeConceptId} onSelect={v => { set('stripeConceptId', v); set('stripeCustomColor', ''); }} />
@@ -1157,7 +1164,7 @@ export default function Configure() {
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7 }}>
               {paddleOptions(!sourceWheelHasPaddles(cfg) ? ['Standard'] : isAudiB85(cfg) ? B85_PADDLES : usesSource2D(cfg) ? F_SERIES_PADDLES : ['Standard']).map(o => (
                 <button key={o} aria-pressed={cfg.paddleShifters === o} className={`ob${cfg.paddleShifters === o ? ' on' : ''}`} onClick={() => set('paddleShifters', o)}>
-                  {o === 'Standard' && usesSource2D(cfg) ? 'Original paddles' : o === 'None' ? 'No paddles' : paddleLabel(o)}{isUniversalPaddle(o) || o.includes('Carbon') || o.startsWith('Racing Style') ? ' (+$25.00)' : ''}
+                  {o === 'Standard' && usesSource2D(cfg) ? 'Original paddles' : o === 'None' ? 'No paddles' : paddleLabel(o)}{isUniversalPaddle(o) || o.includes('Carbon') || o.startsWith('Racing Style') ? ` (+$${isBmw2010(cfg) && o.includes('Carbon') ? '200' : '25'}.00)` : ''}
                 </button>
               ))}
             </div>
@@ -1258,7 +1265,7 @@ export default function Configure() {
             <div style={{ fontFamily: 'Rajdhani, sans-serif', fontWeight: 700, fontSize: 15, letterSpacing: .6, textTransform: 'uppercase', marginBottom: 8 }}>Options</div>
             <Toggle
               label="Airbag Cover"
-              sub={cfg.brand === 'BMW' && cfg.wheelStyleType === 'F-Series'
+              sub={isBmw2010(cfg) ? '+$200.00' : cfg.brand === 'BMW' && cfg.wheelStyleType === 'F-Series'
                 ? <span style={{ display: 'inline-block', background: 'var(--y)', color: '#000', fontWeight: 800, fontSize: 14, letterSpacing: 1, padding: '2px 8px', borderRadius: 3 }}>FREE</span>
                 : '+$25.00'}
               value={cfg.airbagCompat}
@@ -1266,7 +1273,7 @@ export default function Configure() {
             />
 
             {/* The B9.5 full unit can be chosen directly; it includes the cover. */}
-            {(cfg.airbagCompat || isAudiRS2020(cfg)) && (
+            {!isBmw2010(cfg) && (cfg.airbagCompat || isAudiRS2020(cfg)) && (
               <Toggle
                 label={isAudiRS2020(cfg) ? 'Full Upgraded Airbag Unit (includes cover)' : 'Will you require a full upgraded airbag unit (full airbag not just cover)?'}
                 sub={isAudiRS2020(cfg) && !cfg.airbagCompat ? '+$100.00 including cover' : '+$75.00'}
@@ -1278,18 +1285,18 @@ export default function Configure() {
             )}
             <Toggle
               label="Heated Steering"
-              sub={!isAudi ? '+$75.00' : ''}
+              sub={isBmw2010(cfg) ? '+$125.00' : !isAudi ? '+$75.00' : ''}
               value={cfg.heated}
               onChange={v => set('heated', v)}
             />
-            <Toggle
+            {!isBmw2010(cfg) && <Toggle
               label={!isAudi ? 'Does Your Original Steering Wheel Have Driver Assistance Functionality?' : 'Lane Assist Compatible'}
               sub={!isAudi
                 ? (cfg.laneAssist ? 'Yes (I want to retain Driver Assistance) — +$30.00' : 'No')
                 : ''}
               value={cfg.laneAssist}
               onChange={v => set('laneAssist', v)}
-            />
+            />}
 
             {cfg.airbagCompat && (
               <div style={{ marginTop: 14, paddingTop: 14, borderTop: '1px solid #1A1A1A' }}>
@@ -1309,8 +1316,8 @@ export default function Configure() {
                     <div style={{ fontSize: 14, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 4, color: 'var(--t)' }}>
                       Color <span className="req">*</span>: {configuredColor(cfg.airbagCol, cfg.airbagCustomColor)}
                     </div>
-                    <ColorGrid colors={isAudiB85(cfg) ? B85_MATERIAL_COLORS : COLORS} selected={cfg.airbagCol} onSelect={v => { set('airbagCol', v); set('airbagCustomColor', ''); }} />
-                    <CustomColorInput label="Type Any Color:" value={cfg.airbagCustomColor} onChange={v => { set('airbagCustomColor', v); set('airbagCol', null); }} />
+                    <ColorGrid colors={isBmw2010(cfg) ? BMW_2010_COLORS : isAudiB85(cfg) ? B85_MATERIAL_COLORS : COLORS} selected={cfg.airbagCol} onSelect={v => { set('airbagCol', v); set('airbagCustomColor', ''); }} />
+                    {!isBmw2010(cfg) && <CustomColorInput label="Type Any Color:" value={cfg.airbagCustomColor} onChange={v => { set('airbagCustomColor', v); set('airbagCol', null); }} />}
                     {errors.airbagColor && <div className="err-msg" style={{ marginTop: 8 }}>Please choose an airbag color.</div>}
                   </>
                 )}

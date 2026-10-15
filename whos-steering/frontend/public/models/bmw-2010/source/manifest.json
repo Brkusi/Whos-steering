@@ -1,0 +1,476 @@
+[
+  {
+    "path": "round.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/bmw-2010/round.webp",
+    "bytes": 354208,
+    "sha256": "2960758cd74532896aacd39298e348128649ec1244d0260913344b86908849e6"
+  },
+  {
+    "path": "pre/round-side-perforated-9800.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-2010/pre/round-side-perforated-9800.webp",
+    "bytes": 133480,
+    "sha256": "990540f48384339c7b2615a0952b9f9ff04d07d926a649e22f21f763dbd727d7"
+  },
+  {
+    "path": "pre/round-side-perforated-9801.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-2010/pre/round-side-perforated-9801.webp",
+    "bytes": 170616,
+    "sha256": "2b87b742d22c935c2a9ee136ab964469a3d4d94ada35e1d65abce58d79332069"
+  },
+  {
+    "path": "pre/round-side-alcantara-9800.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-2010/pre/round-side-alcantara-9800.webp",
+    "bytes": 140426,
+    "sha256": "14fdd97b170fe8bd4c9810d572ecfca9fab1eae538da424e9e8304db1c1851a0"
+  },
+  {
+    "path": "pre/round-side-alcantara-9801.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-2010/pre/round-side-alcantara-9801.webp",
+    "bytes": 170104,
+    "sha256": "7d4fe4fc843acf9803c0a5379710d5bf85ebd62b5d1629df16a129a1f223bdc5"
+  },
+  {
+    "path": "pre/round-side-smooth-9800.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-2010/pre/round-side-smooth-9800.webp",
+    "bytes": 89264,
+    "sha256": "1e1207182fec8897e462c140914606684b9ea0844bd71f48b7c31a191f0dbf74"
+  },
+  {
+    "path": "pre/round-side-smooth-9801.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-2010/pre/round-side-smooth-9801.webp",
+    "bytes": 128156,
+    "sha256": "d0c571b382c6a44f1616683509383be37b69254b55a603ba6e34292b03d11ab3"
+  },
+  {
+    "path": "pre/round-tb-perforated-9800.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-2010/pre/round-tb-perforated-9800.webp",
+    "bytes": 31106,
+    "sha256": "9b80075ea5dc90f09b532dcb16da1d3a600b85a03f3533442dee5f0b8ad9bd71"
+  },
+  {
+    "path": "pre/round-tb-perforated-9801.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-2010/pre/round-tb-perforated-9801.webp",
+    "bytes": 45392,
+    "sha256": "2aebbc8d870bad4341d82989738a3a7ea62482c2e5fad38a0f47f8eeba2d4ecf"
+  },
+  {
+    "path": "pre/round-tb-alcantara-9800.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-2010/pre/round-tb-alcantara-9800.webp",
+    "bytes": 34590,
+    "sha256": "9a35e5fc65524a8046ddea145445a27369e8c433643bf02811bdeedec56ef5a6"
+  },
+  {
+    "path": "pre/round-tb-alcantara-9801.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-2010/pre/round-tb-alcantara-9801.webp",
+    "bytes": 46358,
+    "sha256": "aac8ec0ddad412f4a02a615debf67dc7d4283cf3bd19d5efea2ff342655ead85"
+  },
+  {
+    "path": "pre/round-tb-smooth-9800.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-2010/pre/round-tb-smooth-9800.webp",
+    "bytes": 31344,
+    "sha256": "b1450324c5b30e010dabcd2750e3ddc779fbb94e477013b6be6864f408277dba"
+  },
+  {
+    "path": "pre/round-tb-smooth-9801.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-2010/pre/round-tb-smooth-9801.webp",
+    "bytes": 36684,
+    "sha256": "947d9e06fcab66ee95a4ac66953b84142331e04ea9e45c9b2f7df27e60ac58dc"
+  },
+  {
+    "path": "cf/round-glossy.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/bmw-2010/cf/round-glossy.webp",
+    "bytes": 48476,
+    "sha256": "f12fd94b8189e216ec95a3fa5b2a74f817e5b99e9fd97466d64853cef32e0a35"
+  },
+  {
+    "path": "cf/round-matte.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/bmw-2010/cf/round-matte.webp",
+    "bytes": 37160,
+    "sha256": "4cdd32a80c7f81b58038d509f20245f472f40d4dc9c1a5b108aec0774f228271"
+  },
+  {
+    "path": "cf/round-forged.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/bmw-2010/cf/round-forged.webp",
+    "bytes": 46842,
+    "sha256": "0903cf84db69c6cfad5434639e09f7948070b0eca2225ef4a25c6d3eaa6f8cc7"
+  },
+  {
+    "path": "marker/round.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/bmw-2010/marker/round.webp",
+    "bytes": 9396,
+    "sha256": "3ed056178be87e33d19edd30b76f7bffbab3fc30188bf8ccc2562361928d4bd2"
+  },
+  {
+    "path": "yoke.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/bmw-2010/yoke.webp",
+    "bytes": 548730,
+    "sha256": "1d2e01dade4aa786ab42553c4a66b4f69adb5a5c091ceed07043081f6d83d03d"
+  },
+  {
+    "path": "pre/yoke-side-perforated-9800.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-2010/pre/yoke-side-perforated-9800.webp",
+    "bytes": 123560,
+    "sha256": "df2a5899904845d7560c6942aabb3be504887af0d803494de5203355139b0ad4"
+  },
+  {
+    "path": "pre/yoke-side-perforated-9801.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-2010/pre/yoke-side-perforated-9801.webp",
+    "bytes": 176106,
+    "sha256": "3426a0b7ad209a55821fe8e6a3ed2f040e0d0b803b8fa63c12f46a0320d971a1"
+  },
+  {
+    "path": "pre/yoke-side-alcantara-9800.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-2010/pre/yoke-side-alcantara-9800.webp",
+    "bytes": 106316,
+    "sha256": "d00c22756cc60fd3851b350e0131669b6445e91a8cf8a45427099f451468e192"
+  },
+  {
+    "path": "pre/yoke-side-alcantara-9801.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-2010/pre/yoke-side-alcantara-9801.webp",
+    "bytes": 145622,
+    "sha256": "83768d5f80ad6261ccbbf7eef038e8a7cb98d7559c984d14e2945961becf3378"
+  },
+  {
+    "path": "pre/yoke-side-smooth-9800.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-2010/pre/yoke-side-smooth-9800.webp",
+    "bytes": 91292,
+    "sha256": "2ec4207321bb5c0f968bb1d32bc1a16dde6b5ba9d58b70f14a494fdc1deca72f"
+  },
+  {
+    "path": "pre/yoke-side-smooth-9801.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-2010/pre/yoke-side-smooth-9801.webp",
+    "bytes": 128816,
+    "sha256": "8d2ee9bcfb64bf3710276062167ba85207e20a32e4ecc6e92fd87ae05e261eff"
+  },
+  {
+    "path": "pre/yoke-bottom-perforated-9800.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-2010/pre/yoke-bottom-perforated-9800.webp",
+    "bytes": 41004,
+    "sha256": "6970f1b33e886cfac434c9d882ca16216c8bc08345c1829d9214249705d61188"
+  },
+  {
+    "path": "pre/yoke-bottom-perforated-9801.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-2010/pre/yoke-bottom-perforated-9801.webp",
+    "bytes": 53764,
+    "sha256": "d77a4af713e529fd9bff91593257ebe07456a7f63358245efd94fb02badf2104"
+  },
+  {
+    "path": "pre/yoke-bottom-alcantara-9800.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-2010/pre/yoke-bottom-alcantara-9800.webp",
+    "bytes": 45990,
+    "sha256": "64505a2956f9c7e0a0bc8ec07a47aa5426f29c4553cb825de14c7770159f0a9d"
+  },
+  {
+    "path": "pre/yoke-bottom-alcantara-9801.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-2010/pre/yoke-bottom-alcantara-9801.webp",
+    "bytes": 60898,
+    "sha256": "1bdf53b7b146d9fc29c617940fe3e7f3cf110c1d27143e836874622f79c99d8b"
+  },
+  {
+    "path": "pre/yoke-bottom-smooth-9800.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-2010/pre/yoke-bottom-smooth-9800.webp",
+    "bytes": 34728,
+    "sha256": "e70f8682718cca06b15faf531396a043a968a4292522310c52ac5ee43cbfc888"
+  },
+  {
+    "path": "pre/yoke-bottom-smooth-9801.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-2010/pre/yoke-bottom-smooth-9801.webp",
+    "bytes": 44704,
+    "sha256": "05dc732ddfce226cc6a5feb57a6ebab5de455398f36886e01fa7bb4fa33f419d"
+  },
+  {
+    "path": "cf/yoke-glossy.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/bmw-2010/cf/yoke-glossy.webp",
+    "bytes": 44020,
+    "sha256": "2c0af947a85d16d321c8910616ce7b4017b02875102ab8dd5fa10f06257801b7"
+  },
+  {
+    "path": "cf/yoke-matte.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/bmw-2010/cf/yoke-matte.webp",
+    "bytes": 44622,
+    "sha256": "38d2c783ee3d595d8ad0a13969cd0849dbe54b3c806cef3dc218d8de3a696e0f"
+  },
+  {
+    "path": "cf/yoke-forged.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/bmw-2010/cf/yoke-forged.webp",
+    "bytes": 46292,
+    "sha256": "2bcf85b65d83b21cd0cf29ea39d3b6a9888e2151940ab3f08a664b51210e6838"
+  },
+  {
+    "path": "flat-flat.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/bmw-2010/flat-flat.webp",
+    "bytes": 577434,
+    "sha256": "f3f0703f41c14b505b1f1f87672ac3ebc5e225797d9c74cd6f7632824309f661"
+  },
+  {
+    "path": "pre/flat-flat-side-perforated-9800.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-2010/pre/flat-flat-side-perforated-9800.webp",
+    "bytes": 123660,
+    "sha256": "33ff2a2c19732cc4c3b278fcb11769d11648e0daf9de765e128ed77284b06a7e"
+  },
+  {
+    "path": "pre/flat-flat-side-perforated-9801.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-2010/pre/flat-flat-side-perforated-9801.webp",
+    "bytes": 165534,
+    "sha256": "8b3aee69d51c982621ae51cef444dd4c2f5fd1c71afe1105b9914161d6d747b4"
+  },
+  {
+    "path": "pre/flat-flat-side-alcantara-9800.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-2010/pre/flat-flat-side-alcantara-9800.webp",
+    "bytes": 104288,
+    "sha256": "b4f5ed70e40ee0b2b1bfb7daf682a92393defac2658a57d6dc3af82b73fc9f3b"
+  },
+  {
+    "path": "pre/flat-flat-side-alcantara-9801.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-2010/pre/flat-flat-side-alcantara-9801.webp",
+    "bytes": 147228,
+    "sha256": "7b6d0de6f0921db54715c79053741f72a7e4c284011c9f607c16d425b6e1b3eb"
+  },
+  {
+    "path": "pre/flat-flat-side-smooth-9800.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-2010/pre/flat-flat-side-smooth-9800.webp",
+    "bytes": 83302,
+    "sha256": "79bd63691bad73a414969d8607f07db5a5fc999ae643db789c09158e64dfddb7"
+  },
+  {
+    "path": "pre/flat-flat-side-smooth-9801.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-2010/pre/flat-flat-side-smooth-9801.webp",
+    "bytes": 109178,
+    "sha256": "dcb35710102cb74b6b2d03d69b768f23665ee12a5cd48f98e2a78fc82ad278b4"
+  },
+  {
+    "path": "pre/flat-flat-tb-perforated-9800.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-2010/pre/flat-flat-tb-perforated-9800.webp",
+    "bytes": 76850,
+    "sha256": "3c4da8ab38e9f2ec3ac87d42c413bb820cd93c6b9a87d0430a2c3a83b9842897"
+  },
+  {
+    "path": "pre/flat-flat-tb-perforated-9801.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-2010/pre/flat-flat-tb-perforated-9801.webp",
+    "bytes": 106276,
+    "sha256": "14e1e5c2acd4ee70b90ccd7dfc3ce42c6a4dfffc782d17cf4e973271e490a898"
+  },
+  {
+    "path": "pre/flat-flat-tb-alcantara-9800.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-2010/pre/flat-flat-tb-alcantara-9800.webp",
+    "bytes": 72140,
+    "sha256": "1361755c2bbd3ac2dbd9b4312c11c16d02f21fb6c6269fe109c0fc3e9b0c7b5b"
+  },
+  {
+    "path": "pre/flat-flat-tb-alcantara-9801.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-2010/pre/flat-flat-tb-alcantara-9801.webp",
+    "bytes": 103246,
+    "sha256": "f9b8f71b02679c28786bda1255387c6a22f169abddd8b0d27883fc072f6485d8"
+  },
+  {
+    "path": "pre/flat-flat-tb-smooth-9800.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-2010/pre/flat-flat-tb-smooth-9800.webp",
+    "bytes": 72374,
+    "sha256": "33e502a6663a2cb2ca76998a646e6953fe85dce083f26a0213b847497b85fa46"
+  },
+  {
+    "path": "pre/flat-flat-tb-smooth-9801.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-2010/pre/flat-flat-tb-smooth-9801.webp",
+    "bytes": 89162,
+    "sha256": "cc40fb7dcfd2015455666e7e9b20869b09079d9ffa79229185dd595224c69d6e"
+  },
+  {
+    "path": "cf/flat-flat-glossy.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/bmw-2010/cf/flat-flat-glossy.webp",
+    "bytes": 92486,
+    "sha256": "3fee836a2ca986215442a7d67e6a9d03ca3223e63741d8ff919a66ac73fdbe41"
+  },
+  {
+    "path": "cf/flat-flat-matte.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/bmw-2010/cf/flat-flat-matte.webp",
+    "bytes": 76434,
+    "sha256": "2ed4ff3bf05d89969ee27a0b340c7dcf6fb73f2042bac9ec7e8dfdab4b86cf1d"
+  },
+  {
+    "path": "cf/flat-flat-forged.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/bmw-2010/cf/flat-flat-forged.webp",
+    "bytes": 97438,
+    "sha256": "80c3109caeb688ac8ec8eb4b548608776bac7e7f5cdd6b5a55cdb66501056cf2"
+  },
+  {
+    "path": "marker/flat-flat.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/bmw-2010/marker/flat-flat.webp",
+    "bytes": 9650,
+    "sha256": "4f1631c8b929929839f50a04cbd3401088e44f9e2be719b8c3dbcd13480ae1a7"
+  },
+  {
+    "path": "flat-round.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/bmw-2010/flat-round.webp",
+    "bytes": 381040,
+    "sha256": "3a781705a22f15356ed85f1809e7a3a48c9401acb48952ee92e2ffe7b64ace63"
+  },
+  {
+    "path": "pre/flat-round-side-perforated-9800.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-2010/pre/flat-round-side-perforated-9800.webp",
+    "bytes": 101844,
+    "sha256": "749f7047e7d0424dd6ee760a97ec096bb2e6153cb5e3c0aee30896ebb81d8d80"
+  },
+  {
+    "path": "pre/flat-round-side-perforated-9801.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-2010/pre/flat-round-side-perforated-9801.webp",
+    "bytes": 128984,
+    "sha256": "f77d178663ead70348aa1de0ccf793dedec6e9209115dcd225dfbaed1cced9ef"
+  },
+  {
+    "path": "pre/flat-round-side-alcantara-9800.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-2010/pre/flat-round-side-alcantara-9800.webp",
+    "bytes": 96152,
+    "sha256": "eccc45e5a1f3c8adaa8d5ae7783dce45c53eeec14abc3f49863a17606660aa51"
+  },
+  {
+    "path": "pre/flat-round-side-alcantara-9801.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-2010/pre/flat-round-side-alcantara-9801.webp",
+    "bytes": 123028,
+    "sha256": "674ceab9fd0840d5d10269f2ec0b4d18de0c2cd47fac4a46905a236b74585ff0"
+  },
+  {
+    "path": "pre/flat-round-side-smooth-9800.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-2010/pre/flat-round-side-smooth-9800.webp",
+    "bytes": 67352,
+    "sha256": "1daf3c16a3693bf91594bbb360e5969bedb9c28d3e4c95eb3a161fb325f9f830"
+  },
+  {
+    "path": "pre/flat-round-side-smooth-9801.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-2010/pre/flat-round-side-smooth-9801.webp",
+    "bytes": 84952,
+    "sha256": "155f3135cafa03c78c8dd0e272876581bb7dcd8b6810dee3378ae7aea89ec869"
+  },
+  {
+    "path": "pre/flat-round-tb-perforated-9800.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-2010/pre/flat-round-tb-perforated-9800.webp",
+    "bytes": 37166,
+    "sha256": "fe75a0c82b9366a5700a3342f2821cbb42e1b7e6c0a25b12c2c586c285bbf14f"
+  },
+  {
+    "path": "pre/flat-round-tb-perforated-9801.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-2010/pre/flat-round-tb-perforated-9801.webp",
+    "bytes": 47606,
+    "sha256": "f8856345d1a25366142e471b69ee8a0704e65d6687767375c697ce2677a84795"
+  },
+  {
+    "path": "pre/flat-round-tb-alcantara-9800.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-2010/pre/flat-round-tb-alcantara-9800.webp",
+    "bytes": 27878,
+    "sha256": "e03c09e0e11752ae5852c493158c7c6167b3181110c95e450f045f15bef7d24f"
+  },
+  {
+    "path": "pre/flat-round-tb-alcantara-9801.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-2010/pre/flat-round-tb-alcantara-9801.webp",
+    "bytes": 36316,
+    "sha256": "b0157b303d22c883265bd8bdfcf48c61d960da63d81dac701ca60d48a81737d8"
+  },
+  {
+    "path": "pre/flat-round-tb-smooth-9800.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-2010/pre/flat-round-tb-smooth-9800.webp",
+    "bytes": 22104,
+    "sha256": "0a805c1d42ccab31ed41acf03a566aa0a71e38de1037ebbd6cdece06450c4ece"
+  },
+  {
+    "path": "pre/flat-round-tb-smooth-9801.webp",
+    "url": "https://pub-c5968ff7f0184c71bc3893412ddc202a.r2.dev/wheels/bmw-2010/pre/flat-round-tb-smooth-9801.webp",
+    "bytes": 27112,
+    "sha256": "28624312cf067e8f04ac29772236ef026565971d847e2d3002760f9dbb49f7d5"
+  },
+  {
+    "path": "cf/flat-round-glossy.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/bmw-2010/cf/flat-round-glossy.webp",
+    "bytes": 48040,
+    "sha256": "fa4f90b3517a13bdb21d681db8d9608bbf80d34ce6b229dc00570cbf5096ba1c"
+  },
+  {
+    "path": "cf/flat-round-matte.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/bmw-2010/cf/flat-round-matte.webp",
+    "bytes": 37552,
+    "sha256": "31ba3c0d72900aa03a58363ba7fbcd6279ce0674d7d78d74ed82abc101f18c3d"
+  },
+  {
+    "path": "cf/flat-round-forged.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/bmw-2010/cf/flat-round-forged.webp",
+    "bytes": 41786,
+    "sha256": "5e162ec87c41599e5fa410a8c3a77df139fa2b6a7ef9b2363ed241049b7fe5f1"
+  },
+  {
+    "path": "marker/flat-round.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/bmw-2010/marker/flat-round.webp",
+    "bytes": 9754,
+    "sha256": "1d8a1c7858fa2843b5c19a712be081ddf893c0a5d91b711b227ba04ab2173248"
+  },
+  {
+    "path": "paddles/glossy.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/bmw-2010/paddles/glossy.webp",
+    "bytes": 41468,
+    "sha256": "c986f2e1e24bd889e13463502187f92118d5ebf7b022c930804aa88334736cb5"
+  },
+  {
+    "path": "paddles/matte.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/bmw-2010/paddles/matte.webp",
+    "bytes": 40544,
+    "sha256": "17ce7564134fdfebe1fb0afc3fb2746b504f4339b0e34aef9203da955533afe6"
+  },
+  {
+    "path": "paddles/forged.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/bmw-2010/paddles/forged.webp",
+    "bytes": 47698,
+    "sha256": "ff141e781d927fc718c557ed705f913e1333a670ed306937233e68a37fe09523"
+  },
+  {
+    "path": "trims/glossy.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/bmw-2010/trims/glossy.webp",
+    "bytes": 92162,
+    "sha256": "ec11bdc7b795f5c3e93888418ded4de1369c344c460941052700d40ab1af9b71"
+  },
+  {
+    "path": "trims/matte.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/bmw-2010/trims/matte.webp",
+    "bytes": 55934,
+    "sha256": "ae3c2650a9b0e34eb99d8ccad3e2769cf1a1f71f204f2d40f8a779cf17e529c0"
+  },
+  {
+    "path": "trims/forged.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/bmw-2010/trims/forged.webp",
+    "bytes": 66542,
+    "sha256": "9451cd2c63f385c2ff77c07fc0c4f54d9518f2e3ea38f7ee9db3d58d038e8817"
+  },
+  {
+    "path": "grips/airbag-alcantara-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/bmw-2010/grips/airbag-alcantara-map.webp",
+    "bytes": 536184,
+    "sha256": "89231b749010b5a5aa7541d1f12f32ac3062d1ed2aadb4d9310214eae7162c00"
+  },
+  {
+    "path": "grips/airbag-smooth-map.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/bmw-2010/grips/airbag-smooth-map.webp",
+    "bytes": 505964,
+    "sha256": "ffbeb8057ef3af40c0fa503785b60c03e0e8758b13403b0ae61c42b3378426de"
+  },
+  {
+    "path": "neutral/airbag-alcantara-logo.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/bmw-2010/neutral/airbag-alcantara-logo.webp",
+    "bytes": 14982,
+    "sha256": "91ac5c55d2edb5720b6519d281d1cf93232845157a6f798833d56f791eb52185"
+  },
+  {
+    "path": "neutral/airbag-smooth-logo.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/bmw-2010/neutral/airbag-smooth-logo.webp",
+    "bytes": 15064,
+    "sha256": "e27a278bfd3808fb3d2a35530617e3688799d0b7c9e63bd86284927c009d29bb"
+  },
+  {
+    "path": "card.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/bmw-2010/card.webp",
+    "bytes": 258626,
+    "sha256": "e2f10956f3b852bf759c2d91046212057c51b002b71a35402ec3c894cd6fe841"
+  },
+  {
+    "path": "basic.webp",
+    "url": "https://build.miamicarbondesigns.com/wheels/bmw-2010/basic.webp",
+    "bytes": 169534,
+    "sha256": "4849a4cdec7baea8259d14ca48cd6015b2ccec8f80935dae905da1d6deadd9f9"
+  }
+]

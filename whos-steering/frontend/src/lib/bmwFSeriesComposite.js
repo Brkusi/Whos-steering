@@ -67,7 +67,7 @@ export function createFSeriesCompositor(family = 'bmw-fseries') {
   }
   const source = path => image(`${ROOT}/source/${path}.webp`);
   function gripLayer(original,zone,shape) {
-    if(family === 'bmw-gseries')return original;
+    if(family === 'bmw-gseries'||family === 'bmw-2010')return original;
     const key=`${zone}:${shape}`;
     if(gripMasks.get(original)?.has(key))return gripMasks.get(original).get(key);
     const out=canvas(),ctx=out.getContext('2d',{willReadFrequently:true});
@@ -106,15 +106,15 @@ export function createFSeriesCompositor(family = 'bmw-fseries') {
     if(layers.has(cacheKey))return layers.get(cacheKey);
     const [dark,light,seam]=await Promise.all([
       source(`pre/${key}-9800`),source(`pre/${key}-9801`),
-      family==='dodge-srt'?null:source(`stitch/${key.replace(/-(alcantara|smooth|perforated)$/,'')}`),
+      family==='dodge-srt'||family==='bmw-2010'?null:source(`stitch/${key.replace(/-(alcantara|smooth|perforated)$/,'')}`),
     ]);
     const out=canvas(),ctx=out.getContext('2d',{willReadFrequently:true});
     ctx.drawImage(light,0,0,SIZE,SIZE);const lightPixels=ctx.getImageData(0,0,SIZE,SIZE);
     ctx.clearRect(0,0,SIZE,SIZE);ctx.drawImage(dark,0,0,SIZE,SIZE);
     const pixels=ctx.getImageData(0,0,SIZE,SIZE);
     // The storefront black/white swatches use the reference photographs exactly.
-    if(family==='bmw-gseries' && ['#111111','#17181b'].includes(color.toLowerCase())) {}
-    else if(family==='bmw-gseries' && ['#f0f0f0','#dcded0'].includes(color.toLowerCase()))pixels.data.set(lightPixels.data);
+    if((family==='bmw-gseries'||family==='bmw-2010') && ['#111111','#17181b'].includes(color.toLowerCase())) {}
+    else if((family==='bmw-gseries'||family==='bmw-2010') && ['#f0f0f0','#dcded0'].includes(color.toLowerCase()))pixels.data.set(lightPixels.data);
     else recolorSourcePhotographs(pixels.data,lightPixels.data,color);
     ctx.putImageData(pixels,0,0);
     if(seam) {
@@ -131,7 +131,7 @@ export function createFSeriesCompositor(family = 'bmw-fseries') {
     return out;
   }
   async function wrap(key,color,stitch,carbonFinish=false) {
-    if(family==='bmw-gseries' && /^(round|flat-round|flat-flat|yoke)-(side|tb|bottom)-(smooth|perforated|alcantara)$/.test(key))return photographedWrap(key,color,stitch);
+    if((family==='bmw-gseries'||family==='bmw-2010') && /^(round|flat-round|flat-flat|yoke)-(side|tb|bottom)-(smooth|perforated|alcantara)$/.test(key))return photographedWrap(key,color,stitch);
     if(family==='dodge-srt' && /^(?:round-tb|yoke-bottom)-(?:smooth|alcantara|perforated)$/.test(key)) return photographedWrap(key,color,stitch);
     if(SOURCE_PRE_MATERIALS.has(`${family}:${key}`))return photographedWrap(key,color,stitch);
     const mapKey=key;
@@ -193,7 +193,7 @@ export function createFSeriesCompositor(family = 'bmw-fseries') {
       a.cover && family!=='dodge-srt'?source(`neutral/airbag-${sourceMaterial(a.airbag.material)}-logo`):null,
       a.cover && family==='dodge-srt'?wrap('airbag-trim',a.dodgeAirbagTrim,a.airbagStitch):null,
       a.cover && family==='dodge-srt'?wrap('srt-logo',a.dodgeLogo,a.airbagStitch):null,
-      !a.led && a.stripes.length?marker(a):null,
+      (!a.led||family==='bmw-2010') && a.stripes.length?marker(a):null,
       // Only verified cutout layers can supplement the base silhouette; some
       // other families' carbon sources include opaque rectangular backing.
       family.startsWith('porsche-')&&a.shape!=='yoke'?source(`cf/${a.shape}-glossy`)
@@ -243,7 +243,7 @@ export function createFSeriesCompositor(family = 'bmw-fseries') {
     }else{
       [side,top,trim,cover,logo,dodgeTrim,dodgeLogo].filter(Boolean).forEach(layer=>mc.drawImage(layer,0,0,SIZE,SIZE));
     }
-    if(family!=='bmw-gseries'){mc.globalCompositeOperation='destination-in';mc.drawImage(silhouette(a.shape,base,porsche991FlatBottom?null:guide),0,0,SIZE,SIZE);}
+    if(family!=='bmw-gseries'&&family!=='bmw-2010'){mc.globalCompositeOperation='destination-in';mc.drawImage(silhouette(a.shape,base,porsche991FlatBottom?null:guide),0,0,SIZE,SIZE);}
     ctx.drawImage(materials,0,0,SIZE,SIZE);
     if(ring)ctx.drawImage(ring,0,0,SIZE,SIZE);
     if(a.led)drawLedDisplay(ctx,ledArtwork,rimLedPlacement(silhouette(a.shape,base,guide)));

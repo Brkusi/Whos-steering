@@ -75,6 +75,17 @@ test('G-Series Pre LCI selects its own assets and keeps G-Series pricing',()=>{
   for(const shape of Object.values(F_SERIES_SHAPE_IDS))for(const zone of ['side',shape==='yoke'?'bottom':'tb'])for(const mat of ['smooth','perforated','alcantara'])expect(calibration[`${shape}-${zone}-${mat}`]).toBeDefined();
 });
 
+test('BMW 2010 uses its photographed assets, ring, and reference option prices',()=>{
+  const cfg={...base,wheelStyleType:'BMW 2010–2019',bmwShape:'Round',topBottomMat:'Perforated Leather',sideMat:'Perforated Leather',topBottomCol:'#17181B',sideCol:'#17181B'};
+  expect(bmwFSeriesConfiguration({...cfg,bmwRing:true},parse)).toMatchObject({family:'bmw-2010',shape:'round',stripes:['#f0f0f0']});
+  expect(calcPrice(cfg)).toBe(899);
+  expect(calcPrice({...cfg,topBottomMat:'Forged Carbon',bmwLowerTrim:'Glossy Carbon',airbagCompat:true,paddleShifters:'Matte Carbon',heated:true})).toBe(1649);
+  const directory=path.join(process.cwd(),'public/models/bmw-2010/source');
+  const manifest=JSON.parse(fs.readFileSync(path.join(directory,'manifest.json'),'utf8'));
+  for(const asset of manifest)expect(crypto.createHash('sha256').update(fs.readFileSync(path.join(directory,asset.path))).digest('hex')).toBe(asset.sha256);
+  for(const shape of Object.values(F_SERIES_SHAPE_IDS))for(const zone of ['side',shape==='yoke'?'bottom':'tb'])for(const mat of ['smooth','perforated','alcantara'])for(const code of ['9800','9801'])expect(fs.existsSync(path.join(directory,`pre/${shape}-${zone}-${mat}-${code}.webp`))).toBe(true);
+});
+
 
 test('stale or omitted shapes resolve to assets supported by each source family',()=>{
   for(const [brand,wheelStyleType] of [['TOYOTA','Supra GR'],['PORSCHE','911 Performance (992)']]){

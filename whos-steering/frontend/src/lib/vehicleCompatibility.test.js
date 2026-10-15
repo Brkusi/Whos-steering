@@ -25,6 +25,8 @@ test('compatibility follows the published style coverage and selected BMW chassi
   expect(wheelMatchesVehicle({brand:'BMW',vehicleYear:'2024',vehicleModel:'330i'},'G-Series Pre LCI')).toBe(true);
   expect(wheelMatchesVehicle({brand:'BMW',vehicleYear:'2024',vehicleModel:'330i'},'F-Series')).toBe(false);
   expect(wheelMatchesVehicle({brand:'BMW',vehicleYear:'2011',vehicleModel:'328i'},'F-Series')).toBe(true);
+  expect(wheelMatchesVehicle({brand:'BMW',vehicleYear:'2011',vehicleModel:'328i'},'BMW 2010–2019')).toBe(true);
+  expect(wheelMatchesVehicle({brand:'BMW',vehicleYear:'2024',vehicleModel:'330i'},'BMW 2010–2019')).toBe(false);
   expect(wheelMatchesVehicle({brand:'BMW',vehicleYear:'2011',vehicleModel:'328i'},'G-Series')).toBe(false);
   expect(wheelMatchesVehicle({brand:'TOYOTA',vehicleYear:'2024',vehicleModel:'Supra'},'Supra GR')).toBe(true);
   expect(wheelMatchesVehicle({brand:'TOYOTA',vehicleYear:'2024',vehicleModel:'Camry'},'Supra GR')).toBe(false);

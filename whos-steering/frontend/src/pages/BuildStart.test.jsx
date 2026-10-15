@@ -21,7 +21,7 @@ const choose = (id, value) => act(() => {
 test('compatibility guides make, year, then model and filters wheel styles', async () => {
   await act(async () => root.render(<MemoryRouter><BuildStart /></MemoryRouter>));
   expect(document.activeElement.id).toBe('compatible-make');
-  expect(container.querySelectorAll('.build-brand-card')).toHaveLength(13);
+  expect(container.querySelectorAll('.build-brand-card')).toHaveLength(14);
 
   choose('compatible-make', 'AUDI');
   expect(document.activeElement.id).toBe('build-vehicle-year');
@@ -44,13 +44,13 @@ test('BMW styles follow model and year without a chassis field', async () => {
   expect(container.querySelector('#build-vehicle-chassis')).toBeNull();
   choose('build-vehicle-year', '2018');
   choose('build-vehicle-model', '330i');
-  expect(container.querySelectorAll('.build-brand-card')).toHaveLength(3);
+  expect(container.querySelectorAll('.build-brand-card')).toHaveLength(4);
   choose('build-vehicle-year', '2011');
   choose('build-vehicle-model', '328i');
-  expect(container.querySelectorAll('.build-brand-card')).toHaveLength(1);
+  expect(container.querySelectorAll('.build-brand-card')).toHaveLength(2);
   choose('build-vehicle-year', '2012');
   choose('build-vehicle-model', '328i');
-  expect(container.querySelectorAll('.build-brand-card')).toHaveLength(3);
+  expect(container.querySelectorAll('.build-brand-card')).toHaveLength(4);
   expect(container.textContent).toContain('spans BMW generations');
   choose('build-vehicle-year', '2024');
   choose('build-vehicle-model', '330i');

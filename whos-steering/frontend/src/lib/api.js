@@ -40,6 +40,18 @@ export function calcPrice(config, rules = {}) {
   let price;
   const isCarbonTop = config.topBottomMat && config.topBottomMat.toLowerCase().includes('carbon');
   const isBmwFSeries = config.brand === 'BMW' && config.wheelStyleType === 'F-Series';
+  const isBmw2010 = config.brand === 'BMW' && config.wheelStyleType === 'BMW 2010–2019';
+  if (isBmw2010) {
+    let total = 899;
+    if (config.topBottomMat === 'Forged Carbon') total += 175;
+    if (['Glossy Carbon','Matte Carbon','Forged Carbon'].includes(config.bmwLowerTrim)) total += 50;
+    if (config.airbagCompat) total += 200;
+    if (['Glossy Carbon','Matte Carbon','Forged Carbon'].includes(config.paddleShifters)) total += 200;
+    if (['Magnetic','Urus Style'].includes(config.paddleShifters)) total += (rules.paddle_magnetic ?? 25);
+    if (config.heated) total += 125;
+    if (config.ledDisplay) total += (rules.rpm_gauge_bmw ?? 100);
+    return total;
+  }
 
   if (config.brand === 'AUDI') {
     // Audi base varies by wheel family; +$40 if carbon top.

@@ -28,6 +28,7 @@ export function wheelMatchesVehicle(config, style) {
   if (config.brand === 'BMW') {
     const families = bmwVehicleFamilies(year, config.vehicleModel);
     if (style === 'F-Series') return families.includes('F') || families.includes('E90');
+    if (style === 'BMW 2010–2019') return year >= 2010 && year <= 2019 && /^(?:[3-7]\d{2}|X[3-6])(?:[a-z]|$)/i.test(config.vehicleModel.trim());
     if (style === 'G-Series' || style === 'G-Series Pre LCI') return families.includes('F') || families.includes('G');
   }
   if (config.brand === 'TOYOTA') return style === 'Supra GR' && year >= 2020 && /^(?:GR\s+)?Supra(?:\s+GR)?$/i.test(config.vehicleModel.trim());

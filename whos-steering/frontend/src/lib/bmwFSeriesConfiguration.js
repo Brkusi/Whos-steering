@@ -5,6 +5,7 @@ export const F_SERIES_SHAPES = ['Round', 'Yoke', 'Flat top & bottom', 'Flat bott
 export const F_SERIES_SHAPE_IDS = {Round:'round', Yoke:'yoke', 'Flat top & bottom':'flat-flat', 'Flat bottom':'flat-round'};
 export const F_SERIES_PADDLES = ['Standard', 'None', 'Glossy Carbon', 'Matte Carbon', 'Forged Carbon'];
 export const SOURCE_WHEEL_STYLES = {
+  BMW: {'BMW 2010–2019': {family:'bmw-2010', shapes:F_SERIES_SHAPES, led:['Flat bottom'], paddles:true, stitch:false, airbagStitch:false}},
   AUDI: {'B8.5': {family:'audi-b85', shapes:['Flat bottom'], led:['Flat bottom'], paddles:true, airbagStitch:true}},
   TOYOTA: {'Supra GR': {family:'supra-gr', shapes:F_SERIES_SHAPES.filter(shape => shape !== 'Round'), led:['Flat top & bottom','Flat bottom'], paddles:true}},
   MERCEDES: {
@@ -27,10 +28,11 @@ export const sourceWheelHasPaddles = cfg => sourceWheelStyle(cfg)?.paddles ?? !i
 export const sourceWheelSupportsLed = cfg => sourceWheelShape(cfg) !== 'Yoke';
 export const bmwStyleLabel = style => style === 'G-Series' ? 'G-Series LCI' : style === 'RS 2020+' ? 'Audi B9.5' : style;
 export const isFSeries = cfg => cfg.brand === 'BMW' && cfg.wheelStyleType === 'F-Series';
+export const isBmw2010 = cfg => cfg.brand === 'BMW' && cfg.wheelStyleType === 'BMW 2010–2019';
 export const isGSeriesPreLCI = cfg => cfg.brand === 'BMW' && cfg.wheelStyleType === 'G-Series Pre LCI';
 export const isAudiRS2020 = cfg => cfg.brand === 'AUDI' && cfg.wheelStyleType === 'RS 2020+';
 export const usesSource2D = cfg => usesBmw2D(cfg) || isAudiRS2020(cfg) || !!sourceWheelStyle(cfg);
-export const usesBmw2D = cfg => isFSeries(cfg) || isGSeriesPreLCI(cfg);
+export const usesBmw2D = cfg => isFSeries(cfg) || isGSeriesPreLCI(cfg) || isBmw2010(cfg);
 export const bmwAssetFamily = cfg => sourceWheelStyle(cfg)?.family || (isAudiRS2020(cfg) ? 'audi-rs-2020' : isGSeriesPreLCI(cfg) ? 'bmw-gseries' : 'bmw-fseries');
 export const hasCarbonPaddles = cfg => (usesBmw2D(cfg) || (!!sourceWheelStyle(cfg) && sourceWheelHasPaddles(cfg))) && ['Glossy Carbon', 'Matte Carbon', 'Forged Carbon'].includes(cfg.paddleShifters);
 export const sourceMaterial = material => ({'Smooth Leather':'smooth',Leather:'smooth',Alcantara:'alcantara','Perforated Leather':'perforated'}[material] || 'smooth');
@@ -50,7 +52,7 @@ export function bmwFSeriesConfiguration(cfg, parseColor) {
     carbonCustomTint: appearance.top.material !== 'Matte Carbon' && !!cfg.topBottomCustomColor,
     topZone:shape==='yoke'?'bottom':'tb',
     led:appearance.led && sourceWheelSupportsLed(cfg),
-    stripes:shape==='yoke'?[]:appearance.stripes,
+    stripes:shape==='yoke'?[]:isBmw2010(cfg)?(cfg.bmwRing ? ['#f0f0f0'] : []):appearance.stripes,
     // The Audi B9.5 source set has no cover overlay. Keep its original center
     // visible while retaining the customer's cover and airbag-unit choices.
     cover:!isAudiRS2020(cfg) && !!cfg.airbagCompat,
