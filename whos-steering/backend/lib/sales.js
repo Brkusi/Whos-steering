@@ -24,7 +24,7 @@ async function save(email,kind,payload,consent) {
   let emailed = false;
   if(kind==='fitment' && mailReady()) {
     try {
-      await mail.sendEmail({to:mail.ADDRESS,idempotencyKey:`fitment-${id}`,subject:'New steering wheel fitment inquiry',html:`<p>A customer requested fitment help for ${escape(payload.brand)} ${escape(payload.year)} ${escape(payload.model)}.</p><p>Customer: ${escape(email)}</p><p><a href="${site}/admin">Review the request and wheel photo in your admin inbox</a></p>`});
+      await mail.sendEmail({to:mail.ADDRESS,idempotencyKey:`fitment-${id}`,subject:'New steering wheel fitment inquiry',html:`<p>A customer requested fitment help for ${escape(payload.brand)} ${escape(payload.year)} ${escape(payload.model)}.</p><p>Wheel: ${escape(payload.config?.wheelStyleType || 'Not recorded')}</p><p>Customer: ${escape(email)}</p><p><a href="${site}/admin">Review the wheel selections and photo in your admin inbox</a></p>`});
     }catch(e){console.error('Fitment notification failed:',e.message);}
   }
   if(kind!=='fitment') {

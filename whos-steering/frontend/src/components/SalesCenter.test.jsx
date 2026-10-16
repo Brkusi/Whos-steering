@@ -5,7 +5,7 @@ import { apiFetch } from '../lib/api';
 
 jest.mock('../lib/api', () => ({ apiFetch: jest.fn() }));
 let container, root;
-const lead = { id: 'lead-1', email: 'driver@example.test', status: 'open', created_at: '2026-09-29T13:00:00Z', payload: { brand: 'BMW', year: '2020', model: 'M3', photoUrl: 'https://example.test/wheel.jpg' } };
+const lead = { id: 'lead-1', email: 'driver@example.test', status: 'open', created_at: '2026-09-29T13:00:00Z', payload: { brand: 'BMW', year: '2020', model: 'M3', photoUrl: 'https://example.test/wheel.jpg', config: {brand:'BMW',wheelStyleType:'G-Series Pre LCI',bmwShape:'Flat bottom',topBottomMat:'Forged Carbon',topBottomCarbonCol:'#1A0A2E',sideMat:'Perforated Leather',sideCol:'#CC2200',paddleShifters:'Magnetic',paddleLength:'Long',ledDisplay:true,heated:true,airbagCompat:false} } };
 const report = {
   events: [{ event: 'configure_started', count: '5' }], counts: [{ kind: 'build', count: '2' }],
   orders: { purchases: '1', revenue: '799.99' }, recovered: { orders: '0', revenue: '0' },
@@ -34,6 +34,13 @@ test('sales period and chart controls update, and a fitment request can be resol
   expect(container.querySelector('.sales-metric-tabs button.active').textContent).toBe('Checkout starts');
   await act(async () => container.querySelector('.sales-fitment-row').click());
   expect(container.textContent).toContain('driver@example.test');
+  expect(container.querySelector('.sales-fitment-row').textContent).toContain('G-Series Pre LCI');
+  expect(container.querySelector('.sales-fitment-selections').textContent).toContain('Forged Carbon');
+  expect(container.querySelector('.sales-fitment-selections').textContent).toContain('Perforated Leather');
+  expect(container.querySelector('.sales-fitment-selections').textContent).toContain('Carbon Magnetic');
+  expect(container.querySelector('.sales-fitment-selections').textContent).toContain('Purple');
+  expect(container.querySelector('.sales-fitment-actions a').href).toBe('https://example.test/wheel.jpg');
+  expect(container.querySelectorAll('.sales-fitment-actions a')[1].href).toBe('https://webmail.porkbun.com/');
   await act(async () => [...container.querySelectorAll('.sales-fitment-actions button')][0].click());
   expect(apiFetch).toHaveBeenCalledWith('/api/sales/admin/lead-1', { method: 'PATCH', body: JSON.stringify({ status: 'resolved' }) });
   expect(container.textContent).toContain('Fitment request resolved.');

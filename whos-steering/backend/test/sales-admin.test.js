@@ -15,6 +15,7 @@ test('sales reporting periods and fitment queue use bounded, parameterized queri
   const pool = { query: async (sql, params = []) => {
     calls.push({ sql, params });
     if (sql.includes('AS total FROM sales_leads')) return { rows: [{ total: '1' }] };
+    if (sql.includes('WHERE lower(email)=lower($1)')) return { rows: [{ count: '0' }] };
     if (sql.includes('SELECT id,email,payload,created_at,status FROM sales_leads')) return { rows: [{ id: 'fit-1', status: 'open' }] };
     if (sql.includes('AS purchases')) return { rows: [{ purchases: '2', revenue: '1200.00' }] };
     if (sql.includes('AS orders')) return { rows: [{ orders: '1', revenue: '600.00' }] };
@@ -29,7 +30,7 @@ test('sales reporting periods and fitment queue use bounded, parameterized queri
       express: { Router: () => router },
       'express-rate-limit': () => () => {},
       '../db/pool': pool,
-      '../lib/sales': { mailReady: () => true, recoveryReady: () => false },
+      '../lib/sales': { mailReady: () => true, recoveryReady: () => false, save: async (_email, _kind, payload) => ({payload}) },
       '../middleware/auth': { adminRequired: admin }
     })[name]
   });
@@ -53,7 +54,15 @@ test('sales reporting periods and fitment queue use bounded, parameterized queri
   assert.deepEqual(Array.from(calls[0].params), ['open', 'bmw']);
   assert.deepEqual(Array.from(calls[1].params), ['open', 'bmw', 0]);
   assert.match(calls[1].sql, /ORDER BY created_at ASC/);
+  assert.match(calls[1].sql, /wheelStyleType/);
   assert.doesNotMatch(calls[1].sql, /BMW/);
+  const fitmentPayload={brand:'BMW',year:'2020',model:'M3',photoUrl:'https://example.test/wheel.jpg',config:{brand:'BMW',vehicleYear:'2020',vehicleModel:'M3',photoUrl:'https://example.test/wheel.jpg',wheelStyleType:'G-Series Pre LCI',topBottomMat:'Forged Carbon'}};
+  const fitment=response();
+  await routes['POST /save'][1]({body:{email:'driver@example.test',kind:'fitment',payload:fitmentPayload}},fitment,next);
+  assert.equal(fitment.body.payload.config.wheelStyleType,'G-Series Pre LCI');
+  const mismatch=response();
+  await routes['POST /save'][1]({body:{email:'driver@example.test',kind:'fitment',payload:{...fitmentPayload,config:{...fitmentPayload.config,wheelStyleType:''}}}},mismatch,next);
+  assert.equal(mismatch.statusCode,400);
   const changed = response();
   await routes['PATCH /admin/:id'][1]({ params: { id: 'fit-1' }, body: { status: 'resolved' } }, changed, next);
   assert.equal(changed.body.ok, true);

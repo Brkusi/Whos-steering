@@ -14,6 +14,7 @@ router.post('/save',rateLimit({windowMs:60*60*1000,max:10}),wrap(async(req,res)=
   if(kind==='fitment' && (!payload.year||!payload.model||!payload.photoUrl)) return res.status(400).json({error:'Add your vehicle year, model and wheel photo first.'});
   if(kind==='checkout' && payload.items.some(i=>!i||typeof i.name!=='string'||typeof i.price!=='number'||!Number.isFinite(i.price)||i.price<0||!i.config||typeof i.config!=='object'))return res.status(400).json({error:'Invalid saved cart.'});
   if(kind==='fitment' && [payload.year,payload.model,payload.photoUrl].some(v=>typeof v!=='string'||v.length>2000))return res.status(400).json({error:'Invalid vehicle details.'});
+  if(kind==='fitment' && payload.config !== undefined && (!payload.config || typeof payload.config!=='object' || Array.isArray(payload.config) || !['BMW','AUDI','MERCEDES','TOYOTA','PORSCHE','DODGE_SRT'].includes(payload.config.brand) || payload.config.brand!==payload.brand || payload.config.vehicleYear!==payload.year || payload.config.vehicleModel!==payload.model || payload.config.photoUrl!==payload.photoUrl || typeof payload.config.wheelStyleType!=='string' || !payload.config.wheelStyleType.trim() || payload.config.wheelStyleType.length>100))return res.status(400).json({error:'Invalid wheel selections.'});
   const {rows}=await pool.query("SELECT count(*) FROM sales_leads WHERE lower(email)=lower($1) AND created_at>now()-interval '24 hours'",[email.trim()]);
   if(Number(rows[0].count)>=5)return res.status(429).json({error:'You have saved several requests today. Please use your existing link or try tomorrow.'});
   res.json(await sales.save(email,kind,payload,consent===true));
@@ -59,7 +60,7 @@ router.get('/admin/fitment',adminRequired,wrap(async(req,res)=>{
   const clauses=["kind='fitment'"];
   const params=[];
   if(status!=='all'){params.push(status);clauses.push(`status=$${params.length}`);}
-  if(search){params.push(search.toLowerCase());const n=params.length;clauses.push(`(position($${n} in lower(email))>0 OR position($${n} in lower(coalesce(payload->>'brand','')))>0 OR position($${n} in lower(coalesce(payload->>'model','')))>0 OR position($${n} in lower(coalesce(payload->>'year','')))>0)`);}
+  if(search){params.push(search.toLowerCase());const n=params.length;clauses.push(`(position($${n} in lower(email))>0 OR position($${n} in lower(coalesce(payload->>'brand','')))>0 OR position($${n} in lower(coalesce(payload->>'model','')))>0 OR position($${n} in lower(coalesce(payload->>'year','')))>0 OR position($${n} in lower(coalesce(payload->'config'->>'wheelStyleType','')))>0)`);}
   const where=clauses.join(' AND ');
   const count=await pool.query(`SELECT count(*) AS total FROM sales_leads WHERE ${where}`,params);
   const total=Number(count.rows[0].total);

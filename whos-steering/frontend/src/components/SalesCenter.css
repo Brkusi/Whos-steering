@@ -56,12 +56,16 @@
 .sales-state { display: inline-block; padding: 4px 7px; border-radius: 4px; font: 700 10px Arial, sans-serif; text-transform: uppercase; letter-spacing: .04em; white-space: nowrap; }
 .sales-state.open { color: #f5cd55; background: #f5cd551c; }
 .sales-state.resolved { color: #86d09c; background: #86d09c1c; }
-.sales-fitment-detail { min-width: 0; padding: 25px; }
+.sales-fitment-detail { min-width: 0; max-height: 640px; overflow-y: auto; padding: 25px; }
 .sales-fitment-detail h3 { margin: 8px 0 13px; font: 700 clamp(21px, 2vw, 28px) Arial, sans-serif; letter-spacing: -.03em; overflow-wrap: anywhere; }
 .sales-fitment-detail dl { margin: 20px 0; }
 .sales-fitment-detail dl > div { display: flex; justify-content: space-between; gap: 14px; padding: 12px 0; border-bottom: 1px solid #32343a; font-size: 13px; }
 .sales-fitment-detail dt { color: #92939b; }
 .sales-fitment-detail dd { margin: 0; text-align: right; overflow-wrap: anywhere; }
+.sales-fitment-selections { margin: 22px 0; padding-top: 18px; border-top: 1px solid #42444a; }
+.sales-fitment-selections h4 { margin: 0; color: var(--y); font: 700 14px Arial, sans-serif; }
+.sales-fitment-selections dl { margin: 8px 0 0; }
+.sales-fitment-selections p { color: #aaaab2; font-size: 13px; line-height: 1.5; }
 .sales-fitment-actions { display: flex; flex-wrap: wrap; gap: 8px; }
 .sales-fitment-actions .btn, .sales-fitment-actions .btn-outline { display: inline-flex; align-items: center; justify-content: center; min-height: 38px; padding: 9px 13px; font-size: 12px; text-decoration: none; }
 .sales-fitment-placeholder { display: grid; align-content: center; justify-items: center; height: 100%; min-height: 260px; text-align: center; color: #91939b; }
