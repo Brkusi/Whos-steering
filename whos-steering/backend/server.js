@@ -47,6 +47,9 @@ app.post('/api/checkout/webhook',
 
     try {
       if (event.type === 'payment_intent.succeeded') {
+        if (pi.metadata?.customOrder === 'true') {
+          await require('./lib/custom-order-payment').recordPaidCustomOrder(pi, 'Stripe webhook');
+        } else {
         await pool.query(
           `UPDATE payments
            SET status = 'succeeded',
@@ -75,6 +78,7 @@ app.post('/api/checkout/webhook',
              VALUES ($1,'pending','paid','Payment confirmed via Stripe webhook')`,
             [pi.metadata.orderId]
           );
+        }
         }
       }
 
@@ -119,6 +123,7 @@ app.use('/api/products', require('./routes/products'));
 app.use('/api/checkout', require('./routes/checkout'));
 app.use('/api/orders',   require('./routes/orders'));
 app.use('/api/payments', require('./routes/payments'));
+app.use('/api/custom-orders', require('./routes/custom-orders'));
 app.use('/api/paypal', require('./routes/paypal'));
 app.use('/api/upload',   require('./routes/upload'));
 

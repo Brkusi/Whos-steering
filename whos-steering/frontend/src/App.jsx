@@ -17,6 +17,7 @@ const Configure         = lazy(() => import('./pages/Configure'));
 const TrackOrder        = lazy(() => import('./pages/TrackOrder'));
 const Checkout          = lazy(() => import('./pages/Checkout'));
 const OrderConfirmation = lazy(() => import('./pages/OrderConfirmation'));
+const CustomOrderConfirmation = lazy(() => import('./pages/CustomOrderConfirmation'));
 const Login             = lazy(() => import('./pages/Login'));
 const Account           = lazy(() => import('./pages/Account'));
 const Contact           = lazy(() => import('./pages/Contact'));
@@ -48,6 +49,7 @@ export default function App() {
               <Route path="/unsubscribe" element={<ResumeBuild unsubscribe />} />
               <Route path="/checkout"           element={<Checkout />} />
               <Route path="/order-confirmation" element={<OrderConfirmation />} />
+              <Route path="/custom-order-confirmation" element={<CustomOrderConfirmation />} />
               <Route path="/login"              element={<Login />} />
               <Route path="/account"            element={<Account />} />
               <Route path="/contact"            element={<Contact />} />
