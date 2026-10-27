@@ -1,10 +1,9 @@
-import { useNavigate, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import './Home.css';
 import FeaturedWheels from '../components/FeaturedWheels';
 
-import heroBase from '../assets/hero/hero-base.webp';
-import heroCarbon from '../assets/hero/hero-carbon-reference.webp';
-import heroWheel from '../assets/hero/hero-wheel-highlighted.webp';
+import WheelDetails from '../components/WheelDetails';
+import workshop from '../assets/hero/prototyping-workshop.webp';
 
 const MATERIALS = [
   'Carbon fibre base engineered for superior strength, weave consistency, and surface finish',
@@ -26,150 +25,35 @@ const BRAND_CARDS = [
 ];
 
 export default function Home() {
-  const nav = useNavigate();
-
-  const openBrand = (brand) => nav(brand.path);
 
   return (
     <main className="ws-home">
-      <section id="hero" className="ws-hero">
-        {/* =====================================================
-            DESKTOP
-            Everything below lives inside ONE 1672×739 stage.
-            Background + wheel + copy + buttons scale together.
-        ====================================================== */}
-        <div className="ws-stage ws-stage-desktop">
-          <img
-            className="ws-stage-bg"
-            src={heroBase}
-            alt=""
-            aria-hidden="true"
-            draggable="false"
-          />
-
-          <img
-            className="ws-stage-carbon"
-            src={heroCarbon}
-            alt=""
-            aria-hidden="true"
-            draggable="false"
-          />
-
-          <div className="ws-stage-copy">
-            <div className="ws-stage-line" aria-hidden="true" />
-
-            <h1 className="ws-stage-title">
-              <span className="ws-stage-title-yellow">DESIGNED BY YOU.</span>
-              <span className="ws-stage-title-white">BUILT BY US.</span>
-            </h1>
-
-            <p className="ws-stage-subtitle">
-              <span>CUSTOM STEERING WHEELS</span>
-              <span>MADE TO YOUR SPECIFICATION.</span>
-            </p>
-
-            <div className="ws-stage-actions">
-              <button
-                type="button"
-                className="ws-stage-btn ws-stage-btn-primary"
-                onClick={() => nav('/build')}
-              >
-                BUILD YOURS
-              </button>
-
-              <button
-                type="button"
-                className="ws-stage-btn ws-stage-btn-secondary"
-                onClick={() => nav('/catalog')}
-              >
-                EXPLORE WHEELS
-              </button>
+      <section id="hero" className="ws-hero" aria-labelledby="hero-title">
+        <img className="ws-workshop" src={workshop} alt="" aria-hidden="true" fetchPriority="high" />
+        <div className="ws-hero-inner">
+          <div className="ws-hero-copy">
+            <p className="ws-hero-eyebrow">HANDCRAFTED. DRIVER DEFINED.</p>
+            <h1 id="hero-title">DESIGNED BY YOU.<br />BUILT BY US.</h1>
+            <p className="ws-hero-description">Your vehicle. Your materials. Your signature.<br />A custom steering wheel, made to your specification.</p>
+            <div className="ws-hero-actions">
+              <Link className="ws-hero-cta ws-hero-primary" to="/build">BUILD YOUR WHEEL <span aria-hidden="true">↗</span></Link>
+              <Link className="ws-hero-cta ws-hero-secondary" to="/catalog">EXPLORE WHEELS <span aria-hidden="true">↗</span></Link>
             </div>
+            <ul className="ws-hero-proof" aria-label="Our service"><li>◇ 6-month warranty</li><li>✓ Fitment confirmed</li><li>◎ Ships worldwide</li></ul>
           </div>
-
-          <div className="ws-stage-wheel" aria-hidden="true">
-            <div className="ws-wheel-glow" />
-            <img
-              src={heroWheel}
-              alt=""
-              className="ws-wheel-image"
-              draggable="false"
-            />
-          </div>
-        </div>
-
-        {/* =====================================================
-            MOBILE
-            Separate fixed-ratio design stage.
-            Again, background + wheel + copy + buttons all move
-            and scale together.
-        ====================================================== */}
-        <div className="ws-stage ws-stage-mobile">
-          <img
-            className="ws-mobile-bg"
-            src={heroBase}
-            alt=""
-            aria-hidden="true"
-            draggable="false"
-          />
-
-          <div className="ws-mobile-copy">
-            <h1 className="ws-mobile-title">
-              <span>DESIGNED BY YOU.</span>
-              <strong>BUILT BY US.</strong>
-            </h1>
-
-            <p className="ws-mobile-subtitle">
-              <span>CUSTOM STEERING WHEELS</span>
-              <span>MADE TO YOUR SPECIFICATION.</span>
-            </p>
-          </div>
-
-          <div className="ws-mobile-wheel" aria-hidden="true">
-            <div className="ws-wheel-glow ws-wheel-glow-mobile" />
-            <img
-              src={heroWheel}
-              alt=""
-              className="ws-wheel-image"
-              draggable="false"
-            />
-          </div>
-
-          <div className="ws-mobile-actions">
-            <button
-              type="button"
-              className="ws-mobile-btn ws-mobile-btn-primary"
-              onClick={() => nav('/build')}
-            >
-              BUILD YOURS
-            </button>
-
-            <button
-              type="button"
-              className="ws-mobile-btn ws-mobile-btn-secondary"
-              onClick={() => nav('/catalog')}
-            >
-              EXPLORE WHEELS
-            </button>
+          <div className="ws-hero-product">
+            <WheelDetails />
+            <p className="ws-detail-hint">THE DETAILS MAKE IT YOURS. TAP + TO EXPLORE.</p>
           </div>
         </div>
       </section>
-
-      <section className="ws-brand-strip" aria-label="Shop by category">
-        {BRAND_CARDS.map((brand) => (
-          <button
-            type="button"
-            key={brand.id}
-            className="ws-brand-card"
-            onClick={() => openBrand(brand)}
-          >
-            <span className="ws-brand-copy">
-              <span className="ws-brand-name">{brand.name}</span>
-              <span className="ws-brand-tag">{brand.tag}</span>
-            </span>
-
-            <span className="ws-brand-badge">{brand.badge}</span>
-          </button>
+      <section className="ws-brand-strip" aria-label="Shop by vehicle brand">
+        {BRAND_CARDS.map((brand, index) => (
+          <Link key={brand.id} className="ws-brand-card" to={brand.path}>
+            <img className="ws-brand-thumbnail" src={['/BMW_PRESET_1.png', '/PRESET_1.png', '/models/mercedes-amg/source/round.webp', '/models/supra-gr/source/flat-round.webp', '/models/porsche-992/source/flat-round.webp', '/models/dodge-srt/source/round.webp'][index]} alt="" loading="lazy" />
+            <span className="ws-brand-copy"><span className="ws-brand-name">{brand.name}</span><span className="ws-brand-tag">{brand.tag}</span></span>
+            <span className="ws-brand-badge">{brand.badge} <span aria-hidden="true">↗</span></span>
+          </Link>
         ))}
       </section>
 
