@@ -1,5 +1,5 @@
-import { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import { apiFetch, authToken } from '../lib/api';
+import { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
+import { apiFetch, authToken, warmAccountService } from '../lib/api';
 
 // ── CART ─────────────────────────────────────────────────────────────────────
 const CartCtx = createContext(null);
@@ -52,6 +52,7 @@ const normalizeUser = (user) => user ? ({
   isAdmin: user.isAdmin ?? user.is_admin,
 }) : null;
 export function AuthProvider({ children }) {
+  const authVersion=useRef(0);
   const cachedUser = (() => {
     try { return JSON.parse(localStorage.getItem('ws_user') || sessionStorage.getItem('ws_user') || 'null'); } catch { return null; }
   })();
@@ -59,24 +60,28 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(!cachedUser);
 
   useEffect(() => {
+    const version=authVersion.current;
     const token = authToken();
     if (token) {
       apiFetch('/api/auth/me')
         .then(u => {
+          if(version!==authVersion.current)return;
           const normalized = normalizeUser(u);
           setUser(normalized);
           const storage = localStorage.getItem('ws_token') ? localStorage : sessionStorage;
           storage.setItem('ws_user', JSON.stringify(normalized));
         })
         .catch((error) => {
+          if(version!==authVersion.current)return;
           if (error.status === 401 || error.status === 403) {
             localStorage.removeItem('ws_token'); localStorage.removeItem('ws_user');
             sessionStorage.removeItem('ws_token'); sessionStorage.removeItem('ws_user');
             setUser(null);
           }
         })
-        .finally(() => setLoading(false));
+        .finally(() => {if(version===authVersion.current)setLoading(false);});
     } else {
+      warmAccountService();
       localStorage.removeItem('ws_user');
       sessionStorage.removeItem('ws_user');
       setUser(null);
@@ -95,7 +100,9 @@ export function AuthProvider({ children }) {
     storage.setItem('ws_token', token);
     const normalized = normalizeUser(user);
     storage.setItem('ws_user', JSON.stringify(normalized));
+    authVersion.current+=1;
     setUser(normalized);
+    setLoading(false);
     return normalized;
   }, []);
 
@@ -107,11 +114,15 @@ export function AuthProvider({ children }) {
     localStorage.setItem('ws_token', token);
     const normalized = normalizeUser(user);
     localStorage.setItem('ws_user', JSON.stringify(normalized));
+    authVersion.current+=1;
     setUser(normalized);
+    setLoading(false);
     return normalized;
   }, []);
 
   const logout = useCallback(() => {
+    authVersion.current+=1;
+    setLoading(false);
     localStorage.removeItem('ws_token');
     localStorage.removeItem('ws_user');
     sessionStorage.removeItem('ws_token');

@@ -53,3 +53,10 @@
 .orbit-picker-option:hover small,.orbit-picker-option:focus-visible small{color:#514610}
 .orbit-picker-option:hover>span:last-child,.orbit-picker-option:focus-visible>span:last-child{color:#0a0b0e}
 @media(max-width:750px){.orbit-heading{padding:27px 20px 25px;gap:16px}.orbit-heading h1{font-size:46px}.orbit-intro p{font-size:12px;margin-bottom:14px}.orbit-heading-actions a{justify-content:space-between;gap:8px}.orbit-heading-proof{margin-top:13px}.orbit-picker{min-width:0;flex:1}.orbit-toolbar>div{width:100%}.orbit-toolbar .orbit-picker-trigger{min-height:46px;font-size:9px;padding:9px 12px}.orbit-picker-menu{width:300px;max-height:300px}}
+
+/* Desktop actions flank the centered banner; phones retain the button row. */
+@media(min-width:1050px){.orbit-heading{position:relative;max-width:1440px;padding:40px 265px 30px}.orbit-heading-actions{position:static;display:block;margin:0;max-width:none}.orbit-heading-actions a{position:absolute;top:50%;transform:translateY(-50%);width:225px;min-height:60px;justify-content:space-between;gap:16px}.orbit-heading-build{left:28px}.orbit-heading-premade{right:28px}.orbit-heading h1{font-size:clamp(56px,4.6vw,72px)}.orbit-heading .orbit-intro{max-width:580px}.orbit-heading-proof{margin-top:14px}}
+.ws-brand-thumbnail{display:block;flex-shrink:0;overflow:visible}.ws-brand-thumbnail .orbit-art{width:100%;height:100%;object-fit:contain}
+.orbit-toolbar>div{justify-content:flex-end}
+@media(max-width:750px){.orbit-toolbar>div{justify-content:flex-start}.orbit-picker{max-width:280px}}
+.orbit-wheel-label small{display:inline-flex;align-items:center;justify-content:center;gap:5px}.orbit-wheel-label small .ws-arrow-mobile{width:12px;height:12px}

@@ -1,3 +1,4 @@
+import DirectionalArrow from './DirectionalArrow';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AUDI_PRESETS_FULL as AUDI_PRESETS, BMW_PRESETS, INFINITI_PRESETS } from '../lib/data';
@@ -269,7 +270,7 @@ export default function FeaturedWheels() {
                   onClick={(event) => openWheelFromCta(wheel, event)}
                   aria-label={`${wheel.buildBrand ? 'Explore styles' : wheel.readyToShip ? 'View wheel' : 'View build'}: ${wheel.name}`}
                 >
-                  {wheel.buildBrand ? 'EXPLORE STYLES' : wheel.readyToShip ? 'VIEW WHEEL' : 'VIEW BUILD'} <span aria-hidden="true">↗</span>
+                  {wheel.buildBrand ? 'EXPLORE STYLES' : wheel.readyToShip ? 'VIEW WHEEL' : 'VIEW BUILD'} <DirectionalArrow/>
                 </button>
               </div>
 

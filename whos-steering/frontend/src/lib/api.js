@@ -3,6 +3,21 @@ import { hasCarbonPaddles, usesBmw2D } from './bmwFSeriesConfiguration';
 // ─── API helper ──────────────────────────────────────────────────────────────
 const BASE = process.env.REACT_APP_API_URL || '';
 
+let accountWarmup;
+let lastAccountWarmup=0;
+export function warmAccountService(){
+  if(!BASE)return Promise.resolve();
+  if(accountWarmup)return accountWarmup;
+  if(Date.now()-lastAccountWarmup<5*60*1000)return Promise.resolve();
+  const controller=new AbortController();
+  const timer=setTimeout(()=>controller.abort(),45000);
+  accountWarmup=fetch(`${BASE.replace(/\/$/,'')}/health`,{cache:'no-store',signal:controller.signal})
+    .then(response=>{if(response.ok)lastAccountWarmup=Date.now();})
+    .catch(()=>{})
+    .finally(()=>{clearTimeout(timer);accountWarmup=undefined;});
+  return accountWarmup;
+}
+
 export function authToken() {
   return localStorage.getItem('ws_token') || sessionStorage.getItem('ws_token');
 }

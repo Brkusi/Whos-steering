@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context';
 import './Login.css';
+import {warmAccountService} from '../lib/api';
 
 export default function Login() {
   const { login, register } = useAuth();
@@ -27,6 +28,7 @@ export default function Login() {
   // Preload the account chunk while the customer types so a successful login
   // does not have to wait for the next page bundle after authentication.
   useEffect(() => {
+    warmAccountService();
     import('./Account').catch(() => {});
   }, []);
 

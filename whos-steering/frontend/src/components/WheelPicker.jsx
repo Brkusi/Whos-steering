@@ -1,4 +1,5 @@
 import {useEffect,useId,useRef,useState} from 'react';
+import DirectionalArrow from './DirectionalArrow';
 
 export default function WheelPicker({wheels,onChoose,nameForWheel}) {
   const [open,setOpen]=useState(false);
@@ -25,7 +26,7 @@ export default function WheelPicker({wheels,onChoose,nameForWheel}) {
       if(event.key==='ArrowDown'||event.key==='ArrowUp'){event.preventDefault();focus(index+(event.key==='ArrowDown'?1:-1));}
       if(event.key==='Home'||event.key==='End'){event.preventDefault();focus(event.key==='Home'?0:wheels.length-1);}
     }}>
-      {wheels.map((wheel,index)=><button ref={el=>{options.current[index]=el;}} role="option" aria-selected="false" tabIndex={-1} type="button" className="orbit-picker-option" key={wheel.brand+wheel.style} onClick={()=>{close();onChoose(wheel,index);}}><span>{nameForWheel(wheel)}<small>STYLE WHEEL</small></span><span aria-hidden="true">↗</span></button>)}
+      {wheels.map((wheel,index)=><button ref={el=>{options.current[index]=el;}} role="option" aria-selected="false" tabIndex={-1} type="button" className="orbit-picker-option" key={wheel.brand+wheel.style} onClick={()=>{close();onChoose(wheel,index);}}><span>{nameForWheel(wheel)}<small>STYLE WHEEL</small></span><DirectionalArrow/></button>)}
     </div>}
   </div>;
 }

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { WHEEL_STYLES } from '../lib/wheelStyles';
 import './RevolvingShowroom.css';
 import WheelPicker from './WheelPicker';
+import DirectionalArrow from './DirectionalArrow';
 
 const BRANDS = {BMW:'BMW', AUDI:'Audi', MERCEDES:'Mercedes', TOYOTA:'Toyota', PORSCHE:'Porsche', DODGE_SRT:'Dodge'};
 const groups=Object.keys(BRANDS).map(brand=>WHEEL_STYLES.filter(wheel=>wheel.brand===brand));
@@ -39,7 +40,7 @@ export function clearBackdrop(pixels, width, height) {
     if(tail>width*height*.001) for(let i=0;i<tail;i++) pixels[queue[i]*4+3]=0;
   }
 }
-function WheelArt({wheel}) {
+export function WheelArt({wheel}) {
   const canvas=useRef(null);
   const [failed,setFailed]=useState(false);
   useEffect(()=>{
@@ -69,22 +70,21 @@ function WheelArt({wheel}) {
 }
 export default function RevolvingShowroom() {
   const [selected,setSelected]=useState(null);
-  const [paused,setPaused]=useState(false);
   const back=useRef(null),triggers=useRef([]),last=useRef(null);
   const id=useId();
   const open=(wheel,index)=>{last.current=index;setSelected(wheel);};
   const close=()=>setSelected(null);
   useEffect(()=>{if(selected){back.current?.focus();back.current?.closest('.orbit-stage')?.scrollIntoView?.({block:'start'});}else if(last.current!==null)triggers.current[last.current]?.focus({preventScroll:true});},[selected]);
-  const running=!paused&&!selected;
+  const running=!selected;
   return <section className="orbit-showroom" aria-labelledby="orbit-title" onKeyDown={event=>{if(event.key==='Escape'&&selected){event.preventDefault();close();} if(event.key==='Tab'&&selected){const nodes=event.currentTarget.querySelectorAll('.orbit-selection button,.orbit-selection a');const first=nodes[0],end=nodes[nodes.length-1];if(event.shiftKey&&document.activeElement===first){event.preventDefault();end.focus();}else if(!event.shiftKey&&document.activeElement===end){event.preventDefault();first.focus();}}}}>
-    <div className="orbit-heading"><div><p className="orbit-eyebrow">THE DRIVER’S COLLECTION / {SHOWROOM_WHEELS.length} WAYS TO MAKE IT YOURS</p><h1 id="orbit-title">YOUR NEXT WHEEL.<br/><em>IN THE SPOTLIGHT.</em></h1></div><div className="orbit-intro"><p>Every brand. Every style. One moving collection.<br/>Choose a wheel. Make every detail yours.</p><div className="orbit-heading-actions"><Link className="orbit-heading-build" to="/build">BUILD A WHEEL <span aria-hidden="true">↗</span></Link><Link className="orbit-heading-premade" to="/catalog">EXPLORE PRE-MADE WHEELS <span aria-hidden="true">↗</span></Link></div><ul className="orbit-heading-proof"><li>14 configurable styles</li><li>6-month warranty</li><li>Worldwide shipping</li></ul></div></div>
+    <div className="orbit-heading"><div><p className="orbit-eyebrow">THE DRIVER’S COLLECTION / {SHOWROOM_WHEELS.length} WAYS TO MAKE IT YOURS</p><h1 id="orbit-title">YOUR NEXT WHEEL.<br/><em>IN THE SPOTLIGHT.</em></h1></div><div className="orbit-intro"><p>Every brand. Every style. One moving collection.<br/>Choose a wheel. Make every detail yours.</p><div className="orbit-heading-actions"><Link className="orbit-heading-build" to="/build">BUILD A WHEEL <DirectionalArrow/></Link><Link className="orbit-heading-premade" to="/catalog">EXPLORE PRE-MADE WHEELS <DirectionalArrow/></Link></div><ul className="orbit-heading-proof"><li>14 configurable styles</li><li>6-month warranty</li><li>Worldwide shipping</li></ul></div></div>
     <div className={`orbit-stage${selected?' has-selection':''}`}>
       <div className="orbit-ceiling" aria-hidden="true"><i/><i/><i/><i/><i/></div>
       <div className="orbit-belt-window">
         <div className="orbit-belt" style={{animationPlayState:running?'running':'paused','--orbit-play-state':running?'running':'paused'}} aria-label="All configurable steering wheels">
           {[0,1].map(copy=><div className="orbit-group" key={copy}>
             {SHOWROOM_WHEELS.map((wheel,index)=><button key={wheel.brand+wheel.style} type="button" className="orbit-wheel" ref={el=>{if(copy===0)triggers.current[index]=el;}} aria-hidden={copy===1?true:undefined} tabIndex={selected||copy===1?-1:0} onClick={()=>open(wheel,index)} aria-label={`View ${wheelName(wheel)} style wheel`} aria-controls={selected?id:undefined}>
-              <span className="orbit-light" aria-hidden="true"/><span className="orbit-wheel-art"><WheelArt wheel={wheel}/></span><span className="orbit-wheel-label"><b>{BRANDS[wheel.brand]}</b><span>{wheel.label} style</span>{audiFitment(wheel)&&<span className="orbit-wheel-fitment">All Audi’s 2011+</span>}<small>SELECT WHEEL ↗</small></span><span className="orbit-plinth" aria-hidden="true"/>
+              <span className="orbit-light" aria-hidden="true"/><span className="orbit-wheel-art"><WheelArt wheel={wheel}/></span><span className="orbit-wheel-label"><b>{BRANDS[wheel.brand]}</b><span>{wheel.label} style</span>{audiFitment(wheel)&&<span className="orbit-wheel-fitment">All Audi’s 2011+</span>}<small>SELECT WHEEL <DirectionalArrow/></small></span><span className="orbit-plinth" aria-hidden="true"/>
             </button>)}
           </div>)}
         </div>
@@ -93,10 +93,10 @@ export default function RevolvingShowroom() {
       {selected&&<div className="orbit-selection" role="dialog" aria-labelledby={id}>
         <button ref={back} className="orbit-back" type="button" onClick={close}>← Back to the shelf</button>
         <div className="orbit-selected-art"><WheelArt wheel={selected}/></div>
-        <div className="orbit-selected-copy"><p className="orbit-eyebrow">YOUR BUILD STARTS HERE</p><h2 id={id}>Build {selected.brand==='AUDI'?'an':'a'}{' '}<br/>{wheelName(selected)}<br/><em>style wheel.</em></h2>{audiFitment(selected)&&<p className="orbit-selected-fitment">All Audi’s 2011+</p>}<p>Choose your materials, colors, stitching and finishing touches. Final fitment is confirmed from your current wheel photo.</p><Link to={`/configure?${new URLSearchParams({brand:selected.brand,style:selected.style})}`} className="orbit-build">BUILD THIS WHEEL <span aria-hidden="true">↗</span></Link><small>From ${selected.price.toFixed(2)} · Handcrafted to order</small></div>
+        <div className="orbit-selected-copy"><p className="orbit-eyebrow">YOUR BUILD STARTS HERE</p><h2 id={id}>Build {selected.brand==='AUDI'?'an':'a'}{' '}<br/>{wheelName(selected)}<br/><em>style wheel.</em></h2>{audiFitment(selected)&&<p className="orbit-selected-fitment">All Audi’s 2011+</p>}<p>Choose your materials, colors, stitching and finishing touches. Final fitment is confirmed from your current wheel photo.</p><Link to={`/configure?${new URLSearchParams({brand:selected.brand,style:selected.style})}`} className="orbit-build">BUILD THIS WHEEL <DirectionalArrow/></Link><small>From ${selected.price.toFixed(2)} · Handcrafted to order</small></div>
       </div>}
     </div>
-    <div className="orbit-toolbar"><p><span className="orbit-live-dot"/> {selected?'YOUR WHEEL, UP CLOSE':running?'THE COLLECTION IS IN MOTION':'TAKE YOUR TIME. FIND YOUR STYLE.'}</p><div><WheelPicker wheels={SHOWROOM_WHEELS} nameForWheel={wheelName} onChoose={open}/><span className="orbit-count">{SHOWROOM_WHEELS.length} WHEELS · 6 BRANDS</span><button type="button" onClick={()=>setPaused(!paused)} aria-pressed={paused}>{paused?'▶ Resume shelf':'Ⅱ Pause shelf'}</button></div></div>
+    <div className="orbit-toolbar"><p><span className="orbit-live-dot"/> {selected?'YOUR WHEEL, UP CLOSE':running?'THE COLLECTION IS IN MOTION':'TAKE YOUR TIME. FIND YOUR STYLE.'}</p><div><WheelPicker wheels={SHOWROOM_WHEELS} nameForWheel={wheelName} onChoose={open}/><span className="orbit-count">{SHOWROOM_WHEELS.length} WHEELS · 6 BRANDS</span></div></div>
     <Link className="orbit-chat" to="/contact" aria-label="Have a question? Contact us"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5h14v11H9l-4 3V5Z"/><path d="M9 10h6M9 13h4"/></svg><span>Have a question?</span></Link>
   </section>;
 }

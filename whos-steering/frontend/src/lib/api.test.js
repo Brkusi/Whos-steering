@@ -31,3 +31,18 @@ test('a server outage is distinguishable from invalid credentials', async () => 
     message: 'Invalid credentials',
   });
 });
+
+test('service warm-up is deduplicated, never sends account credentials, and does not block authentication',async()=>{
+ const previous=process.env.REACT_APP_API_URL;
+ process.env.REACT_APP_API_URL='https://account.example.com';
+ let warm;
+ jest.isolateModules(()=>{warm=require('./api').warmAccountService;});
+ process.env.REACT_APP_API_URL=previous;
+ let finish;global.fetch.mockImplementation(()=>new Promise(resolve=>{finish=resolve;}));
+ const first=warm(),second=warm();
+ expect(first).toBe(second);expect(global.fetch).toHaveBeenCalledTimes(1);
+ expect(global.fetch.mock.calls[0][0]).toBe('https://account.example.com/health');
+ expect(global.fetch.mock.calls[0][1].headers).toBeUndefined();
+ finish({ok:true});await first;await warm();
+ expect(global.fetch).toHaveBeenCalledTimes(1);
+});
