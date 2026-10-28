@@ -71,15 +71,16 @@ export default function RevolvingShowroom() {
   const [hovered,setHovered]=useState(false);
   const back=useRef(null),triggers=useRef([]),last=useRef(null);
   const id=useId();
+  const returning=useRef(false);
   const open=(wheel,index)=>{last.current=index;setSelected(wheel);};
-  const close=()=>{setHovered(false);setSelected(null);};
+  const close=()=>{returning.current=true;setHovered(false);setSelected(null);};
   useEffect(()=>{if(selected){back.current?.focus();back.current?.closest('.orbit-stage')?.scrollIntoView?.({block:'start'});}else if(last.current!==null)triggers.current[last.current]?.focus({preventScroll:true});},[selected]);
   const running=!paused&&!selected&&!hovered;
   return <section className="orbit-showroom" aria-labelledby="orbit-title" onKeyDown={event=>{if(event.key==='Escape'&&selected){event.preventDefault();close();} if(event.key==='Tab'&&selected){const nodes=event.currentTarget.querySelectorAll('.orbit-selection button,.orbit-selection a');const first=nodes[0],end=nodes[nodes.length-1];if(event.shiftKey&&document.activeElement===first){event.preventDefault();end.focus();}else if(!event.shiftKey&&document.activeElement===end){event.preventDefault();first.focus();}}}}>
     <div className="orbit-heading"><div><p className="orbit-eyebrow">THE DRIVER’S COLLECTION / {SHOWROOM_WHEELS.length} WAYS TO MAKE IT YOURS</p><h1 id="orbit-title">YOUR NEXT WHEEL.<br/><em>IN THE SPOTLIGHT.</em></h1></div><div className="orbit-intro"><p>Every brand. Every style. One moving collection.<br/>Choose a wheel. Make every detail yours.</p><Link to="/build">Explore all wheel styles <span aria-hidden="true">↗</span></Link></div></div>
     <div className={`orbit-stage${selected?' has-selection':''}`}>
       <div className="orbit-ceiling" aria-hidden="true"><i/><i/><i/><i/><i/></div>
-      <div className="orbit-belt-window" onMouseEnter={()=>setHovered(true)} onMouseLeave={()=>setHovered(false)}>
+      <div className="orbit-belt-window" onMouseEnter={()=>{if(!returning.current)setHovered(true);}} onMouseLeave={()=>{returning.current=false;setHovered(false);}}>
         <div className="orbit-belt" style={{animationPlayState:running?'running':'paused'}} aria-label="All configurable steering wheels">
           {[0,1].map(copy=><div className="orbit-group" key={copy}>
             {SHOWROOM_WHEELS.map((wheel,index)=><button key={wheel.brand+wheel.style} type="button" className="orbit-wheel" ref={el=>{if(copy===0)triggers.current[index]=el;}} aria-hidden={copy===1?true:undefined} tabIndex={selected||copy===1?-1:0} onClick={()=>open(wheel,index)} aria-label={`View ${wheelName(wheel)} style wheel`} aria-controls={selected?id:undefined}>
