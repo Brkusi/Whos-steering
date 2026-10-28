@@ -16,6 +16,9 @@ export default function AnnouncementBar() {
   return (
     <>
       <style>{`
+        @media(prefers-reduced-motion:reduce) {
+          .ticker-track { animation: ticker 38s linear infinite!important; }
+        }
         @keyframes ticker {
           0%   { transform: translateX(0); }
           100% { transform: translateX(-50%); }

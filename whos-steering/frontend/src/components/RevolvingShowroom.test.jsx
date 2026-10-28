@@ -24,6 +24,10 @@ test('every style opens its exact build route, Back and Escape return it, and ch
  const host=document.createElement('div');document.body.appendChild(host);const root=createRoot(host);
  act(()=>root.render(<MemoryRouter future={{v7_startTransition:true,v7_relativeSplatPath:true}}><RevolvingShowroom/></MemoryRouter>));
  expect(host.querySelectorAll('.orbit-belt').length).toBe(1);
+ act(()=>host.querySelector('.orbit-belt-window').dispatchEvent(new MouseEvent('mouseover',{bubbles:true})));
+ expect(host.querySelector('.orbit-belt').style.animationPlayState).toBe('running');
+ expect(host.querySelector('.orbit-heading-build').getAttribute('href')).toBe('/build');
+ expect(host.querySelector('.orbit-heading-premade').getAttribute('href')).toBe('/catalog');
  const select=host.querySelector('select');
  SHOWROOM_WHEELS.forEach((wheel,index)=>{
   act(()=>{select.value=String(index);select.dispatchEvent(new Event('change',{bubbles:true}));});
