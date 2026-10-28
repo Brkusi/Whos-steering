@@ -28,6 +28,7 @@ test('every style opens its exact build route, Back and Escape return it, and ch
  expect(host.querySelector('.orbit-belt').style.animationPlayState).toBe('running');
  expect(host.querySelector('.orbit-heading-build').getAttribute('href')).toBe('/build');
  expect(host.querySelector('.orbit-heading-premade').getAttribute('href')).toBe('/catalog');
+ expect([...host.querySelectorAll('.orbit-group:first-child .orbit-wheel-fitment')].map(el=>el.textContent)).toEqual(Array(3).fill('All Audi’s 2011+'));
  const select=host.querySelector('select');
  SHOWROOM_WHEELS.forEach((wheel,index)=>{
   act(()=>{select.value=String(index);select.dispatchEvent(new Event('change',{bubbles:true}));});

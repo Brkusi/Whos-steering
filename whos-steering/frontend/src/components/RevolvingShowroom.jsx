@@ -6,6 +6,7 @@ import './RevolvingShowroom.css';
 const BRANDS = {BMW:'BMW', AUDI:'Audi', MERCEDES:'Mercedes', TOYOTA:'Toyota', PORSCHE:'Porsche', DODGE_SRT:'Dodge'};
 const groups=Object.keys(BRANDS).map(brand=>WHEEL_STYLES.filter(wheel=>wheel.brand===brand));
 export const SHOWROOM_WHEELS=Array.from({length:Math.max(...groups.map(group=>group.length))},(_,index)=>groups.map(group=>group[index]).filter(Boolean)).flat();
+const audiFitment = wheel => wheel.brand==='AUDI' && ['B9','R8','RS 2020+'].includes(wheel.style);
 export const wheelName = wheel => wheel.label.startsWith(BRANDS[wheel.brand]) ? wheel.label : `${BRANDS[wheel.brand]} ${wheel.label}`;
 const imageCache = new Map();
 function loadImage(src) {
@@ -82,7 +83,7 @@ export default function RevolvingShowroom() {
         <div className="orbit-belt" style={{animationPlayState:running?'running':'paused','--orbit-play-state':running?'running':'paused'}} aria-label="All configurable steering wheels">
           {[0,1].map(copy=><div className="orbit-group" key={copy}>
             {SHOWROOM_WHEELS.map((wheel,index)=><button key={wheel.brand+wheel.style} type="button" className="orbit-wheel" ref={el=>{if(copy===0)triggers.current[index]=el;}} aria-hidden={copy===1?true:undefined} tabIndex={selected||copy===1?-1:0} onClick={()=>open(wheel,index)} aria-label={`View ${wheelName(wheel)} style wheel`} aria-controls={selected?id:undefined}>
-              <span className="orbit-light" aria-hidden="true"/><span className="orbit-wheel-art"><WheelArt wheel={wheel}/></span><span className="orbit-wheel-label"><b>{BRANDS[wheel.brand]}</b><span>{wheel.label} style</span><small>SELECT WHEEL ↗</small></span><span className="orbit-plinth" aria-hidden="true"/>
+              <span className="orbit-light" aria-hidden="true"/><span className="orbit-wheel-art"><WheelArt wheel={wheel}/></span><span className="orbit-wheel-label"><b>{BRANDS[wheel.brand]}</b><span>{wheel.label} style</span>{audiFitment(wheel)&&<span className="orbit-wheel-fitment">All Audi’s 2011+</span>}<small>SELECT WHEEL ↗</small></span><span className="orbit-plinth" aria-hidden="true"/>
             </button>)}
           </div>)}
         </div>
@@ -91,7 +92,7 @@ export default function RevolvingShowroom() {
       {selected&&<div className="orbit-selection" role="dialog" aria-labelledby={id}>
         <button ref={back} className="orbit-back" type="button" onClick={close}>← Back to the shelf</button>
         <div className="orbit-selected-art"><WheelArt wheel={selected}/></div>
-        <div className="orbit-selected-copy"><p className="orbit-eyebrow">YOUR BUILD STARTS HERE</p><h2 id={id}>Build {selected.brand==='AUDI'?'an':'a'}{' '}<br/>{wheelName(selected)}<br/><em>style wheel.</em></h2><p>Choose your materials, colors, stitching and finishing touches. Final fitment is confirmed from your current wheel photo.</p><Link to={`/configure?${new URLSearchParams({brand:selected.brand,style:selected.style})}`} className="orbit-build">BUILD THIS WHEEL <span aria-hidden="true">↗</span></Link><small>From ${selected.price.toFixed(2)} · Handcrafted to order</small></div>
+        <div className="orbit-selected-copy"><p className="orbit-eyebrow">YOUR BUILD STARTS HERE</p><h2 id={id}>Build {selected.brand==='AUDI'?'an':'a'}{' '}<br/>{wheelName(selected)}<br/><em>style wheel.</em></h2>{audiFitment(selected)&&<p className="orbit-selected-fitment">All Audi’s 2011+</p>}<p>Choose your materials, colors, stitching and finishing touches. Final fitment is confirmed from your current wheel photo.</p><Link to={`/configure?${new URLSearchParams({brand:selected.brand,style:selected.style})}`} className="orbit-build">BUILD THIS WHEEL <span aria-hidden="true">↗</span></Link><small>From ${selected.price.toFixed(2)} · Handcrafted to order</small></div>
       </div>}
     </div>
     <div className="orbit-toolbar"><p><span className="orbit-live-dot"/> {selected?'YOUR WHEEL, UP CLOSE':running?'THE COLLECTION IS IN MOTION':'TAKE YOUR TIME. FIND YOUR STYLE.'}</p><div><select aria-label="Find a wheel" value="" onChange={event=>{if(event.target.value!=='')open(SHOWROOM_WHEELS[Number(event.target.value)],Number(event.target.value));}}><option value="">Find your wheel</option>{SHOWROOM_WHEELS.map((wheel,index)=><option key={wheel.brand+wheel.style} value={index}>{wheelName(wheel)}</option>)}</select><span className="orbit-count">{SHOWROOM_WHEELS.length} WHEELS · 6 BRANDS</span><button type="button" onClick={()=>setPaused(!paused)} aria-pressed={paused}>{paused?'▶ Resume shelf':'Ⅱ Pause shelf'}</button></div></div>
