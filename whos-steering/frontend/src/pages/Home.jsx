@@ -2,8 +2,7 @@ import { Link } from 'react-router-dom';
 import './Home.css';
 import FeaturedWheels from '../components/FeaturedWheels';
 
-import WheelDetails from '../components/WheelDetails';
-import workshop from '../assets/hero/prototyping-workshop.webp';
+import RevolvingShowroom from '../components/RevolvingShowroom';
 
 const MATERIALS = [
   'Carbon fibre base engineered for superior strength, weave consistency, and surface finish',
@@ -15,47 +14,11 @@ const MATERIALS = [
   'Handcrafted construction with strict quality control standards',
 ];
 
-const BRAND_CARDS = [
-  { id: 'bmw', name: 'BMW', tag: 'M Sport Builds', badge: 'IN STOCK', path: '/catalog?brand=BMW' },
-  { id: 'audi', name: 'AUDI', tag: 'B9 & RS Builds', badge: 'IN STOCK', path: '/catalog?brand=AUDI' },
-  { id: 'mercedes', name: 'MERCEDES', tag: 'AMG & Classic Builds', badge: 'CONFIGURE', path: '/build?brand=MERCEDES' },
-  { id: 'toyota', name: 'TOYOTA', tag: 'Supra GR Builds', badge: 'CONFIGURE', path: '/build?brand=TOYOTA' },
-  { id: 'porsche', name: 'PORSCHE', tag: '911 Performance Builds', badge: 'CONFIGURE', path: '/build?brand=PORSCHE' },
-  { id: 'dodge', name: 'DODGE', tag: 'SRT Performance Builds', badge: 'CONFIGURE', path: '/build?brand=DODGE_SRT' },
-];
-
 export default function Home() {
 
   return (
     <main className="ws-home">
-      <section id="hero" className="ws-hero" aria-labelledby="hero-title">
-        <img className="ws-workshop" src={workshop} alt="" aria-hidden="true" fetchPriority="high" />
-        <div className="ws-hero-inner">
-          <div className="ws-hero-copy">
-            <p className="ws-hero-eyebrow">HANDCRAFTED. DRIVER DEFINED.</p>
-            <h1 id="hero-title">DESIGNED BY YOU.<br />BUILT BY US.</h1>
-            <p className="ws-hero-description">Your vehicle. Your materials. Your signature.<br />A custom steering wheel, made to your specification.</p>
-            <div className="ws-hero-actions">
-              <Link className="ws-hero-cta ws-hero-primary" to="/build">BUILD YOUR WHEEL <span aria-hidden="true">↗</span></Link>
-              <Link className="ws-hero-cta ws-hero-secondary" to="/catalog">EXPLORE WHEELS <span aria-hidden="true">↗</span></Link>
-            </div>
-            <ul className="ws-hero-proof" aria-label="Our service"><li>◇ 6-month warranty</li><li>✓ Fitment confirmed</li><li>◎ Ships worldwide</li></ul>
-          </div>
-          <div className="ws-hero-product">
-            <WheelDetails />
-            <p className="ws-detail-hint">THE DETAILS MAKE IT YOURS. TAP + TO EXPLORE.</p>
-          </div>
-        </div>
-      </section>
-      <section className="ws-brand-strip" aria-label="Shop by vehicle brand">
-        {BRAND_CARDS.map((brand, index) => (
-          <Link key={brand.id} className="ws-brand-card" to={brand.path}>
-            <img className="ws-brand-thumbnail" src={['/BMW_PRESET_1.png', '/PRESET_1.png', '/models/mercedes-amg/source/round.webp', '/models/supra-gr/source/flat-round.webp', '/models/porsche-992/source/flat-round.webp', '/models/dodge-srt/source/round.webp'][index]} alt="" loading="lazy" />
-            <span className="ws-brand-copy"><span className="ws-brand-name">{brand.name}</span><span className="ws-brand-tag">{brand.tag}</span></span>
-            <span className="ws-brand-badge">{brand.badge} <span aria-hidden="true">↗</span></span>
-          </Link>
-        ))}
-      </section>
+      <RevolvingShowroom />
 
     <section className="showroom-paths reveal" id="discover" aria-labelledby="paths-title"><div className="section-heading"><div><p className="eyebrow">Your wheel. Your way.</p><h2 id="paths-title">Two ways to make it yours.</h2></div><p>Start with your own vision.<br />Or find a build that already feels right.</p></div><div className="path-grid">
       <Link to="/build" className="path-card"><img src="/BMW_PRESET_1.png" alt="BMW steering wheel with carbon trim" loading="lazy" /><div><span className="eyebrow">01 / Custom made</span><h3>Every detail.<br />Your decision.</h3><p>Choose your vehicle, materials, stitching, and finishing touches.</p><span className="text-link">Start your custom build <b>↗</b></span></div></Link>
