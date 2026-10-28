@@ -2,6 +2,7 @@ import { useEffect, useId, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { WHEEL_STYLES } from '../lib/wheelStyles';
 import './RevolvingShowroom.css';
+import WheelPicker from './WheelPicker';
 
 const BRANDS = {BMW:'BMW', AUDI:'Audi', MERCEDES:'Mercedes', TOYOTA:'Toyota', PORSCHE:'Porsche', DODGE_SRT:'Dodge'};
 const groups=Object.keys(BRANDS).map(brand=>WHEEL_STYLES.filter(wheel=>wheel.brand===brand));
@@ -95,7 +96,7 @@ export default function RevolvingShowroom() {
         <div className="orbit-selected-copy"><p className="orbit-eyebrow">YOUR BUILD STARTS HERE</p><h2 id={id}>Build {selected.brand==='AUDI'?'an':'a'}{' '}<br/>{wheelName(selected)}<br/><em>style wheel.</em></h2>{audiFitment(selected)&&<p className="orbit-selected-fitment">All Audi’s 2011+</p>}<p>Choose your materials, colors, stitching and finishing touches. Final fitment is confirmed from your current wheel photo.</p><Link to={`/configure?${new URLSearchParams({brand:selected.brand,style:selected.style})}`} className="orbit-build">BUILD THIS WHEEL <span aria-hidden="true">↗</span></Link><small>From ${selected.price.toFixed(2)} · Handcrafted to order</small></div>
       </div>}
     </div>
-    <div className="orbit-toolbar"><p><span className="orbit-live-dot"/> {selected?'YOUR WHEEL, UP CLOSE':running?'THE COLLECTION IS IN MOTION':'TAKE YOUR TIME. FIND YOUR STYLE.'}</p><div><select aria-label="Find a wheel" value="" onChange={event=>{if(event.target.value!=='')open(SHOWROOM_WHEELS[Number(event.target.value)],Number(event.target.value));}}><option value="">Find your wheel</option>{SHOWROOM_WHEELS.map((wheel,index)=><option key={wheel.brand+wheel.style} value={index}>{wheelName(wheel)}</option>)}</select><span className="orbit-count">{SHOWROOM_WHEELS.length} WHEELS · 6 BRANDS</span><button type="button" onClick={()=>setPaused(!paused)} aria-pressed={paused}>{paused?'▶ Resume shelf':'Ⅱ Pause shelf'}</button></div></div>
+    <div className="orbit-toolbar"><p><span className="orbit-live-dot"/> {selected?'YOUR WHEEL, UP CLOSE':running?'THE COLLECTION IS IN MOTION':'TAKE YOUR TIME. FIND YOUR STYLE.'}</p><div><WheelPicker wheels={SHOWROOM_WHEELS} nameForWheel={wheelName} onChoose={open}/><span className="orbit-count">{SHOWROOM_WHEELS.length} WHEELS · 6 BRANDS</span><button type="button" onClick={()=>setPaused(!paused)} aria-pressed={paused}>{paused?'▶ Resume shelf':'Ⅱ Pause shelf'}</button></div></div>
     <Link className="orbit-chat" to="/contact" aria-label="Have a question? Contact us"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5h14v11H9l-4 3V5Z"/><path d="M9 10h6M9 13h4"/></svg><span>Have a question?</span></Link>
   </section>;
 }

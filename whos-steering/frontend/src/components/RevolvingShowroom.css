@@ -27,3 +27,29 @@
 @media(max-width:750px){.orbit-heading{padding-top:25px}.orbit-intro{max-width:none;margin-top:17px}.orbit-intro p{font-size:12px;margin-bottom:14px}.orbit-heading-actions{gap:8px}.orbit-heading-actions a{padding:12px 13px;min-height:48px;font-size:8px;gap:8px}.orbit-heading-proof{font-size:8px;gap:10px;margin-top:13px}.orbit-showroom .orbit-belt{animation-duration:75s!important}.orbit-stage{height:335px}.orbit-wheel{height:290px;width:230px;flex-basis:230px;padding-top:30px}.orbit-wheel-art{width:175px;height:175px}.orbit-wheel-label{gap:4px}.orbit-toolbar{padding-bottom:18px;gap:11px}.orbit-selection .orbit-build{max-width:none}}
 
 .orbit-wheel-label>.orbit-wheel-fitment{font-size:9px;color:#d4d6dc;letter-spacing:.02em}.orbit-selected-copy>p.orbit-selected-fitment{color:var(--gold);font-size:12px;margin:-3px 0 10px}
+
+/* Center the full introduction around a shared axis. */
+.orbit-heading{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:20px;padding:38px 24px 30px;max-width:1100px}
+.orbit-heading h1{font-size:clamp(50px,5vw,72px)}
+.orbit-heading .orbit-eyebrow{margin-bottom:15px}
+.orbit-intro{flex:initial;width:100%;max-width:580px;margin:0;padding:0}
+.orbit-intro p{font-size:14px;line-height:1.65;margin:0 0 18px}
+.orbit-heading-actions{max-width:520px;margin:0 auto}
+.orbit-heading-actions a{justify-content:center;gap:24px}
+.orbit-heading-proof{justify-content:center;margin-top:16px}
+.orbit-picker{position:relative;min-width:225px;color:#fff}
+.orbit-toolbar .orbit-picker-trigger{display:flex;justify-content:space-between;align-items:center;text-align:left;gap:24px;width:100%;min-height:48px;padding:10px 15px;border:1px solid #746622;border-radius:3px;background:linear-gradient(135deg,#232219,#111216);color:#f4f4f5;font:700 10px/1.4 Orbitron,Arial,sans-serif;cursor:pointer}
+.orbit-picker-trigger>span{display:flex;flex-direction:column;gap:3px}
+.orbit-picker-trigger small{font:700 7px/1.4 Arial,sans-serif;letter-spacing:.16em;color:var(--gold)}
+.orbit-picker-trigger svg{width:16px;height:16px;stroke:var(--gold);fill:none;stroke-width:1.8;transition:transform .2s}
+.orbit-picker-trigger[aria-expanded=true] svg{transform:rotate(180deg)}
+.orbit-toolbar .orbit-picker-trigger:hover,.orbit-toolbar .orbit-picker-trigger[aria-expanded=true]{border-color:var(--gold);background:#24231b}
+.orbit-picker-menu{position:absolute;bottom:calc(100% + 8px);left:0;width:310px;max-width:calc(100vw - 44px);max-height:330px;overflow-y:auto;background:#111216;border:1px solid #a28b22;border-top:2px solid var(--gold);border-radius:3px;box-shadow:0 12px 36px #000c;z-index:10;padding:5px;scrollbar-width:thin;scrollbar-color:#a28b22 #1e2025}
+.orbit-toolbar .orbit-picker-option{display:flex;align-items:center;justify-content:space-between;gap:15px;width:100%;min-height:49px;padding:10px 13px;border:0;border-bottom:1px solid #ffffff0d;border-radius:0;background:transparent;color:#f0f0f3;text-align:left;font:600 12px/1.4 Arial,sans-serif;cursor:pointer}
+.orbit-picker-option>span:first-child{display:flex;flex-direction:column;gap:3px}
+.orbit-picker-option small{font:700 7px/1.4 Arial,sans-serif;letter-spacing:.12em;color:#92959e}
+.orbit-picker-option>span:last-child{color:var(--gold);font-size:18px}
+.orbit-toolbar .orbit-picker-option:hover,.orbit-toolbar .orbit-picker-option:focus-visible{background:#f2c500;color:#0a0b0e;outline:none}
+.orbit-picker-option:hover small,.orbit-picker-option:focus-visible small{color:#514610}
+.orbit-picker-option:hover>span:last-child,.orbit-picker-option:focus-visible>span:last-child{color:#0a0b0e}
+@media(max-width:750px){.orbit-heading{padding:27px 20px 25px;gap:16px}.orbit-heading h1{font-size:46px}.orbit-intro p{font-size:12px;margin-bottom:14px}.orbit-heading-actions a{justify-content:space-between;gap:8px}.orbit-heading-proof{margin-top:13px}.orbit-picker{min-width:0;flex:1}.orbit-toolbar>div{width:100%}.orbit-toolbar .orbit-picker-trigger{min-height:46px;font-size:9px;padding:9px 12px}.orbit-picker-menu{width:300px;max-height:300px}}

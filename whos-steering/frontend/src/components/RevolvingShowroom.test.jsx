@@ -29,9 +29,10 @@ test('every style opens its exact build route, Back and Escape return it, and ch
  expect(host.querySelector('.orbit-heading-build').getAttribute('href')).toBe('/build');
  expect(host.querySelector('.orbit-heading-premade').getAttribute('href')).toBe('/catalog');
  expect([...host.querySelectorAll('.orbit-group:first-child .orbit-wheel-fitment')].map(el=>el.textContent)).toEqual(Array(3).fill('All Audi’s 2011+'));
- const select=host.querySelector('select');
+ const picker=host.querySelector('.orbit-picker-trigger');
  SHOWROOM_WHEELS.forEach((wheel,index)=>{
-  act(()=>{select.value=String(index);select.dispatchEvent(new Event('change',{bubbles:true}));});
+  act(()=>picker.click());
+  act(()=>host.querySelectorAll('.orbit-picker-option')[index].click());
   expect(host.querySelector('.orbit-selection h2').textContent).toContain(wheelName(wheel));
   expect(host.querySelector('.orbit-build').getAttribute('href')).toBe(`/configure?${new URLSearchParams({brand:wheel.brand,style:wheel.style})}`);
   expect(host.querySelector('.orbit-belt').style.animationPlayState).toBe('paused');
@@ -39,6 +40,13 @@ test('every style opens its exact build route, Back and Escape return it, and ch
   expect(host.querySelector('.orbit-selection')).toBeNull();
   expect(host.querySelector('.orbit-belt').style.animationPlayState).toBe('running');
  });
+ act(()=>picker.dispatchEvent(new KeyboardEvent('keydown',{key:'ArrowDown',bubbles:true})));
+ expect(document.activeElement).toBe(host.querySelector('.orbit-picker-option'));
+ act(()=>host.querySelector('.orbit-picker-option').dispatchEvent(new KeyboardEvent('keydown',{key:'ArrowDown',bubbles:true})));
+ expect(document.activeElement).toBe(host.querySelectorAll('.orbit-picker-option')[1]);
+ act(()=>host.querySelector('.orbit-picker-option').dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',bubbles:true})));
+ expect(host.querySelector('.orbit-picker-menu')).toBeNull();
+ expect(document.activeElement).toBe(picker);
  expect(host.querySelector('.orbit-chat').getAttribute('href')).toBe('/contact');
  act(()=>root.unmount());host.remove();global.Image=original;
 });
