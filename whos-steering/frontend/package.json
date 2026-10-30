@@ -13,7 +13,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "react-scripts build && node scripts/prerender-seo.cjs",
     "test": "react-scripts test"
   },
   "browserslist": {

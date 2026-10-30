@@ -5,10 +5,13 @@ import Footer from './components/Footer';
 import BrandLoader from './components/BrandLoader';
 import './index.css';
 import './experience.css';
+import './pages/SeoLanding.css';
+import SeoManager from './components/SeoManager';
 import { RouteExperience } from './components/Experience';
 
 import { lazy, Suspense } from 'react';
 const ResumeBuild = lazy(() => import('./pages/ResumeBuild'));
+const SeoLanding = lazy(() => import('./pages/SeoLanding'));
 const Home              = lazy(() => import('./pages/Home'));
 const Catalog           = lazy(() => import('./pages/Catalog'));
 const Product           = lazy(() => import('./pages/Product'));
@@ -37,9 +40,11 @@ export default function App() {
           <a className="skip-link" href="#route-content">Skip to content</a>
           <div id="route-content" tabIndex={-1}>
           <RouteExperience />
+          <SeoManager />
           <Suspense fallback={<BrandLoader />}>
             <Routes>
               <Route path="/"                   element={<Home />} />
+              <Route path="/steering-wheels/:brand/:slug?" element={<SeoLanding />} />
               <Route path="/catalog"            element={<Catalog />} />
               <Route path="/catalog/:id"        element={<Product />} />
               <Route path="/build"              element={<BuildStart />} />

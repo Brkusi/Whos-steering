@@ -4,6 +4,7 @@ import { WHEEL_STYLES } from '../lib/wheelStyles';
 import './RevolvingShowroom.css';
 import WheelPicker from './WheelPicker';
 import DirectionalArrow from './DirectionalArrow';
+import workshop from '../assets/hero/prototyping-workshop.webp';
 
 const BRANDS = {BMW:'BMW', AUDI:'Audi', MERCEDES:'Mercedes', TOYOTA:'Toyota', PORSCHE:'Porsche', DODGE_SRT:'Dodge'};
 const groups=Object.keys(BRANDS).map(brand=>WHEEL_STYLES.filter(wheel=>wheel.brand===brand));
@@ -77,7 +78,8 @@ export default function RevolvingShowroom() {
   useEffect(()=>{if(selected){back.current?.focus();back.current?.closest('.orbit-stage')?.scrollIntoView?.({block:'start'});}else if(last.current!==null)triggers.current[last.current]?.focus({preventScroll:true});},[selected]);
   const running=!selected;
   return <section className="orbit-showroom" aria-labelledby="orbit-title" onKeyDown={event=>{if(event.key==='Escape'&&selected){event.preventDefault();close();} if(event.key==='Tab'&&selected){const nodes=event.currentTarget.querySelectorAll('.orbit-selection button,.orbit-selection a');const first=nodes[0],end=nodes[nodes.length-1];if(event.shiftKey&&document.activeElement===first){event.preventDefault();end.focus();}else if(!event.shiftKey&&document.activeElement===end){event.preventDefault();first.focus();}}}}>
-    <div className="orbit-heading"><div><p className="orbit-eyebrow">THE DRIVER’S COLLECTION / {SHOWROOM_WHEELS.length} WAYS TO MAKE IT YOURS</p><h1 id="orbit-title">YOUR NEXT WHEEL.<br/><em>IN THE SPOTLIGHT.</em></h1></div><div className="orbit-intro"><p>Every brand. Every style. One moving collection.<br/>Choose a wheel. Make every detail yours.</p><div className="orbit-heading-actions"><Link className="orbit-heading-build" to="/build">BUILD A WHEEL <DirectionalArrow/></Link><Link className="orbit-heading-premade" to="/catalog">EXPLORE PRE-MADE WHEELS <DirectionalArrow/></Link></div><ul className="orbit-heading-proof"><li>14 configurable styles</li><li>6-month warranty</li><li>Worldwide shipping</li></ul></div></div>
+    <div className="orbit-banner"><img className="orbit-banner-background" src={workshop} alt="" aria-hidden="true" fetchpriority="high"/><div className="orbit-heading"><div><p className="orbit-eyebrow">THE DRIVER’S COLLECTION / {SHOWROOM_WHEELS.length} WAYS TO MAKE IT YOURS</p><h1 id="orbit-title">YOUR NEXT WHEEL.<br/><em>IN THE SPOTLIGHT.</em></h1></div><div className="orbit-intro"><p>Every brand. Every style. One moving collection.<br/>Choose a wheel. Make every detail yours.</p><div className="orbit-heading-actions"><Link className="orbit-heading-build" to="/build">BUILD A WHEEL <DirectionalArrow/></Link><Link className="orbit-heading-premade" to="/catalog">EXPLORE PRE-MADE WHEELS <DirectionalArrow/></Link></div><ul className="orbit-heading-proof"><li>14 configurable styles</li><li>6-month warranty</li><li>Worldwide shipping</li></ul></div></div>
+    </div>
     <div className={`orbit-stage${selected?' has-selection':''}`}>
       <div className="orbit-ceiling" aria-hidden="true"><i/><i/><i/><i/><i/></div>
       <div className="orbit-belt-window">
