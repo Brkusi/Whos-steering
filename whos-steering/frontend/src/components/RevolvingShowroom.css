@@ -64,3 +64,33 @@
 .orbit-banner{position:relative;isolation:isolate;overflow:hidden;background:#0a0d11}.orbit-banner-background{position:absolute;inset:-4px;width:calc(100% + 8px);height:calc(100% + 8px);object-fit:cover;object-position:center 48%;filter:blur(2px);z-index:-2}.orbit-banner:before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,#05070be0,#05070bcc 48%,#05070be0);z-index:-1}.orbit-banner .orbit-intro p{color:#d5d6dc}.orbit-banner .orbit-heading-proof{color:#bfc1c9}.orbit-heading-actions a{box-shadow:0 8px 22px #0003}
 @media(min-width:1050px){.orbit-banner .orbit-heading{display:grid;grid-template-columns:228px minmax(0,1fr) 228px;column-gap:24px;row-gap:20px;align-items:center;max-width:1100px;padding:36px 20px 28px}.orbit-banner .orbit-heading>div:first-child{grid-column:2;grid-row:1}.orbit-banner .orbit-intro,.orbit-banner .orbit-heading-actions{display:contents}.orbit-banner .orbit-heading-actions a{position:static;transform:none;width:100%;min-height:56px;padding:12px 14px;font-size:9px;gap:10px;justify-content:space-between}.orbit-banner .orbit-heading-build{grid-column:1;grid-row:1}.orbit-banner .orbit-heading-premade{grid-column:3;grid-row:1}.orbit-banner .orbit-intro>p{grid-column:1/-1;grid-row:2;margin:0;justify-self:center}.orbit-banner .orbit-heading-proof{grid-column:1/-1;grid-row:3;justify-self:center;margin:0}.orbit-banner .orbit-heading h1{font-size:clamp(52px,4.3vw,64px)}.orbit-banner .orbit-heading .orbit-eyebrow{font-size:8px;margin-bottom:14px}}
 @media(max-width:750px){.orbit-banner:before{background:#05070bd9}.orbit-banner-background{object-position:65% center}}
+
+/* A shared action row gives the desktop introduction a clear center. */
+@media(min-width:1050px){
+ .orbit-banner .orbit-heading{grid-template-columns:1fr 1fr;max-width:940px;padding:38px 32px 30px;column-gap:18px;row-gap:20px}
+ .orbit-banner .orbit-heading>div:first-child{grid-column:1/-1;grid-row:1}
+ .orbit-banner .orbit-heading h1{font-size:clamp(64px,5.1vw,78px)}
+ .orbit-banner .orbit-heading .orbit-eyebrow{font-size:9px;letter-spacing:.17em;margin-bottom:15px}
+ .orbit-banner .orbit-intro>p{grid-row:2;font-size:15px;line-height:1.65}
+ .orbit-banner .orbit-heading-actions a{grid-row:3;min-height:76px;padding:20px 26px;font-size:12px;letter-spacing:.02em;border-radius:2px;gap:20px}
+ .orbit-banner .orbit-heading-build{grid-column:1}
+ .orbit-banner .orbit-heading-premade{grid-column:2}
+ .orbit-banner .orbit-heading-actions a>span{font-size:28px}
+ .orbit-banner .orbit-heading-proof{grid-row:4;font-size:10px;gap:24px}
+}
+.orbit-scrub{position:relative;z-index:1;max-width:1000px;margin:-18px auto 0;padding:0 60px 24px;display:flex;align-items:flex-end;gap:16px}
+.orbit-scrub>button{flex:0 0 42px;width:42px;height:42px;border:1px solid #55565d;border-radius:3px;background:#16181d;color:#f2c500;font:30px/1 Arial;cursor:pointer}
+.orbit-scrub>button:hover{border-color:#f2c500;background:#26251d}
+.orbit-scrub>button:disabled{opacity:.35;cursor:default}
+.orbit-scrub-track{flex:1;min-width:0;padding-bottom:6px}
+.orbit-scrub label{display:flex;align-items:center;justify-content:space-between;gap:12px;color:#d4d5da;font:700 8px/1.5 Arial;letter-spacing:.12em;margin-bottom:12px}
+.orbit-scrub label span{font-weight:400;font-size:10px;letter-spacing:0;color:#a5a7ae}
+.orbit-scrub input{--scrub-progress:0%;appearance:none;-webkit-appearance:none;display:block;width:100%;height:5px;border-radius:5px;background:linear-gradient(to right,#f2c500 var(--scrub-progress),#3b3e46 var(--scrub-progress));cursor:ew-resize;touch-action:pan-y;margin:0}
+.orbit-scrub input::-webkit-slider-thumb{appearance:none;-webkit-appearance:none;width:32px;height:17px;background:#f2c500;border:3px solid #15161a;border-radius:4px;box-shadow:0 0 0 1px #b7a34a}
+.orbit-scrub input::-moz-range-thumb{width:26px;height:11px;background:#f2c500;border:3px solid #15161a;border-radius:4px;box-shadow:0 0 0 1px #b7a34a}
+.orbit-scrub input:disabled{opacity:.35;cursor:default}
+@media(max-width:750px){.orbit-scrub{padding:0 22px 23px;gap:12px}.orbit-scrub>button{flex-basis:36px;width:36px;height:40px}.orbit-scrub label{font-size:7px;letter-spacing:.06em;margin-bottom:14px}.orbit-scrub label span{font-size:8px}}
+
+.orbit-belt-window{touch-action:pan-y}
+@media(max-width:750px){.orbit-scrub{display:none}}
+.orbit-swipe-hint{display:none}@media(max-width:750px){.orbit-swipe-hint{display:inline;color:#d3bd57}}

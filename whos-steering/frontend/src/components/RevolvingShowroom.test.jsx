@@ -26,6 +26,20 @@ test('every style opens its exact build route, Back and Escape return it, and ch
  expect(host.querySelectorAll('.orbit-belt').length).toBe(1);
  act(()=>host.querySelector('.orbit-belt-window').dispatchEvent(new MouseEvent('mouseover',{bubbles:true})));
  expect(host.querySelector('.orbit-belt').style.animationPlayState).toBe('running');
+ const animation={currentTime:10000,effect:{getTiming:()=>({duration:100000})}};
+ host.querySelector('.orbit-belt').getAnimations=()=>[animation];
+ act(()=>host.querySelector('[aria-label="Next wheel in collection"]').click());
+ expect(animation.currentTime).toBeCloseTo(10000+100000/SHOWROOM_WHEELS.length);
+ act(()=>host.querySelector('[aria-label="Previous wheel in collection"]').click());
+ expect(animation.currentTime).toBeCloseTo(10000);
+ expect(host.querySelector('[aria-label="Browse wheel collection"]').type).toBe('range');
+ Object.defineProperty(host.querySelector('.orbit-belt'),'scrollWidth',{value:8400});
+ const viewport=host.querySelector('.orbit-belt-window');
+ const pointer=(type,x)=>{const event=new Event(type,{bubbles:true});Object.assign(event,{button:0,clientX:x,clientY:100,pointerId:1});viewport.dispatchEvent(event);};
+ act(()=>{pointer('pointerdown',200);pointer('pointermove',100);pointer('pointerup',100);host.querySelector('.orbit-wheel').click();});
+ expect(animation.currentTime).toBeCloseTo(10000+100000*100/4200);
+ expect(host.querySelector('.orbit-selection')).toBeNull();
+ expect(host.querySelector('.orbit-belt').style.animationPlayState).toBe('running');
  expect(host.querySelector('.orbit-heading-build').getAttribute('href')).toBe('/build');
  expect(host.querySelector('.orbit-heading-premade').getAttribute('href')).toBe('/catalog');
  expect([...host.querySelectorAll('.orbit-group:first-child .orbit-wheel-fitment')].map(el=>el.textContent)).toEqual(Array(3).fill('All Audi’s 2011+'));
@@ -36,6 +50,7 @@ test('every style opens its exact build route, Back and Escape return it, and ch
   expect(host.querySelector('.orbit-selection h2').textContent).toContain(wheelName(wheel));
   expect(host.querySelector('.orbit-build').getAttribute('href')).toBe(`/configure?${new URLSearchParams({brand:wheel.brand,style:wheel.style})}`);
   expect(host.querySelector('.orbit-belt').style.animationPlayState).toBe('paused');
+  expect(host.querySelector('[aria-label="Browse wheel collection"]').disabled).toBe(true);
   act(()=> index%2 ? host.querySelector('.orbit-back').dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',bubbles:true})) : host.querySelector('.orbit-back').click());
   expect(host.querySelector('.orbit-selection')).toBeNull();
   expect(host.querySelector('.orbit-belt').style.animationPlayState).toBe('running');
