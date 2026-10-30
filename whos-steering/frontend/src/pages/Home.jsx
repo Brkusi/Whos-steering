@@ -5,7 +5,6 @@ import FeaturedWheels from '../components/FeaturedWheels';
 import RevolvingShowroom, {WheelArt} from '../components/RevolvingShowroom';
 import {WHEEL_STYLES} from '../lib/wheelStyles';
 import DirectionalArrow from '../components/DirectionalArrow';
-import {ShopByVehicle} from './SeoLanding';
 
 const MATERIALS = [
   'Carbon fibre base engineered for superior strength, weave consistency, and surface finish',
@@ -47,7 +46,6 @@ export default function Home() {
     </div></section>
 
       <FeaturedWheels />
-      <ShopByVehicle />
 
       <section className="ws-materials">
         <div className="ws-materials-inner">
