@@ -94,3 +94,15 @@
 .orbit-belt-window{touch-action:pan-y}
 @media(max-width:750px){.orbit-scrub{display:none}}
 .orbit-swipe-hint{display:none}@media(max-width:750px){.orbit-swipe-hint{display:inline;color:#d3bd57}}
+
+/* Each fixture and its beam share the wheel's moving coordinate system. */
+.orbit-center-glow{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 50% 20%,#f4e8c826,transparent 60%)}
+.orbit-wheel{--wheel-scale:.78;--wheel-lift:0px;--spotlight:.12;padding-top:52px}
+.orbit-light{inset:0 0 45px;clip-path:none;opacity:var(--spotlight);background:none!important;transition:none;pointer-events:none}
+.orbit-light:after{content:'';position:absolute;inset:12px 0 0;clip-path:polygon(43% 0,57% 0,100% 100%,0 100%);background:linear-gradient(#f6e8be30,transparent 85%)}
+.orbit-light i{position:absolute;top:0;left:50%;transform:translateX(-50%);width:56px;height:7px;border-radius:50%;background:#fff4d5;box-shadow:0 3px 12px #fff3,0 10px 22px #f2c50055}
+.orbit-wheel:hover .orbit-light,.orbit-wheel:focus-visible .orbit-light{opacity:var(--spotlight)}
+.orbit-wheel .orbit-wheel-art,.orbit-wheel:hover .orbit-wheel-art,.orbit-wheel:focus-visible .orbit-wheel-art{transform:translateY(calc(-1 * var(--wheel-lift))) scale(var(--wheel-scale));transition:none;transform-origin:50% 60%;filter:brightness(calc(.72 + var(--spotlight) * .33)) drop-shadow(0 18px 12px #0008);will-change:transform}
+.orbit-wheel-label{position:relative;z-index:1}
+.orbit-plinth{transform:scaleX(var(--wheel-scale));opacity:var(--spotlight)}
+@media(max-width:750px){.orbit-wheel{padding-top:42px}}

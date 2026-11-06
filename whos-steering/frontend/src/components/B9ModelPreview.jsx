@@ -30,7 +30,7 @@ export default function B9ModelPreview({config}) {
         renderer=new THREE.WebGLRenderer({antialias:true,alpha:false});renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
         renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=2.2;
         renderer.domElement.setAttribute('aria-label','Interactive Audi B9 steering wheel. Drag to rotate; scroll or pinch to zoom.');renderer.domElement.setAttribute('role','img');host.appendChild(renderer.domElement);
-        controls=new OrbitControls(camera,renderer.domElement);controls.target.copy(B9_TARGET);controls.enablePan=false;controls.minDistance=.35;controls.maxDistance=4;controls.rotateSpeed=.65;
+        controls=new OrbitControls(camera,renderer.domElement);controls.target.copy(B9_TARGET);controls.enablePan=true;controls.zoomToCursor=true;controls.minDistance=.35;controls.maxDistance=4;controls.rotateSpeed=.65;
         const setFrontCamera=()=>{camera.position.copy(B9_TARGET).add(new THREE.Vector3(0,0,1.26/Math.min(camera.aspect,1)));controls.target.copy(B9_TARGET);controls.update();render();};
         const resize=()=>{const w=host.clientWidth,h=host.clientHeight;if(!w||!h)return;const previousAspect=camera.aspect;renderer.setSize(w,h);camera.aspect=w/h;camera.updateProjectionMatrix();if(previousAspect!==camera.aspect){const offset=camera.position.clone().sub(B9_TARGET);if(offset.length()>0){offset.multiplyScalar(Math.min(previousAspect,1)/Math.min(camera.aspect,1));camera.position.copy(B9_TARGET).add(offset);controls.update();}}render();};
         resize();setFrontCamera();controls.addEventListener('change',render);

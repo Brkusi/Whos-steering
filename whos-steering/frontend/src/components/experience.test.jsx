@@ -7,18 +7,18 @@ import Nav from './Nav';
 import PaymentCenter from './PaymentCenter';
 import { apiFetch } from '../lib/api';
 jest.mock('../context',()=>({useCart:()=>({count:0,items:[],total:0,cartOpen:false,setCartOpen:jest.fn(),removeItem:jest.fn()}),useAuth:()=>({user:null})}));
-jest.mock('../lib/api',()=>({apiFetch:jest.fn()}));
+jest.mock('../lib/api',()=>({apiFetch:jest.fn(),warmAccountService:jest.fn()}));
 let container,root;
 beforeEach(()=>{global.IS_REACT_ACT_ENVIRONMENT=true;container=document.createElement('div');document.body.appendChild(container);root=createRoot(container);apiFetch.mockReset();});
 afterEach(()=>{act(()=>root.unmount());container.remove();});
 const render=async component=>{await act(async()=>{root.render(<MemoryRouter>{component}</MemoryRouter>);});};
-test('homepage restores original artwork and keeps custom and catalog cards',async()=>{
+test('homepage shows the moving collection and keeps custom and catalog paths',async()=>{
   await render(<Home/>);
-  expect(container.querySelector('.ws-wheel-image').getAttribute('src')).toContain('hero-wheel-highlighted.webp');
+  expect(container.querySelector('.orbit-belt')).not.toBeNull();
   expect(container.querySelector('.site-logo')).toBeNull();
   expect(container.querySelector('a[href="/build"]')).not.toBeNull();
   expect(container.querySelectorAll('.path-card').length).toBe(2);
-  expect(container.textContent).toContain('EXPLORE WHEELS');
+  expect(container.textContent).toContain('EXPLORE PRE-MADE WHEELS');
   expect(container.textContent).not.toContain('Preconfigured');
   expect(container.textContent).not.toMatch(/labor day|copy labor/i);
   expect(container.querySelector('.labor-promo-overlay')).toBeNull();

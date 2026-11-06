@@ -1,3 +1,4 @@
+import PreviewZoom from './PreviewZoom';
 import {useEffect,useRef} from 'react';
 import {createLedArtwork,drawLedDisplay} from '../lib/ledDisplay';
 export default function ReferenceWheelPreview({src,alt,style,led}) {
@@ -14,5 +15,5 @@ export default function ReferenceWheelPreview({src,alt,style,led}) {
       }
     };image.src=src;return()=>{active=false;};
   },[src,led]);
-  return <canvas ref={ref} role="img" aria-label={alt} style={style}/>;
+  return <PreviewZoom style={{...style,position:style?.position,aspectRatio:style?.height==='auto'?'3 / 2':undefined}}><canvas ref={ref} role="img" aria-label={alt} style={{width:'100%',height:'100%',objectFit:'contain'}}/></PreviewZoom>;
 }

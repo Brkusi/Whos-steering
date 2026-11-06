@@ -1,3 +1,4 @@
+import PreviewZoom from './PreviewZoom';
 import { useEffect, useRef, useState } from 'react';
 import { bmwFSeriesConfiguration, sourceWheelHasPaddles, sourceWheelShape } from '../lib/bmwFSeriesConfiguration';
 import { createFSeriesCompositor } from '../lib/bmwFSeriesComposite';
@@ -11,7 +12,7 @@ function parseColor(value) {
 
 export default function FSeriesPreview({config}) {
   const output=useRef(null),renderer=useRef(null),version=useRef(0);
-  const [status,setStatus]=useState('loading'),[zoom,setZoom]=useState(false),[retry,setRetry]=useState(0);
+  const [status,setStatus]=useState('loading'),[retry,setRetry]=useState(0);
   const appearance=bmwFSeriesConfiguration(config,parseColor),key=JSON.stringify(appearance),family=appearance.family;
   const shapeLabel=sourceWheelShape(config);
   const label=config.brand === 'AUDI' ? `Audi ${config.wheelStyleType === 'RS 2020+' ? 'B9.5 Style' : config.wheelStyleType}` : config.brand === 'BMW' ? (config.wheelStyleType.startsWith('BMW ') ? config.wheelStyleType : `BMW ${config.wheelStyleType}`) : config.brand === 'TOYOTA' ? 'Toyota Supra GR' : config.brand === 'PORSCHE' ? `Porsche ${config.wheelStyleType}` : config.brand === 'DODGE_SRT' ? 'Dodge SRT' : config.wheelStyleType;
@@ -24,9 +25,9 @@ export default function FSeriesPreview({config}) {
       output.current.getContext('2d').drawImage(canvas,0,0);setStatus('ready');
     }).catch(()=>{if(current===version.current)setStatus('error');});
   },[key,retry]);
-  return <section className={`fseries-preview${zoom?' is-zoomed':''}`} aria-label={`${label} live wheel preview`}>
-    <div className="fseries-preview-heading"><span>LIVE PREVIEW</span><button type="button" aria-label={zoom?'Zoom out wheel preview':'Zoom in wheel preview'} aria-pressed={zoom} onClick={()=>setZoom(!zoom)}>{zoom?'−':'+'}</button></div>
-    <div className="fseries-preview-stage"><canvas ref={output} role="img" aria-label={`${label} ${shapeLabel} wheel, ${config.topBottomMat}${sourceWheelHasPaddles(config) ? `, ${config.paddleShifters} paddles` : ''}`}/></div>
+  return <section className="fseries-preview" aria-label={`${label} live wheel preview`}>
+    <div className="fseries-preview-heading"><span>LIVE PREVIEW</span></div>
+    <PreviewZoom className="fseries-preview-stage"><canvas ref={output} role="img" aria-label={`${label} ${shapeLabel} wheel, ${config.topBottomMat}${sourceWheelHasPaddles(config) ? `, ${config.paddleShifters} paddles` : ''}`}/></PreviewZoom>
     {status==='loading'&&<p role="status" className="fseries-preview-loading">Updating wheel…</p>}
     {status==='error'&&<div className="fseries-preview-error" role="alert"><p>The wheel images could not load.</p><button onClick={()=>setRetry(retry+1)}>Retry preview</button></div>}
     <p className="fseries-preview-caption">{label} · {shapeLabel}</p>

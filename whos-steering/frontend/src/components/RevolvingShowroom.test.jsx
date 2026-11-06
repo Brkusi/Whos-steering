@@ -65,3 +65,29 @@ test('every style opens its exact build route, Back and Escape return it, and ch
  expect(host.querySelector('.orbit-chat').getAttribute('href')).toBe('/contact');
  act(()=>root.unmount());host.remove();global.Image=original;
 });
+
+test('every wheel gains depth toward the center and loses it symmetrically',()=>{
+ const {spotlightDepth}=require('./RevolvingShowroom');
+ const scales=[0,200,400,600].map(x=>spotlightDepth(x,600,1200).scale);
+ expect(scales).toEqual([...scales].sort((a,b)=>a-b));
+ expect(scales[0]).toBeCloseTo(.78);expect(scales[3]).toBeCloseTo(1.14);
+ expect(spotlightDepth(300,600,1200)).toEqual(spotlightDepth(900,600,1200));
+ expect(spotlightDepth(-200,600,1200).scale).toBe(.78);
+
+});
+
+
+test('R8 studio backdrop is transparent while dark carbon and the white center stripe stay intact',()=>{
+ const {clearR8Backdrop,R8_CROP}=require('./RevolvingShowroom');
+ const pixels=new Uint8ClampedArray(10*10*4).fill(255);
+ pixels.set([4,5,6,255],(5*10+5)*4);
+ clearR8Backdrop(pixels,10,10,{x:2,y:1,w:1,h:2});
+ expect(pixels[3]).toBe(0);
+ expect(pixels[(5*10+5)*4+3]).toBe(255);
+ expect([...pixels.slice((1*10+2)*4,(1*10+2)*4+4)]).toEqual([255,255,255,255]);
+ expect(R8_CROP.x).toBeLessThan(53);
+ expect(R8_CROP.x+R8_CROP.w).toBeGreaterThan(962);
+ expect(R8_CROP.y).toBeLessThan(42);
+ expect(R8_CROP.y+R8_CROP.h).toBeGreaterThan(896);
+ expect(WHEEL_STYLES.find(w=>w.style==='R8').showroomImage).toBe('/showroom/audi-r8-front.png');
+});
