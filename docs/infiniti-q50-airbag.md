@@ -3,7 +3,7 @@
 Route: `/configure/infiniti-q50-airbag`, linked from `/build` as Airbag Configurator.
 Standalone design configurator; no price, checkout, or airbag-unit claims were added.
 
-Leather / Alcantara, airbag color, stitching, and emblem finish are independently controlled. Palette imports are the same production COLORS, STITCH_COLORS, CLASSIC_CARBON_COLORS, and FORGED_CARBON_COLORS used by wheel configurators. Finish changes reset to a valid color. Designs persist locally, and Reset restores defaults.
+Leather / Alcantara, airbag color, stitching, and emblem finish are independently controlled. Palette imports are the same production COLORS, STITCH_COLORS, CLASSIC_CARBON_COLORS, and FORGED_CARBON_COLORS used by wheel configurators. Finish changes reset to a valid color. Designs persist locally. Reset, inspect and download controls are omitted per request. Option buttons use the same shared `ob` classes as the wheel configurators, with uppercase airbag labels.
 
 The canvas has transparent alpha. Its on-screen container uses the site's dark background. No inspect or download buttons are shown, per request.
 

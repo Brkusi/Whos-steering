@@ -40,14 +40,14 @@ export function InfinitiAirbagOptions({ config, onChange }) {
   const cfg = normalizeInfinitiAirbag(config);
   const change = patch => onChange({ ...config, ...cfg, ...patch });
   return <div className="infiniti-controls">
-    <fieldset className="infiniti-options"><legend>01 / Material</legend><div className="infiniti-segments">
-      {[['Smooth Leather', 'Leather'], ['Alcantara', 'Alcantara / suede']].map(([value, label]) => <button type="button" key={value} aria-pressed={cfg.airbagMat === value} onClick={() => change({ airbagMat: value })}>{label}</button>)}
+    <fieldset className="infiniti-options"><legend>Airbag material</legend><div className="infiniti-segments">
+      {[['Smooth Leather', 'Leather'], ['Alcantara', 'Alcantara / suede']].map(([value, label]) => <button type="button" key={value} className={`ob${cfg.airbagMat === value ? ' on' : ''}`} aria-pressed={cfg.airbagMat === value} onClick={() => change({ airbagMat: value })}>{label}</button>)}
     </div></fieldset>
     <Swatches label="Airbag color" colors={COLORS} value={cfg.airbagCol} onChange={airbagCol => change({ airbagCol })} />
-    <Swatches label="02 / Stitching" colors={STITCH_COLORS} value={cfg.airbagStitchColor} onChange={airbagStitchColor => change({ airbagStitchColor })} />
-    <fieldset className="infiniti-options"><legend>03 / Infiniti emblem</legend><div className="infiniti-segments">
-      {INFINITI_LOGO_FINISHES.map(finish => <button type="button" key={finish} aria-pressed={cfg.infinitiLogoFinish === finish} onClick={() => change({ infinitiLogoFinish: finish, infinitiLogoCol: infinitiLogoPalette(finish)[0].h })}>{finish}</button>)}
+    <Swatches label="Airbag stitch color" colors={STITCH_COLORS} value={cfg.airbagStitchColor} onChange={airbagStitchColor => change({ airbagStitchColor })} />
+    <fieldset className="infiniti-options"><legend>Emblem Finish</legend><div className="infiniti-segments">
+      {INFINITI_LOGO_FINISHES.map(finish => <button type="button" key={finish} className={`ob${cfg.infinitiLogoFinish === finish ? ' on' : ''}`} aria-pressed={cfg.infinitiLogoFinish === finish} onClick={() => change({ infinitiLogoFinish: finish, infinitiLogoCol: infinitiLogoPalette(finish)[0].h })}>{finish}</button>)}
     </div></fieldset>
-    <Swatches label="Emblem color" colors={infinitiLogoPalette(cfg.infinitiLogoFinish)} value={cfg.infinitiLogoCol} onChange={infinitiLogoCol => change({ infinitiLogoCol })} />
+    <Swatches label="Infiniti logo color" colors={infinitiLogoPalette(cfg.infinitiLogoFinish)} value={cfg.infinitiLogoCol} onChange={infinitiLogoCol => change({ infinitiLogoCol })} />
   </div>;
 }

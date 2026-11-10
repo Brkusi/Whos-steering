@@ -8,7 +8,7 @@ export default function InfinitiAirbagModulePreview() {
   function change(value) { setConfig(value); try { localStorage.setItem(KEY, JSON.stringify(value)); } catch {} }
   return <main className="infiniti-module"><header><div className="eyebrow">WHO’S STEERING / AIRBAG DESIGN</div><h1>INFINITI Q50 <span style={{color:'#999'}}>2014–2017</span></h1><p>Make the details yours. Choose your airbag material, color, stitching and Infiniti emblem finish.</p></header>
     <div className="infiniti-layout"><InfinitiAirbagPreview config={config} /><div><InfinitiAirbagOptions config={config} onChange={change} />
-      <div className="infiniti-summary"><strong>Your airbag design</strong><br />{summary.color} {summary.material} · {summary.stitching} stitching<br />{summary.logoFinish} · {summary.logoColor}<br /><button className="reset" type="button" onClick={() => change(INFINITI_AIRBAG_DEFAULTS)}>Reset design</button></div>
+      <div className="infiniti-summary"><strong>Your airbag design</strong><br />{summary.color} {summary.material} · {summary.stitching} stitching<br />{summary.logoFinish} · {summary.logoColor}</div>
     </div></div>
   </main>;
 }
