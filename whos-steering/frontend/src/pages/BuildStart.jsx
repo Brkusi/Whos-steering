@@ -40,6 +40,11 @@ export default function BuildStart() {
         <h1 className="build-start__title">SELECT YOUR VEHICLE BRAND<span>.</span></h1>
         <p className="build-start__intro">Check your vehicle, then choose the wheel style you want to configure.</p>
 
+        <Link to="/configure/infiniti-q50-airbag" className="build-airbag-option">
+          <img src="/models/infiniti-q50-airbag/leather.png" alt="Infiniti Q50 airbag" />
+          <div><span>AIRBAG CONFIGURATOR</span><h2>Infiniti Q50 · 2014–2017</h2><p>Customize leather or Alcantara, stitching and the Infiniti emblem.</p></div><b aria-hidden="true">→</b>
+        </Link>
+
         <div className="build-start__compatibility" aria-label="Check vehicle compatibility">
           <div className="build-start__compatibility-heading">
             <div><span className="build-start__compatibility-mark">✓</span><span>CHECK VEHICLE COMPATIBILITY</span></div>

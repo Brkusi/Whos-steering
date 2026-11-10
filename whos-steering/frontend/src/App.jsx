@@ -16,6 +16,7 @@ const Home              = lazy(() => import('./pages/Home'));
 const Catalog           = lazy(() => import('./pages/Catalog'));
 const Product           = lazy(() => import('./pages/Product'));
 const BuildStart        = lazy(() => import('./pages/BuildStart'));
+const InfinitiAirbagModulePreview = lazy(() => import('./pages/InfinitiAirbagPreview'));
 const Configure         = lazy(() => import('./pages/Configure'));
 const TrackOrder        = lazy(() => import('./pages/TrackOrder'));
 const Checkout          = lazy(() => import('./pages/Checkout'));
@@ -48,6 +49,7 @@ export default function App() {
               <Route path="/catalog"            element={<Catalog />} />
               <Route path="/catalog/:id"        element={<Product />} />
               <Route path="/build"              element={<BuildStart />} />
+              <Route path="/configure/infiniti-q50-airbag" element={<InfinitiAirbagModulePreview />} />
               <Route path="/configure"          element={<Configure />} />
               <Route path="/track-order"        element={<TrackOrder />} />
               <Route path="/resume" element={<ResumeBuild />} />

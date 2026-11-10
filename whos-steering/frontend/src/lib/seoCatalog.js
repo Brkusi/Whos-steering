@@ -56,6 +56,8 @@ export function seoForRoute(pathname,search=''){
  }else if(pathname==='/build'){
   const guide=brandGuide(params.get('brand'));if(guide)noindex=true;
   title='Build a Custom Steering Wheel | BMW, Audi & More | Who’s Steering';description='Choose your vehicle and steering wheel style, then personalize materials, stitching, colors and available features. Final fitment is checked from your wheel photo.';
+ }else if(pathname==='/configure/infiniti-q50-airbag'){
+  noindex=true;title='Infiniti Q50 Airbag Configurator · 2014–2017 | Who’s Steering';description='Design your Infiniti Q50 airbag with leather or Alcantara, stitching colors and carbon fiber, forged carbon or solid-color emblem finishes.';image='/models/infiniti-q50-airbag/leather.png';
  }else if(pathname==='/configure'){
   noindex=true;title='Configure Your Custom Steering Wheel | Who’s Steering';description='Personalize your steering wheel materials, colors, stitching and vehicle-specific options.';
  }else if(pathname==='/contact'){title='Contact Who’s Steering | Custom Wheel & Fitment Questions';description='Ask Who’s Steering about custom steering wheels, materials, vehicle compatibility, existing designs and your order.';}

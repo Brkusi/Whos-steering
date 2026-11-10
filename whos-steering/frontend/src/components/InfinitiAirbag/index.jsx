@@ -1,0 +1,53 @@
+import { useEffect, useRef, useState } from 'react';
+import { COLORS, STITCH_COLORS } from '../../lib/data';
+import { INFINITI_LOGO_FINISHES, infinitiLogoPalette, normalizeInfinitiAirbag, infinitiAirbagSummary } from '../../lib/infinitiAirbagConfiguration';
+import { renderInfinitiAirbag } from '../../lib/infinitiAirbagRenderer';
+import './style.css';
+
+export function InfinitiAirbagPreview({ config }) {
+  const canvas = useRef(null), generation = useRef(0);
+  const [state, setState] = useState('loading'), [error, setError] = useState(''), [retry, setRetry] = useState(0);
+  const normalized = normalizeInfinitiAirbag(config), key = JSON.stringify(normalized);
+  useEffect(() => {
+    const id = ++generation.current;
+    setState('loading'); setError('');
+    const buffer = document.createElement('canvas');
+    renderInfinitiAirbag(buffer, JSON.parse(key)).then(() => {
+      if (generation.current !== id || !canvas.current) return;
+      canvas.current.width = buffer.width; canvas.current.height = buffer.height;
+      canvas.current.getContext('2d').drawImage(buffer, 0, 0); setState('ready');
+    }).catch(e => { if (generation.current === id) { setError(e.message); setState('error'); } });
+    return () => { generation.current++; };
+  }, [key, retry]);
+  return <div className="infiniti-preview">
+    <div className="infiniti-artboard">
+      <canvas ref={canvas} aria-label={`Infiniti Q50 airbag, ${Object.values(infinitiAirbagSummary(config)).join(', ')}`} role="img" />
+    </div>
+    <div className="infiniti-render-status" role="status">{state === 'loading' ? 'Updating preview…' : error || ''}</div>
+    {error && <button type="button" onClick={() => setRetry(retry + 1)}>Retry preview</button>}
+  </div>;
+}
+function Swatches({ label, colors, value, onChange }) {
+  return <fieldset className="infiniti-options"><legend>{label}<span>{colors.find(c => c.h === value)?.n}</span></legend>
+    <div className="infiniti-swatches">{colors.map(c => <button type="button" key={c.h} title={c.n} aria-label={`${label}: ${c.n}`} aria-pressed={value === c.h} onClick={() => onChange(c.h)} style={{ backgroundColor: c.h }}>
+      {c.img && <img src={c.img} alt="" loading="lazy" />}<span>{value === c.h ? '✓' : ''}</span>
+    </button>)}</div>
+  </fieldset>;
+}
+// Controlled component: the host wheel configurator owns and saves these fields
+// alongside its existing config. Changing an airbag field preserves all wheel fields.
+export function InfinitiAirbagOptions({ config, onChange }) {
+  const cfg = normalizeInfinitiAirbag(config);
+  const change = patch => onChange({ ...config, ...cfg, ...patch });
+  return <div className="infiniti-controls">
+    <fieldset className="infiniti-options"><legend>01 / Material</legend><div className="infiniti-segments">
+      {[['Smooth Leather', 'Leather'], ['Alcantara', 'Alcantara / suede']].map(([value, label]) => <button type="button" key={value} aria-pressed={cfg.airbagMat === value} onClick={() => change({ airbagMat: value })}>{label}</button>)}
+    </div></fieldset>
+    <Swatches label="Airbag color" colors={COLORS} value={cfg.airbagCol} onChange={airbagCol => change({ airbagCol })} />
+    <Swatches label="02 / Stitching" colors={STITCH_COLORS} value={cfg.airbagStitchColor} onChange={airbagStitchColor => change({ airbagStitchColor })} />
+    <fieldset className="infiniti-options"><legend>03 / Infiniti emblem</legend><div className="infiniti-segments">
+      {INFINITI_LOGO_FINISHES.map(finish => <button type="button" key={finish} aria-pressed={cfg.infinitiLogoFinish === finish} onClick={() => change({ infinitiLogoFinish: finish, infinitiLogoCol: infinitiLogoPalette(finish)[0].h })}>{finish}</button>)}
+    </div></fieldset>
+    <Swatches label="Emblem color" colors={infinitiLogoPalette(cfg.infinitiLogoFinish)} value={cfg.infinitiLogoCol} onChange={infinitiLogoCol => change({ infinitiLogoCol })} />
+  </div>;
+}
