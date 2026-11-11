@@ -1,5 +1,11 @@
 import { COLORS, STITCH_COLORS, CLASSIC_CARBON_COLORS, FORGED_CARBON_COLORS } from './data';
 
+export const INFINITI_AIRBAG_PRODUCTS = {
+  'infiniti-q50-2014-2017': {id:'infiniti-q50-2014-2017', title:'INFINITI Q50', fitment:'2014–2017', label:'Infiniti Q50 · 2014–2017', model:'Q50', years:'2014–2017', route:'/configure/infiniti-q50-airbag', artwork:'infiniti-q50-airbag'},
+  'infiniti-q60-2017-q50-2018': {id:'infiniti-q60-2017-q50-2018', title:'INFINITI Q60 / Q50', fitment:'Q60 2017+ / Q50 2018+', label:'Infiniti Q60 2017+ / Q50 2018+', model:'Q60 / Q50', years:'Q60 2017+ / Q50 2018+', route:'/configure/infiniti-q60-q50-airbag', artwork:'infiniti-q60-q50-airbag'},
+};
+export const infinitiAirbagProduct = id => INFINITI_AIRBAG_PRODUCTS[id] || INFINITI_AIRBAG_PRODUCTS['infiniti-q50-2014-2017'];
+export const INFINITI_LED_NOTICE = 'RGB LED colors are controlled via Bluetooth. The LED emblem must be wired properly upon installation.';
 export const INFINITI_AIRBAG_DEFAULTS = {
   airbagMat: 'Smooth Leather', airbagCol: '#111111', airbagStitchColor: '#0A1F6E',
   infinitiLogoFinish: 'Regular Color', infinitiLogoCol: '#111111',
@@ -33,12 +39,13 @@ export function infinitiAirbagSummary(config) {
     logoColor: infinitiLogoPalette(c.infinitiLogoFinish).find(v => v.h === c.infinitiLogoCol).n };
 }
 
-export function infinitiAirbagCartItem(config) {
+export function infinitiAirbagCartItem(config, productId) {
+  const product = infinitiAirbagProduct(productId);
   const cfg = normalizeInfinitiAirbag(config), summary = infinitiAirbagSummary(cfg);
   return {
-    name: 'Infiniti Q50 2014–2017 Custom Airbag Cover',
+    name: `${product.label} Custom Airbag Cover`,
     detail: `${summary.color} ${summary.material} · ${summary.stitching} stitching · ${summary.logoFinish} · ${summary.logoColor}`,
     price: infinitiAirbagPrice(cfg).total / 100,
-    config: {...cfg, productType:'airbag-cover', airbagProductId:'infiniti-q50-2014-2017', brand:'INFINITI', vehicleModel:'Q50', vehicleYear:'2014–2017', wheelStyle:'Airbag cover', airbagSummary:summary, readyToShip:false, airbagCompat:false, heated:false, laneAssist:false},
+    config: {...cfg, productType:'airbag-cover', airbagProductId:product.id, brand:'INFINITI', vehicleModel:product.model, vehicleYear:product.years, wheelStyle:'Airbag cover', airbagSummary:summary, readyToShip:false, airbagCompat:false, heated:false, laneAssist:false},
   };
 }

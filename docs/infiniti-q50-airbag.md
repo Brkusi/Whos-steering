@@ -72,3 +72,15 @@ The separate lighting pass applies only to Alcantara; leather retains its origin
 ## Portable relief extraction
 
 Removed the renderer's dependency on `CanvasRenderingContext2D.filter`. Browsers that ignore that property draw identical fine/broad images, leaving an empty embossing mask. Fine, broad and emblem-lighting luminance now use separable pixel blurs that work without any canvas filter support. The original molded glyph positions and subtle 12% reflected lip are retained. A regression fixture verifies a molded stroke yields nonzero relief with no canvas API; all 12 airbag tests pass. Mobile black suede was visually checked.
+
+## Q60 2017+ / Q50 2018+ cover and sale pricing — November 11, 2026
+
+Added `/configure/infiniti-q60-q50-airbag` with its own broad triangular master and per-product emblem, seam, embossed-marking and LED bevel masks. Reuses the existing palettes, shared controls, review, cart and checkout. Both cover fitments appear under Infiniti. Separate local-storage keys preserve each design. Backend pricing validates each product ID against its matching fitment and retains identical $169.99 base / $19.99 carbon / $79.99 LED pricing. Both cover pages and cards show a red SALE tag, $249.99 struck-through original base price and From $169.99. RGB LED option and review explicitly say colors are controlled via Bluetooth, retaining the installation wiring notice.
+
+New artwork uses built-in imagegen, with original transparent outputs copied unchanged to `whos-steering/frontend/public/models/infiniti-q60-q50-airbag/leather.png` and `suede-surface.png`.
+
+Prompt set:
+1. Product-mockup: precise standalone transparent Infiniti Q60 2017+ / Q50 2018+ cover from the supplied gray/carbon, perforated black and yellow-LED references. Match the broad rounded inverted triangle, short straight top, tapering sides and rounded flat bottom. Front-facing centered neutral charcoal leather, two light-gray seam rows, authentic silver-gray carbon Infiniti emblem with upholstery openings, original molded SRS AIRBAG and horn. No wheel, hands, wires, cast shadows, watermarks or background.
+2. Precise-object-edit: use generated leather as exact geometry target and supplied red-stitched Alcantara photograph as nap reference. Continuous fine black automotive suede only; remove emblem, recess, stitches, seams, letters and horn for subsequent compositing. Preserve canvas, outline, framing, lighting and transparent alpha. No tiling, patches or extra shadows.
+
+Validation: 27 frontend suites / 128 tests and 34 backend tests passed; optimized production build and 44 SEO prerenders passed. Browser checked leather and suede, white/black body, red stitching with both seam rows, LED face and upholstery openings, sale labels and mobile review with Bluetooth notice at 390px. Cart/checkout integration verifies both product identifiers and authoritative server pricing. No live payment submitted.

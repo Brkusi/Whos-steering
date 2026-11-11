@@ -47,7 +47,7 @@ if(new Set(indexed).size!==indexed.length)throw new Error('Duplicate SEO paths')
 for(const url of indexed){
  const target=path.join(build,url==='/'?'index.html':url.slice(1)+'/index.html');fs.mkdirSync(path.dirname(target),{recursive:true});fs.writeFileSync(target,documentFor(url,url==='/'||url==='/catalog'||url==='/build'||url.startsWith('/steering-wheels/')));
 }
-for(const url of ['/login','/account','/admin','/checkout','/configure','/configure/infiniti-q50-airbag','/track-order','/resume','/unsubscribe','/order-confirmation','/custom-order-confirmation']){
+for(const url of ['/login','/account','/admin','/checkout','/configure','/configure/infiniti-q50-airbag','/configure/infiniti-q60-q50-airbag','/track-order','/resume','/unsubscribe','/order-confirmation','/custom-order-confirmation']){
  const target=path.join(build,url.slice(1),'index.html');fs.mkdirSync(path.dirname(target),{recursive:true});fs.writeFileSync(target,documentFor(url,false));
 }
 fs.writeFileSync(path.join(build,'sitemap.xml'),'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'+indexed.map(url=>`<url><loc>${canonicalUrl(url)}</loc></url>`).join('\n')+'\n</urlset>\n');

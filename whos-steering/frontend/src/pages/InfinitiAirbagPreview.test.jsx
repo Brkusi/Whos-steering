@@ -5,13 +5,13 @@ import {CartProvider,useCart} from '../context';
 import CartDrawer from '../components/CartDrawer';
 import Airbag from './InfinitiAirbagPreview';
 jest.mock('../components/InfinitiAirbag',()=>({InfinitiAirbagPreview:()=>null,InfinitiAirbagOptions:()=>null}));
-function Harness(){const cart=useCart(),location=useLocation();return <><Airbag/><CartDrawer open={cart.cartOpen} onClose={()=>cart.setCartOpen(false)}/><output>{location.pathname}</output></>;}
-test('review confirms selections, adds exact item to shared cart and proceeds to checkout',async()=>{
+function Harness({productId}){const cart=useCart(),location=useLocation();return <><Airbag productId={productId}/><CartDrawer open={cart.cartOpen} onClose={()=>cart.setCartOpen(false)}/><output>{location.pathname}</output></>;}
+test.each([[undefined,'infiniti-q50-airbag','infiniti-q50-2014-2017'],['infiniti-q60-2017-q50-2018','infiniti-q60-q50-airbag','infiniti-q60-2017-q50-2018']])('review preserves fitment %s through shared cart and checkout',async(productId,artwork,expectedId)=>{
  global.IS_REACT_ACT_ENVIRONMENT=true;
  sessionStorage.clear();localStorage.clear();
- localStorage.setItem('whossteering:infiniti-q50-airbag:v1',JSON.stringify({airbagMat:'Alcantara',infinitiLogoFinish:'Carbon color',infinitiLogoCol:'#E85500'}));
+ localStorage.setItem(`whossteering:${artwork}:v1`,JSON.stringify({airbagMat:'Alcantara',infinitiLogoFinish:'Carbon color',infinitiLogoCol:'#E85500'}));
  const host=document.createElement('div');document.body.appendChild(host);const root=createRoot(host);
- await act(async()=>root.render(<MemoryRouter future={{v7_startTransition:true,v7_relativeSplatPath:true}}><CartProvider><Harness/></CartProvider></MemoryRouter>));
+ await act(async()=>root.render(<MemoryRouter future={{v7_startTransition:true,v7_relativeSplatPath:true}}><CartProvider><Harness productId={productId}/></CartProvider></MemoryRouter>));
  const scroll=jest.fn();host.querySelector('.infiniti-build-review').scrollIntoView=scroll;
  act(()=>host.querySelector('.infiniti-floating-total').click());
  expect(scroll).toHaveBeenCalledWith({behavior:'smooth',block:'start'});
@@ -26,6 +26,7 @@ test('review confirms selections, adds exact item to shared cart and proceeds to
  expect(host.querySelector('.cart-item').textContent).toContain('Carbon color');
  expect(host.querySelector('.cart-item').textContent).toContain('$189.98');
  const items=JSON.parse(sessionStorage.getItem('ws_cart'));
+ expect(items[0].config.airbagProductId).toBe(expectedId);
  expect(items[0].config.infinitiLogoFinish).toBe('Carbon color');
  expect(items[0].config.airbagMat).toBe('Alcantara');
  act(()=>host.querySelector('.cart-panel .btn').click());

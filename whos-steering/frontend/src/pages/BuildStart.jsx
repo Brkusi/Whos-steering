@@ -6,6 +6,7 @@ import { WHEEL_STYLES } from '../lib/wheelStyles';
 import { bmwVehicleFamilies } from '../lib/bmwVehicleFamilies';
 import VehicleYearModelFields from '../components/VehicleYearModelFields';
 import './BuildStart.css';
+import { INFINITI_AIRBAG_PRODUCTS } from '../lib/infinitiAirbagConfiguration';
 
 const BUILD_MAKES = [...VEHICLE_MAKES, {value:'INFINITI',label:'Infiniti'}];
 
@@ -50,7 +51,7 @@ export default function BuildStart() {
             <p>Tell us what you drive. We’ll confirm final fitment from your wheel photo.</p>
           </div>
           <div className="build-start__compatibility-fields">
-            <div className={`build-start__field${nextField === 'airbag' ? 'Choose the Infiniti Q50 2014–2017 airbag cover below.' : nextField === 'make' ? ' is-next' : ''}`}>
+            <div className={`build-start__field${nextField === 'make' ? ' is-next' : ''}`}>
               <label className="build-start__make-label" htmlFor="compatible-make"><span className="vehicle-field__number">01</span>Vehicle make</label>
               <select ref={makeRef} id="compatible-make" className="build-start__make-select" value={make} onChange={event => {setMake(event.target.value);setYear('');setModel('');}}>
                 <option value="">Select your make</option>
@@ -64,7 +65,7 @@ export default function BuildStart() {
             </div>
           </div>
           <div className="build-start__next-step" role="status" aria-live="polite">
-            {nextField === 'airbag' ? 'Choose the Infiniti Q50 2014–2017 airbag cover below.' : nextField === 'make' ? '01  Select your make to see matching wheel styles.' :
+            {nextField === 'airbag' ? 'Choose your Infiniti airbag cover fitment below.' : nextField === 'make' ? '01  Select your make to see matching wheel styles.' :
               nextField === 'year' ? '02  Now choose your vehicle year.' :
               nextField === 'model' ? '03  Choose your model to complete the compatibility check.' :
               matchingWheels.length ? '✓  Vehicle details added. Choose a wheel style below.' : 'No online wheel styles currently match this vehicle.'}
@@ -76,10 +77,10 @@ export default function BuildStart() {
         {nextField === 'wheel' && !matchingWheels.length && <div className="build-start__unavailable" role="status">
           Sorry, we currently do not offer online customization for that vehicle model. Please <Link to={vehicleInquiryPath(make,year,model)}>contact us</Link> to design your wheel.
         </div>}
-        {make === 'INFINITI' && <Link to="/configure/infiniti-q50-airbag" className="build-airbag-option">
-          <img src="/models/infiniti-q50-airbag/leather.png" alt="Infiniti Q50 airbag" />
-          <div><span>CONFIGURE AIRBAG COVERS</span><h2>Infiniti Q50 · 2014–2017</h2><p>From $169.99 · Customize leather or Alcantara, stitching and the Infiniti emblem.</p></div><b aria-hidden="true">→</b>
-        </Link>}
+        {make === 'INFINITI' && Object.values(INFINITI_AIRBAG_PRODUCTS).map(product => <Link key={product.id} to={product.route} className="build-airbag-option">
+          <img src={`/models/${product.artwork}/leather.png`} alt={`${product.label} airbag`} />
+          <div><span>CONFIGURE AIRBAG COVERS</span><h2>{product.label}</h2><p><span className="airbag-sale-tag">SALE</span> <del>$249.99</del> From $169.99 · Customize leather or Alcantara, stitching and the Infiniti emblem.</p></div><b aria-hidden="true">→</b>
+        </Link>)}
 
         <div className="build-start__grid">
           {matchingWheels.map(wheel => (

@@ -36,3 +36,12 @@ test('checkout saves complete cover config and charges server amount, with promo
  await routes['/create-intent'](req,res);
  assert.equal(status,400);assert.equal(queries.length,0);assert.equal(intent.length,0);
 });
+
+test('newer cover receives identical authoritative pricing and rejects crossed fitments',()=>{
+ const newer={...base,airbagProductId:'infiniti-q60-2017-q50-2018',vehicleModel:'Q60 / Q50',vehicleYear:'Q60 2017+ / Q50 2018+'};
+ for(const [infinitiLogoFinish,price] of Object.entries({'Regular Color':16999,'Classic Carbon':18998,'Forged Carbon':18998,'Carbon color':18998,LED:24998})) {
+  assert.equal(airbagPriceCents({...newer,infinitiLogoFinish,price:1}),price);
+  assert.throws(()=>airbagPriceCents({...newer,infinitiLogoFinish,vehicleYear:base.vehicleYear}));
+  assert.throws(()=>airbagPriceCents({...base,infinitiLogoFinish,airbagProductId:newer.airbagProductId}));
+ }
+});

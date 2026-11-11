@@ -3,6 +3,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { InfinitiAirbagOptions } from './index';
 test('LED selection shows wiring notice; other finishes do not', () => {
   const html = renderToStaticMarkup(<InfinitiAirbagOptions config={{infinitiLogoFinish:'LED'}} onChange={()=>{}} />);
+  expect(html).toContain('RGB LED colors are controlled via Bluetooth.');
   expect(html).toContain('The LED emblem must be wired properly upon installation.');
   expect(html).not.toContain('illumination, as shown.');
   expect(html).toContain('+$79.99');

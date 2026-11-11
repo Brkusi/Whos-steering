@@ -57,6 +57,8 @@ export function seoForRoute(pathname,search=''){
  }else if(pathname==='/build'){
   const guide=brandGuide(params.get('brand'));if(guide)noindex=true;
   title='Build a Custom Steering Wheel | BMW, Audi & More | Who’s Steering';description='Choose your vehicle and steering wheel style, then personalize materials, stitching, colors and available features. Final fitment is checked from your wheel photo.';
+ }else if(pathname==='/configure/infiniti-q60-q50-airbag'){
+  noindex=true;title='Infiniti Q60 2017+ / Q50 2018+ Airbag Configurator | Who’s Steering';description='Customize leather or Alcantara, stitching and Bluetooth RGB LED or carbon emblems. Sale from $169.99, originally $249.99.';image='/models/infiniti-q60-q50-airbag/leather.png';
  }else if(pathname==='/configure/infiniti-q50-airbag'){
   noindex=true;title='Infiniti Q50 Airbag Configurator · 2014–2017 | Who’s Steering';description='Design your Infiniti Q50 airbag with leather or Alcantara, stitching colors and carbon fiber, forged carbon or solid-color emblem finishes.';image='/models/infiniti-q50-airbag/leather.png';
  }else if(pathname==='/configure'){

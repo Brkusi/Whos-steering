@@ -53,3 +53,14 @@ test('cart snapshots keep every airbag selection and exact finish price', () => 
   expect(JSON.parse(JSON.stringify(item))).toEqual(item);
  }
 });
+
+test('newer cover stores its own fitment and keeps identical pricing across finishes', () => {
+ const {infinitiAirbagCartItem} = require('./infinitiAirbagConfiguration');
+ for (const infinitiLogoFinish of ['Regular Color','Carbon color','Classic Carbon','Forged Carbon','LED']) {
+  const config = {infinitiLogoFinish};
+  const newer = infinitiAirbagCartItem(config,'infiniti-q60-2017-q50-2018');
+  expect(newer.price).toBe(infinitiAirbagCartItem(config).price);
+  expect(newer.config).toMatchObject({airbagProductId:'infiniti-q60-2017-q50-2018',vehicleModel:'Q60 / Q50',vehicleYear:'Q60 2017+ / Q50 2018+'});
+  expect(newer.name).toContain('Q60 2017+ / Q50 2018+');
+ }
+});
