@@ -56,7 +56,13 @@ test('sales reporting periods and fitment queue use bounded, parameterized queri
   assert.match(calls[1].sql, /ORDER BY created_at ASC/);
   assert.match(calls[1].sql, /wheelStyleType/);
   assert.doesNotMatch(calls[1].sql, /BMW/);
-  const fitmentPayload={brand:'BMW',year:'2020',model:'M3',photoUrl:'https://example.test/wheel.jpg',config:{brand:'BMW',vehicleYear:'2020',vehicleModel:'M3',photoUrl:'https://example.test/wheel.jpg',wheelStyleType:'G-Series Pre LCI',topBottomMat:'Forged Carbon'}};
+  const fitmentPayload={fullName:'Alex Driver',brand:'BMW',year:'2020',model:'M3',photoUrl:'https://example.test/wheel.jpg',config:{brand:'BMW',vehicleYear:'2020',vehicleModel:'M3',photoUrl:'https://example.test/wheel.jpg',wheelStyleType:'G-Series Pre LCI',topBottomMat:'Forged Carbon'}};
+  for(const fullName of [undefined, '', '   ', 'x'.repeat(121)]) {
+    const missingName=response();
+    await routes['POST /save'][1]({body:{email:'driver@example.test',kind:'fitment',payload:{...fitmentPayload,fullName}}},missingName,next);
+    assert.equal(missingName.statusCode,400);
+    assert.match(missingName.body.error,/full name/);
+  }
   const fitment=response();
   await routes['POST /save'][1]({body:{email:'driver@example.test',kind:'fitment',payload:fitmentPayload}},fitment,next);
   assert.equal(fitment.body.payload.config.wheelStyleType,'G-Series Pre LCI');

@@ -66,7 +66,7 @@ for (const delivered of [true, false]) {
         return require(name);
       }
     });
-    const payload = {brand:'BMW',year:'2020',model:'M3',photoUrl:'https://example.test/wheel.jpg',config:{wheelStyleType:'G-Series Pre LCI',sideMat:'<Leather>'}};
+    const payload = {fullName:'Alex <Driver>',brand:'BMW',year:'2020',model:'M3',photoUrl:'https://example.test/wheel.jpg',config:{wheelStyleType:'G-Series Pre LCI',sideMat:'<Leather>'}};
     const result = await module.exports.save('driver@example.test', 'fitment', payload, false);
     assert.equal(saved.length, 1);
     assert.equal(saved[0][3], payload);
@@ -77,6 +77,7 @@ for (const delivered of [true, false]) {
     assert.match(sent[0].html, /https:\/\/example.test\/wheel.jpg/);
     assert.match(sent[0].html, /&lt;Leather&gt;/);
     assert.match(sent[0].html, /2020 M3/);
+    assert.match(sent[0].html, /Full name: Alex &lt;Driver&gt;/);
     assert.match(sent[0].idempotencyKey, /^fitment-/);
   });
 }

@@ -19,10 +19,18 @@ test('fitment request saves the exact wheel and selected build', async () => {
     email.dispatchEvent(new Event('input', {bubbles:true}));
   });
   await act(async () => [...container.querySelectorAll('button')].find(button => button.textContent === 'ASK ABOUT FITMENT').click());
+  expect(apiFetch.mock.calls.filter(([path]) => path === '/api/sales/save')).toHaveLength(0);
+  const name = container.querySelector('input[name="fullName"]');
+  expect(name.required).toBe(true);
+  await act(async () => {
+    Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set.call(name, 'Alex Driver');
+    name.dispatchEvent(new Event('input', {bubbles:true}));
+  });
+  await act(async () => [...container.querySelectorAll('button')].find(button => button.textContent === 'ASK ABOUT FITMENT').click());
   const [, options] = apiFetch.mock.calls.find(([path]) => path === '/api/sales/save');
   const request = JSON.parse(options.body);
   expect(request.kind).toBe('fitment');
-  expect(request.payload).toMatchObject({brand:'BMW',year:'2020',model:'M3',photoUrl:config.photoUrl,config});
+  expect(request.payload).toMatchObject({fullName:'Alex Driver',brand:'BMW',year:'2020',model:'M3',photoUrl:config.photoUrl,config});
   act(() => root.unmount());
   container.remove();
 });
