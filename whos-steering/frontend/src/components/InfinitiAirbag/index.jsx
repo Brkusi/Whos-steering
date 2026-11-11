@@ -58,7 +58,7 @@ export function InfinitiAirbagOptions({ config, onChange }) {
     <fieldset className="infiniti-options"><legend>Emblem Finish</legend><div className="infiniti-segments">
       {INFINITI_LOGO_FINISHES.map(finish => <button type="button" key={finish} className={`ob${cfg.infinitiLogoFinish === finish ? ' on' : ''}`} aria-pressed={cfg.infinitiLogoFinish === finish} onClick={() => change({ infinitiLogoFinish: finish, infinitiLogoCol: infinitiLogoPalette(finish)[0].h })}>{finish}<small>{infinitiEmblemExtraCents(finish) ? `+${airbagMoney(infinitiEmblemExtraCents(finish))}` : 'Included'}</small></button>)}
     </div></fieldset>
-    {cfg.infinitiLogoFinish === 'LED' && <div className="infiniti-led-notice" role="note"><strong>LED installation</strong><p>The LED emblem must be wired properly upon installation.</p><span>Blue / purple / pink illumination, as shown.</span></div>}
+    {cfg.infinitiLogoFinish === 'LED' && <div className="infiniti-led-notice" role="note"><strong>LED installation</strong><p>The LED emblem must be wired properly upon installation.</p></div>}
     {cfg.infinitiLogoFinish !== 'LED' && <Swatches label="Infiniti logo color" colors={infinitiLogoPalette(cfg.infinitiLogoFinish)} value={cfg.infinitiLogoCol} onChange={infinitiLogoCol => change({ infinitiLogoCol })} />}
   </div>;
 }

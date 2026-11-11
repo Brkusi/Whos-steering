@@ -14,7 +14,41 @@ function load(src) {
   }));
   return images.get(src);
 }
-let masterPromise;
+let masterPromise, ledRelief;
+// A rounded, lit edge registered to the exact emblem mask. No photographed
+// carbon texture is used for the LED face or its highlights.
+function buildLedRelief(mask) {
+  const left = 485, top = 225, width = 470, height = 230;
+  const distances = new Float32Array(width * height);
+  const at = (x, y) => ((y + top) * AIRBAG_WIDTH + x + left) * 4;
+  for (let y = 0; y < height; y++) for (let x = 0; x < width; x++) distances[y * width + x] = mask[at(x,y) + 3] > 127 ? 999 : 0;
+  for (let y = 1; y < height - 1; y++) for (let x = 1; x < width - 1; x++) {
+    const n = y * width + x;
+    distances[n] = Math.min(distances[n], distances[n-1]+1, distances[n-width]+1, distances[n-width-1]+1.414, distances[n-width+1]+1.414);
+  }
+  for (let y = height - 2; y > 0; y--) for (let x = width - 2; x > 0; x--) {
+    const n = y * width + x;
+    distances[n] = Math.min(distances[n], distances[n+1]+1, distances[n+width]+1, distances[n+width-1]+1.414, distances[n+width+1]+1.414);
+  }
+  const canvas = document.createElement('canvas'); canvas.width = width; canvas.height = height;
+  const ctx = canvas.getContext('2d'), pixels = ctx.createImageData(width,height);
+  for (let y = 1; y < height - 1; y++) for (let x = 1; x < width - 1; x++) {
+    const n = y * width + x, d = distances[n], i = n * 4;
+    if (!d) continue;
+    const dx = distances[n+1] - distances[n-1], dy = distances[n+width] - distances[n-width];
+    const length = Math.hypot(dx,dy) || 1;
+    const facing = (dx * .5 + dy * .866) / length;
+    const bevel = Math.pow(clamp(1 - (d-1) / 9), .7);
+    // Upper/left surfaces catch the softbox; the underside has a seated edge.
+    const light = facing * bevel * .48 - .09 * y / height;
+    const rim = d < 1.5 ? .22 : 0;
+    const shade = light - rim;
+    const color = shade > 0 ? 255 : 0;
+    pixels.data[i] = pixels.data[i+1] = pixels.data[i+2] = color;
+    pixels.data[i+3] = Math.round(Math.abs(shade) * mask[at(x,y)+3]);
+  }
+  ctx.putImageData(pixels,0,0); return canvas;
+}
 async function master() {
   if (!masterPromise) masterPromise = (async () => {
     const [base, suede] = await Promise.all([load('/models/infiniti-q50-airbag/leather.png'), load('/models/infiniti-q50-airbag/suede-surface.png')]);
@@ -28,6 +62,7 @@ async function master() {
     const embossBroad = ctx.getImageData(0, 0, c.width, c.height).data;
     ctx.clearRect(0, 0, c.width, c.height); ctx.fillStyle = '#fff'; ctx.fill(new Path2D(LOGO_PATH), 'evenodd');
     const logo = ctx.getImageData(0, 0, c.width, c.height).data;
+    ledRelief = buildLedRelief(logo);
     // Measured seam positions at regular rows in the neutral master. The
     // corridor includes both rows; luminance selects only raised thread.
     const seamRows = [[125,185,202,1236,1256],[150,173,195,1242,1264],[200,162,191,1244,1274],[250,164,196,1240,1271],[300,172,201,1234,1265],[350,180,211,1225,1256],[400,192,222,1215,1245],[450,205,235,1202,1231],[500,220,249,1189,1218],[550,236,265,1173,1203],[600,253,282,1158,1187],[650,270,299,1141,1170],[700,288,318,1124,1153],[750,307,337,1106,1135],[800,328,357,1086,1116],[850,348,378,1067,1096],[900,369,398,1046,1075],[950,390,419,1023,1053],[1000,413,440,1000,1029],[1045,440,463,982,1009]];
@@ -73,7 +108,10 @@ export async function renderInfinitiAirbag(target, config) {
       lum = m.texture[i];
       const embossZone = clamp(Math.min(x - 605, 839 - x, y - 593, 794 - y) / 18);
       const detail = m.embossFine[i] - m.embossBroad[i];
-      lum += detail * embossZone * 1.65;
+      // Molded relief keeps the suede's own color and nap rather than
+      // subtracting the lettering down to black before body tinting.
+      const relief = Math.max(-.38, Math.min(.24, detail / Math.max(24, m.embossBroad[i])));
+      lum *= 1 + relief * embossZone;
       // Retain the dark molded recess immediately around the emblem.
       const rim = clamp(1 - Math.abs(Math.hypot((x - 716) / 238, (y - 340) / 116) - 1) / .12);
       lum *= 1 - rim * clamp((60 - m.original[i]) / 60) * .7;
@@ -122,5 +160,14 @@ export function drawInfinitiLedFrame(target, base, elapsed = 0) {
   gradient.addColorStop(1, '#1441ff');
   ctx.fillStyle = gradient;
   ctx.fillRect(485, 225, 470, 230);
+  if (ledRelief) ctx.drawImage(ledRelief, 485, 225);
+  // A broad reflection across the polished diffuser adds a curved face,
+  // while the flowing color and the upholstery openings remain fully masked.
+  const sheen = ctx.createLinearGradient(0, 230, 0, 450);
+  sheen.addColorStop(0, 'rgba(255,255,255,.24)');
+  sheen.addColorStop(.28, 'rgba(255,255,255,.07)');
+  sheen.addColorStop(.45, 'rgba(255,255,255,0)');
+  sheen.addColorStop(1, 'rgba(0,0,0,.08)');
+  ctx.fillStyle = sheen; ctx.fillRect(485, 225, 470, 230);
   ctx.restore();
 }
