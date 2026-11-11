@@ -1,4 +1,4 @@
-import { applyEmbossLighting } from './infinitiAirbagRelief';
+import { applyEmbossLighting, blurAirbagLuminance } from './infinitiAirbagRelief';
 import { normalizeInfinitiAirbag, infinitiLogoPalette } from './infinitiAirbagConfiguration';
 export const AIRBAG_WIDTH = 1442;
 export const AIRBAG_HEIGHT = 1091;
@@ -55,12 +55,9 @@ async function master() {
     const [base, suede] = await Promise.all([load('/models/infiniti-q50-airbag/leather.png'), load('/models/infiniti-q50-airbag/suede-surface.png')]);
     const c = surface(), ctx = c.getContext('2d', { willReadFrequently: true });
     ctx.drawImage(base, 0, 0, c.width, c.height); const original = ctx.getImageData(0, 0, c.width, c.height).data;
-    ctx.clearRect(0, 0, c.width, c.height); ctx.filter = 'blur(7px)'; ctx.drawImage(base, 0, 0, c.width, c.height); ctx.filter = 'none';
-    const logoLighting = ctx.getImageData(0, 0, c.width, c.height).data;
-    ctx.clearRect(0, 0, c.width, c.height); ctx.filter = 'blur(1.2px)'; ctx.drawImage(base, 0, 0);
-    const embossFine = ctx.getImageData(0, 0, c.width, c.height).data;
-    ctx.clearRect(0, 0, c.width, c.height); ctx.filter = 'blur(22px)'; ctx.drawImage(base, 0, 0); ctx.filter = 'none';
-    const embossBroad = ctx.getImageData(0, 0, c.width, c.height).data;
+    const logoLighting = blurAirbagLuminance(original, c.width, c.height, 7);
+    const embossFine = blurAirbagLuminance(original, c.width, c.height, 1, 1);
+    const embossBroad = blurAirbagLuminance(original, c.width, c.height, 22);
     ctx.clearRect(0, 0, c.width, c.height); ctx.fillStyle = '#fff'; ctx.fill(new Path2D(LOGO_PATH), 'evenodd');
     const logo = ctx.getImageData(0, 0, c.width, c.height).data;
     ledRelief = buildLedRelief(logo);
@@ -86,9 +83,9 @@ async function master() {
     // rectangular patch. A separate light pass stays legible after body tinting.
     const emboss = new Float32Array(c.width * c.height);
     for (let y = 593; y < 794; y++) for (let x = 605; x < 839; x++) {
-      const n = y * c.width + x, i = n * 4;
+      const n = y * c.width + x;
       const feather = clamp(Math.min(x-605,839-x,y-593,794-y)/18);
-      emboss[n] = clamp((embossBroad[i] - embossFine[i] - 2) / 13) * feather;
+      emboss[n] = clamp((embossBroad[n] - embossFine[n] - 2) / 13) * feather;
     }
     const depthSource = new Float32Array(emboss);
     for (let y = 593; y < 794; y++) for (let x = 605; x < 839; x++) {
@@ -145,8 +142,8 @@ export async function renderInfinitiAirbag(target, config) {
       if (cfg.airbagMat === 'Alcantara') value = applyEmbossLighting(value, depth, lip);
       // Preserve the photographed specular highlights, without the original
       // carbon weave leaking into solid or forged finishes.
-      const highlight = clamp((m.logoLighting[i] - 135) / 100);
-      const emblemLight = cfg.infinitiLogoFinish === 'Carbon color' ? m.original[i] : m.logoLighting[i];
+      const highlight = clamp((m.logoLighting[n] - 135) / 100);
+      const emblemLight = cfg.infinitiLogoFinish === 'Carbon color' ? m.original[i] : m.logoLighting[n];
       const reflect = carbon ? carbon[ci + ch] : emblem[ch] * Math.min(1, .58 + emblemLight / 500);
       const lit = ledStops[ledSegment][ch] * (1 - ledMix) + ledStops[ledSegment + 1][ch] * ledMix;
       const finish = cfg.infinitiLogoFinish === 'Carbon color' ? reflect : cfg.infinitiLogoFinish === 'LED'

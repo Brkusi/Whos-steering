@@ -33,7 +33,8 @@ function documentFor(url,render){
    .replace(/<script type="application\/ld\+json">[\s\S]*?<\/script>/gi,'')
    .replace(/<link[^>]*rel="canonical"[^>]*>/gi,'');
  const head=`<meta name="description" content="${escape(seo.description)}"/><meta name="robots" content="${seo.noindex?'noindex,follow':'index,follow,max-image-preview:large'}"/><link rel="canonical" href="${escape(seo.canonical)}"/><meta property="og:site_name" content="Who’s Steering"/><meta property="og:type" content="website"/><meta property="og:title" content="${escape(seo.title)}"/><meta property="og:description" content="${escape(seo.description)}"/><meta property="og:url" content="${escape(seo.canonical)}"/><meta property="og:image" content="${escape(seo.image)}"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="${escape(seo.title)}"/><meta name="twitter:description" content="${escape(seo.description)}"/><meta name="twitter:image" content="${escape(seo.image)}"/><script id="route-schema" type="application/ld+json">${json(seo.schema)}</script>`;
- html=html.replace('</head>',head+(url==='/'&&homeCss?`<link rel="stylesheet" href="${homeCss}"/>`:'')+'</head>');
+ const imageMeta='<meta property="og:image:alt" content="Who’s Steering company logo"/><meta name="twitter:image:alt" content="Who’s Steering company logo"/>';
+ html=html.replace('</head>',head+imageMeta+(url==='/'&&homeCss?`<link rel="stylesheet" href="${homeCss}"/>`:'')+'</head>');
  if(render){
   const Page=url==='/'?Home:url==='/catalog'?Catalog:url==='/build'?Build:null;
   const content=React.createElement(StaticRouter,{location:url},React.createElement(AuthProvider,null,React.createElement(CartProvider,null,React.createElement(Nav),Page?React.createElement(Page):React.createElement(Routes,null,React.createElement(Route,{path:'/steering-wheels/:brand/:slug?',element:React.createElement(Landing)})),React.createElement(Footer))));
@@ -46,7 +47,7 @@ if(new Set(indexed).size!==indexed.length)throw new Error('Duplicate SEO paths')
 for(const url of indexed){
  const target=path.join(build,url==='/'?'index.html':url.slice(1)+'/index.html');fs.mkdirSync(path.dirname(target),{recursive:true});fs.writeFileSync(target,documentFor(url,url==='/'||url==='/catalog'||url==='/build'||url.startsWith('/steering-wheels/')));
 }
-for(const url of ['/login','/account','/admin','/checkout','/configure','/track-order','/resume','/unsubscribe','/order-confirmation','/custom-order-confirmation']){
+for(const url of ['/login','/account','/admin','/checkout','/configure','/configure/infiniti-q50-airbag','/track-order','/resume','/unsubscribe','/order-confirmation','/custom-order-confirmation']){
  const target=path.join(build,url.slice(1),'index.html');fs.mkdirSync(path.dirname(target),{recursive:true});fs.writeFileSync(target,documentFor(url,false));
 }
 fs.writeFileSync(path.join(build,'sitemap.xml'),'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'+indexed.map(url=>`<url><loc>${canonicalUrl(url)}</loc></url>`).join('\n')+'\n</urlset>\n');

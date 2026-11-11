@@ -31,3 +31,10 @@ test('Infiniti discovery reflects both inventory families without borrowing comp
  expect(products.find(p=>p.slug==='purple-rain').fitment).toContain('2009–2013');
  expect(products.find(p=>p.slug==='purple-craze').fitment).toContain('Q50 2018+');
 });
+test('shared links use the company logo across site and product routes',()=>{
+ ['/', '/catalog', '/build', '/configure/infiniti-q50-airbag', ...SHOP_PRODUCTS.map(p=>p.path)].forEach(path=>{
+  expect(seoForRoute(path).image).toBe('https://whossteering.com/ws-logo.png');
+ });
+ const product=SHOP_PRODUCTS[0];
+ expect(seoForRoute(product.path).schema['@graph'].find(item=>item['@type']==='Product').image).toEqual(['https://whossteering.com'+product.image]);
+});

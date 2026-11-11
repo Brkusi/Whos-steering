@@ -1,6 +1,7 @@
 import {WHEEL_STYLES} from './wheelStyles';
 import {BMW_PRESETS,AUDI_PRESETS_FULL,INFINITI_PRESETS} from './data';
 export const SITE='https://whossteering.com';
+export const SOCIAL_IMAGE=SITE+'/ws-logo.png';
 export const canonicalUrl=path=>SITE+(path==='/'?'/':path.replace(/\/+$/,'')+'/');
 export const BRAND_GUIDES=[
  {slug:'bmw',brand:'BMW',name:'BMW',summary:'Shop BMW F-Series, G-Series pre-LCI, G-Series LCI and 2010–2019 steering wheel styles, plus existing BMW carbon fiber builds.',keywords:['BMW custom steering wheel','BMW F-Series carbon fiber steering wheel','BMW G-Series LCI steering wheel']},
@@ -29,7 +30,7 @@ const website={'@type':'WebSite','@id':SITE+'/#website',name:"Who's Steering?",u
 export function seoForRoute(pathname,search=''){
  pathname=pathname==='/'?'/':pathname.replace(/\/+$/,'');
  const params=new URLSearchParams(search),parts=pathname.split('/').filter(Boolean);
- let title=HOME_TITLE,description=HOME_DESCRIPTION,path=pathname==='/'?'/':pathname.replace(/\/$/,''),noindex=false,image='/configure-g-series-lci.png',schema=[ORG,website];
+ let title=HOME_TITLE,description=HOME_DESCRIPTION,path=pathname==='/'?'/':pathname.replace(/\/$/,''),noindex=false,image='/ws-logo.png',schema=[ORG,website];
  const crumbs=[{name:'Home',path:'/'}];
  if(parts[0]==='steering-wheels'){
   const guide=BRAND_GUIDES.find(item=>item.slug===parts[1]);
@@ -65,5 +66,5 @@ export function seoForRoute(pathname,search=''){
   const names={'/shipping':'Shipping Policy','/refund-policy':'Returns & Warranty','/payment-policy':'Payment Policy','/privacy':'Privacy Policy','/terms':'Terms of Service'};title=`${names[pathname]} | Who’s Steering`;description=`Read the Who’s Steering ${names[pathname].toLowerCase()} for custom steering wheels and existing wheel designs.`;
  }else if(pathname!=='/'){title='Your Account & Order | Who’s Steering';noindex=true;}
  if(crumbs.length>1)schema.push({'@type':'BreadcrumbList',itemListElement:crumbs.map((crumb,i)=>({'@type':'ListItem',position:i+1,name:crumb.name,item:canonicalUrl(crumb.path)}))});
- return {title,description,canonical:canonicalUrl(path),noindex,image:SITE+image,schema:{'@context':'https://schema.org','@graph':schema}};
+ return {title,description,canonical:canonicalUrl(path),noindex,image:SOCIAL_IMAGE,schema:{'@context':'https://schema.org','@graph':schema}};
 }
