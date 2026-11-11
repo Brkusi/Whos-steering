@@ -20,7 +20,7 @@ export default function InfinitiAirbagModulePreview({productId}) {
   const [config, setConfig] = useState(() => { try { const saved = localStorage.getItem(KEY); return saved ? normalizeInfinitiAirbag(JSON.parse(saved)) : INFINITI_AIRBAG_DEFAULTS; } catch { return INFINITI_AIRBAG_DEFAULTS; } });
   const summary = infinitiAirbagSummary(config), price = infinitiAirbagPrice(config);
   function change(value) { setConfig(value); try { localStorage.setItem(KEY, JSON.stringify(value)); } catch {} }
-  return <main className="infiniti-module"><header><div className="eyebrow">WHO’S STEERING / AIRBAG DESIGN</div><h1>{product.id === 'infiniti-q60-2017-q50-2018' ? 'INFINITI' : product.title} <span style={{color:'#999'}}>{product.fitment}</span></h1><p>Make the details yours. Choose your airbag material, color, stitching and Infiniti emblem finish.</p></header>
+  return <main className="infiniti-module"><header><div className="eyebrow">WHO’S STEERING / AIRBAG DESIGN</div><h1>{product.id === 'infiniti-q60-2017-q50-2018' ? 'INFINITI' : product.title} <span style={{color:'#999'}}>{product.fitment}</span></h1></header>
     <div className="infiniti-layout"><InfinitiAirbagPreview config={config} productId={product.id}><BuildCheckout className="infiniti-desktop-checkout" price={price} onReview={() => setReview(true)} /></InfinitiAirbagPreview><div><InfinitiAirbagOptions config={config} onChange={change} />
       <section ref={reviewAnchor} className="infiniti-build-review" tabIndex={-1} aria-label="Review your airbag build">
       <div className="infiniti-summary"><strong>Your airbag design</strong><br />{summary.color} {summary.material} · {summary.stitching} stitching<br />{summary.logoFinish} · {summary.logoColor}</div>
