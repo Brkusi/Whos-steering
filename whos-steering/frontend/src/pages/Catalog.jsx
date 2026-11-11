@@ -66,6 +66,7 @@ function ConfigureBanner({ nav }) {
           onMouseLeave={e => { e.currentTarget.style.background = 'var(--y)'; }}>
           CONFIGURE AUDI →
         </button>
+        <button style={btnStyle} onClick={() => nav('/build?brand=INFINITI')}>INFINITI CUSTOM OPTIONS →</button>
       </div>
     </div>
   );

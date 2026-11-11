@@ -91,3 +91,16 @@ test('R8 studio backdrop is transparent while dark carbon and the white center s
  expect(R8_CROP.y+R8_CROP.h).toBeGreaterThan(896);
  expect(WHEEL_STYLES.find(w=>w.style==='R8').showroomImage).toBe('/showroom/audi-r8-front.png');
 });
+
+
+test('collection starts playing even when reduced motion is enabled', () => {
+ const matchMedia = window.matchMedia, original = global.Image;
+ window.matchMedia = jest.fn(() => ({matches:true})); global.Image=class {};
+ const host=document.createElement('div'); const root=createRoot(host);
+ act(()=>root.render(<MemoryRouter><RevolvingShowroom/></MemoryRouter>));
+ expect(host.querySelector('.orbit-belt').style.animationPlayState).toBe('running');
+ expect(host.querySelector('[aria-label="Pause wheel collection"]')).not.toBeNull();
+ act(()=>host.querySelector('[aria-label="Pause wheel collection"]').click());
+ expect(host.querySelector('.orbit-belt').style.animationPlayState).toBe('paused');
+ act(()=>root.unmount()); window.matchMedia=matchMedia; global.Image=original;
+});

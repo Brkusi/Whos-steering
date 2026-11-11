@@ -22,6 +22,10 @@ async function master() {
     ctx.drawImage(base, 0, 0, c.width, c.height); const original = ctx.getImageData(0, 0, c.width, c.height).data;
     ctx.clearRect(0, 0, c.width, c.height); ctx.filter = 'blur(7px)'; ctx.drawImage(base, 0, 0, c.width, c.height); ctx.filter = 'none';
     const logoLighting = ctx.getImageData(0, 0, c.width, c.height).data;
+    ctx.clearRect(0, 0, c.width, c.height); ctx.filter = 'blur(1.2px)'; ctx.drawImage(base, 0, 0);
+    const embossFine = ctx.getImageData(0, 0, c.width, c.height).data;
+    ctx.clearRect(0, 0, c.width, c.height); ctx.filter = 'blur(22px)'; ctx.drawImage(base, 0, 0); ctx.filter = 'none';
+    const embossBroad = ctx.getImageData(0, 0, c.width, c.height).data;
     ctx.clearRect(0, 0, c.width, c.height); ctx.fillStyle = '#fff'; ctx.fill(new Path2D(LOGO_PATH), 'evenodd');
     const logo = ctx.getImageData(0, 0, c.width, c.height).data;
     // Measured seam positions at regular rows in the neutral master. The
@@ -42,7 +46,7 @@ async function master() {
     // markings always come from the single master so they cannot drift.
     ctx.clearRect(0, 0, c.width, c.height); ctx.drawImage(suede, 0, 0, c.width, c.height);
     const texture = ctx.getImageData(0, 0, c.width, c.height).data;
-    return { original, logoLighting, logo, stitch, texture };
+    return { original, logoLighting, logo, stitch, texture, embossFine, embossBroad };
   })().catch(error => { masterPromise = null; throw error; });
   return masterPromise;
 }
@@ -50,9 +54,10 @@ export async function renderInfinitiAirbag(target, config) {
   const cfg = normalizeInfinitiAirbag(config), m = await master();
   const swatch = infinitiLogoPalette(cfg.infinitiLogoFinish).find(v => v.h === cfg.infinitiLogoCol);
   let carbon;
+  const textureSize = cfg.infinitiLogoFinish === 'Forged Carbon' ? 160 : 256;
   if (swatch.img) {
-    const im = await load(swatch.img), tile = document.createElement('canvas'); tile.width = tile.height = 256;
-    const tc = tile.getContext('2d', { willReadFrequently: true }); tc.drawImage(im, 0, 0, 256, 256); carbon = tc.getImageData(0, 0, 256, 256).data;
+    const im = await load(swatch.img), tile = document.createElement('canvas'); tile.width = tile.height = textureSize;
+    const tc = tile.getContext('2d', { willReadFrequently: true }); tc.drawImage(im, 0, 0, textureSize, textureSize); carbon = tc.getImageData(0, 0, textureSize, textureSize).data;
   }
   const out = surface(), ctx = out.getContext('2d'), pixels = ctx.createImageData(out.width, out.height), p = pixels.data;
   const body = rgb(cfg.airbagCol), thread = rgb(cfg.airbagStitchColor), emblem = rgb(cfg.infinitiLogoCol);
@@ -67,13 +72,16 @@ export async function renderInfinitiAirbag(target, config) {
       // tiled patches or rectangular restoration zones.
       lum = m.texture[i];
       const embossZone = clamp(Math.min(x - 605, 839 - x, y - 593, 794 - y) / 18);
-      const detail = m.original[i] - m.logoLighting[i];
-      if (Math.abs(detail) > 5) lum += detail * embossZone;
+      const detail = m.embossFine[i] - m.embossBroad[i];
+      lum += detail * embossZone * 1.65;
       // Retain the dark molded recess immediately around the emblem.
       const rim = clamp(1 - Math.abs(Math.hypot((x - 716) / 238, (y - 340) / 116) - 1) / .12);
       lum *= 1 - rim * clamp((60 - m.original[i]) / 60) * .7;
     }
-    const tx = ((x - 490 + 512) % 256), ty = ((y - 230 + 512) % 256), ci = (ty * 256 + tx) * 4;
+    const tx = ((x - 490 + textureSize * 10) % textureSize), ty = ((y - 230 + textureSize * 10) % textureSize), ci = (ty * textureSize + tx) * 4;
+    const ledPosition = clamp((x - 490) / 455 + (y - 330) / 1800);
+    const ledStops = [[20,65,255],[180,0,255],[255,0,145]];
+    const ledSegment = ledPosition < .5 ? 0 : 1, ledMix = ledPosition < .5 ? ledPosition * 2 : (ledPosition - .5) * 2;
     for (let ch = 0; ch < 3; ch++) {
       let value = cfg.airbagCol === '#111111' ? lum : lum + (body[ch] - 17) * Math.pow(Math.max(0, lum) / 255, .55);
       const t = thread[ch] * (.45 + m.original[i] / 350);
@@ -82,7 +90,10 @@ export async function renderInfinitiAirbag(target, config) {
       // carbon weave leaking into solid or forged finishes.
       const highlight = clamp((m.logoLighting[i] - 135) / 100);
       const reflect = carbon ? carbon[ci + ch] : emblem[ch] * (.52 + m.logoLighting[i] / 290);
-      const finish = reflect * (1 - highlight * .92) + 250 * highlight * .92;
+      const lit = ledStops[ledSegment][ch] * (1 - ledMix) + ledStops[ledSegment + 1][ch] * ledMix;
+      const finish = cfg.infinitiLogoFinish === 'LED'
+        ? lit
+        : reflect * (1 - highlight * .92) + 250 * highlight * .92;
       p[i + ch] = value * (1 - logo) + finish * logo;
     }
   }
@@ -90,4 +101,26 @@ export async function renderInfinitiAirbag(target, config) {
   target.width = out.width; target.height = out.height;
   target.getContext('2d').drawImage(out, 0, 0);
   return target;
+}
+
+// Animate only the emblem region; upholstery and embossed markings stay fixed.
+export function drawInfinitiLedFrame(target, base, elapsed = 0) {
+  const ctx = target.getContext('2d');
+  ctx.clearRect(485, 225, 470, 230);
+  ctx.drawImage(base, 485, 225, 470, 230, 485, 225, 470, 230);
+  ctx.save();
+  ctx.clip(new Path2D(LOGO_PATH), 'evenodd');
+  const shift = (elapsed % 6000) / 6000 * 600;
+  const gradient = ctx.createLinearGradient(490 - 600 - shift, 240, 490 + 1800 - shift, 240);
+  // Repeated stops give the gradient a seamless six-second flowing cycle.
+  for (let cycle = -1; cycle <= 2; cycle++) {
+    for (const [at, color] of [[0, '#1441ff'], [1/3, '#b400ff'], [2/3, '#ff0091']]) {
+      const stop = (cycle + at + 1) / 4;
+      gradient.addColorStop(stop, color);
+    }
+  }
+  gradient.addColorStop(1, '#1441ff');
+  ctx.fillStyle = gradient;
+  ctx.fillRect(485, 225, 470, 230);
+  ctx.restore();
 }

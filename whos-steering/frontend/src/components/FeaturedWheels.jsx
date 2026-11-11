@@ -201,6 +201,8 @@ export default function FeaturedWheels() {
           </button>
         </div>
 
+        {activeBrand === 'INFINITI' && <button type="button" className="featured-wheels__view-all infiniti-custom-entry" onClick={() => nav('/build?brand=INFINITI')}>INFINITI CUSTOM OPTIONS · CONFIGURE AIRBAG COVERS <span aria-hidden="true">→</span></button>}
+
         <div className="featured-wheels__tabs" role="tablist" aria-label="Steering wheel brand">
           {BRANDS.map((brand) => (
             <button

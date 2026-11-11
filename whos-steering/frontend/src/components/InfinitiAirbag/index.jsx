@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { COLORS, STITCH_COLORS } from '../../lib/data';
-import { INFINITI_LOGO_FINISHES, infinitiLogoPalette, normalizeInfinitiAirbag, infinitiAirbagSummary } from '../../lib/infinitiAirbagConfiguration';
-import { renderInfinitiAirbag } from '../../lib/infinitiAirbagRenderer';
+import { INFINITI_LOGO_FINISHES, infinitiEmblemExtraCents, airbagMoney, infinitiLogoPalette, normalizeInfinitiAirbag, infinitiAirbagSummary } from '../../lib/infinitiAirbagConfiguration';
+import { renderInfinitiAirbag, drawInfinitiLedFrame } from '../../lib/infinitiAirbagRenderer';
 import './style.css';
 
 export function InfinitiAirbagPreview({ config }) {
@@ -10,14 +10,24 @@ export function InfinitiAirbagPreview({ config }) {
   const normalized = normalizeInfinitiAirbag(config), key = JSON.stringify(normalized);
   useEffect(() => {
     const id = ++generation.current;
+    let frame, started;
     setState('loading'); setError('');
     const buffer = document.createElement('canvas');
     renderInfinitiAirbag(buffer, JSON.parse(key)).then(() => {
       if (generation.current !== id || !canvas.current) return;
       canvas.current.width = buffer.width; canvas.current.height = buffer.height;
       canvas.current.getContext('2d').drawImage(buffer, 0, 0); setState('ready');
+      if (JSON.parse(key).infinitiLogoFinish === 'LED') {
+        const animate = now => {
+          if (generation.current !== id || !canvas.current) return;
+          if (started === undefined) started = now;
+          if (!document.hidden) drawInfinitiLedFrame(canvas.current, buffer, now - started);
+          frame = requestAnimationFrame(animate);
+        };
+        frame = requestAnimationFrame(animate);
+      }
     }).catch(e => { if (generation.current === id) { setError(e.message); setState('error'); } });
-    return () => { generation.current++; };
+    return () => { generation.current++; cancelAnimationFrame(frame); };
   }, [key, retry]);
   return <div className="infiniti-preview">
     <div className="infiniti-artboard">
@@ -46,8 +56,9 @@ export function InfinitiAirbagOptions({ config, onChange }) {
     <Swatches label="Airbag color" colors={COLORS} value={cfg.airbagCol} onChange={airbagCol => change({ airbagCol })} />
     <Swatches label="Airbag stitch color" colors={STITCH_COLORS} value={cfg.airbagStitchColor} onChange={airbagStitchColor => change({ airbagStitchColor })} />
     <fieldset className="infiniti-options"><legend>Emblem Finish</legend><div className="infiniti-segments">
-      {INFINITI_LOGO_FINISHES.map(finish => <button type="button" key={finish} className={`ob${cfg.infinitiLogoFinish === finish ? ' on' : ''}`} aria-pressed={cfg.infinitiLogoFinish === finish} onClick={() => change({ infinitiLogoFinish: finish, infinitiLogoCol: infinitiLogoPalette(finish)[0].h })}>{finish}</button>)}
+      {INFINITI_LOGO_FINISHES.map(finish => <button type="button" key={finish} className={`ob${cfg.infinitiLogoFinish === finish ? ' on' : ''}`} aria-pressed={cfg.infinitiLogoFinish === finish} onClick={() => change({ infinitiLogoFinish: finish, infinitiLogoCol: infinitiLogoPalette(finish)[0].h })}>{finish}<small>{infinitiEmblemExtraCents(finish) ? `+${airbagMoney(infinitiEmblemExtraCents(finish))}` : 'Included'}</small></button>)}
     </div></fieldset>
-    <Swatches label="Infiniti logo color" colors={infinitiLogoPalette(cfg.infinitiLogoFinish)} value={cfg.infinitiLogoCol} onChange={infinitiLogoCol => change({ infinitiLogoCol })} />
+    {cfg.infinitiLogoFinish === 'LED' && <div className="infiniti-led-notice" role="note"><strong>LED installation</strong><p>The LED emblem must be wired properly upon installation.</p><span>Blue / purple / pink illumination, as shown.</span></div>}
+    {cfg.infinitiLogoFinish !== 'LED' && <Swatches label="Infiniti logo color" colors={infinitiLogoPalette(cfg.infinitiLogoFinish)} value={cfg.infinitiLogoCol} onChange={infinitiLogoCol => change({ infinitiLogoCol })} />}
   </div>;
 }

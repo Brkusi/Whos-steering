@@ -115,7 +115,7 @@ export function WheelArt({wheel}) {
 }
 export default function RevolvingShowroom() {
   const [selected,setSelected]=useState(null);
-  const [paused,setPaused]=useState(()=>(typeof window!=='undefined'&&window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) || false);
+  const [paused,setPaused]=useState(false);
   const back=useRef(null),triggers=useRef([]),last=useRef(null),belt=useRef(null),scrubber=useRef(null),gesture=useRef(null),suppressClick=useRef(false);
   const id=useId();
   const open=(wheel,index)=>{last.current=index;setSelected(wheel);};

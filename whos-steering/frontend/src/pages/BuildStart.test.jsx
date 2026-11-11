@@ -93,3 +93,16 @@ test('Porsche 991 is no longer offered for online customization', async () => {
   expect(container.querySelectorAll('.build-brand-card')).toHaveLength(0);
   expect(container.querySelector('.build-start__unavailable a').getAttribute('href')).toBe('/contact?brand=PORSCHE&year=2018&model=911');
 });
+
+
+test('airbag covers appear only under Infiniti and lead only to Q50 2014–2017', async () => {
+  await act(async () => root.render(<MemoryRouter><BuildStart /></MemoryRouter>));
+  expect(container.querySelector('.build-airbag-option')).toBeNull();
+  choose('compatible-make', 'INFINITI');
+  expect(container.querySelectorAll('.build-airbag-option')).toHaveLength(1);
+  expect(container.querySelector('.build-airbag-option').getAttribute('href')).toBe('/configure/infiniti-q50-airbag');
+  expect(container.textContent).toContain('Infiniti Q50 · 2014–2017');
+  expect(container.querySelectorAll('.build-brand-card')).toHaveLength(0);
+  choose('compatible-make', 'BMW');
+  expect(container.querySelector('.build-airbag-option')).toBeNull();
+});

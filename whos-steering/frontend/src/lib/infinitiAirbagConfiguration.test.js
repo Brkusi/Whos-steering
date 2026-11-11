@@ -27,3 +27,17 @@ test('fitment is restricted to Q50 2014 through 2017', () => {
   for (const year of [2013,2018]) expect(isInfinitiQ50Airbag({brand:'INFINITI',vehicleModel:'Q50',vehicleYear:year})).toBe(false);
   expect(isInfinitiQ50Airbag({brand:'INFINITI',vehicleModel:'Q60',vehicleYear:2017})).toBe(false);
 });
+
+test('airbag prices use exact cents and mutually exclusive emblem surcharges', () => {
+  const {infinitiAirbagPrice} = require('./infinitiAirbagConfiguration');
+  for (const airbagMat of ['Smooth Leather','Alcantara']) {
+    expect(infinitiAirbagPrice({airbagMat,infinitiLogoFinish:'Regular Color'})).toEqual({base:16999,emblem:0,total:16999});
+    for (const infinitiLogoFinish of ['Classic Carbon','Forged Carbon']) expect(infinitiAirbagPrice({airbagMat,infinitiLogoFinish})).toEqual({base:16999,emblem:1999,total:18998});
+    expect(infinitiAirbagPrice({airbagMat,infinitiLogoFinish:'LED'})).toEqual({base:16999,emblem:7999,total:24998});
+  }
+});
+test('LED configuration survives storage and uses reference illumination colors', () => {
+  const c = normalizeInfinitiAirbag({infinitiLogoFinish:'LED',infinitiLogoCol:'#111111'});
+  expect(normalizeInfinitiAirbag(JSON.parse(JSON.stringify(c)))).toEqual(c);
+  expect(infinitiAirbagSummary(c)).toMatchObject({logoFinish:'LED',logoColor:'Blue / Purple / Pink'});
+});

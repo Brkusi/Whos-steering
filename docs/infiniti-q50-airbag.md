@@ -1,7 +1,7 @@
 # Infiniti Q50 2014–2017 airbag configurator
 
-Route: `/configure/infiniti-q50-airbag`, linked from `/build` as Airbag Configurator.
-Standalone design configurator; no price, checkout, or airbag-unit claims were added.
+Route: `/configure/infiniti-q50-airbag`. Select Infiniti under Configure, then Configure Airbag Covers → Q50 2014–2017. Infiniti custom options also link from the home brand section and catalog. No other airbag fitments are offered.
+Standalone design configurator with a $169.99 base price. Regular emblem colors are included; classic or forged carbon adds $19.99; LED adds $79.99. Only one emblem surcharge applies. Checkout is not included in this configurator.
 
 Leather / Alcantara, airbag color, stitching, and emblem finish are independently controlled. Palette imports are the same production COLORS, STITCH_COLORS, CLASSIC_CARBON_COLORS, and FORGED_CARBON_COLORS used by wheel configurators. Finish changes reset to a valid color. Designs persist locally. Reset, inspect and download controls are omitted per request. Option buttons use the same shared `ob` classes as the wheel configurators, with uppercase airbag labels.
 
@@ -36,3 +36,9 @@ Final suede generation prompt (built-in imagegen):
 “Precise material-only texture pass for a product configurator. Image 1 supplies exact shape, framing, coordinates and lighting. Images 2 and 3 supply real Alcantara/suede material appearance. Output the same standalone airbag shape and placement as image 1 on transparent alpha, but covered entirely in realistic BLACK fine-nap automotive Alcantara, very fine soft short suede fibers, matte, subtly brushed and softly mottled like images 2 and 3. NOT leather grain, not wool, not coarse carpet, not large cloudy patches. For this special material layer REMOVE ALL logo, emblem recess, stitching, seams, lettering, SRS, AIRBAG and horn graphics: make an uninterrupted smooth suede-covered airbag surface across those locations. Details will be composited separately. Preserve exact silhouette, side tabs and form shading from image1. No lines, no stripes, no repeating tiles, no grid boundaries, no texture seams, no graphic details, no hard rectangular patches. Full surface continuous fabric with realistic microscopic irregular nap. No wheel or background. Match image1 framing and proportions exactly.”
 
 References for this pass: the neutral leather master, purple-stitched Alcantara photo, and red-stitched Alcantara photo.
+
+## LED and pricing update
+
+LED uses a blue-to-purple-to-pink gradient matching the supplied November 10 reference, clipped to the same complete emblem mask. Selecting LED displays the installation wiring notice. Forged carbon uses a 160px texture repeat instead of 256px for smaller flakes. Fresh designs default to an included regular-color emblem; saved finish selections retain their choice with the corresponding price. Eight configuration and UI tests cover pricing, serialization, palettes and conditional LED notice.
+
+The LED emblem continuously animates a seamless six-second blue/purple/pink flow, repainting only the masked badge region. Original carbon highlights are removed in LED mode so its complete face is illuminated. Suede embossing uses the master image at two blur scales to retain letter interiors and horn relief without a leather patch. The mobile wheel carousel starts playing automatically with a working Pause control. Validation: 20 focused tests and production build passed; mobile computed transforms advanced without pressing Play.
