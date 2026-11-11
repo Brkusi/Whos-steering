@@ -54,19 +54,12 @@ function ConfigureBanner({ nav }) {
       <div style={{ fontFamily: 'Arial, sans-serif', fontSize: 14, letterSpacing: .6, color: 'rgba(232,184,0,.6)', textTransform: 'uppercase', marginBottom: 4 }}>Want something fully custom?</div>
       <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 700, fontStyle: 'italic', fontSize: 18, color: 'var(--w)', marginBottom: 12 }}>BUILD YOUR OWN — Every material, color, stripe &amp; stitch</div>
       <div className="catalog-config-actions" style={{ display: 'flex', gap: 8 }}>
-        <button style={btnStyle}
-          onClick={() => nav('/build?brand=BMW')}
+        <button type="button" style={{...btnStyle, whiteSpace:'normal', lineHeight:1.5}}
+          onClick={() => nav('/build')}
           onMouseEnter={e => { e.currentTarget.style.background = '#FFD000'; }}
           onMouseLeave={e => { e.currentTarget.style.background = 'var(--y)'; }}>
-          CONFIGURE BMW →
+          I WANT TO CUSTOMIZE MY OWN
         </button>
-        <button style={btnStyle}
-          onClick={() => nav('/build?brand=AUDI')}
-          onMouseEnter={e => { e.currentTarget.style.background = '#FFD000'; }}
-          onMouseLeave={e => { e.currentTarget.style.background = 'var(--y)'; }}>
-          CONFIGURE AUDI →
-        </button>
-        <button style={btnStyle} onClick={() => nav('/build?brand=INFINITI')}>INFINITI CUSTOM OPTIONS →</button>
       </div>
     </div>
   );
