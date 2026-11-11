@@ -4,7 +4,7 @@ import { INFINITI_LOGO_FINISHES, infinitiEmblemExtraCents, airbagMoney, infiniti
 import { renderInfinitiAirbag, drawInfinitiLedFrame } from '../../lib/infinitiAirbagRenderer';
 import './style.css';
 
-export function InfinitiAirbagPreview({ config }) {
+export function InfinitiAirbagPreview({ config, children }) {
   const canvas = useRef(null), generation = useRef(0);
   const [state, setState] = useState('loading'), [error, setError] = useState(''), [retry, setRetry] = useState(0);
   const normalized = normalizeInfinitiAirbag(config), key = JSON.stringify(normalized);
@@ -33,6 +33,7 @@ export function InfinitiAirbagPreview({ config }) {
     <div className="infiniti-artboard">
       <canvas ref={canvas} aria-label={`Infiniti Q50 airbag, ${Object.values(infinitiAirbagSummary(config)).join(', ')}`} role="img" />
     </div>
+    {children}
     <div className="infiniti-render-status" role="status">{state === 'loading' ? 'Updating preview…' : error || ''}</div>
     {error && <button type="button" onClick={() => setRetry(retry + 1)}>Retry preview</button>}
   </div>;

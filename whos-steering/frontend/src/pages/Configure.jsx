@@ -1,3 +1,4 @@
+import { BuildCheckoutTotal, FloatingBuildTotal, BuildReviewDialog } from '../components/BuildControls';
 import { paddleOptions, paddleLabel, isUniversalPaddle, URUS_PADDLE_COLORS, normalizePaddleDetails } from '../lib/paddleOptions';
 import LedDisplay from '../components/LedDisplay';
 import ReferenceWheelPreview from '../components/ReferenceWheelPreview';
@@ -982,19 +983,7 @@ export default function Configure() {
           ) : (
             <WheelPreview config={cfg} size={Math.min(isMobileViewport ? 360 : 520, viewportWidth * (isMobileViewport ? 0.74 : 0.46))} />
           )}
-          {!isMobileViewport && (
-            <div style={{ paddingTop: 8, borderTop: '1px solid var(--b)', width: '100%', textAlign: 'center', flexShrink: 0 }}>
-              <div style={{ fontFamily: 'Arial, sans-serif', fontSize: 14, letterSpacing: .6, color: 'var(--t)', textTransform: 'uppercase', marginBottom: 2 }}>Estimated Total</div>
-              <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontSize: 'clamp(54px,5vw,72px)', color: 'var(--y)', lineHeight: .95, letterSpacing: -1 }}>${price.toFixed(2)}</div>
-              <div style={{ fontSize: 14, color: 'var(--t)', letterSpacing: 1.15, marginTop: 2 }}>Final price confirmed at checkout</div>
-            </div>
-          )}
-          {!isMobileViewport && (
-            <button className="btn" style={{ width: '100%', clipPath: 'polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%)', padding: 18, fontSize: 14, letterSpacing: .6 }}
-              onClick={() => validate() && setShowReview(true)}>
-              + ADD TO CART
-            </button>
-          )}
+          {!isMobileViewport && <BuildCheckoutTotal price={price} onReview={() => validate() && setShowReview(true)} />}
         </div>
 
         {/* RIGHT: Options */}
@@ -1371,41 +1360,7 @@ export default function Configure() {
               background: '#0A0A0A',
               borderTop: '1px solid var(--b)',
             }}>
-              <div style={{ textAlign: 'center', marginBottom: 16 }}>
-                <div style={{
-                  fontFamily: 'Arial, sans-serif',
-                  fontSize: 14,
-                  letterSpacing: .6,
-                  color: 'var(--t)',
-                  textTransform: 'uppercase',
-                  marginBottom: 3,
-                }}>
-                  Estimated Total
-                </div>
-                <div style={{
-                  fontFamily: '"Barlow Condensed", sans-serif',
-                  fontWeight: 900,
-                  fontSize: 46,
-                  color: 'var(--y)',
-                  lineHeight: 1,
-                }}>
-                  ${price.toFixed(2)}
-                </div>
-              </div>
-
-              <button
-                className="btn"
-                style={{
-                  width: '100%',
-                  clipPath: 'polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%)',
-                  padding: 18,
-                  fontSize: 14,
-                  letterSpacing: .6,
-                }}
-                onClick={() => validate() && setShowReview(true)}
-              >
-                + ADD TO CART
-              </button>
+              <BuildCheckoutTotal mobile price={price} onReview={() => validate() && setShowReview(true)} />
             </div>
           )}
           </div>
@@ -1415,86 +1370,12 @@ export default function Configure() {
 
       {/* Floating mobile build total */}
       {isMobileViewport && activeStep !== 'review' && !showReview && !cartOpen && (
-        <button
-          type="button"
-          onClick={() => scrollToStep('review')}
-          aria-label={`Build total $${price.toFixed(2)}. Jump to review.`}
-          style={{
-            position: 'fixed',
-            left: '50%',
-            bottom: 'calc(14px + env(safe-area-inset-bottom, 0px))',
-            transform: 'translateX(-50%)',
-            zIndex: 1200,
-            width: 'calc(100% - 28px)',
-            maxWidth: 560,
-            minHeight: 58,
-            padding: '9px 14px 9px 16px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            gap: 12,
-            border: '1px solid rgba(232,184,0,.72)',
-            background: 'rgba(8,8,8,.94)',
-            backdropFilter: 'blur(14px)',
-            boxShadow: '0 10px 36px rgba(0,0,0,.55), 0 0 0 1px rgba(232,184,0,.05) inset',
-            color: '#fff',
-            cursor: 'pointer',
-          }}
-        >
-          <span style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', minWidth: 0 }}>
-            <span style={{
-              fontFamily: 'Arial, sans-serif',
-              fontSize: 7,
-              fontWeight: 800,
-              letterSpacing: 1.8,
-              color: 'var(--y)',
-              marginBottom: 2,
-            }}>
-              BUILD TOTAL
-            </span>
-            <span style={{
-              fontFamily: '"Barlow Condensed", sans-serif',
-              fontSize: 28,
-              fontWeight: 900,
-              lineHeight: .95,
-              letterSpacing: .3,
-              whiteSpace: 'nowrap',
-            }}>
-              ${price.toFixed(2)}
-            </span>
-          </span>
-
-          <span style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 8,
-            color: 'var(--y)',
-            fontFamily: 'Arial, sans-serif',
-            fontSize: 7,
-            fontWeight: 800,
-            letterSpacing: 1.2,
-            whiteSpace: 'nowrap',
-          }}>
-            REVIEW BUILD
-            <span aria-hidden="true" style={{ fontSize: 14 }}>↓</span>
-          </span>
-        </button>
+        <FloatingBuildTotal price={price} onReview={() => scrollToStep('review')} />
       )}
 
       {/* Review overlay */}
       {showReview && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,.88)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2000, padding: 20, overflowY: 'auto' }}>
-          <div style={{ background: 'var(--p)', border: '1px solid var(--b)', padding: 32, width: 520, maxWidth: '100%', maxHeight: '90vh', overflowY: 'auto' }}>
-            <div style={{ fontFamily: 'Arial, sans-serif', fontSize: 14, letterSpacing: .6, color: 'var(--y)', marginBottom: 4 }}>REVIEW YOUR BUILD</div>
-            <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 32, marginBottom: 20 }}>LOOKS GOOD?</div>
-            {buildSummary().map(([k, v]) => (
-              <div key={k} style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #1A1A1A', gap: 10 }}>
-                <span style={{ fontSize: 14, letterSpacing: 1, textTransform: 'uppercase', color: '#666', flexShrink: 0 }}>{k}</span>
-                <span style={{ fontSize: k === 'Est. Price' ? 32 : 13, fontWeight: 900, color: k === 'Est. Price' ? 'var(--y)' : 'var(--w)', textAlign: 'right', fontFamily: k === 'Est. Price' ? '"Barlow Condensed", sans-serif' : 'inherit', letterSpacing: k === 'Est. Price' ? 1 : 'normal' }}>{v}</span>
-              </div>
-            ))}
-            <div style={{ display: 'flex', gap: 12, marginTop: 20, flexWrap: 'wrap' }}>
-              <button className="btn" style={{ clipPath: 'none', flex: 1 }} onClick={() => {
+        <BuildReviewDialog rows={buildSummary()} onClose={() => setShowReview(false)} onConfirm={() => {
                 const topMat = MATS.find(m => m.n === cfg.topBottomMat);
                 addItem({
                   name: `${VEHICLE_MAKES.find(make => make.value === cfg.brand)?.label || cfg.brand} Custom Wheel`,
@@ -1504,11 +1385,7 @@ export default function Configure() {
                 });
                 setShowReview(false);
                 showToast('ADDED TO CART');
-              }}>LOOKS PERFECT — ADD TO CART</button>
-              <button className="btn-outline sm" onClick={() => setShowReview(false)}>MAKE CHANGES</button>
-            </div>
-          </div>
-        </div>
+              }} />
       )}
 
       <div className={`toast${toast ? ' show' : ''}`}>{toast}</div>

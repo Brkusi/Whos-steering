@@ -12,7 +12,12 @@ test('review confirms selections, adds exact item to shared cart and proceeds to
  localStorage.setItem('whossteering:infiniti-q50-airbag:v1',JSON.stringify({airbagMat:'Alcantara',infinitiLogoFinish:'Carbon color',infinitiLogoCol:'#E85500'}));
  const host=document.createElement('div');document.body.appendChild(host);const root=createRoot(host);
  await act(async()=>root.render(<MemoryRouter future={{v7_startTransition:true,v7_relativeSplatPath:true}}><CartProvider><Harness/></CartProvider></MemoryRouter>));
- act(()=>host.querySelector('.infiniti-add-to-cart').click());
+ const scroll=jest.fn();host.querySelector('.infiniti-build-review').scrollIntoView=scroll;
+ act(()=>host.querySelector('.infiniti-floating-total').click());
+ expect(scroll).toHaveBeenCalledWith({behavior:'smooth',block:'start'});
+ expect(document.activeElement).toBe(host.querySelector('.infiniti-build-review'));
+ act(()=>host.querySelector('.build-add-to-cart').click());
+ expect(host.querySelector('.infiniti-floating-total')).toBeNull();
  expect(host.querySelector('.infiniti-review').textContent).toContain('Carbon color');
  expect(host.querySelector('.infiniti-review').textContent).toContain('$189.98');
  act(()=>host.querySelector('.infiniti-review .btn').click());
