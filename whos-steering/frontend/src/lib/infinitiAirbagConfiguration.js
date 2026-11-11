@@ -26,7 +26,7 @@ export function normalizeInfinitiAirbag(config = {}) {
 export const isInfinitiQ50Airbag = config => config.brand === 'INFINITI' && /^Q50(?:\s|$)/i.test(config.vehicleModel || '') && Number(config.vehicleYear) >= 2014 && Number(config.vehicleYear) <= 2017;
 export function infinitiAirbagSummary(config) {
   const c = normalizeInfinitiAirbag(config);
-  return { material: c.airbagMat === 'Alcantara' ? 'Alcantara / suede' : 'Leather',
+  return { material: c.airbagMat === 'Alcantara' ? 'Alcantara / Suede' : 'Leather',
     color: COLORS.find(v => v.h === c.airbagCol).n,
     stitching: STITCH_COLORS.find(v => v.h === c.airbagStitchColor).n,
     logoFinish: c.infinitiLogoFinish,

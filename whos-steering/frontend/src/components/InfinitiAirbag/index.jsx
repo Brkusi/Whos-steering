@@ -52,7 +52,7 @@ export function InfinitiAirbagOptions({ config, onChange }) {
   const change = patch => onChange({ ...config, ...cfg, ...patch });
   return <div className="infiniti-controls">
     <fieldset className="infiniti-options"><legend>Airbag material</legend><div className="infiniti-segments">
-      {[['Smooth Leather', 'Leather'], ['Alcantara', 'Alcantara / suede']].map(([value, label]) => <button type="button" key={value} className={`ob${cfg.airbagMat === value ? ' on' : ''}`} aria-pressed={cfg.airbagMat === value} onClick={() => change({ airbagMat: value })}>{label}</button>)}
+      {[['Smooth Leather', 'Leather'], ['Alcantara', 'Alcantara / Suede']].map(([value, label]) => <button type="button" key={value} className={`ob${cfg.airbagMat === value ? ' on' : ''}`} aria-pressed={cfg.airbagMat === value} onClick={() => change({ airbagMat: value })}>{label}</button>)}
     </div></fieldset>
     <Swatches label="Airbag color" colors={COLORS} value={cfg.airbagCol} onChange={airbagCol => change({ airbagCol })} />
     <Swatches label="Airbag stitch color" colors={STITCH_COLORS} value={cfg.airbagStitchColor} onChange={airbagStitchColor => change({ airbagStitchColor })} />
