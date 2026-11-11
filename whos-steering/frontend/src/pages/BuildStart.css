@@ -251,4 +251,4 @@
 
 .build-brand-card__content>div{min-width:0}.build-brand-card__action{align-self:flex-end}
 
-.build-start__compatibility-heading{flex-wrap:wrap}.build-start__airbag-shop{display:inline-flex;align-items:center;gap:10px;flex-shrink:0;padding:11px 14px;border:1px solid var(--y);color:var(--y);background:#13110a;text-decoration:none;font-size:12px;font-weight:800;letter-spacing:.7px}.build-start__airbag-shop:hover,.build-start__airbag-shop:focus-visible{background:var(--y);color:#090909}
+.build-start__compatibility-heading{flex-wrap:wrap}.build-start__airbag-shop{margin-bottom:18px;display:inline-flex;align-items:center;gap:10px;flex-shrink:0;padding:11px 14px;border:1px solid var(--y);color:var(--y);background:#13110a;text-decoration:none;font-size:12px;font-weight:800;letter-spacing:.7px}.build-start__airbag-shop:hover,.build-start__airbag-shop:focus-visible{background:var(--y);color:#090909}

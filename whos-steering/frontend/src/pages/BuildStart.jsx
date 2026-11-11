@@ -50,7 +50,6 @@ export default function BuildStart() {
           <div className="build-start__compatibility-heading">
             <div><span className="build-start__compatibility-mark">✓</span><span>CHECK VEHICLE COMPATIBILITY</span></div>
             <p>Tell us what you drive. We’ll confirm final fitment from your wheel photo.</p>
-            <Link className="build-start__airbag-shop" to="/build?brand=INFINITI" onClick={() => {setMake('INFINITI');setYear('');setModel('');}}>SHOP AIRBAG COVERS <span aria-hidden="true">→</span></Link>
           </div>
           <div className="build-start__compatibility-fields">
             <div className={`build-start__field${nextField === 'make' ? ' is-next' : ''}`}>
@@ -75,6 +74,7 @@ export default function BuildStart() {
           {make === 'BMW' && bmwVehicleFamilies(year, model).length > 1 && <p className="build-start__generation-note">This model year spans BMW generations. We’ll confirm your wheel from its photo before building.</p>}
         </div>
 
+        <Link className="build-start__airbag-shop" to="/build?brand=INFINITI" onClick={() => {setMake('INFINITI');setYear('');setModel('');}}>SHOP AIRBAG COVERS <span aria-hidden="true">→</span></Link>
         <div className="build-start__section-heading">{make === 'INFINITI' ? 'Infiniti custom options' : make ? `${BUILD_MAKES.find(item => item.value === make)?.label} wheel styles` : 'Choose your style'}</div>
         {nextField === 'wheel' && !matchingWheels.length && <div className="build-start__unavailable" role="status">
           Sorry, we currently do not offer online customization for that vehicle model. Please <Link to={vehicleInquiryPath(make,year,model)}>contact us</Link> to design your wheel.

@@ -112,10 +112,11 @@ test('Infiniti offers all three distinct airbag fitments at the same sale base p
   expect(container.querySelector('.build-airbag-option')).toBeNull();
 });
 
-test('shop airbag covers opens all fitments from the compatibility section', async () => {
+test('shop airbag covers sits above style heading and opens all fitments', async () => {
   await act(async () => root.render(<MemoryRouter><BuildStart /></MemoryRouter>));
   expect(container.querySelector('.build-start__section-heading').textContent).toBe('Choose your style');
-  const shop = container.querySelector('.build-start__compatibility .build-start__airbag-shop');
+  const shop = container.querySelector('.build-start__airbag-shop');
+  expect(shop.nextElementSibling.className).toBe('build-start__section-heading');
   expect(shop.getAttribute('href')).toBe('/build?brand=INFINITI');
   act(() => shop.dispatchEvent(new MouseEvent('click', {bubbles:true,cancelable:true,button:0})));
   expect(container.querySelector('#compatible-make').value).toBe('INFINITI');
