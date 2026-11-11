@@ -121,17 +121,21 @@ export async function renderInfinitiAirbag(target, config) {
     const ledStops = [[20,65,255],[180,0,255],[255,0,145]];
     const ledSegment = ledPosition < .5 ? 0 : 1, ledMix = ledPosition < .5 ? ledPosition * 2 : (ledPosition - .5) * 2;
     for (let ch = 0; ch < 3; ch++) {
-      let value = cfg.airbagCol === '#111111' ? lum : lum + (body[ch] - 17) * Math.pow(Math.max(0, lum) / 255, .55);
-      const t = thread[ch] * (.45 + m.original[i] / 350);
+      // Dye the existing material with the selected swatch rather than adding
+      // neutral gray to RGB channels, which desaturates every colored finish.
+      const dyeShade = Math.min(1.05, .82 * Math.pow(Math.max(0, lum) / 55, .62));
+      let value = cfg.airbagCol === '#111111' ? lum : body[ch] * dyeShade;
+      const t = thread[ch] * Math.min(.95, .45 + m.original[i] / 350);
       value = value * (1 - stitch) + t * stitch;
       // Preserve the photographed specular highlights, without the original
       // carbon weave leaking into solid or forged finishes.
       const highlight = clamp((m.logoLighting[i] - 135) / 100);
-      const reflect = carbon ? carbon[ci + ch] : emblem[ch] * (.52 + (cfg.infinitiLogoFinish === 'Carbon color' ? m.original[i] : m.logoLighting[i]) / 290);
+      const emblemLight = cfg.infinitiLogoFinish === 'Carbon color' ? m.original[i] : m.logoLighting[i];
+      const reflect = carbon ? carbon[ci + ch] : emblem[ch] * Math.min(1, .58 + emblemLight / 500);
       const lit = ledStops[ledSegment][ch] * (1 - ledMix) + ledStops[ledSegment + 1][ch] * ledMix;
       const finish = cfg.infinitiLogoFinish === 'Carbon color' ? reflect : cfg.infinitiLogoFinish === 'LED'
         ? lit
-        : reflect * (1 - highlight * .92) + 250 * highlight * .92;
+        : reflect * (1 - highlight * .28) + 250 * highlight * .28;
       p[i + ch] = value * (1 - logo) + finish * logo;
     }
   }
