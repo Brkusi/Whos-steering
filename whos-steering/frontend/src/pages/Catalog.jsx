@@ -405,7 +405,7 @@ function PresetPage({ preset, onClose }) {
             )}
           </div>
 
-          {totalPrice<regularTotalPrice && <div className="bf-config-offer"><WheelDiscountTag/><span>−${(regularTotalPrice-totalPrice).toFixed(2)}</span><small>Nov 11–28</small></div>}
+          {totalPrice<regularTotalPrice && <div className="bf-config-offer"><WheelDiscountTag/><span>−${(regularTotalPrice-totalPrice).toFixed(2)}</span></div>}
           {/* Options */}
           {!isFixedPreset ? (
             <>

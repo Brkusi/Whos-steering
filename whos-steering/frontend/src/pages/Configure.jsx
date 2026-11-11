@@ -1,3 +1,4 @@
+import {WheelDiscountTag} from '../components/BlackFriday';
 import {customWheelPrice,blackFridayActive} from '../lib/blackFriday';
 import { BuildCheckoutTotal, FloatingBuildTotal, BuildReviewDialog } from '../components/BuildControls';
 import { paddleOptions, paddleLabel, isUniversalPaddle, URUS_PADDLE_COLORS, normalizePaddleDetails } from '../lib/paddleOptions';
@@ -911,6 +912,8 @@ export default function Configure() {
           order: 1,
         }}>
           <p style={{margin:0,padding:'8px 12px',fontSize:12,lineHeight:1.5,color:'var(--t)',flexShrink:0}}>Preview is a visual guide and may not exactly match your finished wheel. Colors, materials, and details may vary. Custom color requests are saved even when they aren’t shown.</p>
+          <div style={{position:'relative',display:'flex',flexDirection:'column',flex:1,minHeight:0}}>
+          <div className="bf-preview-tag"><WheelDiscountTag/></div>
           {!isAudi && cfg.wheelStyleType === 'G-Series' ? (
             <div style={{
               position: 'relative',
@@ -984,6 +987,7 @@ export default function Configure() {
           ) : (
             <WheelPreview config={cfg} size={Math.min(isMobileViewport ? 360 : 520, viewportWidth * (isMobileViewport ? 0.74 : 0.46))} />
           )}
+          </div>
           {!isMobileViewport && <BuildCheckoutTotal originalPrice={blackFridayActive()?regularPrice:undefined} price={price} onReview={() => validate() && setShowReview(true)} />}
         </div>
 

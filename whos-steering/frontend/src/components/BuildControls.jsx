@@ -1,4 +1,3 @@
-import {WheelDiscountTag} from './BlackFriday';
 import { useId, useRef } from 'react';
 import { useDialog } from './Experience';
 
@@ -6,7 +5,7 @@ import { useDialog } from './Experience';
 // sizing, spacing, review actions and floating-total presentation.
 export function BuildCheckoutTotal({price,originalPrice,onReview,mobile=false}) {
   return <>
-    {originalPrice > price && <div className="bf-config-offer"><WheelDiscountTag/><del>${originalPrice.toFixed(2)}</del><small>Nov 11–28 · Custom wheels only</small></div>}
+    {originalPrice > price && <div className="bf-config-offer"><span>Original total</span><del>${originalPrice.toFixed(2)}</del></div>}
     <div aria-live="polite" style={mobile ? {textAlign:'center',marginBottom:16} : {paddingTop:8,borderTop:'1px solid var(--b)',width:'100%',textAlign:'center',flexShrink:0}}>
       <div style={{fontFamily:'Arial, sans-serif',fontSize:14,letterSpacing:.6,color:'var(--t)',textTransform:'uppercase',marginBottom:mobile?3:2}}>Estimated Total</div>
       <div style={{fontFamily:'"Barlow Condensed", sans-serif',fontWeight:900,fontSize:mobile?46:'clamp(54px,5vw,72px)',color:'var(--y)',lineHeight:mobile?1:.95,letterSpacing:mobile?undefined:-1}}>${price.toFixed(2)}</div>
