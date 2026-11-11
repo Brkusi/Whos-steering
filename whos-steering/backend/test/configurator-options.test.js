@@ -25,10 +25,14 @@ test('retired badge and carbon-trim selections cannot enter a new order',async()
   }
 });
 
-test('Drift gives exactly ten percent off regardless of case or surrounding spaces',()=>{
+test('retired Drift code is rejected regardless of case or surrounding spaces',()=>{
   const route=checkoutRoutes()['/validate-promo'];
   for(const code of ['Drift','DRIFT',' drift ']){
     const res=response();route({body:{code}},res);
-    assert.equal(res.body.valid,true);assert.equal(res.body.percentOff,10);assert.equal(res.body.code,'Drift');
+    assert.equal(res.body.valid,false);assert.match(res.body.error,/not recognized/);
   }
+});
+
+test('checkout rejects retired Drift before opening a transaction or payment',async()=>{
+ for(const promoCode of ['Drift','DRIFT',' drift ']){const res=response();await checkoutRoutes()['/create-intent']({body:{cartItems:[{config:{brand:'BMW'},quantity:1}],customer:{email:'test@example.com'},promoCode}},res);assert.equal(res.statusCode,400);assert.match(res.body.error,/Promo code is invalid/);}
 });

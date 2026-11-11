@@ -121,11 +121,11 @@ function PresetCard({ preset, onOpen }) {
       onMouseLeave={e => e.currentTarget.style.background = 'var(--p)'}>
 
       {/* Image with working arrows — no onClick on container so arrows work independently */}
-      <div style={{ width: '100%', aspectRatio: 1, background: '#0A0A0A', position: 'relative', overflow: 'hidden', flexShrink: 0 }}>
+      <div className="catalog-card-media" style={{ width: '100%', aspectRatio: 1, background: '#0A0A0A', position: 'relative', overflow: 'hidden', flexShrink: 0 }}>
         <div className="bf-card-tag"><WheelDiscountTag readyToShip={preset.readyToShip}/></div>
         {/* Clickable overlay for opening details — sits behind arrows */}
         <div onClick={() => onOpen(preset)} style={{ position: 'absolute', inset: 0, cursor: 'pointer', zIndex: 1 }} />
-        <img src={preset.images[imgIdx]} alt={preset.name}
+        <img className="catalog-card-image" src={preset.images[imgIdx]} alt={preset.name}
           style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform .4s', pointerEvents: 'none' }}
           onError={e => e.target.style.display = 'none'} />
         {/* Arrows — zIndex above the overlay */}

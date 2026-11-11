@@ -5,7 +5,6 @@ const { safeHttpUrl } = require('../lib/security');
 const hasText = (value) => typeof value === 'string' && value.trim().length > 0;
 
 const PROMO_CODES = Object.freeze({
-  drift: {code:'Drift',percentOff:10,label:'10% OFF'},
   complaints: {
     code: 'complaints',
     percentOff: 10,

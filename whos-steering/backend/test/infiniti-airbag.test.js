@@ -24,7 +24,7 @@ test('checkout saves complete cover config and charges server amount, with promo
   throw new Error('Unexpected dependency '+name);
  }});
  const config={...base,infinitiLogoFinish:'Carbon color'};
- const req={headers:{},body:{cartItems:[{name:'Q50 Custom Airbag Cover',detail:'Carbon color',quantity:2,price:0.01,config}],customer:{email:'test@example.com'},promoCode:'drift'}};
+ const req={headers:{},body:{cartItems:[{name:'Q50 Custom Airbag Cover',detail:'Carbon color',quantity:2,price:0.01,config}],customer:{email:'test@example.com'},promoCode:'complaints'}};
  let result,status=200;const res={status:n=>{status=n;return res;},json:value=>result=value};
  await routes['/create-intent'](req,res);
  assert.equal(status,200);assert.equal(result.subtotal,'359.96');assert.equal(result.amount,'323.96');
