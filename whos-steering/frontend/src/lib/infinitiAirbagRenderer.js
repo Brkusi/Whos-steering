@@ -89,9 +89,9 @@ export async function renderInfinitiAirbag(target, config) {
       // Preserve the photographed specular highlights, without the original
       // carbon weave leaking into solid or forged finishes.
       const highlight = clamp((m.logoLighting[i] - 135) / 100);
-      const reflect = carbon ? carbon[ci + ch] : emblem[ch] * (.52 + m.logoLighting[i] / 290);
+      const reflect = carbon ? carbon[ci + ch] : emblem[ch] * (.52 + (cfg.infinitiLogoFinish === 'Carbon color' ? m.original[i] : m.logoLighting[i]) / 290);
       const lit = ledStops[ledSegment][ch] * (1 - ledMix) + ledStops[ledSegment + 1][ch] * ledMix;
-      const finish = cfg.infinitiLogoFinish === 'LED'
+      const finish = cfg.infinitiLogoFinish === 'Carbon color' ? reflect : cfg.infinitiLogoFinish === 'LED'
         ? lit
         : reflect * (1 - highlight * .92) + 250 * highlight * .92;
       p[i + ch] = value * (1 - logo) + finish * logo;

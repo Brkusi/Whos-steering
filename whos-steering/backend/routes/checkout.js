@@ -38,6 +38,7 @@ function getPromo(value) {
 
 
 function validateRequiredColors(cfg) {
+  if (cfg.productType === 'airbag-cover') return [];
   // Presets and legacy product-only cart items do not use the full configurator.
   const isConfiguratorBuild = !cfg.isPreset && (
     cfg.vehicleYear !== undefined ||
@@ -230,6 +231,10 @@ router.post('/create-intent', async (req, res) => {
 
   for (const item of cartItems || []) {
     const cfg = item.config || {};
+    if (cfg.productType === 'airbag-cover' || cfg.airbagProductId) {
+      try { require('../lib/infiniti-airbag').airbagPriceCents(cfg); }
+      catch (error) { return res.status(400).json({error:error.message}); }
+    }
     if (cfg.brand === 'AUDI' && cfg.audiBadge === 'R8' && (cfg.isPreset || cfg.wheelStyleType !== 'R8')) {
       return res.status(400).json({error: 'Please choose RS or S for the lower badge.'});
     }
@@ -282,7 +287,9 @@ router.post('/create-intent', async (req, res) => {
       }
       let amountCents;
 
-      if (cfg.isPreset) {
+      if (cfg.productType === 'airbag-cover') {
+        amountCents = require('../lib/infiniti-airbag').airbagPriceCents(cfg);
+      } else if (cfg.isPreset) {
         amountCents = require('../lib/preset-pricing').presetPrice(cfg);
       } else if (cfg.productId) {
         const { rows } = await client.query('SELECT base_price,brand FROM products WHERE id=$1 AND is_active=TRUE',[cfg.productId]);
