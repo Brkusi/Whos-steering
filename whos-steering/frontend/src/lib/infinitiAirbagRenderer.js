@@ -110,7 +110,7 @@ export async function renderInfinitiAirbag(target, config) {
       const detail = m.embossFine[i] - m.embossBroad[i];
       // Molded relief keeps the suede's own color and nap rather than
       // subtracting the lettering down to black before body tinting.
-      const relief = Math.max(-.38, Math.min(.24, detail / Math.max(24, m.embossBroad[i])));
+      const relief = Math.max(-.58, Math.min(.9, detail * 1.4 / Math.max(24, m.embossBroad[i])));
       lum *= 1 + relief * embossZone;
       // Retain the dark molded recess immediately around the emblem.
       const rim = clamp(1 - Math.abs(Math.hypot((x - 716) / 238, (y - 340) / 116) - 1) / .12);
