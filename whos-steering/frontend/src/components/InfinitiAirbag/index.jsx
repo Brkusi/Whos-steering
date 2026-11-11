@@ -32,6 +32,7 @@ export function InfinitiAirbagPreview({ config, productId, children }) {
   }, [key, retry, product.id]);
   return <div className="infiniti-preview">
     <div className="infiniti-artboard">
+      <div className="infiniti-sale"><span>SALE</span><del aria-label="Original base price">$249.99</del><strong>From $169.99</strong></div>
       <canvas ref={canvas} aria-label={`${product.label} airbag, ${Object.values(infinitiAirbagSummary(config)).join(', ')}`} role="img" />
     </div>
     {children}
