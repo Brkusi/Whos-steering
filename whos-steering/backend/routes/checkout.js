@@ -303,6 +303,7 @@ router.post('/create-intent', async (req, res) => {
         throw new Error('Unrecognized cart item.');
       }
 
+      if(cfg.productType !== 'airbag-cover' && !cfg.productId) amountCents = require('../lib/black-friday').customWheelPrice(amountCents,cfg);
       totalCents += amountCents * (item.quantity || 1);
 
       const { rows: cfgRows } = await client.query(

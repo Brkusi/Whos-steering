@@ -13,7 +13,7 @@ export const INFINITI_AIRBAG_DEFAULTS = {
 };
 export const INFINITI_LOGO_FINISHES = ['Classic Carbon', 'Forged Carbon', 'Regular Color', 'Carbon color', 'LED'];
 export const INFINITI_LED_COLORS = [{n:'Blue / Purple / Pink',h:'#A020F0'}];
-export const INFINITI_AIRBAG_BASE_CENTS = 16999;
+export const INFINITI_AIRBAG_BASE_CENTS = 15999;
 export const infinitiEmblemExtraCents = finish => finish === 'LED' ? 7999 : ['Classic Carbon', 'Forged Carbon', 'Carbon color'].includes(finish) ? 1999 : 0;
 export const infinitiAirbagPrice = config => { const base = INFINITI_AIRBAG_BASE_CENTS, emblem = infinitiEmblemExtraCents(normalizeInfinitiAirbag(config).infinitiLogoFinish); return {base,emblem,total:base+emblem}; };
 export const airbagMoney = cents => new Intl.NumberFormat('en-US',{style:'currency',currency:'USD'}).format(cents/100);

@@ -3,7 +3,7 @@ const assert=require('node:assert/strict');
 const {airbagPriceCents}=require('../lib/infiniti-airbag');
 const base={productType:'airbag-cover',airbagProductId:'infiniti-q50-2014-2017',brand:'INFINITI',vehicleModel:'Q50',vehicleYear:'2014–2017',airbagMat:'Alcantara',airbagCol:'#111111',airbagStitchColor:'#FFFFFF',infinitiLogoCol:'#A020F0'};
 test('server prices every airbag finish independently of browser price',()=>{
- for(const [infinitiLogoFinish,price] of Object.entries({'Regular Color':16999,'Classic Carbon':18998,'Forged Carbon':18998,'Carbon color':18998,LED:24998})) {
+ for(const [infinitiLogoFinish,price] of Object.entries({'Regular Color':15999,'Classic Carbon':17998,'Forged Carbon':17998,'Carbon color':17998,LED:23998})) {
   for(const airbagMat of ['Alcantara','Smooth Leather']) assert.equal(airbagPriceCents({...base,airbagMat,infinitiLogoFinish,price:1}),price);
  }
 });
@@ -27,10 +27,10 @@ test('checkout saves complete cover config and charges server amount, with promo
  const req={headers:{},body:{cartItems:[{name:'Q50 Custom Airbag Cover',detail:'Carbon color',quantity:2,price:0.01,config}],customer:{email:'test@example.com'},promoCode:'drift'}};
  let result,status=200;const res={status:n=>{status=n;return res;},json:value=>result=value};
  await routes['/create-intent'](req,res);
- assert.equal(status,200);assert.equal(result.subtotal,'379.96');assert.equal(result.amount,'341.96');
- assert.equal(intent[0].amount,34196);
+ assert.equal(status,200);assert.equal(result.subtotal,'359.96');assert.equal(result.amount,'323.96');
+ assert.equal(intent[0].amount,32396);
  assert.equal(queries.find(([sql])=>sql.includes('INSERT INTO wheel_configurations'))[1].at(-1),config);
- assert.equal(queries.find(([sql])=>sql.includes('INSERT INTO order_items'))[1][4],'189.98');
+ assert.equal(queries.find(([sql])=>sql.includes('INSERT INTO order_items'))[1][4],'179.98');
  // Invalid cover configuration is rejected before a DB transaction or payment call.
  queries.length=0;intent.length=0;req.body.cartItems[0].config={...config,vehicleModel:'Q60'};
  await routes['/create-intent'](req,res);
@@ -39,7 +39,7 @@ test('checkout saves complete cover config and charges server amount, with promo
 
 test('newer cover receives identical authoritative pricing and rejects crossed fitments',()=>{
  const newer={...base,airbagProductId:'infiniti-q60-2017-q50-2018',vehicleModel:'Q60 / Q50',vehicleYear:'Q60 2017+ / Q50 2018+'};
- for(const [infinitiLogoFinish,price] of Object.entries({'Regular Color':16999,'Classic Carbon':18998,'Forged Carbon':18998,'Carbon color':18998,LED:24998})) {
+ for(const [infinitiLogoFinish,price] of Object.entries({'Regular Color':15999,'Classic Carbon':17998,'Forged Carbon':17998,'Carbon color':17998,LED:23998})) {
   assert.equal(airbagPriceCents({...newer,infinitiLogoFinish,price:1}),price);
   assert.throws(()=>airbagPriceCents({...newer,infinitiLogoFinish,vehicleYear:base.vehicleYear}));
   assert.throws(()=>airbagPriceCents({...base,infinitiLogoFinish,airbagProductId:newer.airbagProductId}));
@@ -48,7 +48,7 @@ test('newer cover receives identical authoritative pricing and rejects crossed f
 
 test('G37 has shared server prices and cannot use Q50 or Q60 fitment data',()=>{
  const g37={...base,airbagProductId:'infiniti-g37',vehicleModel:'G37',vehicleYear:''};
- for(const [infinitiLogoFinish,price] of Object.entries({'Regular Color':16999,'Classic Carbon':18998,'Forged Carbon':18998,'Carbon color':18998,LED:24998})) {
+ for(const [infinitiLogoFinish,price] of Object.entries({'Regular Color':15999,'Classic Carbon':17998,'Forged Carbon':17998,'Carbon color':17998,LED:23998})) {
   assert.equal(airbagPriceCents({...g37,infinitiLogoFinish,price:1}),price);
   for(const patch of [{vehicleModel:'Q50'},{vehicleModel:'Q60 / Q50'},{vehicleYear:'2014–2017'},{airbagProductId:base.airbagProductId}]) assert.throws(()=>airbagPriceCents({...g37,infinitiLogoFinish,...patch}));
  }

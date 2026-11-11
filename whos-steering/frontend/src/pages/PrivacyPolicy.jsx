@@ -56,6 +56,7 @@ export default function PrivacyPolicy() {
           <p>We do not alter our data practices in response to "Do Not Track" browser signals, as there is no consistent industry standard for handling such signals.</p>
         </Legal>
 
+        <Legal h="NEWSLETTER"><p>If you sign up for our newsletter, we store your email address, signup source and consent date to send offers and product updates. You can unsubscribe using the link in any newsletter or contact service@whossteering.com. We retain your subscription until you unsubscribe or request deletion.</p></Legal>
         <Legal h="CHANGES TO THIS POLICY">
           <p>We may update this Privacy Policy periodically. We will notify you of significant changes by posting the new policy on this page with an updated date. Continued use of the Service after changes constitutes acceptance.</p>
         </Legal>

@@ -1,3 +1,4 @@
+import {customWheelPrice,blackFridayActive} from '../lib/blackFriday';
 import { BuildCheckoutTotal, FloatingBuildTotal, BuildReviewDialog } from '../components/BuildControls';
 import { paddleOptions, paddleLabel, isUniversalPaddle, URUS_PADDLE_COLORS, normalizePaddleDetails } from '../lib/paddleOptions';
 import LedDisplay from '../components/LedDisplay';
@@ -580,7 +581,7 @@ export default function Configure() {
     });
   };
 
-  const price = calcPrice(cfg, rules);
+  const regularPrice = calcPrice(cfg, rules), price = customWheelPrice(regularPrice);
   const changeWheel = () => {
     const query = new URLSearchParams({brand:cfg.brand});
     if (cfg.vehicleYear) query.set('year',cfg.vehicleYear);
@@ -983,7 +984,7 @@ export default function Configure() {
           ) : (
             <WheelPreview config={cfg} size={Math.min(isMobileViewport ? 360 : 520, viewportWidth * (isMobileViewport ? 0.74 : 0.46))} />
           )}
-          {!isMobileViewport && <BuildCheckoutTotal price={price} onReview={() => validate() && setShowReview(true)} />}
+          {!isMobileViewport && <BuildCheckoutTotal originalPrice={blackFridayActive()?regularPrice:undefined} price={price} onReview={() => validate() && setShowReview(true)} />}
         </div>
 
         {/* RIGHT: Options */}
@@ -1360,7 +1361,7 @@ export default function Configure() {
               background: '#0A0A0A',
               borderTop: '1px solid var(--b)',
             }}>
-              <BuildCheckoutTotal mobile price={price} onReview={() => validate() && setShowReview(true)} />
+              <BuildCheckoutTotal mobile originalPrice={blackFridayActive()?regularPrice:undefined} price={price} onReview={() => validate() && setShowReview(true)} />
             </div>
           )}
           </div>
@@ -1380,7 +1381,7 @@ export default function Configure() {
                 addItem({
                   name: `${VEHICLE_MAKES.find(make => make.value === cfg.brand)?.label || cfg.brand} Custom Wheel`,
                   detail: `${cfg.vehicleYear} ${VEHICLE_MAKES.find(make => make.value === cfg.brand)?.label || cfg.brand} ${cfg.vehicleModel} · ${bmwStyleLabel(cfg.wheelStyleType)} · ${cfg.topBottomMat}`,
-                  price,
+                  price, regularPrice,
                   config: { ...buildConfigSnapshot(), topMatIsCarbon: topMat?.carbon },
                 });
                 setShowReview(false);

@@ -1,3 +1,4 @@
+import {blackFridayActive} from '../lib/blackFriday';
 
 const ITEMS = [
   '⚡ Handcrafted to your exact specification',
@@ -12,6 +13,7 @@ const ITEMS = [
 
 export default function AnnouncementBar() {
 
+  const items=blackFridayActive() ? ['BLACK FRIDAY SPECIAL · Nov 11–28 · Infiniti airbag covers from $159.99 · 10% off custom steering wheels · In-stock wheels excluded',...ITEMS] : ITEMS;
   // CSS animation via a <style> tag — no extra dependencies
   return (
     <>
@@ -42,7 +44,7 @@ export default function AnnouncementBar() {
 
         <div className="ticker-track">
           {/* Duplicate for seamless loop */}
-          {[...ITEMS, ...ITEMS].map((item, i) => (
+          {[...items, ...items].map((item, i) => (
             <span key={i} style={{
               fontFamily: 'Arial, sans-serif',
               fontSize: 14,

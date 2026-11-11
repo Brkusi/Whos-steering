@@ -1,3 +1,4 @@
+import {customWheelPrice} from './blackFriday';
 import {BRAND_GUIDES,SHOP_PRODUCTS,seoForRoute,canonicalUrl} from './seoCatalog';
 import {WHEEL_STYLES} from './wheelStyles';
 import {BMW_PRESETS,AUDI_PRESETS_FULL,INFINITI_PRESETS} from './data';
@@ -11,7 +12,7 @@ test('every available style and preset has one unique crawlable product page',()
   expect(seo.title).toContain(product.name);
   const schema=seo.schema['@graph'].find(item=>item['@type']==='Product');
   expect(schema.offers.priceCurrency).toBe('USD');
-  expect(Number(schema.offers.price||schema.offers.lowPrice)).toBe(product.price);
+  expect(Number(schema.offers.price||schema.offers.lowPrice)).toBe(customWheelPrice(product.price,!product.custom));
   expect(schema.aggregateRating).toBeUndefined();
  });
 });

@@ -3,6 +3,7 @@ import { COLORS, STITCH_COLORS } from '../../lib/data';
 import { INFINITI_LOGO_FINISHES, infinitiEmblemExtraCents, airbagMoney, infinitiLogoPalette, normalizeInfinitiAirbag, infinitiAirbagSummary, infinitiAirbagProduct, INFINITI_LED_NOTICE } from '../../lib/infinitiAirbagConfiguration';
 import { renderInfinitiAirbag, drawInfinitiLedFrame } from '../../lib/infinitiAirbagRenderer';
 import './style.css';
+import {AirbagSpecial} from '../BlackFriday';
 
 export function InfinitiAirbagPreview({ config, productId, children }) {
   const canvas = useRef(null), generation = useRef(0);
@@ -32,7 +33,7 @@ export function InfinitiAirbagPreview({ config, productId, children }) {
   }, [key, retry, product.id]);
   return <div className="infiniti-preview">
     <div className="infiniti-artboard">
-      <div className="infiniti-sale"><span>SALE</span><del aria-label="Original base price">$249.99</del><strong>From $169.99</strong></div>
+      <AirbagSpecial/>
       <canvas ref={canvas} aria-label={`${product.label} airbag, ${Object.values(infinitiAirbagSummary(config)).join(', ')}`} role="img" />
     </div>
     {children}

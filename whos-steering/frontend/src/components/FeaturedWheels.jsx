@@ -1,3 +1,5 @@
+import {customWheelPrice} from '../lib/blackFriday';
+import {WheelDiscountTag,WheelPrice} from './BlackFriday';
 import DirectionalArrow from './DirectionalArrow';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -234,7 +236,7 @@ export default function FeaturedWheels() {
             <article
               className="featured-wheel-card"
               key={wheel.id}
-              aria-label={wheel.readyToShip ? `${wheel.brand} ${wheel.name}, ready to ship at ${wheel.base_price.toFixed(2)}` : `${wheel.brand} ${wheel.name}, starting at ${wheel.base_price.toFixed(2)}`}
+              aria-label={wheel.readyToShip ? `${wheel.brand} ${wheel.name}, ready to ship at ${customWheelPrice(wheel.base_price,wheel.readyToShip).toFixed(2)}` : `${wheel.brand} ${wheel.name}, starting at ${customWheelPrice(wheel.base_price,wheel.readyToShip).toFixed(2)}`}
             >
               <div
                 className="featured-wheel-card__image-wrap"
@@ -261,7 +263,7 @@ export default function FeaturedWheels() {
                 />
                 {wheel.imageOverlay && <img src={wheel.imageOverlay} alt="" aria-hidden="true" className="featured-wheel-card__image featured-wheel-card__image--overlay" loading="lazy" draggable="false" />}
 
-                <span className="featured-wheel-card__brand">
+                <div className="bf-card-tag"><WheelDiscountTag readyToShip={wheel.readyToShip}/></div><span className="featured-wheel-card__brand">
                   {wheel.brand}
                 </span>
 
@@ -291,7 +293,7 @@ export default function FeaturedWheels() {
 
                 <div className="featured-wheel-card__price">
                   <span>{wheel.readyShipOption ? 'FROM' : (wheel.readyToShip ? 'PRICE' : 'FROM')}</span>
-                  ${wheel.base_price.toFixed(2)}
+                  <WheelPrice regular={wheel.base_price} readyToShip={wheel.readyToShip}/>
                 </div>
                 {!wheel.readyToShip && <div className="featured-wheel-card__timeline">⏱ 3–5 week custom build</div>}
                 {wheel.readyShipOption && (

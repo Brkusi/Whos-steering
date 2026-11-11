@@ -1,3 +1,4 @@
+import NewsletterPopup from '../components/NewsletterPopup';
 import { Link } from 'react-router-dom';
 import './Home.css';
 import FeaturedWheels from '../components/FeaturedWheels';
@@ -28,7 +29,7 @@ const BRAND_CARDS = [
 export default function Home() {
 
   return (
-    <main className="ws-home">
+    <main className="ws-home"><NewsletterPopup/>
       <RevolvingShowroom />
       <section className="ws-brand-strip" aria-label="Shop by vehicle brand">
         {BRAND_CARDS.map((brand) => (

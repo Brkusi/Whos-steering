@@ -1,13 +1,22 @@
+import {infinitiAirbagPrice} from '../lib/infinitiAirbagConfiguration';
+import {customWheelPrice} from '../lib/blackFriday';
 import { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
 import { apiFetch, authToken, warmAccountService } from '../lib/api';
 
+export function currentCartItem(item) {
+ const cfg=item.config||{};
+ if(cfg.productType==='airbag-cover')return {...item,price:infinitiAirbagPrice(cfg).total/100};
+ if(!cfg.brand||cfg.productId||cfg.readyToShip)return item;
+ const regularPrice=item.regularPrice??item.price;
+ return {...item,regularPrice,price:customWheelPrice(regularPrice)};
+}
 // ── CART ─────────────────────────────────────────────────────────────────────
 const CartCtx = createContext(null);
 export function CartProvider({ children }) {
   const [cartOpen, setCartOpen] = useState(false);
 
   const [items, setItems] = useState(() => {
-    try { return JSON.parse(sessionStorage.getItem('ws_cart') || '[]'); } catch { return []; }
+    try { return JSON.parse(sessionStorage.getItem('ws_cart') || '[]').map(currentCartItem); } catch { return []; }
   });
 
   useEffect(() => {
@@ -15,7 +24,7 @@ export function CartProvider({ children }) {
   }, [items]);
 
   const addItem = useCallback((item) => {
-    setItems(prev => [...prev, { ...item, cartId: Date.now() + Math.random() }]);
+    setItems(prev => [...prev, { ...currentCartItem(item), cartId: Date.now() + Math.random() }]);
   }, []);
 
   const removeItem = useCallback((cartId) => {

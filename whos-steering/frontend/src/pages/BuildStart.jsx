@@ -6,6 +6,7 @@ import { WHEEL_STYLES } from '../lib/wheelStyles';
 import { bmwVehicleFamilies } from '../lib/bmwVehicleFamilies';
 import VehicleYearModelFields from '../components/VehicleYearModelFields';
 import './BuildStart.css';
+import {AirbagSpecial,WheelDiscountTag,WheelPrice} from '../components/BlackFriday';
 import { INFINITI_AIRBAG_PRODUCTS } from '../lib/infinitiAirbagConfiguration';
 
 const BUILD_MAKES = [...VEHICLE_MAKES, {value:'INFINITI',label:'Infiniti'}];
@@ -79,7 +80,7 @@ export default function BuildStart() {
         </div>}
         {make === 'INFINITI' && Object.values(INFINITI_AIRBAG_PRODUCTS).map(product => <Link key={product.id} to={product.route} className="build-airbag-option">
           <img src={`/models/${product.artwork}/leather.png`} alt={`${product.label} airbag`} />
-          <div><span>CONFIGURE AIRBAG COVERS</span><h2>{product.label}</h2><p><span className="airbag-sale-tag">SALE</span> <del>$249.99</del> From $169.99 · Customize leather or Alcantara, stitching and the Infiniti emblem.</p></div><b aria-hidden="true">→</b>
+          <div><span>CONFIGURE AIRBAG COVERS</span><h2>{product.label}</h2><AirbagSpecial/><p>Customize leather or Alcantara, stitching and the Infiniti emblem.</p></div><b aria-hidden="true">→</b>
         </Link>)}
 
         <div className="build-start__grid">
@@ -88,14 +89,14 @@ export default function BuildStart() {
               <div className="build-brand-card__media">
                 <img src={wheel.image} alt={`${/^(Audi|BMW)\b/.test(wheel.label) ? '' : `${BUILD_MAKES.find(item => item.value === wheel.brand)?.label} `}${wheel.label} steering wheel`} loading="lazy" />
                 {(wheel.imageOverlays || (wheel.imageOverlay ? [wheel.imageOverlay] : [])).map(src => <img key={src} className="build-brand-card__overlay" src={src} alt="" aria-hidden="true" loading="lazy" />)}
-                <span className="build-brand-card__badge">{BUILD_MAKES.find(item => item.value === wheel.brand)?.label}</span>
+                <div className="bf-card-tag"><WheelDiscountTag/></div><span className="build-brand-card__badge">{BUILD_MAKES.find(item => item.value === wheel.brand)?.label}</span>
                 <span className="build-brand-card__corner" aria-hidden="true" />
               </div>
               <div className="build-brand-card__content">
                 <div>
                   <div className="build-brand-card__fitment">{wheel.detail}</div>
                   <h2>{wheel.label} Style</h2>
-                  <p>From ${wheel.price.toFixed(2)}</p>
+                  <p>From <WheelPrice regular={wheel.price}/></p>
                   <p className="build-brand-card__timeline">⏱ 3–5 week custom build</p>
                 </div>
                 <span className="build-brand-card__action">CONFIGURE <b>→</b></span>

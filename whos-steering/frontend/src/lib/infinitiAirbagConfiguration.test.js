@@ -32,9 +32,9 @@ test('fitment is restricted to Q50 2014 through 2017', () => {
 test('airbag prices use exact cents and mutually exclusive emblem surcharges', () => {
   const {infinitiAirbagPrice} = require('./infinitiAirbagConfiguration');
   for (const airbagMat of ['Smooth Leather','Alcantara']) {
-    expect(infinitiAirbagPrice({airbagMat,infinitiLogoFinish:'Regular Color'})).toEqual({base:16999,emblem:0,total:16999});
-    for (const infinitiLogoFinish of ['Classic Carbon','Forged Carbon','Carbon color']) expect(infinitiAirbagPrice({airbagMat,infinitiLogoFinish})).toEqual({base:16999,emblem:1999,total:18998});
-    expect(infinitiAirbagPrice({airbagMat,infinitiLogoFinish:'LED'})).toEqual({base:16999,emblem:7999,total:24998});
+    expect(infinitiAirbagPrice({airbagMat,infinitiLogoFinish:'Regular Color'})).toEqual({base:15999,emblem:0,total:15999});
+    for (const infinitiLogoFinish of ['Classic Carbon','Forged Carbon','Carbon color']) expect(infinitiAirbagPrice({airbagMat,infinitiLogoFinish})).toEqual({base:15999,emblem:1999,total:17998});
+    expect(infinitiAirbagPrice({airbagMat,infinitiLogoFinish:'LED'})).toEqual({base:15999,emblem:7999,total:23998});
   }
 });
 test('LED configuration survives storage and uses reference illumination colors', () => {
@@ -45,7 +45,7 @@ test('LED configuration survives storage and uses reference illumination colors'
 
 test('cart snapshots keep every airbag selection and exact finish price', () => {
  const {infinitiAirbagCartItem}=require('./infinitiAirbagConfiguration');
- for (const [infinitiLogoFinish,total] of [['Regular Color',169.99],['Carbon color',189.98],['LED',249.98]]) {
+ for (const [infinitiLogoFinish,total] of [['Regular Color',159.99],['Carbon color',179.98],['LED',239.98]]) {
   const item=infinitiAirbagCartItem({airbagMat:'Alcantara',airbagCol:'#111111',airbagStitchColor:'#FFFFFF',infinitiLogoFinish,infinitiLogoCol:'#A020F0'});
   expect(item.price).toBe(total);
   expect(item.config).toMatchObject({productType:'airbag-cover',airbagProductId:'infiniti-q50-2014-2017',brand:'INFINITI',vehicleModel:'Q50',vehicleYear:'2014–2017',airbagMat:'Alcantara',infinitiLogoFinish});

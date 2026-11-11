@@ -19,12 +19,12 @@ test.each([['infiniti-g37','infiniti-g37-airbag','infiniti-g37'],[undefined,'inf
  act(()=>host.querySelector('.build-add-to-cart').click());
  expect(host.querySelector('.infiniti-floating-total')).toBeNull();
  expect(host.querySelector('.infiniti-review').textContent).toContain('Carbon color');
- expect(host.querySelector('.infiniti-review').textContent).toContain('$189.98');
+ expect(host.querySelector('.infiniti-review').textContent).toContain('$179.98');
  act(()=>host.querySelector('.infiniti-review .btn').click());
  expect(host.querySelector('.cart-panel').getAttribute('aria-hidden')).toBe('false');
  expect(host.querySelector('.cart-item').textContent).toContain('Custom Airbag Cover');
  expect(host.querySelector('.cart-item').textContent).toContain('Carbon color');
- expect(host.querySelector('.cart-item').textContent).toContain('$189.98');
+ expect(host.querySelector('.cart-item').textContent).toContain('$179.98');
  const items=JSON.parse(sessionStorage.getItem('ws_cart'));
  expect(items[0].config.airbagProductId).toBe(expectedId);
  expect(items[0].config.infinitiLogoFinish).toBe('Carbon color');

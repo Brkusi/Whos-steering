@@ -1,3 +1,5 @@
+import {customWheelPrice} from '../lib/blackFriday';
+import {WheelDiscountTag,WheelPrice} from '../components/BlackFriday';
 import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useCart } from '../context';
@@ -120,6 +122,7 @@ function PresetCard({ preset, onOpen }) {
 
       {/* Image with working arrows — no onClick on container so arrows work independently */}
       <div style={{ width: '100%', aspectRatio: 1, background: '#0A0A0A', position: 'relative', overflow: 'hidden', flexShrink: 0 }}>
+        <div className="bf-card-tag"><WheelDiscountTag readyToShip={preset.readyToShip}/></div>
         {/* Clickable overlay for opening details — sits behind arrows */}
         <div onClick={() => onOpen(preset)} style={{ position: 'absolute', inset: 0, cursor: 'pointer', zIndex: 1 }} />
         <img src={preset.images[imgIdx]} alt={preset.name}
@@ -157,7 +160,7 @@ function PresetCard({ preset, onOpen }) {
         </div>
         <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontSize: 28, color: 'var(--y)', marginBottom: 2 }}>
           {preset.readyShipOption && <span style={{ fontFamily: 'Arial, sans-serif', fontSize: 14, letterSpacing: 1.5, marginRight: 7 }}>FROM</span>}
-          ${preset.base_price.toFixed(2)}
+          <WheelPrice regular={preset.base_price} readyToShip={preset.readyToShip}/>
         </div>
         <div style={{ fontSize: 14, color: 'var(--t)', marginBottom: preset.readyShipOption ? 5 : 14 }}>
           {preset.readyToShip ? 'Already built · Ready to ship' : (preset.customizable === false ? (preset.fixedBuildNote || 'Fixed build · Sold as shown') : 'Starting price · Options available')}
@@ -214,7 +217,7 @@ function PresetPage({ preset, onClose }) {
 
   // BMW pricing: heated +$75, lane assist +$30, airbag upgrade +$75
   // Audi pricing: heated free, lane assist free, airbag upgrade +$75
-  const totalPrice = isFixedPreset
+  const regularTotalPrice = isFixedPreset
     ? preset.base_price + readyShipOptionDelta
     : (
         preset.base_price +
@@ -224,6 +227,8 @@ function PresetPage({ preset, onClose }) {
         (laneAssist && isBMW ? 30 : 0) +
         (m1m2 && isBMW ? 40 : 0)
       );
+
+  const totalPrice = customWheelPrice(regularTotalPrice,preset.readyToShip);
 
   function YesNo({ label, sub, value, onChange }) {
     return (
@@ -256,7 +261,7 @@ function PresetPage({ preset, onClose }) {
             : []),
         ].join(' · ')
       : `${preset.brand} · ${badge} Badge · ${preset.features.slice(0, 2).join(' · ')}`,
-    price: totalPrice,
+    price: totalPrice, regularPrice:regularTotalPrice,
     config: {
       brand: preset.brand,
       presetId: preset.id,
@@ -322,7 +327,7 @@ function PresetPage({ preset, onClose }) {
 
         {/* Left — images */}
         <div>
-          <div style={{ background: '#0A0A0A', position: 'relative', overflow: 'hidden', aspectRatio: 1 }}>
+          <div style={{ background: '#0A0A0A', position: 'relative', overflow: 'hidden', aspectRatio: 1 }}><div className="bf-card-tag"><WheelDiscountTag readyToShip={preset.readyToShip}/></div>
             <ZoomableImage src={preset.images[imgIdx]} alt={preset.name}
               onError={e => e.target.style.display = 'none'}
               buttonStyle={{ top: 12, right: 12, zIndex: 8 }} iconSize={30} />
@@ -400,6 +405,7 @@ function PresetPage({ preset, onClose }) {
             )}
           </div>
 
+          {totalPrice<regularTotalPrice && <div className="bf-config-offer"><WheelDiscountTag/><span>−${(regularTotalPrice-totalPrice).toFixed(2)}</span><small>Nov 11–28</small></div>}
           {/* Options */}
           {!isFixedPreset ? (
             <>
@@ -450,7 +456,7 @@ function PresetPage({ preset, onClose }) {
                         fontFamily: 'Arial, sans-serif', fontSize: 14, letterSpacing: 1,
                       }}
                     >
-                      WITHOUT INSERTS<br />${preset.base_price.toFixed(2)}
+                      WITHOUT INSERTS<br /><WheelPrice regular={preset.base_price} readyToShip={preset.readyToShip}/>
                     </button>
                     <button
                       type="button"

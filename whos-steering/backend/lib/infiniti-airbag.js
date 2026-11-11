@@ -5,6 +5,6 @@ function airbagPriceCents(cfg) {
   if (cfg.productType !== 'airbag-cover' || !fitment || cfg.brand !== 'INFINITI' || cfg.vehicleModel !== fitment[0] || cfg.vehicleYear !== fitment[1] || cfg.isPreset || cfg.productId) throw new Error('Please select a supported Infiniti airbag cover fitment again.');
   if (!Object.hasOwn(FINISH_EXTRAS,cfg.infinitiLogoFinish) || !['Smooth Leather','Alcantara'].includes(cfg.airbagMat)) throw new Error('Please review your airbag material and emblem finish.');
   if (![cfg.airbagCol,cfg.airbagStitchColor,cfg.infinitiLogoCol].every(value=>typeof value==='string' && /^#[0-9a-f]{6}$/i.test(value))) throw new Error('Please choose all airbag color options.');
-  return 16999 + FINISH_EXTRAS[cfg.infinitiLogoFinish];
+  return 15999 + FINISH_EXTRAS[cfg.infinitiLogoFinish];
 }
 module.exports = {airbagPriceCents};

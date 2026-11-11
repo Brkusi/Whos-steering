@@ -106,7 +106,7 @@ test('Infiniti offers all three distinct airbag fitments at the same sale base p
   expect(container.textContent).toContain('Infiniti Q60 2017+ / Q50 2018+');
   expect(container.querySelectorAll('.build-airbag-option')[2].getAttribute('href')).toBe('/configure/infiniti-g37-airbag');
   expect(container.textContent).toContain('Infiniti G37');
-  expect(container.querySelectorAll('.airbag-sale-tag')).toHaveLength(3);
+  expect(container.querySelectorAll('.infiniti-sale')).toHaveLength(3);
   expect(container.querySelectorAll('.build-brand-card')).toHaveLength(0);
   choose('compatible-make', 'BMW');
   expect(container.querySelector('.build-airbag-option')).toBeNull();

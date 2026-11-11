@@ -1,3 +1,4 @@
+import {customWheelPrice,blackFridayActive} from './blackFriday';
 import {WHEEL_STYLES} from './wheelStyles';
 import {BMW_PRESETS,AUDI_PRESETS_FULL,INFINITI_PRESETS} from './data';
 export const SITE='https://whossteering.com';
@@ -41,7 +42,7 @@ export function seoForRoute(pathname,search=''){
    if(product){
     title=`${product.name} | Who’s Steering`;description=product.description;image=product.image;path=product.path;
     crumbs.push({name:product.name,path});
-    schema.push({'@type':'Product','@id':canonicalUrl(path)+'#product',name:product.name,description:product.description,image:[SITE+image],sku:product.id,brand:{'@type':'Brand',name:"Who's Steering?"},category:'Vehicle steering wheels',offers:{'@type':product.custom?'AggregateOffer':'Offer',url:canonicalUrl(path),priceCurrency:'USD',...(product.custom?{lowPrice:product.price.toFixed(2),offerCount:1}:{price:product.price.toFixed(2),availability:'https://schema.org/InStock'}),seller:{'@id':ORG['@id']}}});
+    schema.push({'@type':'Product','@id':canonicalUrl(path)+'#product',name:product.name,description:product.description,image:[SITE+image],sku:product.id,brand:{'@type':'Brand',name:"Who's Steering?"},category:'Vehicle steering wheels',offers:{'@type':product.custom?'AggregateOffer':'Offer',url:canonicalUrl(path),priceCurrency:'USD',...(product.custom&&blackFridayActive()?{priceValidUntil:'2026-11-28'}:{}),...(product.custom?{lowPrice:customWheelPrice(product.price,!product.custom).toFixed(2),offerCount:1}:{price:product.price.toFixed(2),availability:'https://schema.org/InStock'}),seller:{'@id':ORG['@id']}}});
    }else{
     title=guide.slug==='infiniti'?'Infiniti Carbon Fiber Steering Wheels | Ready-to-Ship Designs':`${guide.name} Custom & Carbon Fiber Steering Wheels | Who’s Steering`;description=guide.summary;
     const products=SHOP_PRODUCTS.filter(item=>item.brand===guide.brand);
@@ -58,9 +59,9 @@ export function seoForRoute(pathname,search=''){
   const guide=brandGuide(params.get('brand'));if(guide)noindex=true;
   title='Build a Custom Steering Wheel | BMW, Audi & More | Who’s Steering';description='Choose your vehicle and steering wheel style, then personalize materials, stitching, colors and available features. Final fitment is checked from your wheel photo.';
  }else if(pathname==='/configure/infiniti-g37-airbag'){
-  noindex=true;title='Infiniti G37 Airbag Configurator | Who’s Steering';description='Customize your Infiniti G37 airbag cover with leather or Alcantara, stitching and Bluetooth RGB LED or carbon emblems. Sale from $169.99, originally $249.99.';image='/models/infiniti-g37-airbag/leather.png';
+  noindex=true;title='Infiniti G37 Airbag Configurator | Who’s Steering';description='Customize your Infiniti G37 airbag cover with leather or Alcantara, stitching and Bluetooth RGB LED or carbon emblems. Black Friday Special, Nov 11–28: from $159.99.';image='/models/infiniti-g37-airbag/leather.png';
  }else if(pathname==='/configure/infiniti-q60-q50-airbag'){
-  noindex=true;title='Infiniti Q60 2017+ / Q50 2018+ Airbag Configurator | Who’s Steering';description='Customize leather or Alcantara, stitching and Bluetooth RGB LED or carbon emblems. Sale from $169.99, originally $249.99.';image='/models/infiniti-q60-q50-airbag/leather.png';
+  noindex=true;title='Infiniti Q60 2017+ / Q50 2018+ Airbag Configurator | Who’s Steering';description='Customize leather or Alcantara, stitching and Bluetooth RGB LED or carbon emblems. Black Friday Special, Nov 11–28: from $159.99.';image='/models/infiniti-q60-q50-airbag/leather.png';
  }else if(pathname==='/configure/infiniti-q50-airbag'){
   noindex=true;title='Infiniti Q50 Airbag Configurator · 2014–2017 | Who’s Steering';description='Design your Infiniti Q50 airbag with leather or Alcantara, stitching colors and carbon fiber, forged carbon or solid-color emblem finishes.';image='/models/infiniti-q50-airbag/leather.png';
  }else if(pathname==='/configure'){

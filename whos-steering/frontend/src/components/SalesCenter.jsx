@@ -1,3 +1,4 @@
+import NewsletterAdmin from './NewsletterAdmin';
 import { useEffect, useState } from 'react';
 import { apiFetch } from '../lib/api';
 import { activityBuckets } from '../lib/salesDashboard';
@@ -100,7 +101,7 @@ export default function SalesCenter() {
     {error && <div className="notice notice-error" role="alert">{error} <button className="btn-outline sm" onClick={() => setRevision(value => value + 1)}>Retry</button></div>}
     {loading && !data && <div className="dashboard-empty" role="status">Loading sales activity…</div>}
     {data && <><div className="sales-kpis" aria-busy={loading}>{cards.map(([label, value, hint, priority]) => <article className={priority ? 'sales-kpi priority' : 'sales-kpi'} key={label}><span>{label}</span><strong>{value}</strong><small>{hint}</small></article>)}</div><div className="sales-panels"><ActivityPanel data={data} days={days} /><section className="sales-panel sales-panel-operations"><p className="eyebrow">Operating status</p><h2>Follow-up health</h2><div className="sales-operation-row"><span>Saved-link emails</span><strong className={data.email ? 'is-good' : 'is-muted'}>{data.email ? 'Connected' : 'Not configured'}</strong></div><div className="sales-operation-row"><span>Recovery reminders</span><strong className={data.recovery ? 'is-good' : 'is-muted'}>{data.recovery ? 'Enabled' : 'Paused'}</strong></div><div className="sales-operation-row"><span>Oldest open fitment</span><strong>{data.fitment?.oldest_open ? date(data.fitment.oldest_open) : 'Queue clear'}</strong></div><p>{data.recovery ? 'Opted-in shoppers can receive build reminders.' : 'Recovery reminders need an email sender and business mailing address.'}</p><a href="#fitment-queue" className="sales-panel-link">Review fitment queue ↘</a></section></div></>}
-    <FitmentQueue summary={data?.fitment} onUpdated={() => setRevision(value => value + 1)} />
+    <NewsletterAdmin/><FitmentQueue summary={data?.fitment} onUpdated={() => setRevision(value => value + 1)} />
     {data && <section className="sales-recent"><div className="sales-section-title"><div><p className="eyebrow">Recent intent</p><h2>Saved builds & checkouts</h2></div></div><div className="sales-recent-list">{!data.recentSaves?.length && <p>No saved builds or checkouts yet.</p>}{data.recentSaves?.map(lead => <div key={lead.id}><span className="sales-recent-kind">{lead.kind === 'checkout' ? 'Checkout' : 'Build'}</span><strong>{lead.email}</strong><span>{date(lead.created_at)}</span><small>{lead.stage ? `${lead.stage} reminder${lead.stage === 1 ? '' : 's'} sent` : 'No reminders sent'}</small></div>)}</div></section>}
   </section>;
 }
