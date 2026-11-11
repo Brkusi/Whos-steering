@@ -1,3 +1,4 @@
+import { applyEmbossLighting } from './infinitiAirbagRelief';
 import { normalizeInfinitiAirbag, infinitiLogoPalette } from './infinitiAirbagConfiguration';
 export const AIRBAG_WIDTH = 1442;
 export const AIRBAG_HEIGHT = 1091;
@@ -81,7 +82,20 @@ async function master() {
     // markings always come from the single master so they cannot drift.
     ctx.clearRect(0, 0, c.width, c.height); ctx.drawImage(suede, 0, 0, c.width, c.height);
     const texture = ctx.getImageData(0, 0, c.width, c.height).data;
-    return { original, logoLighting, logo, stitch, texture, embossFine, embossBroad };
+    // Isolate the photographed glyph relief, not a retyped font or a dark
+    // rectangular patch. A separate light pass stays legible after body tinting.
+    const emboss = new Float32Array(c.width * c.height);
+    for (let y = 593; y < 794; y++) for (let x = 605; x < 839; x++) {
+      const n = y * c.width + x, i = n * 4;
+      const feather = clamp(Math.min(x-605,839-x,y-593,794-y)/18);
+      emboss[n] = clamp((embossBroad[i] - embossFine[i] - 2) / 13) * feather;
+    }
+    const depthSource = new Float32Array(emboss);
+    for (let y = 593; y < 794; y++) for (let x = 605; x < 839; x++) {
+      const n = y * c.width + x, w = c.width;
+      emboss[n] = (depthSource[n]*4 + (depthSource[n-1]+depthSource[n+1]+depthSource[n-w]+depthSource[n+w])*2 + depthSource[n-w-1]+depthSource[n-w+1]+depthSource[n+w-1]+depthSource[n+w+1])/16;
+    }
+    return { original, logoLighting, logo, stitch, texture, emboss };
   })().catch(error => { masterPromise = null; throw error; });
   return masterPromise;
 }
@@ -108,16 +122,14 @@ export async function renderInfinitiAirbag(target, config) {
       // One continuous full-size suede photograph: no modulo sampling,
       // tiled patches or rectangular restoration zones.
       lum = m.texture[i];
-      const embossZone = clamp(Math.min(x - 605, 839 - x, y - 593, 794 - y) / 18);
-      const detail = m.embossFine[i] - m.embossBroad[i];
-      // Molded relief keeps the suede's own color and nap rather than
-      // subtracting the lettering down to black before body tinting.
-      const relief = Math.max(-.58, Math.min(.9, detail * 1.4 / Math.max(24, m.embossBroad[i])));
-      lum *= 1 + relief * embossZone;
       // Retain the dark molded recess immediately around the emblem.
       const rim = clamp(1 - Math.abs(Math.hypot((x - 716) / 238, (y - 340) / 116) - 1) / .12);
       lum *= 1 - rim * clamp((60 - m.original[i]) / 60) * .7;
     }
+    const n = i / 4, depth = m.emboss[n];
+    // Recessed lower/right walls catch light; the dark interior retains the
+    // chosen hue. Three source pixels produce a visible lip at preview scale.
+    const lip = Math.max(0, (m.emboss[n - out.width * 3 - 3] || 0) - (m.emboss[n + out.width * 3 + 3] || 0));
     const tx = ((x - 490 + textureSize * 10) % textureSize), ty = ((y - 230 + textureSize * 10) % textureSize), ci = (ty * textureSize + tx) * 4;
     const ledPosition = clamp((x - 490) / 455 + (y - 330) / 1800);
     const ledStops = [[20,65,255],[180,0,255],[255,0,145]];
@@ -130,6 +142,7 @@ export async function renderInfinitiAirbag(target, config) {
       let value = cfg.airbagCol === '#2A2A2A' ? lum : cfg.airbagCol === '#111111' ? Math.min(lum * .78, dyed) : dyed;
       const t = thread[ch] * Math.min(.95, .45 + m.original[i] / 350);
       value = value * (1 - stitch) + t * stitch;
+      if (cfg.airbagMat === 'Alcantara') value = applyEmbossLighting(value, depth, lip);
       // Preserve the photographed specular highlights, without the original
       // carbon weave leaking into solid or forged finishes.
       const highlight = clamp((m.logoLighting[i] - 135) / 100);
