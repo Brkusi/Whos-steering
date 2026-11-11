@@ -9,4 +9,4 @@
 .infiniti-sale{position:absolute;top:14px;right:14px;z-index:1;display:flex;align-items:center;justify-content:flex-end;gap:9px;margin:0;font-size:12px;white-space:nowrap}.infiniti-sale>span,.airbag-sale-tag{display:inline-block;background:#d52132;color:#fff;border-radius:3px;padding:5px 9px;font-size:11px;font-weight:800;letter-spacing:1px}.infiniti-sale del{color:#999}.infiniti-sale strong{color:#fff}
 
 @media(min-width:761px){.infiniti-artboard canvas{top:48px;bottom:6%;height:calc(94% - 48px)}}
-@media(max-width:760px){.infiniti-artboard{padding-top:40px;aspect-ratio:1.1}.infiniti-sale{top:12px;right:12px;font-size:11px;gap:8px}}
+@media(max-width:760px){.infiniti-artboard{padding-top:0;aspect-ratio:1.1;overflow:hidden}.infiniti-artboard canvas{position:absolute;top:44px;left:6%;width:88%;height:calc(100% - 56px);object-fit:contain}.infiniti-sale{top:12px;right:12px;font-size:11px;gap:8px}}

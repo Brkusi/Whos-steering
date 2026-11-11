@@ -49,6 +49,7 @@ export default function App() {
               <Route path="/catalog"            element={<Catalog />} />
               <Route path="/catalog/:id"        element={<Product />} />
               <Route path="/build"              element={<BuildStart />} />
+              <Route path="/configure/infiniti-g37-airbag" element={<InfinitiAirbagModulePreview key="g37-airbag" productId="infiniti-g37" />} />
               <Route path="/configure/infiniti-q60-q50-airbag" element={<InfinitiAirbagModulePreview key="new-infiniti-airbag" productId="infiniti-q60-2017-q50-2018" />} />
               <Route path="/configure/infiniti-q50-airbag" element={<InfinitiAirbagModulePreview />} />
               <Route path="/configure"          element={<Configure />} />

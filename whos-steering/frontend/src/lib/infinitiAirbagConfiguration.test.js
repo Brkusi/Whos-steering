@@ -64,3 +64,14 @@ test('newer cover stores its own fitment and keeps identical pricing across fini
   expect(newer.name).toContain('Q60 2017+ / Q50 2018+');
  }
 });
+
+test('G37 cover keeps all finishes at shared prices and its own cart identity',()=>{
+ const {infinitiAirbagCartItem}=require('./infinitiAirbagConfiguration');
+ for (const infinitiLogoFinish of ['Regular Color','Carbon color','Classic Carbon','Forged Carbon','LED']) {
+  const config={infinitiLogoFinish,airbagMat:'Alcantara'};
+  const g37=infinitiAirbagCartItem(config,'infiniti-g37');
+  expect(g37.price).toBe(infinitiAirbagCartItem(config).price);
+  expect(g37.name).toBe('Infiniti G37 Custom Airbag Cover');
+  expect(g37.config).toMatchObject({airbagProductId:'infiniti-g37',vehicleModel:'G37',vehicleYear:'',airbagMat:'Alcantara'});
+ }
+});

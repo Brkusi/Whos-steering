@@ -6,7 +6,7 @@ import CartDrawer from '../components/CartDrawer';
 import Airbag from './InfinitiAirbagPreview';
 jest.mock('../components/InfinitiAirbag',()=>({InfinitiAirbagPreview:()=>null,InfinitiAirbagOptions:()=>null}));
 function Harness({productId}){const cart=useCart(),location=useLocation();return <><Airbag productId={productId}/><CartDrawer open={cart.cartOpen} onClose={()=>cart.setCartOpen(false)}/><output>{location.pathname}</output></>;}
-test.each([[undefined,'infiniti-q50-airbag','infiniti-q50-2014-2017'],['infiniti-q60-2017-q50-2018','infiniti-q60-q50-airbag','infiniti-q60-2017-q50-2018']])('review preserves fitment %s through shared cart and checkout',async(productId,artwork,expectedId)=>{
+test.each([['infiniti-g37','infiniti-g37-airbag','infiniti-g37'],[undefined,'infiniti-q50-airbag','infiniti-q50-2014-2017'],['infiniti-q60-2017-q50-2018','infiniti-q60-q50-airbag','infiniti-q60-2017-q50-2018']])('review preserves fitment %s through shared cart and checkout',async(productId,artwork,expectedId)=>{
  global.IS_REACT_ACT_ENVIRONMENT=true;
  sessionStorage.clear();localStorage.clear();
  localStorage.setItem(`whossteering:${artwork}:v1`,JSON.stringify({airbagMat:'Alcantara',infinitiLogoFinish:'Carbon color',infinitiLogoCol:'#E85500'}));

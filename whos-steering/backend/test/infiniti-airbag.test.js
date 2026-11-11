@@ -45,3 +45,11 @@ test('newer cover receives identical authoritative pricing and rejects crossed f
   assert.throws(()=>airbagPriceCents({...base,infinitiLogoFinish,airbagProductId:newer.airbagProductId}));
  }
 });
+
+test('G37 has shared server prices and cannot use Q50 or Q60 fitment data',()=>{
+ const g37={...base,airbagProductId:'infiniti-g37',vehicleModel:'G37',vehicleYear:''};
+ for(const [infinitiLogoFinish,price] of Object.entries({'Regular Color':16999,'Classic Carbon':18998,'Forged Carbon':18998,'Carbon color':18998,LED:24998})) {
+  assert.equal(airbagPriceCents({...g37,infinitiLogoFinish,price:1}),price);
+  for(const patch of [{vehicleModel:'Q50'},{vehicleModel:'Q60 / Q50'},{vehicleYear:'2014–2017'},{airbagProductId:base.airbagProductId}]) assert.throws(()=>airbagPriceCents({...g37,infinitiLogoFinish,...patch}));
+ }
+});

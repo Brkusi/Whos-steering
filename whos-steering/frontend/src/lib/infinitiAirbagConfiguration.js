@@ -3,6 +3,7 @@ import { COLORS, STITCH_COLORS, CLASSIC_CARBON_COLORS, FORGED_CARBON_COLORS } fr
 export const INFINITI_AIRBAG_PRODUCTS = {
   'infiniti-q50-2014-2017': {id:'infiniti-q50-2014-2017', title:'INFINITI Q50', fitment:'2014–2017', label:'Infiniti Q50 · 2014–2017', model:'Q50', years:'2014–2017', route:'/configure/infiniti-q50-airbag', artwork:'infiniti-q50-airbag'},
   'infiniti-q60-2017-q50-2018': {id:'infiniti-q60-2017-q50-2018', title:'INFINITI Q60 / Q50', fitment:'Q60 2017+ / Q50 2018+', label:'Infiniti Q60 2017+ / Q50 2018+', model:'Q60 / Q50', years:'Q60 2017+ / Q50 2018+', route:'/configure/infiniti-q60-q50-airbag', artwork:'infiniti-q60-q50-airbag'},
+  'infiniti-g37': {id:'infiniti-g37', title:'INFINITI', fitment:'G37', label:'Infiniti G37', model:'G37', years:'', route:'/configure/infiniti-g37-airbag', artwork:'infiniti-g37-airbag'},
 };
 export const infinitiAirbagProduct = id => INFINITI_AIRBAG_PRODUCTS[id] || INFINITI_AIRBAG_PRODUCTS['infiniti-q50-2014-2017'];
 export const INFINITI_LED_NOTICE = 'RGB LED colors are controlled via Bluetooth. The LED emblem must be wired properly upon installation.';

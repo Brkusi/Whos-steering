@@ -7,7 +7,10 @@ export const AIRBAG_HEIGHT = 1091;
 export const LOGO_PATH = 'M 492 337 C 497 274 595 229 711 229 C 833 226 935 274 943 331 C 958 392 891 438 778 449 L 716 307 L 654 448 C 552 435 486 396 492 337 Z M 551 325 C 552 288 618 257 709 256 C 805 253 878 285 885 323 C 889 347 863 363 818 368 L 715 271 L 617 367 C 575 364 548 350 551 325 Z';
 const NEW_LOGO_PATH = 'M 440 399 C 434 322 550 269 696 269 C 841 269 956 318 962 395 C 970 466 885 519 771 535 L 704 385 L 635 535 C 524 520 440 466 440 399 Z M 495 389 C 495 344 584 305 696 305 C 807 305 899 342 905 387 C 909 416 869 439 823 444 L 703 319 L 582 444 C 530 438 493 419 495 389 Z';
 const NEW_SEAMS = [[53,424,446,961,982],[80,373,408,996,1034],[125,323,358,1044,1080],[175,280,311,1093,1126],[225,235,268,1134,1173],[275,193,228,1170,1210],[325,166,201,1200,1240],[375,147,184,1217,1258],[425,140,179,1221,1263],[475,144,189,1212,1256],[525,160,209,1194,1240],[575,184,237,1170,1219],[625,210,264,1145,1193],[675,238,292,1111,1165],[725,266,322,1082,1136],[775,301,350,1050,1106],[825,330,386,1016,1073],[875,363,421,974,1035],[925,401,458,923,994],[950,426,498,888,975],[975,454,935,454,935],[995,480,910,480,910],[1015,535,840,535,840],[1028,610,760,610,760]];
+const G37_LOGO_PATH = 'M 441 392 C 440 334 529 292 644 292 C 758 292 841 334 844 389 C 852 450 787 487 707 501 L 647 368 L 582 501 C 497 486 438 446 441 392 Z M 480 383 C 480 345 551 314 644 314 C 737 314 808 345 809 383 C 812 408 779 427 739 432 L 646 338 L 555 432 C 510 426 478 407 480 383 Z';
+const G37_SEAMS = [[108,490,805,490,805],[125,368,927,368,927],[150,248,1042,248,1042],[175,198,389,923,1100],[200,160,260,1028,1134],[225,141,208,1091,1153],[250,128,180,1109,1167],[275,117,167,1126,1178],[300,107,155,1138,1190],[350,90,134,1158,1208],[400,79,126,1170,1221],[450,74,121,1177,1227],[500,78,130,1173,1225],[550,95,153,1149,1208],[600,134,198,1106,1169],[650,172,242,1057,1131],[700,215,287,1009,1082],[750,264,326,962,1031],[800,309,373,920,980],[850,351,420,869,940],[900,399,465,823,892],[950,440,500,785,841],[1000,471,525,754,804],[1050,485,537,741,790],[1100,492,541,737,784],[1150,495,544,735,781],[1170,495,544,735,781]];
 function geometry(productId) {
+  if (infinitiAirbagProduct(productId).id === 'infiniti-g37') return {width:1301,height:1209,path:G37_LOGO_PATH,region:[433,284,420,226],emboss:[[530,750,755,890],[230,332,327,406],[976,332,1070,406]],seams:G37_SEAMS,rim:[644,396,205,106]};
   const newer = infinitiAirbagProduct(productId).id === 'infiniti-q60-2017-q50-2018';
   return newer ? {width:1409,height:1116,path:NEW_LOGO_PATH,region:[431,262,540,280],emboss:[585,665,816,892],seams:NEW_SEAMS,rim:[701,400,267,139]} : {width:AIRBAG_WIDTH,height:AIRBAG_HEIGHT,path:LOGO_PATH,region:[485,225,470,230],emboss:[605,593,839,794],rim:[716,340,238,116]};
 }
@@ -89,16 +92,20 @@ async function master(productId) {
     // Isolate the photographed glyph relief, not a retyped font or a dark
     // rectangular patch. A separate light pass stays legible after body tinting.
     const emboss = new Float32Array(c.width * c.height);
-    const [ex0,ey0,ex1,ey1] = g.emboss;
+    const embossRegions = Array.isArray(g.emboss[0]) ? g.emboss : [g.emboss];
+    for (const [ex0,ey0,ex1,ey1] of embossRegions) {
     for (let y = ey0; y < ey1; y++) for (let x = ex0; x < ex1; x++) {
       const n = y * c.width + x;
       const feather = clamp(Math.min(x-ex0,ex1-x,y-ey0,ey1-y)/18);
       emboss[n] = clamp((embossBroad[n] - embossFine[n] - 2) / 13) * feather;
     }
+    }
     const depthSource = new Float32Array(emboss);
+    for (const [ex0,ey0,ex1,ey1] of embossRegions) {
     for (let y = ey0; y < ey1; y++) for (let x = ex0; x < ex1; x++) {
       const n = y * c.width + x, w = c.width;
       emboss[n] = (depthSource[n]*4 + (depthSource[n-1]+depthSource[n+1]+depthSource[n-w]+depthSource[n+w])*2 + depthSource[n-w-1]+depthSource[n-w+1]+depthSource[n+w-1]+depthSource[n+w+1])/16;
+    }
     }
     return { original, logoLighting, logo, stitch, texture, emboss };
   })().catch(error => { masters.delete(product.id); throw error; }));

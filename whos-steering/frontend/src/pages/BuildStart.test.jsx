@@ -95,16 +95,18 @@ test('Porsche 991 is no longer offered for online customization', async () => {
 });
 
 
-test('Infiniti offers both distinct airbag fitments at the same sale base price', async () => {
+test('Infiniti offers all three distinct airbag fitments at the same sale base price', async () => {
   await act(async () => root.render(<MemoryRouter><BuildStart /></MemoryRouter>));
   expect(container.querySelector('.build-airbag-option')).toBeNull();
   choose('compatible-make', 'INFINITI');
-  expect(container.querySelectorAll('.build-airbag-option')).toHaveLength(2);
+  expect(container.querySelectorAll('.build-airbag-option')).toHaveLength(3);
   expect(container.querySelector('.build-airbag-option').getAttribute('href')).toBe('/configure/infiniti-q50-airbag');
   expect(container.textContent).toContain('Infiniti Q50 · 2014–2017');
   expect(container.querySelectorAll('.build-airbag-option')[1].getAttribute('href')).toBe('/configure/infiniti-q60-q50-airbag');
   expect(container.textContent).toContain('Infiniti Q60 2017+ / Q50 2018+');
-  expect(container.querySelectorAll('.airbag-sale-tag')).toHaveLength(2);
+  expect(container.querySelectorAll('.build-airbag-option')[2].getAttribute('href')).toBe('/configure/infiniti-g37-airbag');
+  expect(container.textContent).toContain('Infiniti G37');
+  expect(container.querySelectorAll('.airbag-sale-tag')).toHaveLength(3);
   expect(container.querySelectorAll('.build-brand-card')).toHaveLength(0);
   choose('compatible-make', 'BMW');
   expect(container.querySelector('.build-airbag-option')).toBeNull();
