@@ -95,7 +95,9 @@ export async function renderInfinitiAirbag(target, config) {
     const tc = tile.getContext('2d', { willReadFrequently: true }); tc.drawImage(im, 0, 0, textureSize, textureSize); carbon = tc.getImageData(0, 0, textureSize, textureSize).data;
   }
   const out = surface(), ctx = out.getContext('2d'), pixels = ctx.createImageData(out.width, out.height), p = pixels.data;
-  const body = rgb(cfg.airbagCol), thread = rgb(cfg.airbagStitchColor), emblem = rgb(cfg.infinitiLogoCol);
+  // The neutral photograph is the lighter charcoal surface. Reserve it for
+  // Dark Gray; Black uses the darker dyed shade previously shown as charcoal.
+  const body = rgb(cfg.airbagCol === '#111111' ? '#2A2A2A' : cfg.airbagCol), thread = rgb(cfg.airbagStitchColor), emblem = rgb(cfg.infinitiLogoCol);
   for (let y = 0; y < out.height; y++) for (let x = 0; x < out.width; x++) {
     const i = (y * out.width + x) * 4, a = m.original[i + 3];
     if (!a) continue;
@@ -124,7 +126,8 @@ export async function renderInfinitiAirbag(target, config) {
       // Dye the existing material with the selected swatch rather than adding
       // neutral gray to RGB channels, which desaturates every colored finish.
       const dyeShade = Math.min(1.05, .82 * Math.pow(Math.max(0, lum) / 55, .62));
-      let value = cfg.airbagCol === '#111111' ? lum : body[ch] * dyeShade;
+      const dyed = body[ch] * dyeShade;
+      let value = cfg.airbagCol === '#2A2A2A' ? lum : cfg.airbagCol === '#111111' ? Math.min(lum * .78, dyed) : dyed;
       const t = thread[ch] * Math.min(.95, .45 + m.original[i] / 350);
       value = value * (1 - stitch) + t * stitch;
       // Preserve the photographed specular highlights, without the original
