@@ -20,7 +20,7 @@ export default function SalesTools({config,items}) {
     e.preventDefault();setBusy(true);setMessage('');setLink('');
     try {
       const result=await apiFetch('/api/sales/save',{method:'POST',body:JSON.stringify({email,consent,kind:fitment?'fitment':items?'checkout':'build',payload:fitment?{brand:config.brand,year:config.vehicleYear,model:config.vehicleModel,photoUrl:config.photoUrl,config}:items?{items}:{config}})});
-      if(fitment)setMessage('Your fitment request is in our inbox. We’ll reply to your email.');
+      if(fitment)setMessage('Your fitment request has been saved for our team. We’ll reply to your email.');
       else {setLink(result.url);setMessage(result.emailed?'Saved! Your private link is also on its way by email.':'Saved! Copy your private link below to return within 30 days.');}
     }catch(err){setMessage(err.message);}finally{setBusy(false);}
   }

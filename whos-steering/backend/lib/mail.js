@@ -1,9 +1,10 @@
 const ADDRESS = 'service@whossteering.com';
+const INQUIRY_ADDRESS = 'whossteering@gmail.com';
 const FROM = `Who's Steering <${ADDRESS}>`;
 
 const mailReady = () => Boolean(process.env.RESEND_API_KEY?.trim());
 
-async function sendEmail({ to, subject, html, replyTo = ADDRESS, idempotencyKey }) {
+async function sendEmail({ to, subject, html, replyTo = INQUIRY_ADDRESS, idempotencyKey }) {
   if (!mailReady()) throw new Error('Email service is not configured');
   const response = await fetch('https://api.resend.com/emails', {
     method: 'POST',
@@ -21,4 +22,4 @@ async function sendEmail({ to, subject, html, replyTo = ADDRESS, idempotencyKey 
   return result.id;
 }
 
-module.exports = { ADDRESS, mailReady, sendEmail };
+module.exports = { ADDRESS, INQUIRY_ADDRESS, mailReady, sendEmail };

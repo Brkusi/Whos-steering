@@ -15,7 +15,7 @@ router.post('/', rateLimit({ windowMs: 60 * 60 * 1000, max: 5 }), async (req, re
   }
   try {
     await mail.sendEmail({
-      to: mail.ADDRESS,
+      to: mail.INQUIRY_ADDRESS,
       replyTo: email.trim(),
       subject: `Who's Steering inquiry${vehicle?.trim() ? ` - ${vehicle.trim().replace(/\s+/g, ' ').slice(0, 100)}` : ''}`,
       html: `<h1>New website inquiry</h1><p><strong>Name:</strong> ${escape(name?.trim() || 'Website visitor')}</p><p><strong>Email:</strong> ${escape(email.trim())}</p><p><strong>Vehicle:</strong> ${escape(vehicle?.trim() || 'Not specified')}</p><p><strong>Message:</strong></p><p>${escape(message.trim()).replace(/\n/g, '<br>')}</p>`,
@@ -23,7 +23,7 @@ router.post('/', rateLimit({ windowMs: 60 * 60 * 1000, max: 5 }), async (req, re
     return res.json({ ok: true });
   } catch (error) {
     console.error('Contact email failed:', error.message);
-    return res.status(503).json({ error: 'Your message could not be sent. Please email service@whossteering.com directly.' });
+    return res.status(503).json({ error: 'Your message could not be sent. Please email whossteering@gmail.com directly.' });
   }
 });
 

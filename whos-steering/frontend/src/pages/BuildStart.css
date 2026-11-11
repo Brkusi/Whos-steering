@@ -169,7 +169,7 @@
 .build-brand-card__content {
   flex: 1;
   display: flex;
-  align-items: flex-end;
+  align-items: flex-start;
   justify-content: space-between;
   gap: 24px;
   padding: 17px 18px 19px;

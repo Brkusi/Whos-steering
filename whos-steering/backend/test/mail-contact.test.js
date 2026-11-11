@@ -15,7 +15,7 @@ test('Resend uses the service sender and confirms accepted messages', async () =
     assert.equal(request.url, 'https://api.resend.com/emails');
     assert.deepEqual(JSON.parse(request.options.body), {
       from: "Who's Steering <service@whossteering.com>",
-      to: ['customer@example.com'], reply_to: 'service@whossteering.com', subject: 'Saved build', html: '<p>Ready</p>'
+      to: ['customer@example.com'], reply_to: 'whossteering@gmail.com', subject: 'Saved build', html: '<p>Ready</p>'
     });
     global.fetch = async () => ({ ok: true, json: async () => ({}) });
     await assert.rejects(mail.sendEmail({ to: 'customer@example.com', subject: 'Test', html: '' }), /did not confirm/);
@@ -25,7 +25,7 @@ test('Resend uses the service sender and confirms accepted messages', async () =
   }
 });
 
-test('contact inquiries use the service recipient and customer reply-to', async () => {
+test('contact inquiries go directly to Gmail with customer reply-to', async () => {
   const routes = {};
   const sent = [];
   const router = { post: (path, ...handlers) => { routes[path] = handlers; } };
@@ -35,7 +35,7 @@ test('contact inquiries use the service recipient and customer reply-to', async 
     require: name => ({
       express: { Router: () => router },
       'express-rate-limit': () => () => {},
-      '../lib/mail': { ADDRESS: 'service@whossteering.com', sendEmail: async message => { sent.push(message); return 'email-1'; } }
+      '../lib/mail': { INQUIRY_ADDRESS: 'whossteering@gmail.com', sendEmail: async message => { sent.push(message); return 'email-1'; } }
     })[name]
   });
   const handler = routes['/'][1];
@@ -47,7 +47,36 @@ test('contact inquiries use the service recipient and customer reply-to', async 
   const good = response();
   await handler({ body: { name: 'Visitor', email: 'visitor@example.com', vehicle: '2024 Supra', message: 'Can you help? <script>' } }, good);
   assert.equal(good.body.ok, true);
-  assert.equal(sent[0].to, 'service@whossteering.com');
+  assert.equal(sent[0].to, 'whossteering@gmail.com');
   assert.equal(sent[0].replyTo, 'visitor@example.com');
   assert.match(sent[0].html, /&lt;script&gt;/);
 });
+
+for (const delivered of [true, false]) {
+  test(`fitment is saved and Gmail notification ${delivered ? 'includes the full request' : 'failure is reported accurately'}`, async () => {
+    const sent = [];
+    const saved = [];
+    const module = { exports: {} };
+    const actualMail = require('../lib/mail');
+    vm.runInNewContext(fs.readFileSync(require.resolve('../lib/sales'), 'utf8'), {
+      module, exports: module.exports, process, console: { error() {} },
+      require: name => {
+        if (name === '../db/pool') return { query: async (sql, values) => { saved.push(values); return { rows: [{id: values[0], email: values[1]}] }; } };
+        if (name === './mail') return { ...actualMail, mailReady: () => true, sendEmail: async message => { sent.push(message); if (!delivered) throw new Error('Provider unavailable'); return 'email-1'; } };
+        return require(name);
+      }
+    });
+    const payload = {brand:'BMW',year:'2020',model:'M3',photoUrl:'https://example.test/wheel.jpg',config:{wheelStyleType:'G-Series Pre LCI',sideMat:'<Leather>'}};
+    const result = await module.exports.save('driver@example.test', 'fitment', payload, false);
+    assert.equal(saved.length, 1);
+    assert.equal(saved[0][3], payload);
+    assert.equal(result.emailed, delivered);
+    assert.equal(sent[0].to, 'whossteering@gmail.com');
+    assert.equal(sent[0].replyTo, 'driver@example.test');
+    assert.match(sent[0].subject, /fitment inquiry/);
+    assert.match(sent[0].html, /https:\/\/example.test\/wheel.jpg/);
+    assert.match(sent[0].html, /&lt;Leather&gt;/);
+    assert.match(sent[0].html, /2020 M3/);
+    assert.match(sent[0].idempotencyKey, /^fitment-/);
+  });
+}
