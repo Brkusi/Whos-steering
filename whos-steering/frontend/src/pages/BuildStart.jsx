@@ -6,7 +6,7 @@ import { WHEEL_STYLES } from '../lib/wheelStyles';
 import { bmwVehicleFamilies } from '../lib/bmwVehicleFamilies';
 import VehicleYearModelFields from '../components/VehicleYearModelFields';
 import './BuildStart.css';
-import {AirbagSpecial,WheelDiscountTag,WheelPrice} from '../components/BlackFriday';
+import {AirbagSpecial,AirbagDiscountTag,WheelDiscountTag,WheelPrice} from '../components/BlackFriday';
 import { INFINITI_AIRBAG_PRODUCTS } from '../lib/infinitiAirbagConfiguration';
 
 const BUILD_MAKES = [...VEHICLE_MAKES, {value:'INFINITI',label:'Infiniti'}];
@@ -81,14 +81,14 @@ export default function BuildStart() {
         </div>}
         {make === 'INFINITI' && Object.values(INFINITI_AIRBAG_PRODUCTS).map(product => <Link key={product.id} to={product.route} className="build-airbag-option">
           <img src={`/models/${product.artwork}/leather.png`} alt={`${product.label} airbag`} />
-          <div><span>CONFIGURE AIRBAG COVERS</span><h2>{product.label}</h2><AirbagSpecial/><p>Customize leather or Alcantara, stitching and the Infiniti emblem.</p></div><b aria-hidden="true">→</b>
+          <div className="build-airbag-option__details"><AirbagDiscountTag/><h2>{product.label}</h2><AirbagSpecial showTag={false}/><p>Customize leather or Alcantara, stitching and the Infiniti emblem.</p></div><span className="build-airbag-option__action">CUSTOMIZE <b aria-hidden="true">→</b></span>
         </Link>)}
 
         <div className="build-start__grid">
           {matchingWheels.map(wheel => (
             <button type="button" className="build-brand-card" key={`${wheel.brand}-${wheel.style}`} onClick={() => startBuild(wheel)}>
               <div className="build-brand-card__media">
-                <img src={wheel.image} alt={`${/^(Audi|BMW)\b/.test(wheel.label) ? '' : `${BUILD_MAKES.find(item => item.value === wheel.brand)?.label} `}${wheel.label} steering wheel`} loading="lazy" />
+                <img src={wheel.brand === 'AUDI' && wheel.style === 'R8' ? wheel.showroomImage : wheel.image} alt={`${/^(Audi|BMW)\b/.test(wheel.label) ? '' : `${BUILD_MAKES.find(item => item.value === wheel.brand)?.label} `}${wheel.label} steering wheel`} loading="lazy" />
                 {(wheel.imageOverlays || (wheel.imageOverlay ? [wheel.imageOverlay] : [])).map(src => <img key={src} className="build-brand-card__overlay" src={src} alt="" aria-hidden="true" loading="lazy" />)}
                 <div className="bf-card-tag"><WheelDiscountTag/></div><span className="build-brand-card__badge">{BUILD_MAKES.find(item => item.value === wheel.brand)?.label}</span>
                 <span className="build-brand-card__corner" aria-hidden="true" />
