@@ -1,4 +1,4 @@
-const FINISH_EXTRAS = Object.freeze({'Classic':0,'Regular Color':0,'Classic Carbon':1999,'Forged Carbon':1999,'Carbon color':1999,LED:7999});
+const FINISH_EXTRAS = Object.freeze({'Classic':0,'Regular Color':0,'Classic Carbon':1999,'Honeycomb Carbon':1999,'Forged Carbon':1999,'Carbon color':1999,LED:7999});
 const FITMENTS = {'infiniti-g37':['G37',''], 'infiniti-q50-2014-2017':['Q50','2014–2017'], 'infiniti-q60-2017-q50-2018':['Q60 / Q50','Q60 2017+ / Q50 2018+']};
 function airbagPriceCents(cfg) {
   const fitment = FITMENTS[cfg.airbagProductId];

@@ -56,7 +56,7 @@ test('cart snapshots keep every airbag selection and exact finish price', () => 
 
 test('newer cover stores its own fitment and keeps identical pricing across finishes', () => {
  const {infinitiAirbagCartItem} = require('./infinitiAirbagConfiguration');
- for (const infinitiLogoFinish of ['Classic','Regular Color','Carbon color','Classic Carbon','Forged Carbon','LED']) {
+ for (const infinitiLogoFinish of ['Classic','Honeycomb Carbon','Regular Color','Carbon color','Classic Carbon','Forged Carbon','LED']) {
   const config = {infinitiLogoFinish};
   const newer = infinitiAirbagCartItem(config,'infiniti-q60-2017-q50-2018');
   expect(newer.price).toBe(infinitiAirbagCartItem(config).price);
@@ -67,7 +67,7 @@ test('newer cover stores its own fitment and keeps identical pricing across fini
 
 test('G37 cover keeps all finishes at shared prices and its own cart identity',()=>{
  const {infinitiAirbagCartItem}=require('./infinitiAirbagConfiguration');
- for (const infinitiLogoFinish of ['Classic','Regular Color','Carbon color','Classic Carbon','Forged Carbon','LED']) {
+ for (const infinitiLogoFinish of ['Classic','Honeycomb Carbon','Regular Color','Carbon color','Classic Carbon','Forged Carbon','LED']) {
   const config={infinitiLogoFinish,airbagMat:'Alcantara'};
   const g37=infinitiAirbagCartItem(config,'infiniti-g37');
   expect(g37.price).toBe(infinitiAirbagCartItem(config).price);
@@ -86,5 +86,16 @@ test('Classic keeps a chrome emblem and included pricing through cart creation',
   expect(item.price).toBe(159.99);
   expect(item.config.infinitiLogoFinish).toBe('Classic');
   expect(item.detail).toContain('Classic · Chrome');
+ }
+});
+
+
+test('Honeycomb Carbon preserves its finish and carbon surcharge across fitments', () => {
+ const config=normalizeInfinitiAirbag({infinitiLogoFinish:'Honeycomb Carbon'});
+ expect(infinitiAirbagSummary(config)).toMatchObject({logoFinish:'Honeycomb Carbon',logoColor:'Black Honeycomb'});
+ for(const id of ['infiniti-q50-2014-2017','infiniti-q60-2017-q50-2018','infiniti-g37']) {
+  const item=infinitiAirbagCartItem(config,id);
+  expect(item.price).toBe(179.98);
+  expect(item.config.infinitiLogoFinish).toBe('Honeycomb Carbon');
  }
 });

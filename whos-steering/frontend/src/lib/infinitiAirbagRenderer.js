@@ -70,7 +70,8 @@ async function master(productId) {
     const embossBroad = blurAirbagLuminance(original, c.width, c.height, 22);
     ctx.clearRect(0, 0, c.width, c.height); ctx.fillStyle = '#fff'; ctx.fill(new Path2D(g.path), 'evenodd');
     const logo = ctx.getImageData(0, 0, c.width, c.height).data;
-    ledReliefs.set(product.id, buildLedRelief(logo, g));
+    const emblemRelief = buildLedRelief(logo, g);
+    ledReliefs.set(product.id, emblemRelief);
     // Measured seam positions at regular rows in the neutral master. The
     // corridor includes both rows; luminance selects only raised thread.
     const seamRows = g.seams || [[125,185,202,1236,1256],[150,173,195,1242,1264],[200,162,191,1244,1274],[250,164,196,1240,1271],[300,172,201,1234,1265],[350,180,211,1225,1256],[400,192,222,1215,1245],[450,205,235,1202,1231],[500,220,249,1189,1218],[550,236,265,1173,1203],[600,253,282,1158,1187],[650,270,299,1141,1170],[700,288,318,1124,1153],[750,307,337,1106,1135],[800,328,357,1086,1116],[850,348,378,1067,1096],[900,369,398,1046,1075],[950,390,419,1023,1053],[1000,413,440,1000,1029],[1045,440,463,982,1009]];
@@ -107,7 +108,7 @@ async function master(productId) {
       emboss[n] = (depthSource[n]*4 + (depthSource[n-1]+depthSource[n+1]+depthSource[n-w]+depthSource[n+w])*2 + depthSource[n-w-1]+depthSource[n-w+1]+depthSource[n+w-1]+depthSource[n+w+1])/16;
     }
     }
-    return { original, logoLighting, logo, stitch, texture, emboss };
+    return { original, logoLighting, logo, stitch, texture, emboss, emblemRelief };
   })().catch(error => { masters.delete(product.id); throw error; }));
   return masters.get(product.id);
 }
@@ -115,7 +116,7 @@ export async function renderInfinitiAirbag(target, config, productId) {
   const g = geometry(productId), cfg = normalizeInfinitiAirbag(config), m = await master(productId);
   const swatch = infinitiLogoPalette(cfg.infinitiLogoFinish).find(v => v.h === cfg.infinitiLogoCol);
   let carbon;
-  const textureSize = cfg.infinitiLogoFinish === 'Forged Carbon' ? 160 : 256;
+  const textureSize = ['Forged Carbon','Honeycomb Carbon'].includes(cfg.infinitiLogoFinish) ? 160 : 256;
   if (swatch.img) {
     const im = await load(swatch.img), tile = document.createElement('canvas'); tile.width = tile.height = textureSize;
     const tc = tile.getContext('2d', { willReadFrequently: true }); tc.drawImage(im, 0, 0, textureSize, textureSize); carbon = tc.getImageData(0, 0, textureSize, textureSize).data;
@@ -161,18 +162,25 @@ export async function renderInfinitiAirbag(target, config, productId) {
       const emblemLight = cfg.infinitiLogoFinish === 'Carbon color' ? m.original[i] : m.logoLighting[n];
       const reflect = carbon ? carbon[ci + ch] : emblem[ch] * Math.min(1, .58 + emblemLight / 500);
       const lit = ledStops[ledSegment][ch] * (1 - ledMix) + ledStops[ledSegment + 1][ch] * ledMix;
-      // Smooth mirror bands and the photographed relief give Classic a
-      // neutral chrome reflection without the carbon texture.
-      const chromePosition = clamp((y - g.region[1]) / g.region[3]);
-      const chromeBand = chromePosition < .46 ? 245 - chromePosition * 150 : chromePosition < .53 ? 65 + (chromePosition - .46) * 500 : 155 + (chromePosition - .53) * 190;
-      const chrome = Math.min(255, Math.max(35, chromeBand + (m.logoLighting[n] - 130) * .35));
-      const finish = cfg.infinitiLogoFinish === 'Classic' ? chrome : cfg.infinitiLogoFinish === 'Carbon color' ? reflect : cfg.infinitiLogoFinish === 'LED'
+      // Curved environmental reflections follow the polished badge face,
+      // with bright softboxes and darker, slightly cool reflected surroundings.
+      const u = (x - g.rim[0]) / g.rim[2], v = (y - g.rim[1]) / g.rim[3];
+      const horizon = .22 + .22 * Math.cos(u * 3.4) + .045 * Math.sin(u * 19);
+      const faceReflection = clamp((v + .35 + .2 * Math.abs(u)) * 14) * clamp((horizon + .35 - v) * 18);
+      const sky = Math.max(faceReflection, clamp((-v - .72) * 12) * .88);
+      const leftGlint = Math.exp(-((u + .78) ** 2 / .012 + (v - .12) ** 2 / .13));
+      const rightGlint = Math.exp(-((u - .75) ** 2 / .025 + (v - .3) ** 2 / .07));
+      const glint = Math.min(1, leftGlint + rightGlint);
+      const chrome = Math.min(255, Math.max(18, 28 + sky * 211 + glint * 180 + clamp((v-.68)*5) * 65 + (m.logoLighting[n]-130)*.24 + (ch===2 ? (1-sky)*11 : 0)));
+      const honeycomb = reflect * (.48 + m.logoLighting[n] / 1000) + glint * 185 + highlight * 60;
+      const finish = cfg.infinitiLogoFinish === 'Classic' ? chrome : cfg.infinitiLogoFinish === 'Honeycomb Carbon' ? honeycomb : cfg.infinitiLogoFinish === 'Carbon color' ? reflect : cfg.infinitiLogoFinish === 'LED'
         ? lit
         : reflect * (1 - highlight * .28) + 250 * highlight * .28;
       p[i + ch] = value * (1 - logo) + finish * logo;
     }
   }
   ctx.putImageData(pixels, 0, 0);
+  if (['Classic','Honeycomb Carbon'].includes(cfg.infinitiLogoFinish)) ctx.drawImage(m.emblemRelief, g.region[0], g.region[1]);
   target.width = out.width; target.height = out.height;
   target.getContext('2d').drawImage(out, 0, 0);
   return target;
