@@ -132,7 +132,7 @@ function PresetCard({ preset, onOpen }) {
         {total > 1 && <div style={{ zIndex: 20, position: 'absolute', top: 0, left: 0, bottom: 0, display: 'flex', alignItems: 'center', paddingLeft: 0 }}><ArrowBtn dir="left" onClick={() => setImgIdx(i => (i - 1 + total) % total)} /></div>}
         {total > 1 && <div style={{ zIndex: 20, position: 'absolute', top: 0, right: 0, bottom: 0, display: 'flex', alignItems: 'center', paddingRight: 0 }}><ArrowBtn dir="right" onClick={() => setImgIdx(i => (i + 1) % total)} /></div>}
         <div style={{ position: 'absolute', top: 12, left: 12, background: 'var(--y)', color: '#000', fontFamily: 'Arial, sans-serif', fontSize: 14, fontWeight: 700, padding: '3px 8px', letterSpacing: 1, zIndex: 5 }}>{preset.brand}</div>
-        <div style={{ position: 'absolute', top: 12, right: 12, background: '#1A3A1A', color: '#3DB85A', fontFamily: 'Arial, sans-serif', fontSize: 14, fontWeight: 700, padding: '3px 8px', letterSpacing: 1, border: '1px solid #3DB85A', zIndex: 5 }}>{preset.statusBadge || 'PRESET'}</div>
+        <div className="catalog-status-badge" style={{ position: 'absolute', bottom: 12, left: 12, background: '#1A3A1A', color: '#3DB85A', fontFamily: 'Arial, sans-serif', fontSize: 14, fontWeight: 700, padding: '3px 8px', letterSpacing: 1, border: '1px solid #3DB85A', zIndex: 5 }}>{preset.statusBadge || 'PRESET'}</div>
         {total > 1 && (
           <div style={{ position: 'absolute', bottom: 10, left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: 5, zIndex: 5 }}>
             {preset.images.map((_, i) => (
