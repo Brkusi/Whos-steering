@@ -161,7 +161,12 @@ export async function renderInfinitiAirbag(target, config, productId) {
       const emblemLight = cfg.infinitiLogoFinish === 'Carbon color' ? m.original[i] : m.logoLighting[n];
       const reflect = carbon ? carbon[ci + ch] : emblem[ch] * Math.min(1, .58 + emblemLight / 500);
       const lit = ledStops[ledSegment][ch] * (1 - ledMix) + ledStops[ledSegment + 1][ch] * ledMix;
-      const finish = cfg.infinitiLogoFinish === 'Carbon color' ? reflect : cfg.infinitiLogoFinish === 'LED'
+      // Smooth mirror bands and the photographed relief give Classic a
+      // neutral chrome reflection without the carbon texture.
+      const chromePosition = clamp((y - g.region[1]) / g.region[3]);
+      const chromeBand = chromePosition < .46 ? 245 - chromePosition * 150 : chromePosition < .53 ? 65 + (chromePosition - .46) * 500 : 155 + (chromePosition - .53) * 190;
+      const chrome = Math.min(255, Math.max(35, chromeBand + (m.logoLighting[n] - 130) * .35));
+      const finish = cfg.infinitiLogoFinish === 'Classic' ? chrome : cfg.infinitiLogoFinish === 'Carbon color' ? reflect : cfg.infinitiLogoFinish === 'LED'
         ? lit
         : reflect * (1 - highlight * .28) + 250 * highlight * .28;
       p[i + ch] = value * (1 - logo) + finish * logo;

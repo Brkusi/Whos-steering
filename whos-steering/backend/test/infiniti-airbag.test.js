@@ -3,7 +3,7 @@ const assert=require('node:assert/strict');
 const {airbagPriceCents}=require('../lib/infiniti-airbag');
 const base={productType:'airbag-cover',airbagProductId:'infiniti-q50-2014-2017',brand:'INFINITI',vehicleModel:'Q50',vehicleYear:'2014–2017',airbagMat:'Alcantara',airbagCol:'#111111',airbagStitchColor:'#FFFFFF',infinitiLogoCol:'#A020F0'};
 test('server prices every airbag finish independently of browser price',()=>{
- for(const [infinitiLogoFinish,price] of Object.entries({'Regular Color':15999,'Classic Carbon':17998,'Forged Carbon':17998,'Carbon color':17998,LED:23998})) {
+ for(const [infinitiLogoFinish,price] of Object.entries({'Classic':15999,'Regular Color':15999,'Classic Carbon':17998,'Forged Carbon':17998,'Carbon color':17998,LED:23998})) {
   for(const airbagMat of ['Alcantara','Smooth Leather']) assert.equal(airbagPriceCents({...base,airbagMat,infinitiLogoFinish,price:1}),price);
  }
 });
@@ -39,7 +39,7 @@ test('checkout saves complete cover config and charges server amount, with promo
 
 test('newer cover receives identical authoritative pricing and rejects crossed fitments',()=>{
  const newer={...base,airbagProductId:'infiniti-q60-2017-q50-2018',vehicleModel:'Q60 / Q50',vehicleYear:'Q60 2017+ / Q50 2018+'};
- for(const [infinitiLogoFinish,price] of Object.entries({'Regular Color':15999,'Classic Carbon':17998,'Forged Carbon':17998,'Carbon color':17998,LED:23998})) {
+ for(const [infinitiLogoFinish,price] of Object.entries({'Classic':15999,'Regular Color':15999,'Classic Carbon':17998,'Forged Carbon':17998,'Carbon color':17998,LED:23998})) {
   assert.equal(airbagPriceCents({...newer,infinitiLogoFinish,price:1}),price);
   assert.throws(()=>airbagPriceCents({...newer,infinitiLogoFinish,vehicleYear:base.vehicleYear}));
   assert.throws(()=>airbagPriceCents({...base,infinitiLogoFinish,airbagProductId:newer.airbagProductId}));
@@ -48,7 +48,7 @@ test('newer cover receives identical authoritative pricing and rejects crossed f
 
 test('G37 has shared server prices and cannot use Q50 or Q60 fitment data',()=>{
  const g37={...base,airbagProductId:'infiniti-g37',vehicleModel:'G37',vehicleYear:''};
- for(const [infinitiLogoFinish,price] of Object.entries({'Regular Color':15999,'Classic Carbon':17998,'Forged Carbon':17998,'Carbon color':17998,LED:23998})) {
+ for(const [infinitiLogoFinish,price] of Object.entries({'Classic':15999,'Regular Color':15999,'Classic Carbon':17998,'Forged Carbon':17998,'Carbon color':17998,LED:23998})) {
   assert.equal(airbagPriceCents({...g37,infinitiLogoFinish,price:1}),price);
   for(const patch of [{vehicleModel:'Q50'},{vehicleModel:'Q60 / Q50'},{vehicleYear:'2014–2017'},{airbagProductId:base.airbagProductId}]) assert.throws(()=>airbagPriceCents({...g37,infinitiLogoFinish,...patch}));
  }

@@ -63,6 +63,7 @@ export function InfinitiAirbagOptions({ config, onChange }) {
       {INFINITI_LOGO_FINISHES.map(finish => <button type="button" key={finish} className={`ob${cfg.infinitiLogoFinish === finish ? ' on' : ''}`} aria-pressed={cfg.infinitiLogoFinish === finish} onClick={() => change({ infinitiLogoFinish: finish, infinitiLogoCol: infinitiLogoPalette(finish)[0].h })}>{finish}<small>{infinitiEmblemExtraCents(finish) ? `+${airbagMoney(infinitiEmblemExtraCents(finish))}` : 'Included'}</small></button>)}
     </div></fieldset>
     {cfg.infinitiLogoFinish === 'LED' && <div className="infiniti-led-notice" role="note"><strong>Bluetooth RGB LED</strong><p>{INFINITI_LED_NOTICE}</p></div>}
-    {cfg.infinitiLogoFinish !== 'LED' && <Swatches label="Infiniti logo color" colors={infinitiLogoPalette(cfg.infinitiLogoFinish)} value={cfg.infinitiLogoCol} onChange={infinitiLogoCol => change({ infinitiLogoCol })} />}
+    {cfg.infinitiLogoFinish === 'Classic' && <p className="infiniti-led-notice">Chrome Infiniti emblem</p>}
+    {!['LED','Classic'].includes(cfg.infinitiLogoFinish) && <Swatches label="Infiniti logo color" colors={infinitiLogoPalette(cfg.infinitiLogoFinish)} value={cfg.infinitiLogoCol} onChange={infinitiLogoCol => change({ infinitiLogoCol })} />}
   </div>;
 }

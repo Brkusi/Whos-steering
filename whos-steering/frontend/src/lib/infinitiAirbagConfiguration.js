@@ -11,13 +11,14 @@ export const INFINITI_AIRBAG_DEFAULTS = {
   airbagMat: 'Smooth Leather', airbagCol: '#111111', airbagStitchColor: '#0A1F6E',
   infinitiLogoFinish: 'Regular Color', infinitiLogoCol: '#111111',
 };
-export const INFINITI_LOGO_FINISHES = ['Classic Carbon', 'Forged Carbon', 'Regular Color', 'Carbon color', 'LED'];
+export const INFINITI_LOGO_FINISHES = ['Classic', 'Classic Carbon', 'Forged Carbon', 'Regular Color', 'Carbon color', 'LED'];
+export const INFINITI_CHROME_COLORS = [{n:'Chrome',h:'#C0C0C0'}];
 export const INFINITI_LED_COLORS = [{n:'Blue / Purple / Pink',h:'#A020F0'}];
 export const INFINITI_AIRBAG_BASE_CENTS = 15999;
 export const infinitiEmblemExtraCents = finish => finish === 'LED' ? 7999 : ['Classic Carbon', 'Forged Carbon', 'Carbon color'].includes(finish) ? 1999 : 0;
 export const infinitiAirbagPrice = config => { const base = INFINITI_AIRBAG_BASE_CENTS, emblem = infinitiEmblemExtraCents(normalizeInfinitiAirbag(config).infinitiLogoFinish); return {base,emblem,total:base+emblem}; };
 export const airbagMoney = cents => new Intl.NumberFormat('en-US',{style:'currency',currency:'USD'}).format(cents/100);
-export const infinitiLogoPalette = finish => finish === 'LED' ? INFINITI_LED_COLORS : finish === 'Forged Carbon' ? FORGED_CARBON_COLORS : ['Regular Color', 'Carbon color'].includes(finish) ? COLORS : CLASSIC_CARBON_COLORS;
+export const infinitiLogoPalette = finish => finish === 'Classic' ? INFINITI_CHROME_COLORS : finish === 'LED' ? INFINITI_LED_COLORS : finish === 'Forged Carbon' ? FORGED_CARBON_COLORS : ['Regular Color', 'Carbon color'].includes(finish) ? COLORS : CLASSIC_CARBON_COLORS;
 export function normalizeInfinitiAirbag(config = {}) {
   const finish = INFINITI_LOGO_FINISHES.includes(config.infinitiLogoFinish) ? config.infinitiLogoFinish : INFINITI_AIRBAG_DEFAULTS.infinitiLogoFinish;
   const palette = infinitiLogoPalette(finish);

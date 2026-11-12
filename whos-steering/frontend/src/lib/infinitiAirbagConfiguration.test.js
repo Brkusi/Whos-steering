@@ -1,5 +1,5 @@
 import { COLORS, STITCH_COLORS, CLASSIC_CARBON_COLORS, FORGED_CARBON_COLORS } from './data';
-import { normalizeInfinitiAirbag, infinitiLogoPalette, isInfinitiQ50Airbag, infinitiAirbagSummary } from './infinitiAirbagConfiguration';
+import { normalizeInfinitiAirbag, infinitiLogoPalette, isInfinitiQ50Airbag, infinitiAirbagSummary, infinitiAirbagCartItem } from './infinitiAirbagConfiguration';
 test('emblem choices reuse exact production palettes', () => {
   expect(infinitiLogoPalette('Classic Carbon')).toBe(CLASSIC_CARBON_COLORS);
   expect(infinitiLogoPalette('Forged Carbon')).toBe(FORGED_CARBON_COLORS);
@@ -56,7 +56,7 @@ test('cart snapshots keep every airbag selection and exact finish price', () => 
 
 test('newer cover stores its own fitment and keeps identical pricing across finishes', () => {
  const {infinitiAirbagCartItem} = require('./infinitiAirbagConfiguration');
- for (const infinitiLogoFinish of ['Regular Color','Carbon color','Classic Carbon','Forged Carbon','LED']) {
+ for (const infinitiLogoFinish of ['Classic','Regular Color','Carbon color','Classic Carbon','Forged Carbon','LED']) {
   const config = {infinitiLogoFinish};
   const newer = infinitiAirbagCartItem(config,'infiniti-q60-2017-q50-2018');
   expect(newer.price).toBe(infinitiAirbagCartItem(config).price);
@@ -67,11 +67,24 @@ test('newer cover stores its own fitment and keeps identical pricing across fini
 
 test('G37 cover keeps all finishes at shared prices and its own cart identity',()=>{
  const {infinitiAirbagCartItem}=require('./infinitiAirbagConfiguration');
- for (const infinitiLogoFinish of ['Regular Color','Carbon color','Classic Carbon','Forged Carbon','LED']) {
+ for (const infinitiLogoFinish of ['Classic','Regular Color','Carbon color','Classic Carbon','Forged Carbon','LED']) {
   const config={infinitiLogoFinish,airbagMat:'Alcantara'};
   const g37=infinitiAirbagCartItem(config,'infiniti-g37');
   expect(g37.price).toBe(infinitiAirbagCartItem(config).price);
   expect(g37.name).toBe('Infiniti G37 Custom Airbag Cover');
   expect(g37.config).toMatchObject({airbagProductId:'infiniti-g37',vehicleModel:'G37',vehicleYear:'',airbagMat:'Alcantara'});
+ }
+});
+
+
+test('Classic keeps a chrome emblem and included pricing through cart creation', () => {
+ const config=normalizeInfinitiAirbag({infinitiLogoFinish:'Classic',infinitiLogoCol:'#FF0000'});
+ expect(config).toMatchObject({infinitiLogoFinish:'Classic',infinitiLogoCol:'#C0C0C0'});
+ expect(infinitiAirbagSummary(config)).toMatchObject({logoFinish:'Classic',logoColor:'Chrome'});
+ for(const id of ['infiniti-q50-2014-2017','infiniti-q60-2017-q50-2018','infiniti-g37']) {
+  const item=infinitiAirbagCartItem(config,id);
+  expect(item.price).toBe(159.99);
+  expect(item.config.infinitiLogoFinish).toBe('Classic');
+  expect(item.detail).toContain('Classic · Chrome');
  }
 });

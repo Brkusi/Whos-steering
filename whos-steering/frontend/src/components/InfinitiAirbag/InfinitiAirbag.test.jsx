@@ -12,3 +12,10 @@ test('LED selection shows wiring notice; other finishes do not', () => {
   expect(regular).not.toContain('must be wired properly');
   expect(regular).toContain('Included');
 });
+
+test('Classic is a separate included chrome finish with no color choices', () => {
+ const html=renderToStaticMarkup(<InfinitiAirbagOptions config={{infinitiLogoFinish:'Classic'}} onChange={()=>{}} />);
+ expect(html).toContain('Chrome Infiniti emblem');
+ expect(html).toContain('aria-pressed="true">Classic<small>Included');
+ expect(html).not.toContain('aria-label="Infiniti logo color:');
+});
