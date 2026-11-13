@@ -1,4 +1,5 @@
 import {customWheelPrice,blackFridayActive} from './blackFriday';
+import {CLUSTER_PATH,CLUSTER_NAME,CLUSTER_IMAGE} from './digitalCluster';
 import {WHEEL_STYLES} from './wheelStyles';
 import {BMW_PRESETS,AUDI_PRESETS_FULL,INFINITI_PRESETS} from './data';
 export const SITE='https://whossteering.com';
@@ -50,6 +51,10 @@ export function seoForRoute(pathname,search=''){
     schema.push({'@type':'CollectionPage',name:title,url:canonicalUrl(path),description,mainEntity:{'@type':'ItemList',itemListElement:products.map((p,i)=>({'@type':'ListItem',position:i+1,url:canonicalUrl(p.path),name:p.name}))}});
    }
   }
+ }else if(pathname===CLUSTER_PATH){
+  title=CLUSTER_NAME+' · 2012–2018 | Who’s Steering';description='Explore the 12.3-inch Audi A6/A7 C7 Digital Instrument Cluster with four UI themes, wireless smartphone connectivity and factory integration. Join the availability waitlist.';image=CLUSTER_IMAGE;
+  schema.push({'@type':'Product',name:CLUSTER_NAME,description,image:[SITE+CLUSTER_IMAGE],sku:'audi-a6-a7-c7-digital-cluster',brand:{'@type':'Brand',name:"Who's Steering?"}});
+  crumbs.push({name:'Store',path:'/catalog'},{name:CLUSTER_NAME,path:CLUSTER_PATH});
  }else if(pathname==='/catalog'){
   const product=SHOP_PRODUCTS.find(item=>item.id===params.get('preset'));
   const guide=brandGuide(params.get('brand'));

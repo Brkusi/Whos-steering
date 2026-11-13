@@ -19,6 +19,8 @@ const React=require('react'),{renderToString}=require('react-dom/server'),{Stati
 const {AuthProvider,CartProvider}=require('../src/context/index.jsx');
 const Nav=require('../src/components/Nav.jsx').default,Footer=require('../src/components/Footer.jsx').default;
 const Home=require('../src/pages/Home.jsx').default,Catalog=require('../src/pages/Catalog.jsx').default,Build=require('../src/pages/BuildStart.jsx').default;
+const DigitalCluster=require('../src/pages/DigitalCluster.jsx').default;
+const {CLUSTER_PATH}=require('../src/lib/digitalCluster.js');
 const Landing=require('../src/pages/SeoLanding.jsx').default;
 const {Routes,Route}=require('react-router-dom');
 const {BRAND_GUIDES,SHOP_PRODUCTS,seoForRoute,canonicalUrl}=require('../src/lib/seoCatalog.js');
@@ -36,16 +38,16 @@ function documentFor(url,render){
  const imageMeta='<meta property="og:image:alt" content="Who’s Steering company logo"/><meta name="twitter:image:alt" content="Who’s Steering company logo"/>';
  html=html.replace('</head>',head+imageMeta+(url==='/'&&homeCss?`<link rel="stylesheet" href="${homeCss}"/>`:'')+'</head>');
  if(render){
-  const Page=url==='/'?Home:url==='/catalog'?Catalog:url==='/build'?Build:null;
+  const Page=url==='/'?Home:url==='/catalog'?Catalog:url==='/build'?Build:url===CLUSTER_PATH?DigitalCluster:null;
   const content=React.createElement(StaticRouter,{location:url},React.createElement(AuthProvider,null,React.createElement(CartProvider,null,React.createElement(Nav),Page?React.createElement(Page):React.createElement(Routes,null,React.createElement(Route,{path:'/steering-wheels/:brand/:slug?',element:React.createElement(Landing)})),React.createElement(Footer))));
   html=html.replace('<div id="root"></div>',`<div id="root">${renderToString(content)}</div>`);
  }
  return html;
 }
-const indexed=['/','/catalog','/build','/contact','/shipping','/refund-policy','/payment-policy','/privacy','/terms',...BRAND_GUIDES.map(b=>'/steering-wheels/'+b.slug),...SHOP_PRODUCTS.map(p=>p.path)];
+const indexed=['/','/catalog',CLUSTER_PATH,'/build','/contact','/shipping','/refund-policy','/payment-policy','/privacy','/terms',...BRAND_GUIDES.map(b=>'/steering-wheels/'+b.slug),...SHOP_PRODUCTS.map(p=>p.path)];
 if(new Set(indexed).size!==indexed.length)throw new Error('Duplicate SEO paths');
 for(const url of indexed){
- const target=path.join(build,url==='/'?'index.html':url.slice(1)+'/index.html');fs.mkdirSync(path.dirname(target),{recursive:true});fs.writeFileSync(target,documentFor(url,url==='/'||url==='/catalog'||url==='/build'||url.startsWith('/steering-wheels/')));
+ const target=path.join(build,url==='/'?'index.html':url.slice(1)+'/index.html');fs.mkdirSync(path.dirname(target),{recursive:true});fs.writeFileSync(target,documentFor(url,url==='/'||url==='/catalog'||url===CLUSTER_PATH||url==='/build'||url.startsWith('/steering-wheels/')));
 }
 for(const url of ['/login','/account','/admin','/checkout','/configure','/configure/infiniti-q50-airbag','/configure/infiniti-q60-q50-airbag','/configure/infiniti-g37-airbag','/track-order','/resume','/unsubscribe','/order-confirmation','/custom-order-confirmation']){
  const target=path.join(build,url.slice(1),'index.html');fs.mkdirSync(path.dirname(target),{recursive:true});fs.writeFileSync(target,documentFor(url,false));

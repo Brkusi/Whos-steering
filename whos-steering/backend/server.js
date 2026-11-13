@@ -116,6 +116,7 @@ app.use('/api/auth/', rateLimit({ windowMs: 15 * 60 * 1000, max: 20  }));
 app.use('/api/orders/track', rateLimit({ windowMs: 15 * 60 * 1000, max: 30 }));
 
 // ── Routes ────────────────────────────────────────────────────
+app.use('/api/waitlist',require('./routes/waitlist'));
 app.use('/api/newsletter',require('./routes/newsletter'));
 app.use('/api/sales', require('./routes/sales'));
 app.use('/api/contact', require('./routes/contact'));

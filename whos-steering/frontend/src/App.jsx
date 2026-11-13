@@ -14,6 +14,7 @@ const ResumeBuild = lazy(() => import('./pages/ResumeBuild'));
 const SeoLanding = lazy(() => import('./pages/SeoLanding'));
 const Home              = lazy(() => import('./pages/Home'));
 const Catalog           = lazy(() => import('./pages/Catalog'));
+const DigitalCluster = lazy(() => import('./pages/DigitalCluster'));
 const Product           = lazy(() => import('./pages/Product'));
 const BuildStart        = lazy(() => import('./pages/BuildStart'));
 const InfinitiAirbagModulePreview = lazy(() => import('./pages/InfinitiAirbagPreview'));
@@ -47,6 +48,7 @@ export default function App() {
               <Route path="/"                   element={<Home />} />
               <Route path="/steering-wheels/:brand/:slug?" element={<SeoLanding />} />
               <Route path="/catalog"            element={<Catalog />} />
+              <Route path="/products/audi-a6-a7-digital-instrument-cluster" element={<DigitalCluster />} />
               <Route path="/catalog/:id"        element={<Product />} />
               <Route path="/build"              element={<BuildStart />} />
               <Route path="/configure/infiniti-g37-airbag" element={<InfinitiAirbagModulePreview key="g37-airbag" productId="infiniti-g37" />} />

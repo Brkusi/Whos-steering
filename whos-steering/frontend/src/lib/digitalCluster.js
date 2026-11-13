@@ -1,0 +1,9 @@
+export const CLUSTER_PATH = '/products/audi-a6-a7-digital-instrument-cluster';
+export const CLUSTER_IMAGE = '/products/digital-instrument-cluster/cluster.png';
+export const CLUSTER_NAME = 'Audi A6/A7 Digital Instrument Cluster';
+export const CLUSTER_PRODUCT = 'audi-a6-a7-c7-digital-cluster';
+export const CLUSTER_FEATURES = [
+  {id:'display',label:'Display & themes',short:'12.3-inch IPS · Four themes',x:30,y:43,scale:2.05,title:'A new view of every drive.',description:'A 12.3-inch IPS HD display with 1920 × 720 resolution and 2K visual support brings your vehicle data into focus. Switch between four digital cockpit themes to suit your drive.',options:['Sport','Classic','Map','Tech'],detail:'A dedicated automotive Linux operating system delivers fast boot times and a responsive interface.'},
+  {id:'connectivity',label:'Connected cockpit',short:'Wireless navigation & media',x:50,y:42,scale:2.55,title:'Your phone. Front and center.',description:'Wireless Apple CarPlay, Android Auto, AirPlay and HiCar bring navigation, music and voice assistants into the digital cockpit.',options:['Apple CarPlay','Android Auto','AirPlay','HiCar'],detail:'HDMI input supports screen mirroring and external video sources. Factory HUD projection and high-definition reversing camera input are supported.'},
+  {id:'integration',label:'Factory integration',short:'MLB platform · OEM fit',x:71,y:43,scale:2.05,title:'Made to feel right at home.',description:'Engineered for the Audi MLB platform — A6/A7 C7 (4G8), model years 2012–2018 — with synchronization to the original electronic protocols and vehicle bus system.',options:['Steering wheel controls','Factory menus & settings','Vehicle safety alerts','Original mainboard retained'],detail:'Retains the factory motherboard, vehicle information and diagnostic history. Fits the original mounting points without modifying the dashboard structure or wiring harnesses.'},
+];
