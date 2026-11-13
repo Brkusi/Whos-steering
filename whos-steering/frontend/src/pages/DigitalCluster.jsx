@@ -16,10 +16,12 @@ export default function DigitalCluster(){
  const [viewIndex,setViewIndex]=useState(0);
  const [imageState,setImageState]=useState('ready');
  const [imageRetry,setImageRetry]=useState(0);
+ const [previousImage,setPreviousImage]=useState(null);
  const view=CLUSTER_VIEWS[viewIndex];
  const features=view.features;
- useEffect(()=>{const next=new Image();next.src=CLUSTER_VIEWS[(viewIndex+1)%CLUSTER_VIEWS.length].image;},[viewIndex]);
- function changeView(direction){setActive(null);setImageState('loading');setImageRetry(0);setViewIndex(index=>(index+direction+CLUSTER_VIEWS.length)%CLUSTER_VIEWS.length);}
+ useEffect(()=>{CLUSTER_VIEWS.slice(1).forEach(item=>{const image=new Image();image.src=item.image;});},[]);
+ useEffect(()=>{if(!active)return;const dismiss=event=>{if(!(event.target instanceof Element)||event.target.closest('.cluster-hotspot, .cluster-feature-nav, .cluster-popover'))return;setActive(null);};document.addEventListener('click',dismiss);return ()=>document.removeEventListener('click',dismiss);},[active]);
+ function changeView(direction){setPreviousImage(view.image);setActive(null);setImageState('loading');setImageRetry(0);setViewIndex(index=>(index+direction+CLUSTER_VIEWS.length)%CLUSTER_VIEWS.length);}
  const [params]=useSearchParams();
  const [formOpen,setFormOpen]=useState(params.get('waitlist')==='1');
  const [form,setForm]=useState({name:'',email:'',vehicle:'',consent:false});
@@ -47,20 +49,21 @@ export default function DigitalCluster(){
     <div className="cluster-view-label"><span>EXPLORE THE SYSTEM</span><span className="cluster-view-name" role="status">{view.label} · {viewIndex+1} / {CLUSTER_VIEWS.length}</span></div>
     <div className={`cluster-viewport${detail?' is-focused':''}`} aria-busy={imageState==='loading'}>
      <div className="cluster-image-layer" style={{transform:detail?`translate(${(50-detail.x)*detail.scale}%, ${(50-detail.y)*detail.scale}%) scale(${detail.scale})`:'translate(0%, 0%) scale(1)'}}>
-      <img key={`${view.id}-${imageRetry}`} className="cluster-view-image" src={view.image+(imageRetry?`?retry=${imageRetry}`:'')} alt={view.alt} draggable="false" fetchpriority="high" onLoad={()=>setImageState('ready')} onError={()=>setImageState('error')}/>
+      {imageState==='loading'&&previousImage&&<img className="cluster-previous-image" src={previousImage} alt="" aria-hidden="true" draggable="false"/>}
+      <img key={`${view.id}-${imageRetry}`} className="cluster-view-image" style={{visibility:imageState==='loading'?'hidden':'visible'}} src={view.image+(imageRetry?`?retry=${imageRetry}`:'')} alt={view.alt} draggable="false" fetchpriority="high" onLoad={()=>setImageState('ready')} onError={()=>setImageState('error')}/>
       {features.map(item=><button key={item.id} type="button" disabled={imageState!=='ready'} className={`cluster-hotspot${active===item.id?' selected':''}`} style={{left:`${item.x}%`,top:`${item.y}%`}} aria-label={`Explore ${item.label}`} aria-pressed={active===item.id} aria-controls="cluster-detail" onClick={()=>setActive(active===item.id?null:item.id)}><span aria-hidden="true"/></button>)}
      </div>
-     {imageState==='loading'&&<p className="cluster-image-status" role="status">Loading features…</p>}
      {imageState==='error'&&<div className="cluster-image-status" role="alert"><p>This view couldn’t load.</p><button className="btn-outline" onClick={()=>{setImageState('loading');setImageRetry(value=>value+1);}}>TRY AGAIN</button></div>}
      <div className="cluster-popover-host" aria-live="polite" aria-atomic="true">{detail&&<section className="cluster-popover" id="cluster-detail" aria-label={detail.label} key={detail.id}>
       <button type="button" className="cluster-popover-close" aria-label="Close feature details" onClick={()=>setActive(null)}>×</button>
       <p className="cluster-eyebrow">{detail.label}</p><h2>{detail.title}</h2><p>{detail.description}</p><ul className="cluster-options">{detail.options.map(option=><li key={option}>{option}</li>)}</ul><p className="cluster-detail-note">{detail.detail}</p>
      </section>}</div>
     </div>
-    <div className="cluster-view-footer"><p>{detail?'Select another feature below or reset the view.':'Tap a glowing point to take a closer look.'}</p><button className="cluster-reset" disabled={!active} onClick={()=>setActive(null)}>↺ RESET VIEW</button></div>
+    {!detail&&<div className="cluster-more-features" role="group" aria-label="Explore other cluster views"><button className="cluster-previous" onClick={()=>changeView(-1)} aria-label="Previous features">←</button><button className="cluster-next" onClick={()=>changeView(1)}>EXPLORE OTHER FEATURES <span aria-hidden="true">→</span></button></div>}
+    <div className="cluster-view-footer"><p>{detail?'Click outside this insight to return to the full view.':'Tap a glowing point to take a closer look.'}</p>{detail&&<button className="cluster-reset" onClick={()=>setActive(null)}>↺ RESET VIEW</button>}</div>
    </div>
 
-   <div className="cluster-more-features" role="group" aria-label="Explore more cluster views"><button className="cluster-previous" onClick={()=>changeView(-1)} aria-label="Previous features">← <span>PREVIOUS FEATURES</span></button><p>Different views. More to discover.</p><button className="cluster-next" onClick={()=>changeView(1)}>MORE FEATURES <span aria-hidden="true">→</span></button></div>
+
    <div className="cluster-feature-nav" role="group" aria-label="System features">{features.map(item=><button key={item.id} disabled={imageState!=='ready'} aria-pressed={active===item.id} aria-controls="cluster-detail" onClick={()=>setActive(active===item.id?null:item.id)}><span className="cluster-feature-dot" aria-hidden="true"/><span><strong>{item.label}</strong><small>{item.short}</small></span><span className="cluster-feature-arrow">↗</span></button>)}</div>
   </section>
   <section className="cluster-specs" aria-label="Product highlights"><div><span>01 / CLARITY</span><h2>SEE THE DIFFERENCE.</h2><p>1920 × 720 resolution, 2K visual support and an automotive Linux operating system.</p></div><div><span>02 / CONNECTION</span><h2>STAY CONNECTED.</h2><p>Wireless Apple CarPlay, Android Auto, AirPlay and HiCar. HDMI input, factory HUD and reversing camera support.</p></div><div><span>03 / INTEGRATION</span><h2>KEEP WHAT MATTERS.</h2><p>Retain your original mainboard, vehicle data, steering wheel controls, factory menus and safety alerts.</p></div></section>

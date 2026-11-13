@@ -38,3 +38,19 @@
 .cluster-image-status{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);padding:18px 22px;background:#171717ed;color:#ddd;font-size:14px;z-index:5;text-align:center}.cluster-image-status button{margin-top:12px}
 @media(max-width:760px){.cluster-view-label{align-items:center;gap:18px}.cluster-view-name{font-size:9px;max-width:155px}.cluster-more-features{gap:12px;margin-bottom:15px}.cluster-more-features>p{display:none}.cluster-more-features button{font-size:10px;gap:8px}.cluster-next{padding:12px 16px}.cluster-previous span{max-width:90px;text-align:left;line-height:1.5}}
 @media(prefers-reduced-motion:reduce){.cluster-view-image{animation:none}.cluster-next>span{transition:none}}
+
+/* Compact overview with navigation directly beneath the product. */
+.cluster-view{width:100%;max-width:880px;margin:0 auto}
+.cluster-viewport{min-height:0;aspect-ratio:2.25}
+.cluster-image-layer{width:82%;flex-shrink:0}
+.cluster-view-image{animation:none}
+.cluster-previous-image{position:absolute;inset:0;display:block;width:100%;height:100%;object-fit:contain;pointer-events:none}
+.cluster-more-features{justify-content:center;margin:-5px 0 8px;padding:0;gap:14px}
+.cluster-more-features .cluster-next{background:transparent;color:var(--y);padding:10px 16px;font-size:11px;letter-spacing:1.1px}
+.cluster-more-features .cluster-next:hover{color:#ffe57a}
+.cluster-more-features .cluster-previous{width:38px;padding:0;font-size:20px;color:#999}
+.cluster-view-footer{justify-content:center;text-align:center;padding:2px 0 22px;min-height:44px}
+.cluster-view-footer p{max-width:none}
+.cluster-feature-nav{max-width:1000px;width:100%;margin:0 auto}
+.cluster-viewport.is-focused{min-height:440px;aspect-ratio:2}
+@media(max-width:760px){.cluster-viewport{min-height:0;aspect-ratio:2.05}.cluster-image-layer{width:88%}.cluster-viewport.is-focused{aspect-ratio:auto;min-height:0;padding-top:30px}.cluster-more-features{margin:0 0 8px;gap:7px}.cluster-more-features .cluster-next{font-size:10px;padding:8px 10px;letter-spacing:.8px}.cluster-view-footer{gap:12px;padding-bottom:18px}.cluster-view-footer p{max-width:240px}.cluster-popover-host{margin:0 auto 12px}}

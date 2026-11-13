@@ -23,7 +23,7 @@ Original photos remain untouched. This is an AI-extracted product cutout rather 
 
 ## More features — all supplied photos
 
-The More Features → and ← Previous Features controls step through the eight views in a loop. Each change resets the close-up and loads that image’s own hotspot explanations. There is no automatic slideshow. The next image is prefetched; controls prevent interacting with a not-yet-loaded image, and failed loads offer Retry. Navigation remains available during loading.
+The Explore Other Features → and ← controls step through the eight views in a loop. Each change resets the close-up and loads that image’s own hotspot explanations. There is no automatic slideshow. All additional images are prefetched; the preceding photo stays visible until its replacement has loaded, with no loading message. Controls prevent interacting with a not-yet-loaded image, and failed loads offer Retry. Navigation remains available during loading.
 
 | Source photo | Project asset | View |
 | --- | --- | --- |
@@ -39,3 +39,8 @@ The More Features → and ← Previous Features controls step through the eight 
 Assets are in `whos-steering/frontend/public/products/digital-instrument-cluster/`. All new extracts use the built-in image editing tool with transparency enabled, one request per original photo, using this prompt:
 
 > Use case: background-extraction. Edit target: the attached photograph of an Audi digital instrument cluster. Remove ONLY the entire surrounding white/gray photo backdrop, bench, shadows and trailing power cable. Preserve the complete instrument cluster including silver bezel, black housing, mounting tabs, exact screen layout, text, menu selections, gauge style and vehicle icon from THIS photograph. Do not replace the screen with another layout; the unique current screen content is essential. Preserve original proportions and photographed details. Center and tightly frame the complete product with a small clear margin, landscape approximately 2:1 canvas. Output real alpha transparency with no floor, no shadow, no added text or background. No redesign or restyling.
+
+
+## Compact overview refinement
+
+The product overview is capped at 880px, with a smaller image and a centered Explore Other Features arrow immediately beneath the cluster. Navigation is present only in the unselected overview. Opening an insight hides it; clicking anywhere outside the popup and insight selectors restores the current photo’s full view. Clicking inside the information box leaves it open. Escape, Reset View and the close button remain accessible alternatives. All photographs and the existing waitlist are retained.
