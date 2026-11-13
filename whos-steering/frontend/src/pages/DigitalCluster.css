@@ -89,3 +89,6 @@
 
 /* Vector arrows stay consistent across platforms and cannot become emoji. */
 .cluster-svg-arrow{display:inline-block;vertical-align:middle;flex-shrink:0;width:1.35em;height:1.35em}
+
+/* Fill the overview evenly while leaving the focused insight layout unchanged. */
+@media(min-width:761px){.cluster-viewport:not(.is-focused){aspect-ratio:2}.cluster-viewport:not(.is-focused) .cluster-image-layer{width:98%}}
