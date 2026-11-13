@@ -44,3 +44,8 @@ Assets are in `whos-steering/frontend/public/products/digital-instrument-cluster
 ## Compact overview refinement
 
 The product overview is capped at 880px, with a smaller image and a centered More Features arrow in the open notch beneath the center bezel, between the mounting tabs. Navigation is present only in the unselected overview. Opening an insight hides it; clicking anywhere outside the popup and insight selectors restores the current photo’s full view. Clicking inside the information box leaves it open. Escape, Reset View and the close button remain accessible alternatives. All photographs and the existing waitlist are retained.
+
+
+Each insight has bottom-corner Back and Next arrows. They cycle through the current photo’s three hotspots, animates the corresponding close-up and wraps back to the first insight. The popup stays mounted so keyboard focus remains on the navigation control. Clicking outside still returns to the overview.
+
+A fixed yellow Join the Waitlist call to action stays visible while browsing and exploring insights. On mobile it spans the bottom edge; on desktop it sits at bottom right with the product name. It opens and focuses the signup form, then hides to avoid covering the form. Overview size remains compact; desktop insight view has enough vertical space for its full text and corner controls.

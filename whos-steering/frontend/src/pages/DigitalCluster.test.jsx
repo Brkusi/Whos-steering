@@ -53,3 +53,11 @@ test('overview navigation sits beneath the unit, disappears during insights, and
  const previous=host.querySelector('.cluster-view-image').getAttribute('src');act(()=>host.querySelector('.cluster-next').click());expect(host.textContent).not.toContain('Loading features');expect(host.querySelector('.cluster-previous-image').getAttribute('src')).toBe(previous);expect(host.querySelector('.cluster-view-image').style.visibility).toBe('hidden');
  act(()=>host.querySelector('.cluster-view-image').dispatchEvent(new Event('load')));expect(host.querySelector('.cluster-previous-image')).toBeNull();expect(host.querySelector('.cluster-view-image').style.visibility).toBe('visible');
 });
+
+test('the bottom-corner arrow cycles insights and keeps the overview button hidden',()=>{
+ mount(<DigitalCluster/>);const features=CLUSTER_VIEWS[0].features;expect(host.querySelector('.cluster-floating-waitlist').textContent).toContain('JOIN THE WAITLIST');act(()=>host.querySelector('.cluster-hotspot').click());
+ for(let step=1;step<=features.length;step++){
+  const next=features[step%features.length];const button=host.querySelector('.cluster-insight-next');button.focus();act(()=>button.click());expect(host.querySelector('.cluster-popover').getAttribute('aria-label')).toBe(next.label);expect(host.querySelector('.cluster-hotspot[aria-pressed=true]').getAttribute('aria-label')).toBe('Explore '+next.label);expect(host.querySelector('.cluster-next')).toBeNull();expect(document.activeElement).toBe(host.querySelector('.cluster-insight-next'));
+ }
+ act(()=>host.querySelector('.cluster-insight-back').click());expect(host.querySelector('.cluster-popover').getAttribute('aria-label')).toBe(features.at(-1).label);expect(host.querySelector('.cluster-insight-next').textContent).not.toContain('INSIGHT');act(()=>document.body.click());expect(host.querySelector('.cluster-popover')).toBeNull();expect(host.querySelector('.cluster-next')).not.toBeNull();
+});

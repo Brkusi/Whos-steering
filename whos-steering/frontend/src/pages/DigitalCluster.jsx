@@ -55,9 +55,10 @@ export default function DigitalCluster(){
     {!detail&&<div className="cluster-more-features" role="group" aria-label="Explore other cluster views"><button className="cluster-previous" onClick={()=>changeView(-1)} aria-label="Previous features">←</button><button className="cluster-next" onClick={()=>changeView(1)}>MORE FEATURES <span aria-hidden="true">→</span></button></div>}
      </div>
      {imageState==='error'&&<div className="cluster-image-status" role="alert"><p>This view couldn’t load.</p><button className="btn-outline" onClick={()=>{setImageState('loading');setImageRetry(value=>value+1);}}>TRY AGAIN</button></div>}
-     <div className="cluster-popover-host" aria-live="polite" aria-atomic="true">{detail&&<section className="cluster-popover" id="cluster-detail" aria-label={detail.label} key={detail.id}>
+     <div className="cluster-popover-host" aria-live="polite" aria-atomic="true">{detail&&<section className="cluster-popover" id="cluster-detail" aria-label={detail.label}>
       <button type="button" className="cluster-popover-close" aria-label="Close feature details" onClick={()=>setActive(null)}>×</button>
       <p className="cluster-eyebrow">{detail.label}</p><h2>{detail.title}</h2><p>{detail.description}</p><ul className="cluster-options">{detail.options.map(option=><li key={option}>{option}</li>)}</ul><p className="cluster-detail-note">{detail.detail}</p>
+      <div className="cluster-insight-footer"><button type="button" className="cluster-insight-back" aria-label="Back" onClick={()=>setActive(features[(features.indexOf(detail)-1+features.length)%features.length].id)}><span aria-hidden="true">←</span> BACK</button><button type="button" className="cluster-insight-next" aria-label="Next" onClick={()=>setActive(features[(features.indexOf(detail)+1)%features.length].id)}>NEXT <span aria-hidden="true">→</span></button></div>
      </section>}</div>
     </div>
     <div className="cluster-view-footer"><p>{detail?'Click outside this insight to return to the full view.':'Tap a glowing point to take a closer look.'}</p>{detail&&<button className="cluster-reset" onClick={()=>setActive(null)}>↺ RESET VIEW</button>}</div>
@@ -76,5 +77,6 @@ export default function DigitalCluster(){
     {error&&<p className="cluster-error" role="alert">{error}</p>}<button className="btn" type="submit" disabled={status==='sending'}>{status==='sending'?'JOINING…':'JOIN THE WAITLIST ↗'}</button><p className="cluster-form-note">No payment required. Joining the waitlist does not place an order.</p>
    </form>:<><button className="btn" onClick={openWaitlist}>JOIN THE WAITLIST ↗</button><p className="cluster-form-note">Availability updates. No payment required.</p></>}
   </div></section>
+  {!formOpen&&status!=='success'&&!token&&<aside className="cluster-floating-waitlist" aria-label="Product availability"><div><span>AUDI A6 / A7</span><strong>DIGITAL INSTRUMENT CLUSTER</strong></div><button type="button" className="btn" onClick={openWaitlist}>JOIN THE WAITLIST <span aria-hidden="true">→</span></button></aside>}
  </main>;
 }
