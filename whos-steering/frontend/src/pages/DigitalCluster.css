@@ -92,3 +92,6 @@
 
 /* Fill the overview evenly while leaving the focused insight layout unchanged. */
 @media(min-width:761px){.cluster-viewport:not(.is-focused){aspect-ratio:2}.cluster-viewport:not(.is-focused) .cluster-image-layer{width:98%}}
+
+.cluster-image-layer>.cluster-more-features{top:82%}
+@media(max-width:760px){.cluster-image-layer>.cluster-more-features{top:80%}}

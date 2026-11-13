@@ -43,11 +43,20 @@ Assets are in `whos-steering/frontend/public/products/digital-instrument-cluster
 
 ## Compact overview refinement
 
-The product overview is capped at 880px, with a smaller image and a centered More Features arrow in the open notch beneath the center bezel, between the mounting tabs. Navigation is present only in the unselected overview. Opening an insight hides it; clicking anywhere outside the popup and insight selectors restores the current photo’s full view. Clicking inside the information box leaves it open. Escape, Reset View and the close button remain accessible alternatives. All photographs and the existing waitlist are retained.
+The product overview is capped at 880px, with a smaller image and a centered More Features arrow in the open notch beneath the center bezel, below the center of the chrome bezel. Navigation is present only in the unselected overview. Opening an insight hides it; clicking anywhere outside the popup and insight selectors restores the current photo’s full view. Clicking inside the information box leaves it open. Escape, Reset View and the close button remain accessible alternatives. All photographs and the existing waitlist are retained.
 
 
 Each insight has bottom-corner Back and Next arrows. They cycle through the current photo’s three hotspots, animates the corresponding close-up and wraps back to the first insight. The popup stays mounted so keyboard focus remains on the navigation control. Clicking outside still returns to the overview.
 
-A fixed yellow Join the Waitlist call to action stays visible while browsing and exploring insights. On mobile it spans the bottom edge; on desktop it sits at bottom right with the product name. It opens and focuses the signup form, then hides to avoid covering the form. Overview size remains compact; desktop insight view has enough vertical space for its full text and corner controls.
+A fixed yellow Join the Waitlist call to action stays visible while browsing and exploring insights. On mobile it spans the bottom edge; on desktop it sits at bottom center with the product name. It opens and focuses the signup form, then hides to avoid covering the form. Overview size remains compact; desktop insight view has enough vertical space for its full text and corner controls.
 
-The focused viewport is explicitly constrained to the centered product column. Its desktop height no longer transfers through the aspect ratio into a larger width, so opening or changing an insight does not move the viewport sideways. Clipped overflow also prevents the zoomed image from creating an internal scroll offset. The header is limited to a centered 1000px group, keeping its waitlist action close to the introduction. The floating waitlist CTA is centered at the bottom of the screen; mobile retains its full-width bottom action.
+The focused viewport is explicitly constrained to the centered product column. Its desktop height no longer transfers through the aspect ratio into a larger width, so opening or changing an insight does not move the viewport sideways. Clipped overflow also prevents the zoomed image from creating an internal scroll offset. The header is limited to a centered 1000px group, keeping the introduction and Coming Soon indicator together. The floating waitlist CTA is centered at the bottom of the screen; mobile retains its full-width bottom action.
+
+
+## Chrome bezel cutouts
+
+All eight product PNGs in `whos-steering/frontend/public/products/digital-instrument-cluster/` were edited with built-in imagegen on 2026-11-13 to remove the exterior plastic housing and mounting tabs. Chrome and the display inside it remain, with alpha transparency outside the bezel. The More Features control was raised from 84% to 82% of the image height on desktop, and from 82% to 80% on mobile.
+
+Prompt used separately for each asset:
+
+> undefined
