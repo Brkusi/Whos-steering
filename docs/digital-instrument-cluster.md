@@ -2,7 +2,7 @@
 
 Owner-supplied fitment and specifications: Audi A6/A7 2012–2018, C7 / 4G8 MLB platform. Route: `/products/audi-a6-a7-digital-instrument-cluster/`. Store card appears under All and Audi. No product price or purchase offer is emitted.
 
-The explorer uses one transparent 2D image with three accessible glowing hotspot buttons, animated close-ups and floating explanations beside the selected point. The Coming Soon dot pulses; hotspot rings animate. Reset and Escape restore the full image; reduced motion is respected. On mobile the floating explanation sits below its selected point. All specifications and four theme names come from the owner's supplied description.
+The explorer uses all eight supplied photos as transparent 2D views, each with three accessible glowing hotspot buttons, animated close-ups and floating explanations beside the selected point. The Coming Soon dot pulses; hotspot rings animate. Reset and Escape restore the full image; reduced motion is respected. On mobile the floating explanation sits below its selected point. All specifications and four theme names come from the owner's supplied description.
 
 ## Waitlist operations
 
@@ -19,3 +19,23 @@ Final prompt:
 > Use case: background-extraction. Edit target: supplied photograph of automotive digital instrument cluster. Remove only the entire surrounding white/gray photo backdrop, bench, shadows and trailing power cable. Keep the complete instrument cluster, silver bezel, black housing and mounting tabs exactly as photographed. Preserve the actual screen graphics, proportions, colors and details. Center the complete product, tightly framed with a small clear margin on all sides, landscape composition. Output a clean product cutout with real alpha transparency, no background, no floor, no shadow. Do not redraw, redesign or add any part.
 
 Original photos remain untouched. This is an AI-extracted product cutout rather than a pixel-identical manual mask.
+
+
+## More features — all supplied photos
+
+The More Features → and ← Previous Features controls step through the eight views in a loop. Each change resets the close-up and loads that image’s own hotspot explanations. There is no automatic slideshow. The next image is prefetched; controls prevent interacting with a not-yet-loaded image, and failed loads offer Retry. Navigation remains available during loading.
+
+| Source photo | Project asset | View |
+| --- | --- | --- |
+| 5164134872.jpg | cluster.png | Twin-dial overview |
+| 5164130935.jpg | media.png | Media & controls |
+| 5164281941.jpg | navigation.png | Navigation & HDMI |
+| 5164289841.jpg | tracks.png | Track-style display |
+| 5164301499.jpg | minimal.png | Minimal digital display |
+| 5164301503.jpg | single-dial.png | Single-dial display |
+| 5168332098.jpg | settings.png | Settings & connectivity |
+| 5168332137.jpg | vehicle-status.png | Vehicle status & alerts |
+
+Assets are in `whos-steering/frontend/public/products/digital-instrument-cluster/`. All new extracts use the built-in image editing tool with transparency enabled, one request per original photo, using this prompt:
+
+> Use case: background-extraction. Edit target: the attached photograph of an Audi digital instrument cluster. Remove ONLY the entire surrounding white/gray photo backdrop, bench, shadows and trailing power cable. Preserve the complete instrument cluster including silver bezel, black housing, mounting tabs, exact screen layout, text, menu selections, gauge style and vehicle icon from THIS photograph. Do not replace the screen with another layout; the unique current screen content is essential. Preserve original proportions and photographed details. Center and tightly frame the complete product with a small clear margin, landscape approximately 2:1 canvas. Output real alpha transparency with no floor, no shadow, no added text or background. No redesign or restyling.
