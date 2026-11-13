@@ -52,6 +52,7 @@ export default function DigitalCluster(){
       {imageState==='loading'&&previousImage&&<img className="cluster-previous-image" src={previousImage} alt="" aria-hidden="true" draggable="false"/>}
       <img key={`${view.id}-${imageRetry}`} className="cluster-view-image" style={{visibility:imageState==='loading'?'hidden':'visible'}} src={view.image+(imageRetry?`?retry=${imageRetry}`:'')} alt={view.alt} draggable="false" fetchpriority="high" onLoad={()=>setImageState('ready')} onError={()=>setImageState('error')}/>
       {features.map(item=><button key={item.id} type="button" disabled={imageState!=='ready'} className={`cluster-hotspot${active===item.id?' selected':''}`} style={{left:`${item.x}%`,top:`${item.y}%`}} aria-label={`Explore ${item.label}`} aria-pressed={active===item.id} aria-controls="cluster-detail" onClick={()=>setActive(active===item.id?null:item.id)}><span aria-hidden="true"/></button>)}
+    {!detail&&<div className="cluster-more-features" role="group" aria-label="Explore other cluster views"><button className="cluster-previous" onClick={()=>changeView(-1)} aria-label="Previous features">←</button><button className="cluster-next" onClick={()=>changeView(1)}>MORE FEATURES <span aria-hidden="true">→</span></button></div>}
      </div>
      {imageState==='error'&&<div className="cluster-image-status" role="alert"><p>This view couldn’t load.</p><button className="btn-outline" onClick={()=>{setImageState('loading');setImageRetry(value=>value+1);}}>TRY AGAIN</button></div>}
      <div className="cluster-popover-host" aria-live="polite" aria-atomic="true">{detail&&<section className="cluster-popover" id="cluster-detail" aria-label={detail.label} key={detail.id}>
@@ -59,7 +60,6 @@ export default function DigitalCluster(){
       <p className="cluster-eyebrow">{detail.label}</p><h2>{detail.title}</h2><p>{detail.description}</p><ul className="cluster-options">{detail.options.map(option=><li key={option}>{option}</li>)}</ul><p className="cluster-detail-note">{detail.detail}</p>
      </section>}</div>
     </div>
-    {!detail&&<div className="cluster-more-features" role="group" aria-label="Explore other cluster views"><button className="cluster-previous" onClick={()=>changeView(-1)} aria-label="Previous features">←</button><button className="cluster-next" onClick={()=>changeView(1)}>EXPLORE OTHER FEATURES <span aria-hidden="true">→</span></button></div>}
     <div className="cluster-view-footer"><p>{detail?'Click outside this insight to return to the full view.':'Tap a glowing point to take a closer look.'}</p>{detail&&<button className="cluster-reset" onClick={()=>setActive(null)}>↺ RESET VIEW</button>}</div>
    </div>
 

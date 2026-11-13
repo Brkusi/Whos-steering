@@ -46,7 +46,7 @@ test('a failed view load leaves navigation available and offers a retry',()=>{
 });
 
 test('overview navigation sits beneath the unit, disappears during insights, and outside clicks restore it',()=>{
- mount(<DigitalCluster/>);expect(host.querySelector('.cluster-next').textContent).toContain('EXPLORE OTHER FEATURES');expect(host.querySelector('.cluster-more-features').previousElementSibling.className).toContain('cluster-viewport');
+ mount(<DigitalCluster/>);expect(host.querySelector('.cluster-next').textContent).toContain('MORE FEATURES');expect(host.querySelector('.cluster-more-features').parentElement.className).toContain('cluster-image-layer');
  act(()=>host.querySelector('.cluster-hotspot').click());expect(host.querySelector('.cluster-next')).toBeNull();
  act(()=>host.querySelector('.cluster-popover p').click());expect(host.querySelector('.cluster-popover')).not.toBeNull();
  act(()=>host.querySelector('.cluster-specs').click());expect(host.querySelector('.cluster-popover')).toBeNull();expect(host.querySelector('.cluster-image-layer').style.transform).toContain('scale(1)');expect(host.querySelector('.cluster-next')).not.toBeNull();

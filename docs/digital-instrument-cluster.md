@@ -23,7 +23,7 @@ Original photos remain untouched. This is an AI-extracted product cutout rather 
 
 ## More features — all supplied photos
 
-The Explore Other Features → and ← controls step through the eight views in a loop. Each change resets the close-up and loads that image’s own hotspot explanations. There is no automatic slideshow. All additional images are prefetched; the preceding photo stays visible until its replacement has loaded, with no loading message. Controls prevent interacting with a not-yet-loaded image, and failed loads offer Retry. Navigation remains available during loading.
+The More Features → and ← controls step through the eight views in a loop. Each change resets the close-up and loads that image’s own hotspot explanations. There is no automatic slideshow. All additional images are prefetched; the preceding photo stays visible until its replacement has loaded, with no loading message. Controls prevent interacting with a not-yet-loaded image, and failed loads offer Retry. Navigation remains available during loading.
 
 | Source photo | Project asset | View |
 | --- | --- | --- |
@@ -43,4 +43,4 @@ Assets are in `whos-steering/frontend/public/products/digital-instrument-cluster
 
 ## Compact overview refinement
 
-The product overview is capped at 880px, with a smaller image and a centered Explore Other Features arrow immediately beneath the cluster. Navigation is present only in the unselected overview. Opening an insight hides it; clicking anywhere outside the popup and insight selectors restores the current photo’s full view. Clicking inside the information box leaves it open. Escape, Reset View and the close button remain accessible alternatives. All photographs and the existing waitlist are retained.
+The product overview is capped at 880px, with a smaller image and a centered More Features arrow in the open notch beneath the center bezel, between the mounting tabs. Navigation is present only in the unselected overview. Opening an insight hides it; clicking anywhere outside the popup and insight selectors restores the current photo’s full view. Clicking inside the information box leaves it open. Escape, Reset View and the close button remain accessible alternatives. All photographs and the existing waitlist are retained.
