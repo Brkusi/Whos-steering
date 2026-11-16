@@ -1,3 +1,4 @@
+import {LIGHTING_PATH,LIGHTING_CATEGORY,LIGHTING_NAME,LIGHTING_VARIANTS,lightingImage} from './ambientLighting';
 import {customWheelPrice,blackFridayActive} from './blackFriday';
 import {CLUSTER_PATH,CLUSTER_NAME,CLUSTER_IMAGE} from './digitalCluster';
 import {WHEEL_STYLES} from './wheelStyles';
@@ -51,6 +52,14 @@ export function seoForRoute(pathname,search=''){
     schema.push({'@type':'CollectionPage',name:title,url:canonicalUrl(path),description,mainEntity:{'@type':'ItemList',itemListElement:products.map((p,i)=>({'@type':'ListItem',position:i+1,url:canonicalUrl(p.path),name:p.name}))}});
    }
   }
+ }else if(pathname===LIGHTING_PATH){
+  title=LIGHTING_NAME+' | Who’s Steering';description='Shop Symphony acrylic LED ambient lighting with Bluetooth app control, music sync and ten kit options. Explore LED close-ups and choose up to 100 kits.';
+  schema.push({'@type':'Product',name:LIGHTING_NAME,description,image:[SITE+lightingImage],sku:'symphony-ambient-lighting',brand:{'@type':'Brand',name:"Who's Steering?"},offers:{'@type':'AggregateOffer',priceCurrency:'USD',lowPrice:'28.80',highPrice:'53.10',offerCount:LIGHTING_VARIANTS.length,url:canonicalUrl(path)}});
+  crumbs.push({name:'Shop Lighting',path:LIGHTING_CATEGORY},{name:LIGHTING_NAME,path:LIGHTING_PATH});
+ }else if(pathname===LIGHTING_CATEGORY){
+  title='Shop Ambient Lighting | Who’s Steering';description='Explore acrylic LED car ambient lighting kits with Bluetooth app control and music-reactive Symphony effects.';
+  schema.push({'@type':'CollectionPage',name:title,url:canonicalUrl(path),description});
+  crumbs.push({name:'Shop Lighting',path:LIGHTING_CATEGORY});
  }else if(pathname===CLUSTER_PATH){
   title=CLUSTER_NAME+' · 2012–2018 | Who’s Steering';description='Explore the 12.3-inch Audi A6/A7 C7 Digital Instrument Cluster with four UI themes, wireless smartphone connectivity and factory integration. Join the availability waitlist.';image=CLUSTER_IMAGE;
   schema.push({'@type':'Product',name:CLUSTER_NAME,description,image:[SITE+CLUSTER_IMAGE],sku:'audi-a6-a7-c7-digital-cluster',brand:{'@type':'Brand',name:"Who's Steering?"}});

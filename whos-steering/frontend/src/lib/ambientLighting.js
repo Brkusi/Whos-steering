@@ -1,0 +1,10 @@
+import variants from './ambientLightingVariants.json';
+export const LIGHTING_PATH='/products/symphony-ambient-lighting';
+export const LIGHTING_CATEGORY='/shop/lighting';
+export const LIGHTING_NAME='Symphony Ambient Lighting Kit';
+export const LIGHTING_VARIANTS=variants;
+export const LIGHTING_MAX=100;
+export const lightingVariant=id=>variants.find(v=>v.id===id);
+export const lightingQuantity=value=>Math.min(LIGHTING_MAX,Math.max(1,Math.trunc(Number(value))||1));
+export const lightingImage='/products/ambient-lighting/view-4.jpg';
+export const lightingMoney=cents=>'$'+(cents/100).toFixed(2);

@@ -1,3 +1,4 @@
+import {lightingVariant,lightingQuantity} from '../lib/ambientLighting';
 import {infinitiAirbagPrice} from '../lib/infinitiAirbagConfiguration';
 import {customWheelPrice} from '../lib/blackFriday';
 import { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
@@ -5,6 +6,7 @@ import { apiFetch, authToken, warmAccountService } from '../lib/api';
 
 export function currentCartItem(item) {
  const cfg=item.config||{};
+ if(cfg.productType==='ambient-lighting'){const v=lightingVariant(cfg.lightingVariant);return {...item,price:v?v.priceCents/100:0,quantity:lightingQuantity(item.quantity)};}
  if(cfg.productType==='airbag-cover')return {...item,price:infinitiAirbagPrice(cfg).total/100};
  if(!cfg.brand||cfg.productId||cfg.readyToShip)return item;
  const regularPrice=item.regularPrice??item.price;
@@ -24,25 +26,42 @@ export function CartProvider({ children }) {
   }, [items]);
 
   const addItem = useCallback((item) => {
-    setItems(prev => [...prev, { ...currentCartItem(item), cartId: Date.now() + Math.random() }]);
+    setItems(prev => {
+      const next=currentCartItem(item);
+      if(next.config?.productType==='ambient-lighting'){
+        const count=prev.filter(i=>i.config?.productType==='ambient-lighting').reduce((n,i)=>n+(i.quantity||1),0);
+        if(count+(next.quantity||1)>100)return prev;
+        const match=prev.find(i=>i.config?.productType==='ambient-lighting'&&i.config.lightingVariant===next.config.lightingVariant);
+        if(match)return prev.map(i=>i.cartId===match.cartId?{...i,quantity:(i.quantity||1)+next.quantity}:i);
+      }
+      return [...prev,{...next,cartId:Date.now()+Math.random()}];
+    });
   }, []);
 
   const removeItem = useCallback((cartId) => {
     setItems(prev => prev.filter(i => i.cartId !== cartId));
   }, []);
 
+  const updateQuantity=useCallback((cartId,value)=>setItems(prev=>{
+    const quantity=lightingQuantity(value),item=prev.find(i=>i.cartId===cartId);
+    if(item?.config?.productType!=='ambient-lighting')return prev;
+    const others=prev.filter(i=>i.cartId!==cartId&&i.config?.productType==='ambient-lighting').reduce((n,i)=>n+(i.quantity||1),0);
+    return prev.map(i=>i.cartId===cartId?{...i,quantity:Math.min(quantity,100-others)}:i);
+  }),[]);
+
   const clearCart = useCallback(() => setItems([]), []);
 
-  const total = items.reduce((s, i) => s + i.price, 0);
+  const total = items.reduce((s, i) => s + i.price*(i.quantity||1), 0);
 
   return (
     <CartCtx.Provider value={{
       items,
       addItem,
       removeItem,
+      updateQuantity,
       clearCart,
       total,
-      count: items.length,
+      count: items.reduce((n,i)=>n+(i.quantity||1),0),
       cartOpen,
       setCartOpen,
     }}>

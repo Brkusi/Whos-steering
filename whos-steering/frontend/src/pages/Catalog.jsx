@@ -6,6 +6,7 @@ import { useCart } from '../context';
 import { AUDI_PRESETS_FULL as AUDI_PRESETS, BMW_PRESETS, INFINITI_PRESETS } from '../lib/data';
 import ZoomableImage from '../components/ZoomableImage';
 import './Catalog.css';
+import {LightingCard} from './AmbientLighting';
 import {DigitalClusterCard} from './DigitalCluster';
 
 function ArrowBtn({ dir, onClick }) {
@@ -520,7 +521,7 @@ export default function Catalog() {
 
   useEffect(() => {
     const brand = params.get('brand');
-    if (brand) setFilter(brand);
+    setFilter(params.get('category')==='lighting'?'LIGHTING':brand||'ALL');
 
     const presetId = params.get('preset');
     if (presetId) {
@@ -549,7 +550,7 @@ export default function Catalog() {
       </div>
 
       <div style={{ display: 'flex', gap: 10, padding: '16px 40px', borderBottom: '1px solid var(--b)', flexWrap: 'wrap' }}>
-        {['ALL','BMW','AUDI','INFINITI'].map(f => (
+        {['ALL','BMW','AUDI','INFINITI','LIGHTING'].map(f => (
           <button key={f} className={`ob${filter === f ? ' on' : ''}`} style={{ fontSize: 14, padding: '5px 16px' }} onClick={() => setFilter(f)}>{f}</button>
         ))}
       </div>
@@ -557,6 +558,7 @@ export default function Catalog() {
       <ConfigureBanner nav={nav} />
       <div style={{ maxWidth: 1600, margin: '0 auto', width: '100%' }}>
         <div className="catalog-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))', gap: 1, background: 'var(--b)' }}>
+          {(filter==='ALL'||filter==='LIGHTING')&&<LightingCard/>}
           {showBMW      && BMW_PRESETS.map(p => <PresetCard key={p.id} preset={p} onOpen={setOpenPreset} />)}
           {showAUDI && <DigitalClusterCard />}
           {showAUDI     && AUDI_PRESETS.map(p => <PresetCard key={p.id} preset={p} onOpen={setOpenPreset} />)}

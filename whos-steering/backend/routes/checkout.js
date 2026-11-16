@@ -221,7 +221,8 @@ router.post('/create-intent', async (req, res) => {
   const { cartItems, customer, shippingAddress, promoCode, provider = 'stripe' } = req.body;
   if(!['stripe','paypal'].includes(provider)) return res.status(400).json({error:'Invalid payment provider.'});
   if(provider==='paypal' && !require('../lib/paypal').enabled()) return res.status(503).json({error:'PayPal is not available.'});
-  if(!Array.isArray(cartItems)||!cartItems.length||cartItems.length>30||cartItems.some(i=>!Number.isInteger(i.quantity||1)||(i.quantity||1)<1||(i.quantity||1)>10))return res.status(400).json({error:'Your cart is invalid. Please review it.'});
+  if(!Array.isArray(cartItems)||!cartItems.length||cartItems.length>30||cartItems.some(i=>!Number.isInteger(i.quantity??1)||(i.quantity??1)<1||(i.quantity??1)>(i.config?.productType==='ambient-lighting'?100:10)))return res.status(400).json({error:'Your cart is invalid. Please review it.'});
+  if(cartItems.some(i=>i.config?.productType==='ambient-lighting')&&!require('../lib/ambient-lighting').validLightingQuantities(cartItems))return res.status(400).json({error:'Maximum 100 ambient lighting kits per order.'});
   if(!/^\S+@\S+\.\S+$/.test(customer?.email||''))return res.status(400).json({error:'Enter a valid email address.'});
 
   if (!customer?.email) {
@@ -230,6 +231,7 @@ router.post('/create-intent', async (req, res) => {
 
   for (const item of cartItems || []) {
     const cfg = item.config || {};
+    if(cfg.productType==='ambient-lighting'){try{require('../lib/ambient-lighting').lightingPriceCents(cfg);}catch(error){return res.status(400).json({error:error.message});}}
     if (cfg.productType === 'airbag-cover' || cfg.airbagProductId) {
       try { require('../lib/infiniti-airbag').airbagPriceCents(cfg); }
       catch (error) { return res.status(400).json({error:error.message}); }
@@ -286,7 +288,9 @@ router.post('/create-intent', async (req, res) => {
       }
       let amountCents;
 
-      if (cfg.productType === 'airbag-cover') {
+      if(cfg.productType==='ambient-lighting'){
+        amountCents=require('../lib/ambient-lighting').lightingPriceCents(cfg);
+      } else if (cfg.productType === 'airbag-cover') {
         amountCents = require('../lib/infiniti-airbag').airbagPriceCents(cfg);
       } else if (cfg.isPreset) {
         amountCents = require('../lib/preset-pricing').presetPrice(cfg);
@@ -302,8 +306,14 @@ router.post('/create-intent', async (req, res) => {
         throw new Error('Unrecognized cart item.');
       }
 
-      if(cfg.productType !== 'airbag-cover' && !cfg.productId) amountCents = require('../lib/black-friday').customWheelPrice(amountCents,cfg);
+      if(!['airbag-cover','ambient-lighting'].includes(cfg.productType) && !cfg.productId) amountCents = require('../lib/black-friday').customWheelPrice(amountCents,cfg);
       totalCents += amountCents * (item.quantity || 1);
+
+      if(cfg.productType==='ambient-lighting'){
+        const kit=require('../../frontend/src/lib/ambientLightingVariants.json').find(v=>v.id===cfg.lightingVariant);
+        savedConfigs.push({configId:null,amountCents,quantity:item.quantity||1,name:'Symphony Ambient Lighting Kit',detail:`${kit.label} · Symphony · 12V · Bluetooth app control`});
+        continue;
+      }
 
       const { rows: cfgRows } = await client.query(
         `INSERT INTO wheel_configurations

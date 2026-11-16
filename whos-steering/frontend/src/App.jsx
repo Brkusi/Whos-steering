@@ -1,3 +1,4 @@
+import AmbientLighting, {ShopLighting} from './pages/AmbientLighting';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { CartProvider, AuthProvider } from './context';
 import Nav from './components/Nav';
@@ -48,6 +49,8 @@ export default function App() {
               <Route path="/"                   element={<Home />} />
               <Route path="/steering-wheels/:brand/:slug?" element={<SeoLanding />} />
               <Route path="/catalog"            element={<Catalog />} />
+              <Route path="/shop/lighting" element={<ShopLighting />} />
+              <Route path="/products/symphony-ambient-lighting" element={<AmbientLighting />} />
               <Route path="/products/audi-a6-a7-digital-instrument-cluster" element={<DigitalCluster />} />
               <Route path="/catalog/:id"        element={<Product />} />
               <Route path="/build"              element={<BuildStart />} />

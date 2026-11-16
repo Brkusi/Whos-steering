@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context';
 
 export default function CartDrawer({ open, onClose }) {
-  const { items, removeItem, total } = useCart();
+  const { items, removeItem, updateQuantity, total, count } = useCart();
   const nav = useNavigate();
 
   const panelRef = useRef(null);
@@ -22,7 +22,7 @@ export default function CartDrawer({ open, onClose }) {
         {/* Header */}
         <div style={{ padding: '20px 24px', borderBottom: '1px solid var(--b)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div style={{ fontFamily: 'Arial, sans-serif', fontSize: 14, letterSpacing: .6, color: 'var(--y)', textTransform: 'uppercase' }}>
-            Cart {items.length > 0 && `(${items.length})`}
+            Cart {items.length > 0 && `(${count})`}
           </div>
           <button aria-label="Close cart" onClick={onClose} style={{ background: 'none', border: 'none', color: 'var(--t)', cursor: 'pointer', fontSize: 20 }}>✕</button>
         </div>
@@ -32,7 +32,7 @@ export default function CartDrawer({ open, onClose }) {
           {items.length === 0 ? (
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: 200, color: 'var(--t)', gap: 8 }}>
               <div style={{ fontSize: 36, opacity: .3 }}>⊙</div>
-              <div style={{ letterSpacing: .6, textTransform: 'uppercase', fontSize: 14 }}>No wheels yet</div>
+              <div style={{ letterSpacing: .6, textTransform: 'uppercase', fontSize: 14 }}>Your cart is empty</div>
             </div>
           ) : items.map(item => (
             <div className="cart-item" key={item.cartId} style={{ padding: '16px 0', borderBottom: '1px solid var(--b)' }}>
@@ -44,8 +44,9 @@ export default function CartDrawer({ open, onClose }) {
                 <button aria-label={`Remove ${item.name} from cart`} onClick={() => removeItem(item.cartId)}
                   style={{ background: 'none', border: 'none', color: '#444', cursor: 'pointer', fontSize: 14, marginLeft: 8, flexShrink: 0 }}>✕</button>
               </div>
+              {item.config?.productType==='ambient-lighting'&&<label style={{display:'flex',alignItems:'center',gap:12,marginTop:12,fontSize:13}}>Quantity<input aria-label={`Quantity for ${item.detail}`} type="number" min="1" max="100" value={item.quantity||1} onChange={e=>updateQuantity(item.cartId,e.target.value)} style={{width:70,padding:8,background:'#171719',color:'#fff',border:'1px solid #555'}}/><span>${item.price.toFixed(2)} each</span></label>}
               <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontSize: 22, color: 'var(--y)', marginTop: 6 }}>
-                ${item.price.toFixed(2)}
+                ${(item.price*(item.quantity||1)).toFixed(2)}
               </div>
             </div>
           ))}

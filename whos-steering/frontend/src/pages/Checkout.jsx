@@ -269,7 +269,7 @@ export default function Checkout() {
             name: item.name,
             detail: item.detail,
             price: item.price,
-            quantity: 1,
+            quantity: item.quantity || 1,
             config: item.config || {},
           })),
           customer: { email: info.email, name: info.name },
@@ -389,7 +389,7 @@ export default function Checkout() {
               <div key={item.cartId} style={{ padding: '14px 0', borderBottom: '1px solid var(--b)' }}>
                 <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 800, fontStyle: 'italic', fontSize: 18 }}>{item.name}</div>
                 {item.detail && <div style={{ fontSize: 14, color: 'var(--t)', marginTop: 2, lineHeight: 1.5 }}>{item.detail}</div>}
-                <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontSize: 22, color: 'var(--y)', marginTop: 6 }}>${item.price.toFixed(2)}</div>
+                <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontSize: 22, color: 'var(--y)', marginTop: 6 }}>${(item.price*(item.quantity||1)).toFixed(2)}{item.quantity>1&&<span style={{fontSize:13,color:'var(--t)'}}> · {item.quantity} × ${item.price.toFixed(2)}</span>}</div>
               </div>
             ))}
           </div>
