@@ -19,6 +19,13 @@ router.get('/', async (req, res) => {
   }
 });
 
+// GET /api/products/lighting/variants — public storefront prices, no supplier costs.
+router.get('/lighting/variants', (req, res) => {
+  const variants = require('../../frontend/src/lib/ambientLightingVariants.json');
+  res.set('Cache-Control', 'no-store');
+  res.json({productType:'ambient-lighting',maxQuantity:100,shipping:0,currency:'USD',variants:variants.map(({id,label,priceCents,compareCents,image})=>({id,label,priceCents,compareCents,image}))});
+});
+
 // GET /api/products/:id — public
 router.get('/:id', async (req, res) => {
   try {
