@@ -558,11 +558,11 @@ export default function Catalog() {
       <ConfigureBanner nav={nav} />
       <div style={{ maxWidth: 1600, margin: '0 auto', width: '100%' }}>
         <div className="catalog-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))', gap: 1, background: 'var(--b)' }}>
-          {(filter==='ALL'||filter==='LIGHTING')&&<LightingCard/>}
           {showBMW      && BMW_PRESETS.map(p => <PresetCard key={p.id} preset={p} onOpen={setOpenPreset} />)}
-          {showAUDI && <DigitalClusterCard />}
           {showAUDI     && AUDI_PRESETS.map(p => <PresetCard key={p.id} preset={p} onOpen={setOpenPreset} />)}
           {showINFINITI && INFINITI_PRESETS.map(p => <PresetCard key={p.id} preset={p} onOpen={setOpenPreset} />)}
+          {(filter==='ALL'||filter==='LIGHTING')&&<LightingCard/>}
+          {showAUDI && <DigitalClusterCard />}
         </div>
       </div>
 
