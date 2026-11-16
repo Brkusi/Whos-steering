@@ -35,3 +35,13 @@ test('LED hotspots zoom, cycle insights and reset; view navigation opens differe
  click(host.querySelector('[aria-label="Next lighting view"]'));
  expect(host.querySelector('.lighting-image-layer img').getAttribute('src')).toContain('view-2.jpg');
 });
+test('customers can mix three 6-in-1 kits with two 26-in-1 kits as separate cart lines',()=>{
+ change(host.querySelector('#lighting-kit'),'6-in-1');change(host.querySelector('#lighting-quantity'),'3');
+ click([...host.querySelectorAll('button')].find(b=>b.textContent==='ADD TO CART'));
+ change(host.querySelector('#lighting-kit'),'26-in-1');change(host.querySelector('#lighting-quantity'),'2');
+ click([...host.querySelectorAll('button')].find(b=>b.textContent==='ADD TO CART'));
+ const cart=JSON.parse(host.querySelector('#cart-result').textContent);
+ expect(cart.items).toHaveLength(2);
+ expect(cart.items.map(i=>[i.config.lightingVariant,i.quantity])).toEqual([['6-in-1',3],['26-in-1',2]]);
+ expect(cart.total).toBeCloseTo(192.60,2);
+});
