@@ -47,3 +47,6 @@
 .lighting-header h1{margin:12px 0 14px}
 .lighting-page>.lighting-order{padding-top:24px}
 @media(max-width:760px){.lighting-page{padding-top:14px}.lighting-page .lighting-breadcrumb{margin-bottom:16px}.lighting-page>.lighting-order{padding-top:22px}}
+/* Compact image treatment on the lighting category card. */
+.lighting-category .lighting-card-image{height:220px;aspect-ratio:auto;display:grid;place-items:center}
+.lighting-category .lighting-card-image img{width:240px;max-width:72%;height:190px;object-fit:contain}
