@@ -4,20 +4,22 @@ Source listing, read November 16, 2026: https://www.alibaba.com/product-detail/S
 
 Product: `/products/symphony-ambient-lighting/`. Category: `/shop/lighting/`. Category is linked in desktop and mobile navigation. The catalog includes the product under All and Lighting.
 
-The ten Symphony variants and their individual supplier prices were read from the listing's Select variations and quantity panel. Current selling price: add 50% to supplier cost, add $20, then round upward to the next $5 increment. The crossed-out comparison price remains 30% above selling price. The page says SALE. Comparison prices come from the owner’s instruction and are not verified historical prices.
+The owner supplied exact retail prices on November 16, 2026; these replace the earlier markup and rounding formula. Both 14-in-1 variants share $59.99, and both 22-in-1 variants share $74.99. The crossed-out comparison price remains 30% above retail, rounded to cents; it is not a verified historical price.
 
 | Kit | Supplier USD | Selling USD | Comparison USD |
 | --- | ---: | ---: | ---: |
-| 26 in 1 | 35.40 | 75.00 | 97.50 |
-| 24 in 1 | 29.50 | 65.00 | 84.50 |
-| 22 in 1-1 | 28.80 | 65.00 | 84.50 |
-| 22 in 1-2 | 28.10 | 65.00 | 84.50 |
-| 20 in 1 | 25.90 | 60.00 | 78.00 |
-| 18 in 1 | 22.90 | 55.00 | 71.50 |
-| 14 in 1-1 | 21.40 | 55.00 | 71.50 |
-| 14 in 1-2 | 21.40 | 55.00 | 71.50 |
-| 10 in 1 | 20.60 | 55.00 | 71.50 |
-| 6 in 1 | 19.20 | 50.00 | 65.00 |
+| 26 in 1 | 35.40 | 79.99 | 103.99 |
+| 24 in 1 | 29.50 | 76.99 | 100.09 |
+| 22 in 1-1 | 28.80 | 74.99 | 97.49 |
+| 22 in 1-2 | 28.10 | 74.99 | 97.49 |
+| 20 in 1 | 25.90 | 69.99 | 90.99 |
+| 18 in 1 | 22.90 | 64.99 | 84.49 |
+| 14 in 1-1 | 21.40 | 59.99 | 77.99 |
+| 14 in 1-2 | 21.40 | 59.99 | 77.99 |
+| 10 in 1 | 20.60 | 56.99 | 74.09 |
+| 6 in 1 | 19.20 | 49.99 | 64.99 |
+
+The purchase section appears directly below the introduction, followed by Explore the Details, feature highlights and specifications.
 
 Six source gallery photographs and ten source kit photographs are stored unchanged in `frontend/public/products/ambient-lighting/`. Filename mapping follows gallery order, then variant order above. The LED hero now uses led-transparent.png, an AI background extraction from view-4.jpg. The explorer zooms the product cutout with CSS. Each view has its own descriptions and focus coordinates. Reset, Escape, Next/Back and reduced motion are supported.
 
