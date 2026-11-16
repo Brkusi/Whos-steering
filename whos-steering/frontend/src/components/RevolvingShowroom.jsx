@@ -90,7 +90,10 @@ export function WheelArt({wheel}) {
       images.forEach((image,index)=>{
         const layer=document.createElement('canvas');layer.width=640;layer.height=640;
         const lc=layer.getContext('2d',{willReadFrequently:true});
-        const crop=wheel.style==='R8'&&index===0?R8_CROP:{x:0,y:0,w:image.width,h:image.height};
+        // The transparent showroom asset has different dimensions from the legacy photo.
+        const r8Cutout=wheel.style==='R8'&&Boolean(wheel.showroomImage)&&index===0;
+        const legacyR8=wheel.style==='R8'&&!r8Cutout&&index===0;
+        const crop=legacyR8?R8_CROP:{x:0,y:0,w:image.width,h:image.height};
         const size=Math.min(608/crop.w,608/crop.h);
         if(wheel.style==='RS 2020+'&&index===0){
           // Trace the photographic silhouette instead of keying its near-black
@@ -100,10 +103,10 @@ export function WheelArt({wheel}) {
           lc.clip(outline,'evenodd');lc.drawImage(image,0,0);lc.restore();
         }else lc.drawImage(image,crop.x,crop.y,crop.w,crop.h,(640-crop.w*size)/2,(640-crop.h*size)/2,crop.w*size,crop.h*size);
         const data=lc.getImageData(0,0,640,640);
-        if(wheel.style==='R8'&&index===0){
+        if(legacyR8){
           clearR8Backdrop(data.data,640,640,{x:(640-crop.w*size)/2+(495-crop.x)*size,y:(640-crop.h*size)/2+(43-crop.y)*size,w:16*size,h:70*size});
           lc.putImageData(data,0,0);
-        }else if(wheel.style!=='RS 2020+'&&index===0){
+        }else if(wheel.style!=='RS 2020+'&&index===0&&!r8Cutout){
           const firstPixel=(Math.min(639,Math.ceil((640-crop.h*size)/2)+1)*640+Math.min(639,Math.ceil((640-crop.w*size)/2)+1))*4;
           if(data.data[firstPixel+3]===255){clearBackdrop(data.data,640,640);lc.putImageData(data,0,0);}
         }

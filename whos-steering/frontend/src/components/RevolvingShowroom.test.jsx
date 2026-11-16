@@ -104,3 +104,20 @@ test('collection starts playing even when reduced motion is enabled', () => {
  expect(host.querySelector('.orbit-belt').style.animationPlayState).toBe('paused');
  act(()=>root.unmount()); window.matchMedia=matchMedia; global.Image=original;
 });
+
+test('transparent R8 showroom image draws its full dimensions without legacy cropping or backdrop keying',async()=>{
+ const {WheelArt}=require('./RevolvingShowroom');
+ const originalImage=global.Image;
+ global.Image=class {constructor(){this.width=1320;this.height=1192;}set src(value){this.url=value;Promise.resolve().then(()=>this.onload());}};
+ const context={drawImage:jest.fn(),getImageData:jest.fn(()=>({data:new Uint8ClampedArray(640*640*4)})),putImageData:jest.fn()};
+ const spy=jest.spyOn(HTMLCanvasElement.prototype,'getContext').mockReturnValue(context);
+ const host=document.createElement('div'),root=createRoot(host);
+ try{
+  await act(async()=>{root.render(<WheelArt wheel={{...WHEEL_STYLES.find(w=>w.style==='R8'),showroomImage:'/showroom/audi-r8-front.png?full-image-test'}}/>);});
+  const draw=context.drawImage.mock.calls.find(call=>call.length===9);
+  expect(draw.slice(1,5)).toEqual([0,0,1320,1192]);
+  expect(draw[5]).toBe(16);expect(draw[6]).toBeGreaterThan(16);
+  expect(draw[7]).toBe(608);expect(draw[8]).toBeLessThan(608);
+  expect(context.putImageData).not.toHaveBeenCalled();
+ }finally{act(()=>root.unmount());spy.mockRestore();global.Image=originalImage;}
+});
