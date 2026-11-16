@@ -486,7 +486,7 @@ export default function Checkout() {
 
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16 }}>
               <span style={{ fontSize: 14, color: 'var(--t)' }}>Shipping</span>
-              <span style={{ fontSize: 14, color: '#3DB85A', fontWeight: 700 }}>Confirmed after order</span>
+              <span style={{ fontSize: 14, color: '#3DB85A', fontWeight: 700 }}>FREE</span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
               <span style={{ fontFamily: 'Arial, sans-serif', fontSize: 14, letterSpacing: .6, color: 'var(--t)' }}>TOTAL</span>

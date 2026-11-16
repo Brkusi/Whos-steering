@@ -59,6 +59,7 @@ export default function CartDrawer({ open, onClose }) {
               <span style={{ fontFamily: 'Arial, sans-serif', fontSize: 14, letterSpacing: .6, color: 'var(--t)', textTransform: 'uppercase' }}>Total</span>
               <span style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontSize: 28, color: 'var(--y)' }}>${total.toFixed(2)}</span>
             </div>
+            <p style={{color:'#4ade80',fontWeight:700,fontSize:14,marginBottom:12}}>FREE SHIPPING ON ALL PRODUCTS</p>
             <button className="btn" style={{ width: '100%', clipPath: 'none' }}
               onClick={() => { onClose(); nav('/checkout'); }}>
               PROCEED TO CHECKOUT

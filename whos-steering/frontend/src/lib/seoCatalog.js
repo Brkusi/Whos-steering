@@ -54,7 +54,7 @@ export function seoForRoute(pathname,search=''){
   }
  }else if(pathname===LIGHTING_PATH){
   title=LIGHTING_NAME+' | Who’s Steering';description='Shop Symphony acrylic LED ambient lighting with Bluetooth app control, music sync and ten kit options. Explore LED close-ups and choose up to 100 kits.';
-  schema.push({'@type':'Product',name:LIGHTING_NAME,description,image:[SITE+lightingImage],sku:'symphony-ambient-lighting',brand:{'@type':'Brand',name:"Who's Steering?"},offers:{'@type':'AggregateOffer',priceCurrency:'USD',lowPrice:'28.80',highPrice:'53.10',offerCount:LIGHTING_VARIANTS.length,url:canonicalUrl(path)}});
+  schema.push({'@type':'Product',name:LIGHTING_NAME,description,image:[SITE+lightingImage],sku:'symphony-ambient-lighting',brand:{'@type':'Brand',name:"Who's Steering?"},offers:{'@type':'AggregateOffer',priceCurrency:'USD',lowPrice:'50.00',highPrice:'75.00',offerCount:LIGHTING_VARIANTS.length,url:canonicalUrl(path)}});
   crumbs.push({name:'Shop Lighting',path:LIGHTING_CATEGORY},{name:LIGHTING_NAME,path:LIGHTING_PATH});
  }else if(pathname===LIGHTING_CATEGORY){
   title='Shop Ambient Lighting | Who’s Steering';description='Explore acrylic LED car ambient lighting kits with Bluetooth app control and music-reactive Symphony effects.';

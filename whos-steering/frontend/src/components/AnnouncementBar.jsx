@@ -3,11 +3,11 @@ import {blackFridayActive} from '../lib/blackFriday';
 const ITEMS = [
   '⚡ Handcrafted to your exact specification',
   '📍 Engineered in Florida · Assembled in New York City',
-  '🌍 International Shipping Available Worldwide',
+  '🌍 FREE SHIPPING ON ALL PRODUCTS WORLDWIDE',
   '🛡 Every build backed by a 6-Month Warranty',
   '⏱ Custom Build Time: 3–5 Weeks from Order Confirmation',
   '🔧 Custom wheels for BMW, Audi, Mercedes, Toyota, Porsche & Dodge SRT — fitment confirmed from your wheel photo',
-  '✈️ We ship globally — no matter where you are, we deliver',
+  '✈️ Free worldwide shipping — every product, every order',
   '🏁 Race-inspired materials. Street-legal quality.',
 ];
 
@@ -19,12 +19,20 @@ export default function AnnouncementBar() {
     <>
       <style>{`
         @media(prefers-reduced-motion:reduce) {
-          .ticker-track { animation: ticker 38s linear infinite!important; }
+          .shipping-promo { position:absolute;left:0;top:0;bottom:0;z-index:3;display:flex;align-items:center;padding:0 18px;background:#101813;color:#4ade80;font-family:Rajdhani,sans-serif;font-size:13px;font-weight:700;letter-spacing:.7px;box-shadow:12px 0 20px #10181355; }
+        .shipping-promo-short {display:none}
+        .shipping-promo + .ticker-track {padding-left:300px}
+        @media(max-width:600px){.shipping-promo{padding:0 12px;font-size:12px}.shipping-promo-long{display:none}.shipping-promo-short{display:inline}.shipping-promo + .ticker-track{padding-left:145px}}
+        .ticker-track { animation: ticker 38s linear infinite!important; }
         }
         @keyframes ticker {
           0%   { transform: translateX(0); }
           100% { transform: translateX(-50%); }
         }
+        .shipping-promo { position:absolute;left:0;top:0;bottom:0;z-index:3;display:flex;align-items:center;padding:0 18px;background:#101813;color:#4ade80;font-family:Rajdhani,sans-serif;font-size:13px;font-weight:700;letter-spacing:.7px;box-shadow:12px 0 20px #10181355; }
+        .shipping-promo-short {display:none}
+        .shipping-promo + .ticker-track {padding-left:300px}
+        @media(max-width:600px){.shipping-promo{padding:0 12px;font-size:12px}.shipping-promo-long{display:none}.shipping-promo-short{display:inline}.shipping-promo + .ticker-track{padding-left:145px}}
         .ticker-track {
           display: flex;
           width: max-content;
@@ -42,6 +50,7 @@ export default function AnnouncementBar() {
         <div style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: 60, background: 'linear-gradient(to right, var(--y), transparent)', zIndex: 2, pointerEvents: 'none' }} />
         <div style={{ position: 'absolute', right: 0, top: 0, bottom: 0, width: 60, background: 'linear-gradient(to left, var(--y), transparent)', zIndex: 2, pointerEvents: 'none' }} />
 
+        <div className="shipping-promo" aria-label="Free shipping on all products worldwide"><span className="shipping-promo-long">FREE SHIPPING ON ALL PRODUCTS</span><span className="shipping-promo-short" aria-hidden="true">FREE SHIPPING</span></div>
         <div className="ticker-track">
           {/* Duplicate for seamless loop */}
           {[...items, ...items].map((item, i) => (
@@ -50,7 +59,7 @@ export default function AnnouncementBar() {
               fontSize: 14,
               fontWeight: 700,
               letterSpacing: .6,
-              color: '#000',
+              color: item.toLowerCase().includes('free ')?'#14532d':'#000',
               textTransform: 'uppercase',
               whiteSpace: 'nowrap',
               padding: '0 40px',

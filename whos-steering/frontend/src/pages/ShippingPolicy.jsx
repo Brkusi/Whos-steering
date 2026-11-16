@@ -7,7 +7,8 @@ export default function ShippingPolicy() {
       <div style={{ maxWidth: 860, margin: '0 auto', padding: '48px 24px 80px' }}>
         <div style={{ fontFamily: 'Arial, sans-serif', fontSize: 14, letterSpacing: .6, color: 'var(--y)', marginBottom: 10 }}>LEGAL</div>
         <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 52, marginBottom: 8 }}>SHIPPING POLICY</div>
-        <div style={{ fontSize: 14, color: 'var(--t)', marginBottom: 40, borderBottom: '1px solid var(--b)', paddingBottom: 24 }}>Last updated: September 30, 2026</div>
+        <p style={{color:'#4ade80',fontWeight:700,marginTop:14}}>FREE WORLDWIDE SHIPPING ON ALL PRODUCTS — no shipping fee at checkout.</p>
+        <div style={{ fontSize: 14, color: 'var(--t)', marginBottom: 40, borderBottom: '1px solid var(--b)', paddingBottom: 24 }}>Last updated: November 16, 2026</div>
 
         <Legal h="PRODUCTION & ORDER PROCESSING">
           <p>Every Who's Steering wheel is built by hand to your exact specifications. Production begins within 24 hours of order confirmation and order processing takes place seven days a week.</p>
