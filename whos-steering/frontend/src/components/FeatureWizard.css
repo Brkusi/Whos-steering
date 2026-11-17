@@ -55,3 +55,19 @@
 @media(max-width:979px){body.wheel-config-active #root>footer{display:none}}
 
 @media(max-width:979px){body.wheel-config-compact .feature-wizard-preview{display:none}}
+.urus-paddle-options{display:grid;grid-template-columns:repeat(auto-fit,minmax(115px,1fr));gap:8px}.urus-paddle-options button{padding:7px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:6px;min-width:0;text-align:center;font-size:14px;line-height:1.2}.urus-paddle-options span{min-height:2.4em;display:flex;align-items:center;justify-content:center}
+.vehicle-compatible{color:#3dde7c;font:700 15px Rajdhani,sans-serif;margin:10px 0 0}
+/* Use more of the phone screen for the full wheel, and trim preview chrome. */
+@media(max-width:979px){
+ .wheel-config-options .feature-wizard-header{padding:8px 12px}
+ .wheel-config-options .feature-wizard-progress{margin:6px 0}
+ .wheel-config-options .feature-wizard-edit select{padding:5px 9px}
+ .feature-wizard-preview{flex-basis:clamp(170px,30dvh,290px)}
+ .feature-wizard-preview .preview-zoom-hint{display:none}
+ .feature-wizard-preview .preview-zoom-content{height:100%;width:100%}
+ .feature-wizard-preview>div>p{padding:3px 8px!important;font-size:9px!important}
+ .feature-wizard-preview .fseries-preview-stage{flex:1;min-height:0}
+ .feature-wizard-preview .wheel3d-stage{flex:1;min-height:0}
+}
+@media(max-width:979px) and (max-height:600px){.feature-wizard-preview{flex-basis:140px}}
+@media(max-width:979px){.feature-wizard-preview .preview-zoom{height:100%!important;min-height:0;aspect-ratio:auto!important}}

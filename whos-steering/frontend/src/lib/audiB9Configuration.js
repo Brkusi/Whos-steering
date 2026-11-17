@@ -5,7 +5,7 @@ export function audiB9Configuration(config, parseColor) {
   const appearance = wheelAppearance(config, parseColor);
   return {
     ...appearance,
-    standardPaddles: config.paddleShifters !== 'Magnetic',
+    standardPaddles: !['Magnetic','Urus Style'].includes(config.paddleShifters),
     paddleFinish: config.paddleFinish === 'Stealth' ? 'Stealth' : 'Normal',
     style: config.wheelStyle === 'Sport' ? 'Sport' : 'Comfort',
     topColorSelected: Boolean(config.topBottomCustomColor || (appearance.top.material.includes('Carbon') ? config.topBottomCarbonCol : config.topBottomCol)),

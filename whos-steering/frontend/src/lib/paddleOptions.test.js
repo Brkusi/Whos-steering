@@ -8,7 +8,7 @@ import {calcPrice} from './api';
 test('universal paddles survive saved builds and carry the correct price',()=>{
   for(const [brand,wheelStyleType] of [['BMW','G-Series Pre LCI'],['AUDI','B8.5'],['AUDI','RS 2020+'],['MERCEDES','Mercedes 2015–2023'],['DODGE_SRT','SRT']]){
     const base={...DEFAULT_CONFIG,brand,wheelStyleType,heated:false,laneAssist:false,airbagCompat:false};
-    for(const paddleShifters of ['Magnetic','Urus Style']){
+    for(const paddleShifters of brand==='AUDI'?['Magnetic','Urus Style']:['Magnetic']){
       const cfg=normalizePaddleDetails(normalizeB85Options({...base,paddleShifters,paddleLength:'Long',urusPaddleColor:'Red'}));
       expect(cfg.paddleShifters).toBe(paddleShifters);
       expect(cfg.paddleLength).toBe('Long');
@@ -16,7 +16,7 @@ test('universal paddles survive saved builds and carry the correct price',()=>{
       expect(calcPrice(cfg)-calcPrice(base)).toBe(25);
     }
   }
-  expect(paddleOptions(['Standard'])).toEqual(['Standard','Magnetic','Urus Style']);
+  expect(paddleOptions(['Standard'],'AUDI')).toEqual(['Standard','Magnetic','Urus Style']);
   expect(paddleLabel('Magnetic')).toBe('Carbon Magnetic');
 });
 
@@ -27,4 +27,9 @@ test('matte carbon ignores stale custom color and uses carbon geometry',()=>{
   expect(a.top.color).toBe('#111111');expect(audiB9Parts(a).top).toBe(1);
   const g=bmwFSeriesConfiguration({...cfg,brand:'BMW',wheelStyleType:'G-Series Pre LCI'},()=> '#ff0000');
   expect(g.carbonCustomTint).toBe(false);expect(g.carbonSwatch).toBe('/matte-carbon-gseries.png');
+});
+
+test('Urus is Audi-only and every finish survives normalization',()=>{
+ for(const brand of ['BMW','MERCEDES','TOYOTA','PORSCHE','DODGE_SRT']){expect(paddleOptions(['Standard','Urus Style'],brand)).not.toContain('Urus Style');expect(normalizePaddleDetails({brand,paddleShifters:'Urus Style',urusPaddleColor:'Red'})).toMatchObject({paddleShifters:'Standard',urusPaddleColor:''});}
+ for(const urusPaddleColor of ['Silver','Green','Carbon Fiber','Red Carbon Fiber','Forged Carbon Fiber','Red Forged Carbon Fiber','Blue Forged Carbon Fiber']) expect(normalizePaddleDetails({brand:'AUDI',paddleShifters:'Urus Style',urusPaddleColor}).urusPaddleColor).toBe(urusPaddleColor);
 });

@@ -14,7 +14,7 @@ let mockViewport=1280;
 jest.mock('../hooks/useViewport',()=>()=>mockViewport);
 global.IS_REACT_ACT_ENVIRONMENT=true;
 let host,root;
-beforeEach(()=>{mockViewport=1280;sessionStorage.clear();host=document.createElement('div');document.body.append(host);root=createRoot(host);window.scrollTo=jest.fn();});
+beforeEach(()=>{jest.spyOn(HTMLCanvasElement.prototype,'getContext').mockReturnValue({fillRect:jest.fn(),save:jest.fn(),restore:jest.fn(),translate:jest.fn(),scale:jest.fn(),beginPath:jest.fn(),moveTo:jest.fn(),lineTo:jest.fn(),closePath:jest.fn(),clip:jest.fn(),stroke:jest.fn(),drawImage:jest.fn(),createLinearGradient:()=>({addColorStop:jest.fn()})});mockViewport=1280;sessionStorage.clear();host=document.createElement('div');document.body.append(host);root=createRoot(host);window.scrollTo=jest.fn();});
 afterEach(()=>{act(()=>root.unmount());host.remove();jest.restoreAllMocks();});
 async function mount(query='brand=AUDI&style=B9&year=2018&model=A4'){await act(async()=>root.render(<MemoryRouter initialEntries={['/configure?'+query]}><CartProvider><Configure/></CartProvider></MemoryRouter>));}
 function clickLabel(label){act(()=>host.querySelector(`button[aria-label="${label}"]`).click());}
@@ -53,7 +53,7 @@ test('removes redundant wheel controls and preserves new Urus colors',async()=>{
  act(()=>sport.click());expect(sport.getAttribute('aria-pressed')).toBe('true');
  jump('style-paddle-shifters');
  act(()=>[...host.querySelectorAll('button')].find(b=>b.textContent.startsWith('Urus Style')).click());
- for(const color of ['Silver','Green']){
+ for(const color of ['Silver','Green','Carbon Fiber','Red Carbon Fiber','Forged Carbon Fiber','Red Forged Carbon Fiber','Blue Forged Carbon Fiber']){
   act(()=>[...host.querySelectorAll('button')].find(b=>b.textContent===color).click());
   jump('style-wheel-style');jump('style-paddle-shifters');
   expect([...host.querySelectorAll('button')].find(b=>b.textContent===color).getAttribute('aria-pressed')).toBe('true');
@@ -86,4 +86,11 @@ test('mobile keeps progress, preview and navigation in a locked configuration sh
  mockViewport=1280;await mount();
  expect(document.body.classList.contains('wheel-config-active')).toBe(false);
  expect(wizard.querySelector('.feature-wizard-preview')).toBeNull();
+});
+
+test('vehicle confirmation appears after year and model; Urus is absent outside Audi',async()=>{
+ await mount();expect(host.querySelector('.vehicle-compatible').textContent).toBe('✓ Your vehicle is compatible');
+});
+test('non-Audi paddle menu excludes Urus',async()=>{
+ await mount('brand=BMW&style=F-Series&year=2018&model=M3');jump('style-paddle-shifters');expect(host.textContent).not.toContain('Urus Style');
 });

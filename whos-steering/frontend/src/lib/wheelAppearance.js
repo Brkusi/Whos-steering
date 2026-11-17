@@ -1,3 +1,4 @@
+import {urusActive,urusFinish} from './urusPaddles';
 import { COLORS, STITCH_COLORS, STRIPE_CONCEPTS } from './data';
 import { BMW_2010_COLORS } from './bmw2010Palette';
 
@@ -32,6 +33,7 @@ export function wheelAppearance(cfg, parseColor) {
     dodgeAirbagTrim: color(cfg.dodgeAirbagTrimCustomColor || cfg.dodgeAirbagTrimCol, '#292929'),
     dodgeLogo: color(cfg.dodgeLogoCustomColor || cfg.dodgeLogoCol, '#c5c9ce'),
     badge: cfg.audiBadge === 'R8' && cfg.wheelStyleType !== 'R8' ? 'RS' : cfg.audiBadge || 'RS', led: !!cfg.ledDisplay,
+    urus:urusActive(cfg),urusFinish:urusFinish(cfg.urusPaddleColor).name,
     magnetic: cfg.paddleShifters === 'Magnetic', longPaddles: cfg.paddleLength === 'Long',
     unresolved: [...new Set(unresolved)],
   };

@@ -1,9 +1,10 @@
+import UrusPaddleOptions from '../components/UrusPaddleOptions';
 import '../components/BlackFriday.css';
 import FeatureWizard from '../components/FeatureWizard';
 import StripeSwatch from '../components/StripeSwatch';
 import {customWheelPrice,blackFridayActive} from '../lib/blackFriday';
 import { BuildCheckoutTotal, BuildReviewDialog } from '../components/BuildControls';
-import { paddleOptions, paddleLabel, isUniversalPaddle, URUS_PADDLE_COLORS, normalizePaddleDetails } from '../lib/paddleOptions';
+import { paddleOptions, paddleLabel, isUniversalPaddle, normalizePaddleDetails } from '../lib/paddleOptions';
 import LedDisplay from '../components/LedDisplay';
 import ReferenceWheelPreview from '../components/ReferenceWheelPreview';
 import { normalizeB85Options } from '../lib/audiB85Configuration';
@@ -22,7 +23,7 @@ import { F_SERIES_SHAPE_IDS, F_SERIES_PADDLES, sourceWheelStyle, sourceWheelShap
 import { calcPrice, apiFetch } from '../lib/api';
 import { useCart } from '../context';
 
-import { VEHICLE_MAKES, isConfigurableMake } from '../lib/vehicleCompatibility';
+import { VEHICLE_MAKES, isConfigurableMake, wheelMatchesVehicle } from '../lib/vehicleCompatibility';
 import { defaultWheelStyle, wheelStyle } from '../lib/wheelStyles';
 import { hasVehicleCatalog, vehicleInquiryPath, vehicleYears } from '../lib/vehicleCatalog';
 import VehicleYearModelFields from '../components/VehicleYearModelFields';
@@ -766,8 +767,8 @@ export default function Configure() {
               minHeight: 0,
               overflow: isMobileViewport ? 'visible' : 'hidden',
             }}>
-              <ReferenceWheelPreview led={cfg.ledDisplay}
-                src="/g-series-reference.png"
+              <ReferenceWheelPreview config={cfg} led={cfg.ledDisplay}
+                src={isMobileViewport ? '/configure-g-series-lci.png' : '/g-series-reference.png'}
                 alt="BMW G-Series LCI Steering Wheel customization options"
                 style={{
                   position: isMobileViewport ? 'relative' : 'absolute',
@@ -807,8 +808,8 @@ export default function Configure() {
               minHeight: 0,
               overflow: isMobileViewport ? 'visible' : 'hidden',
             }}>
-              <ReferenceWheelPreview led={cfg.ledDisplay}
-                src="/r8-reference.png"
+              <ReferenceWheelPreview config={cfg} led={cfg.ledDisplay}
+                src={isMobileViewport || cfg.paddleShifters === 'Urus Style' ? '/showroom/audi-r8-front.png' : '/r8-reference.png'}
                 alt="Audi R8 Steering Wheel customization options"
                 style={{
                   position: isMobileViewport ? 'relative' : 'absolute',
@@ -887,6 +888,7 @@ export default function Configure() {
             <VehicleYearModelFields key={compatibilityMake} make={compatibilityMake} year={cfg.vehicleYear} model={cfg.vehicleModel}
               idPrefix="configure-vehicle" onYearChange={setVehicleYear} onModelChange={setVehicleModel}
               errors={errors} required />
+            {wheelMatchesVehicle(cfg,cfg.wheelStyleType) && <p className="vehicle-compatible" role="status">✓ Your vehicle is compatible</p>}
           </Sect>
           <Sect label="Current Wheel Photo">
             <label className="fl">Current Wheel Photo <span className="req">*</span></label>
@@ -978,7 +980,7 @@ export default function Configure() {
           {/* Paddles */}
           {<Sect label="Paddle Shifters" value={paddleLabel(cfg.paddleShifters) + (cfg.paddleShifters === 'Magnetic' ? ` · ${cfg.paddleLength}` : isAudi && cfg.wheelStyleType === 'B9' && cfg.paddleShifters === 'Standard' ? ` · ${cfg.paddleFinish === 'Stealth' ? 'Black' : 'Classic'}` : '')}>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7 }}>
-              {paddleOptions(!sourceWheelHasPaddles(cfg) ? ['Standard'] : isAudiB85(cfg) ? B85_PADDLES : usesSource2D(cfg) ? F_SERIES_PADDLES : ['Standard']).map(o => (
+              {paddleOptions(!sourceWheelHasPaddles(cfg) ? ['Standard'] : isAudiB85(cfg) ? B85_PADDLES : usesSource2D(cfg) ? F_SERIES_PADDLES : ['Standard'],cfg.brand).map(o => (
                 <button key={o} aria-pressed={cfg.paddleShifters === o} className={`ob${cfg.paddleShifters === o ? ' on' : ''}`} onClick={() => set('paddleShifters', o)}>
                   {o === 'Standard' && usesSource2D(cfg) ? 'Original paddles' : o === 'None' ? 'No paddles' : paddleLabel(o)}{isUniversalPaddle(o) || o.includes('Carbon') || o.startsWith('Racing Style') ? ' (+$25.00)' : ''}
                 </button>
@@ -986,8 +988,7 @@ export default function Configure() {
             </div>
             {cfg.paddleShifters === 'Urus Style' && <div style={{marginTop:12}}>
               <div className="fl">Urus Style Color</div>
-              <OptionRow options={URUS_PADDLE_COLORS} selected={cfg.urusPaddleColor} onSelect={v => set('urusPaddleColor', v)} />
-              <p style={{fontSize:14,color:'var(--t)'}}>Your paddle style and color are saved for your build. Urus Style paddles are not shown in the preview yet.</p>
+              <UrusPaddleOptions selected={cfg.urusPaddleColor} onSelect={v => set('urusPaddleColor', v)} />
             </div>}
             {isAudiB85(cfg) && cfg.paddleShifters?.startsWith('Racing Style') && <div style={{marginTop:16}}>
               <div className="fl">Paddle finish</div>

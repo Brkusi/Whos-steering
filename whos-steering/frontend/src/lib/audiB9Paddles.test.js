@@ -63,3 +63,13 @@ test('standard paddles change finish, remain connected, and swap cleanly with ma
   paddles.update({...standard,paddleFinish:'Stealth'},5);
   parent.children.forEach(assembly=>expect(assembly.getObjectByName('Standard_paddle').visible).toBe(true));
 });
+
+test('Urus blades have two windows, mirror, retain the rear mount and switch finishes',()=>{
+ const parent=new THREE.Group(),rear=new THREE.Mesh(new THREE.PlaneGeometry(2,2),new THREE.MeshBasicMaterial({side:THREE.DoubleSide}));rear.position.z=-.07;rear.updateMatrixWorld(true);
+ const paddles=createB9Paddles(parent,new Map([[5,{object:rear}]]),new THREE.Texture(),{'Red Forged Carbon Fiber':new THREE.Texture()});
+ paddles.update({urus:true,urusFinish:'Red',standardPaddles:false},5);parent.updateMatrixWorld(true);
+ for(const a of parent.children){const blade=a.getObjectByName('Urus_blade');expect(blade.geometry.parameters.shapes.holes).toHaveLength(2);expect(blade.scale.x).toBe(-.85);expect(blade.scale.y).toBe(.85);expect(a.getObjectByName('Urus_paddle').visible).toBe(true);expect(a.getObjectByName('Standard_paddle').visible).toBe(false);expect(a.getObjectByName('Magnetic_paddle').visible).toBe(false);expect(blade.material[0].color.getHexString()).toBe('c41c20');expect(a.userData.mountDepth).toBeCloseTo(-.071,6);}
+ expect(parent.children[0].scale.x).toBe(-parent.children[1].scale.x);
+ paddles.update({urus:true,urusFinish:'Red Forged Carbon Fiber'},5);parent.children.forEach(a=>expect(a.getObjectByName('Urus_blade').material[0].map).not.toBeNull());
+ paddles.update({standardPaddles:true},5);parent.children.forEach(a=>expect(a.getObjectByName('Urus_paddle').visible).toBe(false));
+});

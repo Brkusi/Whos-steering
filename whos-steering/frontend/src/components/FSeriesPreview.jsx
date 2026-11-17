@@ -1,3 +1,5 @@
+import {addUrusPaddlesToCanvas} from '../lib/urusPaddleOverlay';
+import {fitPreviewCanvas} from '../lib/previewFraming';
 import PreviewZoom from './PreviewZoom';
 import { useEffect, useRef, useState } from 'react';
 import { bmwFSeriesConfiguration, sourceWheelHasPaddles, sourceWheelShape } from '../lib/bmwFSeriesConfiguration';
@@ -19,10 +21,11 @@ export default function FSeriesPreview({config}) {
   useEffect(()=>{const compositor=createFSeriesCompositor(family);renderer.current=compositor;return()=>{version.current++;compositor.dispose();renderer.current=null;};},[family]);
   useEffect(()=>{
     const current=++version.current;setStatus('loading');
-    renderer.current.render(JSON.parse(key)).then(canvas=>{
+    renderer.current.render(JSON.parse(key)).then(async canvas=>{
       if(current!==version.current||!canvas||!output.current)return;
-      output.current.width=canvas.width;output.current.height=canvas.height;
-      output.current.getContext('2d').drawImage(canvas,0,0);setStatus('ready');
+      await addUrusPaddlesToCanvas(canvas,{brand:config.brand,paddleShifters:appearance.urus?'Urus Style':'Standard',urusPaddleColor:appearance.urusFinish});
+      if(current!==version.current||!output.current)return;
+      fitPreviewCanvas(canvas,output.current);setStatus('ready');
     }).catch(()=>{if(current===version.current)setStatus('error');});
   },[key,retry]);
   return <section className="fseries-preview" aria-label={`${label} live wheel preview`}>

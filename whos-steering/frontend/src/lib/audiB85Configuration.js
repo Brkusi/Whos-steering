@@ -23,7 +23,7 @@ export function audiB85Layers(config) {
     add('paddles-magnetic.png');
     add(assets.magneticSymbols.Blanc);
     if(config.paddleLength === 'Long')layers.forEach(layer => {layer.rect=[0,-119,1080,1318];});
-  } else if (config.paddleShifters !== 'None') add('paddles-original.png');
+  } else if (!['None','Urus Style'].includes(config.paddleShifters)) add('paddles-original.png');
   add('base.png');
   add(config.topBottomMat === 'Forged Carbon'
     ? assets.top[forged[config.topBottomCarbonCol] || 'Simple']

@@ -1,3 +1,4 @@
+import {createUrusPaddle} from './urusPaddleGeometry';
 import * as THREE from 'three';
 
 // Profiles traced from the supplied short/long photographs. X points outward
@@ -109,7 +110,7 @@ function standardPaddle(sign, black) {
   } };
 }
 
-export function createB9Paddles(parent, parts, carbonTexture) {
+export function createB9Paddles(parent, parts, carbonTexture, urusTextures={}) {
   const carbon=new THREE.MeshStandardMaterial({map:carbonTexture,color:'#999999',roughness:.32,metalness:.15});
   const black=new THREE.MeshStandardMaterial({color:'#17191b',roughness:.32,metalness:.65});
   const magnet=new THREE.MeshStandardMaterial({color:'#aaa99d',roughness:.28,metalness:.88});
@@ -124,6 +125,7 @@ export function createB9Paddles(parent, parts, carbonTexture) {
     group.position.set(-.012138549+sign*.164,.373,0);group.scale.x=sign;
     const magneticGroup = new THREE.Group(); magneticGroup.name = 'Magnetic_paddle'; group.add(magneticGroup);
     const standard = standardPaddle(sign, black); group.add(standard.group);
+    const urus=createUrusPaddle(sign,urusTextures);group.add(urus.group);
     const variants=[false,true].map(long=>{
       const blade=plate(bladeProfile(long),.0024,carbon,long?'Long_carbon_blade':'Short_carbon_blade');
       blade.scale.x=.72;blade.position.set(.026,0,-.021);magneticGroup.add(blade);
@@ -162,13 +164,14 @@ export function createB9Paddles(parent, parts, carbonTexture) {
       contactGeometry.setIndex([0,2,1,0,3,2,4,5,6,4,6,7,0,1,5,0,5,4,1,2,6,1,6,5,2,3,7,2,7,6,3,0,4,3,4,7]);contactGeometry.computeVertexNormals();contactGeometry.computeBoundingSphere();
       group.userData.contactDepths=depths;group.userData.mountDepth=back;
     }
-    return {group,variants,fit,magneticGroup,standard};
+    return {group,variants,fit,magneticGroup,standard,urus};
   });
-  return {update(appearance,sideNode){assemblies.forEach(({group,variants,fit,magneticGroup,standard})=>{
-    group.visible=Boolean(appearance.magnetic || appearance.standardPaddles);
+  return {update(appearance,sideNode){assemblies.forEach(({group,variants,fit,magneticGroup,standard,urus})=>{
+    group.visible=Boolean(appearance.magnetic || appearance.standardPaddles || appearance.urus);
     if(group.visible)fit(sideNode);
-    magneticGroup.visible=Boolean(appearance.magnetic);
-    standard.group.visible=Boolean(appearance.standardPaddles && !appearance.magnetic);
+    magneticGroup.visible=Boolean(appearance.magnetic && !appearance.urus);
+    urus.group.visible=Boolean(appearance.urus);urus.update(appearance.urusFinish);
+    standard.group.visible=Boolean(appearance.standardPaddles && !appearance.magnetic && !appearance.urus);
     standard.update(appearance.paddleFinish === 'Stealth');
     variants[0].visible=!appearance.longPaddles;variants[1].visible=appearance.longPaddles;
   });}};

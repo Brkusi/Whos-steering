@@ -1,0 +1,2 @@
+import {previewBounds} from './previewFraming';
+test('preview framing removes only empty margins and retains outer paddles',()=>{const w=100,h=100,p=new Uint8ClampedArray(w*h*4);for(const [x,y] of [[20,10],[80,90],[10,40],[90,60]]){const i=(y*w+x)*4;p[i]=150;p[i+3]=255;}const b=previewBounds(p,w,h);expect(b.x).toBeLessThan(10);expect(b.y).toBeLessThan(10);expect(b.x+b.width).toBeGreaterThan(90);expect(b.y+b.height).toBeGreaterThan(90);expect(b.width).toBeLessThan(100);});

@@ -1,3 +1,4 @@
+import {visibleWheelFraming} from '../lib/wheelCamera';
 import { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
@@ -31,8 +32,15 @@ export default function B9ModelPreview({config}) {
         renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=2.2;
         renderer.domElement.setAttribute('aria-label','Interactive Audi B9 steering wheel. Drag to rotate; scroll or pinch to zoom.');renderer.domElement.setAttribute('role','img');host.appendChild(renderer.domElement);
         controls=new OrbitControls(camera,renderer.domElement);controls.target.copy(B9_TARGET);controls.enablePan=true;controls.zoomToCursor=true;controls.minDistance=.35;controls.maxDistance=4;controls.rotateSpeed=.65;
-        const setFrontCamera=()=>{camera.position.copy(B9_TARGET).add(new THREE.Vector3(0,0,1.26/Math.min(camera.aspect,1)));controls.target.copy(B9_TARGET);controls.update();render();};
-        const resize=()=>{const w=host.clientWidth,h=host.clientHeight;if(!w||!h)return;const previousAspect=camera.aspect;renderer.setSize(w,h);camera.aspect=w/h;camera.updateProjectionMatrix();if(previousAspect!==camera.aspect){const offset=camera.position.clone().sub(B9_TARGET);if(offset.length()>0){offset.multiplyScalar(Math.min(previousAspect,1)/Math.min(camera.aspect,1));camera.position.copy(B9_TARGET).add(offset);controls.update();}}render();};
+        const setFrontCamera=()=>{
+          const target=B9_TARGET.clone();let distance=1.26/Math.min(camera.aspect,1);
+          if(window.innerWidth<980&&model){
+            const fit=visibleWheelFraming(model.root,camera.aspect,camera.fov);
+            if(fit){target.copy(fit.target);distance=fit.distance;}
+          }
+          camera.position.copy(target).add(new THREE.Vector3(0,0,distance));controls.target.copy(target);controls.update();render();
+        };
+        const resize=()=>{const w=host.clientWidth,h=host.clientHeight;if(!w||!h)return;const previousAspect=camera.aspect;renderer.setSize(w,h);camera.aspect=w/h;camera.updateProjectionMatrix();if(window.innerWidth<980&&model){setFrontCamera();}else if(previousAspect!==camera.aspect){const offset=camera.position.clone().sub(B9_TARGET);if(offset.length()>0){offset.multiplyScalar(Math.min(previousAspect,1)/Math.min(camera.aspect,1));camera.position.copy(B9_TARGET).add(offset);controls.update();}}render();};
         resize();setFrontCamera();controls.addEventListener('change',render);
         observer=new ResizeObserver(resize);observer.observe(host);
         const visibility=()=>{if(!document.hidden)render();};document.addEventListener('visibilitychange',visibility);
@@ -44,7 +52,7 @@ export default function B9ModelPreview({config}) {
         ]);
         if(disposed)return;
         pmrem=new THREE.PMREMGenerator(renderer);environment=pmrem.fromEquirectangular(sourceHDR);sourceHDR.dispose();sourceHDR=null;scene.environment=environment.texture;pmrem.dispose();pmrem=null;
-        scene.add(model.root);model.update(audiB9Configuration(latest.current,parsePreviewColor));
+        scene.add(model.root);model.update(audiB9Configuration(latest.current,parsePreviewColor));if(window.innerWidth<980)setFrontCamera();
         runtime.current={update:next=>{model.update(next);render();}};
         setReady(true);render();
       } catch(e){if(!disposed){setError(true);abort.abort();model?.dispose();model=null;sourceHDR?.dispose();sourceHDR=null;}}

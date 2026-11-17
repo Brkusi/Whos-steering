@@ -1,3 +1,4 @@
+import {URUS_FINISHES,loadUrusTexture,makeUrusTexture} from './urusPaddles';
 import { drawLedArtwork } from './ledDisplay';
 import * as THREE from 'three';
 import { createB9Paddles } from './audiB9Paddles';
@@ -25,7 +26,9 @@ export async function createB9Extras(root, parts) {
   function add(geometry, material, name, position) {
     const mesh=new THREE.Mesh(geometry,material);mesh.name=name;mesh.position.copy(position);group.add(mesh);return mesh;
   }
-  const paddles=createB9Paddles(group,parts,paddleTexture);
+  const urusTextures={};
+  await Promise.all(URUS_FINISHES.filter(f=>f.carbon).map(async f=>{const image=await loadUrusTexture(f.name);const map=new THREE.CanvasTexture(makeUrusTexture(f.name,image));map.colorSpace=THREE.SRGBColorSpace;map.wrapS=map.wrapT=THREE.RepeatWrapping;textures.push(map);urusTextures[f.name]=map;}));
+  const paddles=createB9Paddles(group,parts,paddleTexture,urusTextures);
   const top=parts.get(15).object, bounds=new THREE.Box3().setFromObject(top), centerX=(bounds.min.x+bounds.max.x)/2;
   const ray=new THREE.Raycaster(), positions=[], uv=[], index=[];
   for(let i=0;i<=48;i++){
