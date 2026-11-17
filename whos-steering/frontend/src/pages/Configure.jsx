@@ -736,7 +736,7 @@ export default function Configure() {
     return ()=>{elements.forEach(el=>el.classList.remove('wheel-config-active'));document.documentElement.style.removeProperty('--wheel-config-top');document.documentElement.style.removeProperty('--wheel-config-height');document.body.classList.remove('wheel-config-compact');observer?.disconnect();window.removeEventListener('resize',update);window.visualViewport?.removeEventListener('resize',update);};
   },[isMobileViewport,compatibilityMake,viewportWidth]);
 
-  const wheelPreview = (<div style={{
+  const wheelPreview = (<div className="wheel-config-preview" style={{
           position: mobile3D ? 'sticky' : 'relative',
           top: mobile3D ? mobilePreviewTop : 0,
           zIndex: mobile3D ? 29 : undefined,
@@ -753,7 +753,7 @@ export default function Configure() {
           order: 1,
         }}>
           <p style={{margin:0,padding:'8px 12px',fontSize:12,lineHeight:1.5,color:'var(--t)',flexShrink:0}}>Preview may not exactly match your finished wheel.</p>
-          <div style={{position:'relative',display:'flex',flexDirection:'column',flex:1,minHeight:0}}>
+          <div className="wheel-config-preview-media" style={{position:'relative',display:'flex',flexDirection:'column',flex:1,minHeight:0}}>
           {!isAudi && cfg.wheelStyleType === 'G-Series' ? (
             <div style={{
               position: 'relative',

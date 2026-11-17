@@ -71,3 +71,7 @@
 }
 @media(max-width:979px) and (max-height:600px){.feature-wizard-preview{flex-basis:140px}}
 @media(max-width:979px){.feature-wizard-preview .preview-zoom{height:100%!important;min-height:0;aspect-ratio:auto!important}}
+/* The preview must share short screens with its price instead of overdrawing it. */
+.wheel-config-preview-media{overflow:hidden}
+.wheel-config-preview-media>.wheel3d,.wheel-config-preview-media>.fseries-preview,.wheel-config-preview-media>div{height:100%!important;min-height:0!important}
+.wheel-config-preview-media .wheel3d-stage,.wheel-config-preview-media .fseries-preview-stage{min-height:0}
