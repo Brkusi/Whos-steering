@@ -1,3 +1,4 @@
+import {coverAudiRsSpokes} from '../lib/audiRsPaddleLayers';
 import {addUrusPaddlesToCanvas} from '../lib/urusPaddleOverlay';
 import {fitPreviewCanvas} from '../lib/previewFraming';
 import PreviewZoom from './PreviewZoom';
@@ -23,7 +24,8 @@ export default function FSeriesPreview({config}) {
     const current=++version.current;setStatus('loading');
     renderer.current.render(JSON.parse(key)).then(async canvas=>{
       if(current!==version.current||!canvas||!output.current)return;
-      await addUrusPaddlesToCanvas(canvas,{brand:config.brand,paddleShifters:appearance.urus?'Urus Style':'Standard',urusPaddleColor:appearance.urusFinish});
+      await addUrusPaddlesToCanvas(canvas,{brand:config.brand,paddleShifters:appearance.urus?'Urus Style':'Standard',urusPaddleColor:appearance.urusFinish},undefined,
+        family === 'audi-rs-2020' ? ctx => coverAudiRsSpokes(ctx,appearance.shape) : undefined);
       if(current!==version.current||!output.current)return;
       fitPreviewCanvas(canvas,output.current);setStatus('ready');
     }).catch(()=>{if(current===version.current)setStatus('error');});

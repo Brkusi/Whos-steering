@@ -1,3 +1,4 @@
+import {removeAudiRsStockPaddles, coverAudiRsSpokes} from './audiRsPaddleLayers';
 import { createLedArtwork, drawLedDisplay, rimLedPlacement } from './ledDisplay';
 import { carbonCoordinates } from './bmwFSeriesCarbonUV';
 import F_CALIBRATION from './bmwFSeriesCalibration.json';
@@ -204,6 +205,7 @@ export function createFSeriesCompositor(family = 'bmw-fseries') {
     if(disposed)return null;
     const out=canvas(),ctx=out.getContext('2d');
     ctx.drawImage(base,0,0,SIZE,SIZE);
+    if(family==='audi-rs-2020' && (a.magnetic || a.urus))removeAudiRsStockPaddles(ctx,a.shape);
     // The 991 base contains its original carbon top at a different outline
     // from the selectable grip layers. Clear that rim before repainting it;
     // this also removes the small exposed carbon fragments on the 992.
@@ -222,7 +224,11 @@ export function createFSeriesCompositor(family = 'bmw-fseries') {
       pc.drawImage(paddles,0,(SIZE-height)/2,SIZE,height);
       if(a.magnetic){
         pc.globalCompositeOperation='destination-out';
-        pc.drawImage(silhouette(a.shape,base,guide),0,0,SIZE,SIZE);
+        if(family==='audi-rs-2020'){
+          coverAudiRsSpokes(pc,a.shape);
+        }else{
+          pc.drawImage(silhouette(a.shape,base,guide),0,0,SIZE,SIZE);
+        }
       }
       ctx.globalCompositeOperation='lighten';ctx.drawImage(paddleLayer,0,0);
       ctx.globalCompositeOperation='source-over';
