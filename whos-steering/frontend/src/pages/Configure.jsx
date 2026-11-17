@@ -964,7 +964,6 @@ export default function Configure() {
 
           {/* Stitch */}
           {sourceWheelStyle(cfg)?.stitch !== false && <Sect label="Stitch Color *" value={cfg.stitchColor ? stitchColorName(cfg.stitchColor) : cfg.stitchCustomColor || '—'}>
-            {isAudiB85(cfg) && <p style={{fontSize:14,color:'var(--t)',lineHeight:1.5}}>Stitch color is saved for your build. This preview does not display stitching changes.</p>}
             <ColorGrid colors={isAudiB85(cfg) ? B85_STITCH_COLORS : STITCH_COLORS} selected={cfg.stitchColor} onSelect={v => { set('stitchColor', v); set('stitchCustomColor', ''); }} />
             <CustomColorInput label="Type Any Stitch Color (Max Two):" value={cfg.stitchCustomColor} onChange={v => { set('stitchCustomColor', v); set('stitchColor', null); }} placeholder="e.g. Gold, Magenta, Dual Colors..." />
             {errors.stitchColor && <div className="err-msg" style={{ marginTop: 8 }}>Please choose a stitch color.</div>}
@@ -1089,7 +1088,6 @@ export default function Configure() {
           {!isBmw2010(cfg)&&<Sect label="Driver Assistance" value={cfg.laneAssist?'Retained':'Not added'}><Toggle label={!isAudi?'Does Your Original Steering Wheel Have Driver Assistance Functionality?':'Lane Assist Compatible'} sub={!isAudi?(cfg.laneAssist?'Yes (I want to retain Driver Assistance) — +$30.00':'No'):''} value={cfg.laneAssist} onChange={v=>set('laneAssist',v)}/></Sect>}
           {cfg.airbagCompat&&<Sect label="Airbag Material" value={materialLabel(cfg.airbagMat)}>
             <div style={{display:'flex',flexWrap:'wrap',gap:7,marginBottom:14}}>{AIRBAG_MATS.map(m=><button key={m.n} className={`ob${cfg.airbagMat===m.n?' on':''}`} onClick={()=>{set('airbagMat',m.n);set('airbagCol',null);set('airbagCustomColor','');}}>{materialLabel(m.n)}</button>)}</div>
-            {isAudiB85(cfg)&&<p style={{fontSize:14,color:'var(--t)'}}>The preview shows a black cover. Your selected cover and stitching colors are saved for your build.</p>}
             {errors.airbagMaterial&&<div className="err-msg">Please choose an airbag material.</div>}
             {cfg.airbagMat&&<><div className="fl">Color *: {configuredColor(cfg.airbagCol,cfg.airbagCustomColor)}</div><ColorGrid colors={isAudiB85(cfg)?B85_MATERIAL_COLORS:COLORS} selected={cfg.airbagCol} onSelect={v=>{set('airbagCol',v);set('airbagCustomColor','');}}/><CustomColorInput label="Type Any Color:" value={cfg.airbagCustomColor} onChange={v=>{set('airbagCustomColor',v);set('airbagCol',null);}}/>{errors.airbagColor&&<div className="err-msg">Please choose an airbag color.</div>}</>}
           </Sect>}

@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import {audiB85Layers, normalizeB85Options, B85_ROOT, B85_LED} from './audiB85Configuration';
+import {B85_MATERIAL_COLORS, B85_STITCH_COLORS} from './data';
 import assets from './audiB85Assets.json';
 const defaults = {brand:'AUDI',wheelStyleType:'B8.5',topBottomMat:'Smooth Leather',sideMat:'Alcantara',paddleShifters:'Standard',stripeConceptId:'C-1'};
 const render = overrides => audiB85Layers(normalizeB85Options({...defaults,...overrides}));
@@ -47,10 +48,17 @@ test('stale structural options normalize while production colors are preserved',
   expect(cfg).toMatchObject({bmwShape:'Flat bottom',wheelStyle:'Sport',topBottomMat:'Smooth Leather',sideCol:'#ff0000',audiBadge:'RS',paddleShifters:'Standard'});
 });
 
-test('airbag color variants alter stitching, while cover material remains black', () => {
-  const cfg=normalizeB85Options({...defaults,airbagCompat:true,airbagCol:'#CC2200',airbagStitchColor:'#E8B800'});
-  expect(cfg.airbagCol).toBe('#CC2200');
-  expect(audiB85Layers(cfg).map(l=>l.src)).toContain(B85_ROOT+assets.airbagLeather.Jaune);
+test('all B8.5 airbag and grip swatches reach their own color layers', () => {
+  for (const {h} of B85_MATERIAL_COLORS) {
+    const layers = render({airbagCompat:true,airbagCol:h,topBottomCol:h});
+    expect(layers.find(layer => layer.src.endsWith(assets.top['Cuir nappa'])).tint).toBe(h);
+    expect(layers.find(layer => layer.src.endsWith(assets.airbagLeather.Noir)).tint).toBe(h);
+  }
+  for (const {h} of B85_STITCH_COLORS) {
+    const layer = render({airbagCompat:true,airbagStitchColor:h}).find(layer => layer.stitchSource);
+    expect(layer.stitchColor).toBe(h);
+    expect(layer.stitchSource).toBe(B85_ROOT+assets.airbagLeather.Blanc);
+  }
 });
 
 test('restored builds preserve custom stitching but clear stripes alongside LEDs', () => {

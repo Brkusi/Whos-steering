@@ -1,5 +1,5 @@
 import { wheelAppearance } from './wheelAppearance';
-import { DEFAULT_CONFIG } from './data';
+import { COLORS, STITCH_COLORS, CLASSIC_CARBON_COLORS, FORGED_CARBON_COLORS, HONEYCOMB_CARBON_COLORS, DEFAULT_CONFIG } from './data';
 
 const parse = s => /^#[a-f\d]{6}$/i.test(s) ? s : null;
 test('restored carbon builds use carbon colors rather than stale leather colors', () => {
@@ -23,4 +23,27 @@ test('turning off the cover upgrade suppresses stale cover options without mutat
 test('unsupported custom instructions are surfaced rather than treated as accurate colors', () => {
   const result=wheelAppearance({...DEFAULT_CONFIG,stitchCustomColor:'Red and gold alternating'},parse);
   expect(result.unresolved).toContain('Red and gold alternating');expect(result.stitch).toBe('#696969');
+});
+
+test('each standard palette reaches the shared preview appearance', () => {
+  for (const {h} of COLORS) {
+    const appearance = wheelAppearance({...DEFAULT_CONFIG, topBottomMat:'Smooth Leather', topBottomCol:h, airbagCompat:true, airbagCol:h}, parse);
+    expect(appearance.top.color).toBe(h);
+    expect(appearance.airbag.color).toBe(h);
+  }
+  for (const {h} of STITCH_COLORS) {
+    const appearance = wheelAppearance({...DEFAULT_CONFIG, stitchColor:h, airbagCompat:true, airbagStitchColor:h}, parse);
+    expect(appearance.stitch).toBe(h);
+    expect(appearance.airbagStitch).toBe(h);
+  }
+  for (const [material, palette] of [
+    ['Classic Carbon', CLASSIC_CARBON_COLORS],
+    ['Forged Carbon', FORGED_CARBON_COLORS],
+    ['Honeycomb Carbon', HONEYCOMB_CARBON_COLORS],
+  ]) {
+    for (const {h} of palette) {
+      const appearance = wheelAppearance({...DEFAULT_CONFIG, topBottomMat:material, topBottomCarbonCol:h}, parse);
+      expect(appearance.top.color).toBe(h);
+    }
+  }
 });

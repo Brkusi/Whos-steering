@@ -23,12 +23,23 @@ export function audiB85Layers(config) {
     layers.push({src:config.paddleLength === 'Long' ? '/magnetic-long.svg' : '/magnetic-short.svg'});
   } else if (!['None','Urus Style'].includes(config.paddleShifters)) add('paddles-original.png');
   add('base.png');
+  const topIndex = layers.length;
   add(config.topBottomMat === 'Forged Carbon'
     ? assets.top[forged[config.topBottomCarbonCol] || 'Simple']
     : assets.top[materialNames[config.topBottomMat]] || assets.top['Cuir nappa']);
+  if (['Smooth Leather','Alcantara'].includes(config.topBottomMat)) {
+    layers[topIndex].tint = config.topBottomCustomColor || config.topBottomCol;
+  }
   add(assets.sides[materialNames[config.sideMat]] || assets.sides['Cuir nappa perforé']);
   const airbag = config.airbagCompat && config.airbagMat === 'Alcantara' ? assets.airbagAlcantara : assets.airbagLeather;
-  add(airbag[config.airbagCompat ? colors[config.airbagStitchColor] || 'Noir' : 'Noir']);
+  layers.push({
+    src: B85_ROOT + airbag.Noir,
+    tint: config.airbagCompat ? config.airbagCustomColor || config.airbagCol : null,
+    ...(config.airbagCompat && {
+      stitchSource: B85_ROOT + airbag.Blanc,
+      stitchColor: config.airbagStitchCustomColor || config.airbagStitchColor,
+    }),
+  });
   add(assets.badge[config.audiBadge === 'S' ? 'Sline' : 'RS']);
   if (config.ledDisplay) {
     // Register the existing Audi LED photograph to the B8.5 upper rim.
