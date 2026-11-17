@@ -30,7 +30,10 @@ export function makeUrusTexture(finish,image,size=256){
  const f=urusFinish(finish),c=document.createElement('canvas');c.width=c.height=size;const ctx=c.getContext('2d');
  ctx.fillStyle=f.color;ctx.fillRect(0,0,size,size);
  if(image){
-  ctx.drawImage(image,0,0,size,size);
+  // More repeats reveal a finer weave/chip pattern on the long narrow blades.
+  // This map is shared by paddle thumbnails, 2D overlays and the 3D faces.
+  const columns=2,rows=6;
+  for(let y=0;y<rows;y++)for(let x=0;x<columns;x++)ctx.drawImage(image,x*size/columns,y*size/rows,size/columns,size/rows);
   if(f.accent){
    // The references show colored chips against black resin, not a solid tint.
    const pixels=ctx.getImageData(0,0,size,size),rgb=[1,3,5].map(i=>parseInt(f.accent.slice(i,i+2),16));
