@@ -15,14 +15,18 @@ export default function ReferenceWheelPreview({src,alt,style,led,config}) {
           : [[.27,.184,.21,.047,.018],[.554,.609,.137,.019,.034],[.801,.598,.13,.019,.035]];
         placements.forEach(([x,y,width,height,rise])=>drawLedDisplay(ctx,texture,{x:x*w,y:y*h,width:width*w,height:height*h,rise:rise*h}));
       }
-      if(config?.paddleShifters==='Urus Style'){
+      if(['Urus Style','Magnetic'].includes(config?.paddleShifters)){
         if(src.includes('audi-r8-front')){
           for(const sign of [-1,1]){ctx.save();ctx.translate(canvas.width/2,0);ctx.scale(sign,1);ctx.beginPath();[[.21,.30],[.285,.30],[.285,.455],[.18,.455]].forEach(([x,y],i)=>i?ctx.lineTo((x-.5)*canvas.width,y*canvas.height):ctx.moveTo((x-.5)*canvas.width,y*canvas.height));ctx.closePath();ctx.clip();ctx.clearRect(-canvas.width,0,canvas.width*2,canvas.height);ctx.restore();}
         }
-        await addUrusPaddlesToCanvas(canvas,config);
+        if(config.paddleShifters==='Magnetic'){
+          const pair=new Image();pair.src=config.paddleLength==='Long'?'/magnetic-long.svg':'/magnetic-short.svg';
+          await pair.decode();ctx.globalCompositeOperation='destination-over';
+          ctx.drawImage(pair,0,0,canvas.width,canvas.height);
+        }else await addUrusPaddlesToCanvas(canvas,config);
       }
       if(active&&ref.current)fitPreviewCanvas(canvas,ref.current);
     };image.src=src;return()=>{active=false;};
-  },[src,led,config?.paddleShifters,config?.urusPaddleColor]);
+  },[src,led,config?.paddleShifters,config?.urusPaddleColor,config?.paddleLength]);
   return <PreviewZoom style={{...style,position:style?.position,aspectRatio:style?.height==='auto'?'3 / 2':undefined}}><canvas ref={ref} role="img" aria-label={alt} style={{width:'100%',height:'100%',objectFit:'contain'}}/></PreviewZoom>;
 }

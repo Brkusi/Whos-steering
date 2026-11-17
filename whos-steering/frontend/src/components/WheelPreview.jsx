@@ -24,6 +24,8 @@ export default function WheelPreview({ config, size = 320 }) {
       style={{ filter: 'drop-shadow(0 0 50px rgba(232,184,0,.15))', transition: 'transform .3s' }}>
       <circle cx="150" cy="150" r="143" fill="#1A1A1A" />
 
+      {config?.paddleShifters === 'Magnetic' && <image href={config.paddleLength === 'Long' ? '/magnetic-long.svg' : '/magnetic-short.svg'} width="300" height="300"/>}
+
       {/* Top stripe – solid */}
       {showSolid && (
         <rect x="132" y="7" width="36" height="28" rx="3" fill={stripeColor} />

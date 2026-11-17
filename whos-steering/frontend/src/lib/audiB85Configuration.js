@@ -20,9 +20,7 @@ export function audiB85Layers(config) {
       : assets[`${racing}Finish`].Carbone);
     add(assets[`${racing}Symbols`][colors[config.b85PaddleSymbolCol] || 'Blanc']);
   } else if (config.paddleShifters === 'Magnetic') {
-    add('paddles-magnetic.png');
-    add(assets.magneticSymbols.Blanc);
-    if(config.paddleLength === 'Long')layers.forEach(layer => {layer.rect=[0,-119,1080,1318];});
+    layers.push({src:config.paddleLength === 'Long' ? '/magnetic-long.svg' : '/magnetic-short.svg'});
   } else if (!['None','Urus Style'].includes(config.paddleShifters)) add('paddles-original.png');
   add('base.png');
   add(config.topBottomMat === 'Forged Carbon'

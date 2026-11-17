@@ -185,7 +185,7 @@ export function createFSeriesCompositor(family = 'bmw-fseries') {
   }
   async function render(a) {
     const [base,paddles,side,top,trim,cover,logo,dodgeTrim,dodgeLogo,ring,guide]=await Promise.all([
-      source(a.shape),a.magnetic?image(`${process.env.PUBLIC_URL || ''}/models/audi-b85/source/paddles-magnetic.png`):a.paddle?source(`paddles/${a.paddle}`):null,
+      source(a.shape),a.magnetic?image(`${process.env.PUBLIC_URL || ''}/magnetic-${a.longPaddles?"long":"short"}.svg`):a.paddle?source(`paddles/${a.paddle}`):null,
       wrap(`${a.shape}-side-${sourceMaterial(a.side.material)}`,a.side.color,a.stitch).then(layer=>gripLayer(layer,'side',a.shape)),
       (a.top.material.includes('Carbon')?carbon(a):wrap(`${a.shape}-${a.topZone}-${sourceMaterial(a.top.material)}`,a.top.color,a.stitch)).then(layer=>gripLayer(layer,'top',a.shape)),
       a.lowerTrim?source(`trims/${a.lowerTrim}`):null,
@@ -218,7 +218,7 @@ export function createFSeriesCompositor(family = 'bmw-fseries') {
     // paddles behind the wheel while retaining the source's black background.
     if(paddles){
       const paddleLayer=canvas(),pc=paddleLayer.getContext('2d');
-      const height=a.magnetic&&a.longPaddles?SIZE*1.22:SIZE;
+      const height=SIZE;
       pc.drawImage(paddles,0,(SIZE-height)/2,SIZE,height);
       if(a.magnetic){
         pc.globalCompositeOperation='destination-out';

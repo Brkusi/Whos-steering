@@ -768,7 +768,7 @@ export default function Configure() {
               overflow: isMobileViewport ? 'visible' : 'hidden',
             }}>
               <ReferenceWheelPreview config={cfg} led={cfg.ledDisplay}
-                src={isMobileViewport ? '/configure-g-series-lci.png' : '/g-series-reference.png'}
+                src={isMobileViewport || cfg.paddleShifters === 'Magnetic' ? '/configure-g-series-lci.png' : '/g-series-reference.png'}
                 alt="BMW G-Series LCI Steering Wheel customization options"
                 style={{
                   position: isMobileViewport ? 'relative' : 'absolute',
@@ -809,7 +809,7 @@ export default function Configure() {
               overflow: isMobileViewport ? 'visible' : 'hidden',
             }}>
               <ReferenceWheelPreview config={cfg} led={cfg.ledDisplay}
-                src={isMobileViewport || cfg.paddleShifters === 'Urus Style' ? '/showroom/audi-r8-front.png' : '/r8-reference.png'}
+                src={isMobileViewport || ['Urus Style','Magnetic'].includes(cfg.paddleShifters) ? '/showroom/audi-r8-front.png' : '/r8-reference.png'}
                 alt="Audi R8 Steering Wheel customization options"
                 style={{
                   position: isMobileViewport ? 'relative' : 'absolute',

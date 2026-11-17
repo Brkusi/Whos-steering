@@ -16,7 +16,12 @@ test('paddles render behind the base; None removes them instead of retaining the
   expect(standard[0].src).toContain('paddles-original');
   expect(standard[1].src).toContain('base.png');
   expect(render({paddleShifters:'None'})[0].src).toContain('base.png');
-  for (const paddleShifters of ['Racing Style 1','Racing Style 2','Magnetic']) {
+  for (const paddleLength of ['Short','Long']) {
+    const layers=render({paddleShifters:'Magnetic',paddleLength});
+    expect(layers[0].src).toBe('/magnetic-'+paddleLength.toLowerCase()+'.svg');
+    expect(layers[1].src).toContain('base.png');
+  }
+  for (const paddleShifters of ['Racing Style 1','Racing Style 2']) {
     expect(render({paddleShifters})[2].src).toContain('base.png');
   }
 });
