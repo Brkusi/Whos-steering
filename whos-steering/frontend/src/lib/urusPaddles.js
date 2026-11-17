@@ -1,12 +1,28 @@
-// Urus blade outline traced from the supplied front/back and installed Audi
-// photographs: angular tips, two open windows, and a covered central switch.
-// Loose-paddle photographs show the rear; flip each blade for the mounted
-// driver-facing view. Shared normalized paths keep 2D previews and the extruded 3D blades aligned.
-export const URUS_OUTLINE = [[.17,.02],[.39,0],[.56,.08],[.54,.20],[.58,.26],[.91,.39],[.99,.46],[1,.69],[.94,.79],[.67,.98],[.47,1],[.34,.94],[.33,.86],[.14,.73],[.07,.61],[.05,.40],[.12,.25],[.14,.10]];
+// Trace coordinates from the driver-left paddle in the black-pair photograph.
+// Keeping one trace lets the canvas and mesh mirror the exact same part.
+const trace = points => points.map(([x,y]) => [(x-29)/214,(y-12)/613]);
+export const URUS_OUTLINE = trace([
+ [29,239],[31,221],[45,174],[91,44],[96,35],[133,14],[140,12],[146,14],
+ [173,36],[177,42],[178,50],[174,130],[175,136],[222,199],[231,214],[234,226],
+ [243,410],[242,422],[238,432],[195,496],[192,502],[192,510],[205,585],[204,592],
+ [199,599],[173,623],[167,625],[160,624],[119,608],[113,603],[107,591],
+ [47,452],[38,430],[35,415]
+]);
 export const URUS_WINDOWS = [
- [[.31,.18],[.40,.17],[.43,.23],[.42,.28],[.67,.39],[.65,.43],[.37,.42],[.27,.33]],
- [[.35,.72],[.60,.73],[.66,.77],[.51,.88],[.44,.90],[.42,.84],[.29,.76]],
+ trace([[101,139],[106,132],[132,124],[138,125],[141,129],[142,146],[146,157],
+  [171,207],[177,223],[179,248],[127,252],[123,249],[101,184],[97,167],[97,155]]),
+ trace([[124,420],[129,414],[141,411],[176,409],[182,411],[185,416],[185,423],
+  [160,481],[157,490],[158,509],[155,516],[150,518],[120,513],[116,509],[111,490],[111,477]])
 ];
+export const URUS_TIP_PANELS = [
+ trace([[101,124],[113,56],[118,50],[137,39],[143,40],[153,50],[145,122],[137,115],[130,115]]),
+ trace([[114,515],[123,519],[151,522],[159,516],[177,581],[175,588],[168,595],[137,584]])
+];
+export const URUS_SWITCH = trace([[79,276],[82,266],[90,260],[192,251],[202,252],
+ [210,260],[216,390],[213,401],[94,405],[85,399],[81,391]]);
+export const URUS_SWITCH_COVER = trace([[88,284],[98,272],[185,264],[198,273],
+ [202,283],[208,388],[202,393],[99,397],[92,391]]);
+export const URUS_MARK_CENTER = trace([[131,72]])[0];
 export const URUS_FINISHES = [
  {name:'Red',color:'#c41c20'}, {name:'Blue',color:'#165fc4'}, {name:'Yellow',color:'#e8b800'},
  {name:'Black',color:'#18191b'}, {name:'Silver',color:'#b7bdc5'}, {name:'Green',color:'#23843d'},
@@ -50,11 +66,22 @@ export function drawUrusBlade(ctx,{x,y,width,height,sign=1,finish='Black',textur
  if(texture)ctx.drawImage(texture,0,0,1,1);
  const sheen=ctx.createLinearGradient(0,0,1,.6);sheen.addColorStop(0,'#ffffff44');sheen.addColorStop(.25,'#ffffff0a');sheen.addColorStop(.5,'#00000022');sheen.addColorStop(.8,'#ffffff44');sheen.addColorStop(1,'#00000066');ctx.fillStyle=sheen;ctx.fillRect(0,0,1,1);ctx.restore();
  urusCanvasPath(ctx);ctx.strokeStyle=f.carbon?'#999a9c':'#777b80';ctx.lineWidth=.012;ctx.stroke();
- ctx.fillStyle=f.name==='Black'?'#a3a6aa':'#f1f2f4';ctx.fillRect(.28,.09,.17,.019);if(sign>0)ctx.fillRect(.354,.055,.022,.09);
+ function panel(points,fill,edge){
+  ctx.beginPath();polygon(ctx,points);ctx.fillStyle=fill;ctx.fill();
+  ctx.strokeStyle=edge;ctx.lineWidth=.012;ctx.stroke();
+ }
+ for(const points of URUS_TIP_PANELS)panel(points,'rgba(0,0,0,.12)','rgba(0,0,0,.58)');
+ panel(URUS_SWITCH,'#17181a','#48494a');
+ panel(URUS_SWITCH_COVER,'#303033','#101012');
+ ctx.fillStyle='#121214';ctx.beginPath();ctx.ellipse(.46,.51,.068,.023,0,0,2*Math.PI);ctx.fill();
+ ctx.fillRect(.64,.50,.08,.014);ctx.fillRect(.43,.58,.044,.028);
+ const [mx,my]=URUS_MARK_CENTER;
+ ctx.fillStyle=f.name==='Black'?'#55565a':f.name==='Silver'?'#313438':'#f3f3f3';
+ ctx.fillRect(mx-.059,my-.0038,.118,.0076);if(sign>0)ctx.fillRect(mx-.012,my-.021,.024,.042);
  ctx.restore();
 }
 // The source photograph's wheel/spokes mask the central housing in front view.
 export function drawUrusPair(ctx,size,finish,texture,placement={}){
- const width=size*(placement.width||.092),height=size*(placement.height||.35),y=size*(placement.y||.49),spread=size*(placement.spread||.245);
+ const width=size*(placement.width||.1225),height=size*(placement.height||.35),y=size*(placement.y||.49),spread=size*(placement.spread||.245);
  for(const sign of [-1,1])drawUrusBlade(ctx,{x:size*.5+sign*spread,y,width,height,sign,finish,texture});
 }
