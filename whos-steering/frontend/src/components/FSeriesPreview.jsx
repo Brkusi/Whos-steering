@@ -36,7 +36,6 @@ export default function FSeriesPreview({config}) {
     {status==='loading'&&<p role="status" className="fseries-preview-loading">Updating wheel…</p>}
     {status==='error'&&<div className="fseries-preview-error" role="alert"><p>The wheel images could not load.</p><button onClick={()=>setRetry(retry+1)}>Retry preview</button></div>}
     <p className="fseries-preview-caption">{label} · {shapeLabel}</p>
-    {config.brand==='AUDI'&&!appearance.cover&&config.airbagCompat&&<p className="fseries-preview-note">Airbag cover and full-unit choices are saved for your build; the preview retains the original center image.</p>}
     {!!appearance.unresolved.length&&<p className="fseries-preview-note">Custom instructions saved for your order: {appearance.unresolved.join(', ')}.</p>}
   </section>;
 }

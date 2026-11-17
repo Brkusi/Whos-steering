@@ -55,6 +55,7 @@ export function bmwFSeriesConfiguration(cfg, parseColor) {
     stripes:shape==='yoke'?[]:isBmw2010(cfg)?(cfg.bmwRing ? ['#f0f0f0'] : []):appearance.stripes,
     // The Audi B9.5 source set has no cover overlay. Keep its original center
     // visible while retaining the customer's cover and airbag-unit choices.
+    referenceCoverColor:isAudiRS2020(cfg) && cfg.airbagCompat && (cfg.airbagCustomColor || cfg.airbagCol),
     cover:!isAudiRS2020(cfg) && !!cfg.airbagCompat,
     dodgeAirbagTrim:appearance.dodgeAirbagTrim,
     dodgeLogo:appearance.dodgeLogo,

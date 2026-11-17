@@ -20,18 +20,3 @@ export function resolvePreviewColor(value) {
   return '#' + [...context.getImageData(0, 0, 1, 1).data.slice(0, 3)]
     .map(channel => channel.toString(16).padStart(2, '0')).join('');
 }
-
-// Coordinates follow the inner grip edge in the registered B8.5 photograph.
-const b85Seam = 'M85 116 Q131 58 200 57 Q269 58 315 116 M86 120 Q54 158 56 177 M314 120 Q346 158 344 177 M60 232 Q55 267 85 301 M340 232 Q345 267 315 301 M90 304 Q115 331 154 334 L246 334 Q285 331 310 304';
-
-export function drawB85Stitch(ctx, color) {
-  const ink = resolvePreviewColor(color);
-  if (!ink) return;
-  ctx.save();
-  ctx.scale(ctx.canvas.width / 400, ctx.canvas.height / 400);
-  ctx.strokeStyle = ink;
-  ctx.lineWidth = .9;
-  ctx.setLineDash([2, 1.8]);
-  ctx.stroke(new Path2D(b85Seam));
-  ctx.restore();
-}

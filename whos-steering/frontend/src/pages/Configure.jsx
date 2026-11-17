@@ -768,7 +768,7 @@ export default function Configure() {
               overflow: isMobileViewport ? 'visible' : 'hidden',
             }}>
               <ReferenceWheelPreview config={cfg} led={cfg.ledDisplay}
-                src={isMobileViewport || cfg.paddleShifters === 'Magnetic' ? '/configure-g-series-lci.png' : '/g-series-reference.png'}
+                src={isMobileViewport || cfg.paddleShifters === 'Magnetic' || cfg.topBottomCol || cfg.topBottomCarbonCol || cfg.airbagCompat || cfg.topBottomCustomColor ? '/configure-g-series-lci.png' : '/g-series-reference.png'}
                 alt="BMW G-Series LCI Steering Wheel customization options"
                 style={{
                   position: isMobileViewport ? 'relative' : 'absolute',
@@ -809,7 +809,7 @@ export default function Configure() {
               overflow: isMobileViewport ? 'visible' : 'hidden',
             }}>
               <ReferenceWheelPreview config={cfg} led={cfg.ledDisplay}
-                src={isMobileViewport || ['Urus Style','Magnetic'].includes(cfg.paddleShifters) ? '/showroom/audi-r8-front.png' : '/r8-reference.png'}
+                src={isMobileViewport || ['Urus Style','Magnetic'].includes(cfg.paddleShifters) || cfg.topBottomCol || cfg.topBottomCarbonCol || cfg.airbagCompat || cfg.topBottomCustomColor ? '/showroom/audi-r8-front.png' : '/r8-reference.png'}
                 alt="Audi R8 Steering Wheel customization options"
                 style={{
                   position: isMobileViewport ? 'relative' : 'absolute',
@@ -965,6 +965,7 @@ export default function Configure() {
           {/* Stitch */}
           {sourceWheelStyle(cfg)?.stitch !== false && <Sect label="Stitch Color *" value={cfg.stitchColor ? stitchColorName(cfg.stitchColor) : cfg.stitchCustomColor || '—'}>
             <ColorGrid colors={isAudiB85(cfg) ? B85_STITCH_COLORS : STITCH_COLORS} selected={cfg.stitchColor} onSelect={v => { set('stitchColor', v); set('stitchCustomColor', ''); }} />
+            {isAudiB85(cfg) && <p>Your selected wheel thread color is saved with the build. The B8.5 photograph shows the original seam.</p>}
             <CustomColorInput label="Type Any Stitch Color (Max Two):" value={cfg.stitchCustomColor} onChange={v => { set('stitchCustomColor', v); set('stitchColor', null); }} placeholder="e.g. Gold, Magenta, Dual Colors..." />
             {errors.stitchColor && <div className="err-msg" style={{ marginTop: 8 }}>Please choose a stitch color.</div>}
           </Sect>}

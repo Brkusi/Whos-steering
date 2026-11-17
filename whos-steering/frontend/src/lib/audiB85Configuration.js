@@ -31,6 +31,7 @@ export function audiB85Layers(config) {
     layers[topIndex].tint = config.topBottomCustomColor || config.topBottomCol;
   }
   add(assets.sides[materialNames[config.sideMat]] || assets.sides['Cuir nappa perforé']);
+  layers[layers.length-1].tint = config.sideCustomColor || config.sideCol;
   const airbag = config.airbagCompat && config.airbagMat === 'Alcantara' ? assets.airbagAlcantara : assets.airbagLeather;
   layers.push({
     src: B85_ROOT + airbag.Noir,

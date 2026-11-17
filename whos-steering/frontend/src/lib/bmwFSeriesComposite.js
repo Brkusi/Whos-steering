@@ -1,3 +1,4 @@
+import {applyReferenceFinishes} from './referenceFinishes';
 import {removeAudiRsStockPaddles, coverAudiRsSpokes} from './audiRsPaddleLayers';
 import { createLedArtwork, drawLedDisplay, rimLedPlacement } from './ledDisplay';
 import { carbonCoordinates } from './bmwFSeriesCarbonUV';
@@ -251,6 +252,17 @@ export function createFSeriesCompositor(family = 'bmw-fseries') {
     }
     if(family!=='bmw-gseries'&&family!=='bmw-2010'){mc.globalCompositeOperation='destination-in';mc.drawImage(silhouette(a.shape,base,porsche991FlatBottom?null:guide),0,0,SIZE,SIZE);}
     ctx.drawImage(materials,0,0,SIZE,SIZE);
+    if (family.startsWith('mercedes-') || family==='supra-gr' || family==='porsche-992') {
+      const zones = a.top.material.includes('Carbon') ? ['side'] : ['side',a.topZone];
+      const threads = await Promise.all(zones.map(zone=>source('stitch/'+a.shape+'-'+zone)));
+      const threadLayer=canvas(), tc=threadLayer.getContext('2d');
+      threads.forEach(thread=>tc.drawImage(thread,0,0,SIZE,SIZE));
+      tc.globalCompositeOperation='source-in';
+      tc.fillStyle=a.stitch;
+      tc.fillRect(0,0,SIZE,SIZE);
+      ctx.drawImage(threadLayer,0,0);
+    }
+    if(family==='audi-rs-2020' && a.referenceCoverColor)applyReferenceFinishes(ctx,'rs',null,a.referenceCoverColor);
     if(ring)ctx.drawImage(ring,0,0,SIZE,SIZE);
     if(a.led)drawLedDisplay(ctx,ledArtwork,rimLedPlacement(silhouette(a.shape,base,guide)));
     return out;

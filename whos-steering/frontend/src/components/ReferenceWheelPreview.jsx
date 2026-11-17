@@ -1,3 +1,4 @@
+import {applyReferenceFinishes} from '../lib/referenceFinishes';
 import {addUrusPaddlesToCanvas} from '../lib/urusPaddleOverlay';
 import {fitPreviewCanvas} from '../lib/previewFraming';
 import PreviewZoom from './PreviewZoom';
@@ -38,10 +39,15 @@ function clearStockPaddles(ctx, photo) {
 
 export default function ReferenceWheelPreview({src,alt,style,led,config}) {
   const ref=useRef(null);
+  const gripColor=config?.topBottomCustomColor || (config?.topBottomMat?.includes('Carbon') ? config?.topBottomCarbonCol : config?.topBottomCol);
+  const coverColor=config?.airbagCompat && (config.airbagCustomColor || config.airbagCol);
   useEffect(()=>{
     let active=true;const image=new Image();
     image.onload=async()=>{if(!active)return;const canvas=document.createElement('canvas');canvas.width=image.width;canvas.height=image.height;
       const ctx=canvas.getContext('2d');ctx.drawImage(image,0,0);
+      if(src.includes('audi-r8-front') || src.includes('configure-g-series-lci')){
+        applyReferenceFinishes(ctx,src.includes('audi-r8-front')?'r8':'lci',gripColor,coverColor);
+      }
       if(led){const texture=createLedArtwork(),w=image.width,h=image.height;
         const placements=(src.includes('audi-r8-front')||src.includes('configure-g-series-lci')) ? [[.27,.092,.46,.04,.035]] : src.includes('r8')
           ? [[.27,.166,.21,.039,.027],[.81,.558,.122,.017,.034]]
@@ -59,6 +65,6 @@ export default function ReferenceWheelPreview({src,alt,style,led,config}) {
       }
       if(active&&ref.current)fitPreviewCanvas(canvas,ref.current);
     };image.src=src;return()=>{active=false;};
-  },[src,led,config?.paddleShifters,config?.urusPaddleColor,config?.paddleLength]);
+  },[src,led,gripColor,coverColor,config?.paddleShifters,config?.urusPaddleColor,config?.paddleLength]);
   return <PreviewZoom style={{...style,position:style?.position,aspectRatio:style?.height==='auto'?'3 / 2':undefined}}><canvas ref={ref} role="img" aria-label={alt} style={{width:'100%',height:'100%',objectFit:'contain'}}/></PreviewZoom>;
 }
