@@ -1,3 +1,4 @@
+import '../components/BlackFriday.css';
 import FeatureWizard from '../components/FeatureWizard';
 import StripeSwatch from '../components/StripeSwatch';
 import {customWheelPrice,blackFridayActive} from '../lib/blackFriday';
