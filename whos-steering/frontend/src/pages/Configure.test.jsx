@@ -14,7 +14,7 @@ jest.mock('../hooks/useViewport',()=>()=>1280);
 global.IS_REACT_ACT_ENVIRONMENT=true;
 let host,root;
 beforeEach(()=>{sessionStorage.clear();host=document.createElement('div');document.body.append(host);root=createRoot(host);window.scrollTo=jest.fn();});
-afterEach(()=>{act(()=>root.unmount());host.remove();});
+afterEach(()=>{act(()=>root.unmount());host.remove();jest.restoreAllMocks();});
 async function mount(query='brand=AUDI&style=B9&year=2018&model=A4'){await act(async()=>root.render(<MemoryRouter initialEntries={['/configure?'+query]}><CartProvider><Configure/></CartProvider></MemoryRouter>));}
 function clickLabel(label){act(()=>host.querySelector(`button[aria-label="${label}"]`).click());}
 function jump(value){act(()=>{const s=host.querySelector('.feature-wizard select');s.value=value;s.dispatchEvent(new Event('change',{bubbles:true}));});}
@@ -39,4 +39,34 @@ test('shape-dependent features disappear for a yoke and reappear when returning 
  expect([...host.querySelectorAll('.feature-wizard option')].map(o=>o.value)).not.toContain('style-top-stripe');
  act(()=>[...host.querySelectorAll('button')].find(b=>b.textContent==='Round').click());
  expect([...host.querySelectorAll('.feature-wizard option')].map(o=>o.value)).toContain('style-top-stripe');
+});
+test('removes redundant wheel controls and preserves new Urus colors',async()=>{
+ await mount();
+ expect(host.textContent).toContain('Preview may not exactly match your finished wheel.');
+ expect(host.textContent).not.toContain('final fitment checked');
+ expect(host.textContent).not.toContain('CHANGE VEHICLE OR WHEEL');
+ expect([...host.querySelectorAll('.feature-wizard option')].map(o=>o.value)).not.toContain('style-selected-wheel');
+ expect(host.querySelector('.bf-preview-tag')).toBeNull();
+ jump('style-wheel-style');
+ const sport=[...host.querySelectorAll('button')].find(b=>b.textContent==='Sport (Flat Bottom)');
+ act(()=>sport.click());expect(sport.getAttribute('aria-pressed')).toBe('true');
+ jump('style-paddle-shifters');
+ act(()=>[...host.querySelectorAll('button')].find(b=>b.textContent.startsWith('Urus Style')).click());
+ for(const color of ['Silver','Green']){
+  act(()=>[...host.querySelectorAll('button')].find(b=>b.textContent===color).click());
+  jump('style-wheel-style');jump('style-paddle-shifters');
+  expect([...host.querySelectorAll('button')].find(b=>b.textContent===color).getAttribute('aria-pressed')).toBe('true');
+ }
+});
+test('build review itemizes the active sale discount',async()=>{
+ jest.spyOn(Date,'now').mockReturnValue(Date.parse('2026-11-17T12:00:00-05:00'));
+ sessionStorage.setItem('ws_restore_build',JSON.stringify({brand:'BMW',wheelStyleType:'F-Series',vehicleYear:'2018',vehicleModel:'M3',photoUrl:'/test-wheel.png',topBottomMat:'Smooth Leather',topBottomCol:'#000000',sideMat:'Perforated Leather',sideCol:'#000000',stitchColor:'#000000',airbagCompat:false}));
+ await mount('brand=BMW&style=F-Series&year=2018&model=M3');
+ jump('review');next();
+ const dialog=host.querySelector('[role="dialog"]');
+ expect(dialog).not.toBeNull();
+ expect(dialog.textContent).toContain('Original total');
+ expect(dialog.textContent).toContain('Black Friday discount (10%)');
+ expect(dialog.textContent).toContain('−$70.00');
+ expect(dialog.textContent).toContain('$630.00');
 });

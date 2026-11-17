@@ -1,6 +1,5 @@
 import FeatureWizard from '../components/FeatureWizard';
 import StripeSwatch from '../components/StripeSwatch';
-import {WheelDiscountTag} from '../components/BlackFriday';
 import {customWheelPrice,blackFridayActive} from '../lib/blackFriday';
 import { BuildCheckoutTotal, FloatingBuildTotal, BuildReviewDialog } from '../components/BuildControls';
 import { paddleOptions, paddleLabel, isUniversalPaddle, URUS_PADDLE_COLORS, normalizePaddleDetails } from '../lib/paddleOptions';
@@ -54,7 +53,7 @@ function OptionRow({ options, selected, onSelect }) {
   return (
     <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7 }}>
       {options.map(o => (
-        <button key={o} aria-pressed={selected === o} className={`ob${selected === o ? ' on' : ''}`} onClick={() => onSelect(o)}>{o}</button>
+        <button key={o} aria-pressed={selected === o} className={`ob${selected === o ? ' on' : ''}`} onClick={() => onSelect(o)}>{o === 'Sport' ? 'Sport (Flat Bottom)' : o}</button>
       ))}
     </div>
   );
@@ -452,12 +451,7 @@ export default function Configure() {
   const scrollToStep = step => wizardRef.current?.goToGroup(step);
 
   const regularPrice = calcPrice(cfg, rules), price = customWheelPrice(regularPrice);
-  const changeWheel = () => {
-    const query = new URLSearchParams({brand:cfg.brand});
-    if (cfg.vehicleYear) query.set('year',cfg.vehicleYear);
-    if (cfg.vehicleModel) query.set('model',cfg.vehicleModel);
-    nav(`/build?${query}`);
-  };
+
 
   const setBrand = (brand) => {
     setCfg(currentWheelOptions({ ...DEFAULT_CONFIG, brand,
@@ -644,7 +638,7 @@ export default function Configure() {
 
       !(cfg.brand === 'AUDI' && cfg.wheelStyleType === 'R8') &&
       !usesSource2D(cfg)
-        ? ['Wheel Style', cfg.wheelStyle]
+        ? ['Wheel Style', cfg.wheelStyle === 'Sport' ? 'Sport (Flat Bottom)' : cfg.wheelStyle]
         : null,
 
       usesSource2D(cfg) ? ['Wheel Shape', cfg.bmwShape || 'Round'] : null,
@@ -702,6 +696,7 @@ export default function Configure() {
         cfg.laneAssist ? (cfg.brand === 'BMW' ? 'Yes (+$30)' : 'Yes') : 'No'],
 
       ['Custom Notes', textValue(cfg.customNotes) || 'None'],
+      ...(regularPrice > price ? [['Original total', `$${regularPrice.toFixed(2)}`], ['Black Friday discount (10%)', `−$${(regularPrice-price).toFixed(2)}`]] : []),
       ['Est. Price', `$${price.toFixed(2)}`],
     ];
 
@@ -772,9 +767,8 @@ export default function Configure() {
           borderRight: isMobileViewport ? 'none' : '1px solid var(--b)', overflow: 'hidden',
           order: 1,
         }}>
-          <p style={{margin:0,padding:'8px 12px',fontSize:12,lineHeight:1.5,color:'var(--t)',flexShrink:0}}>Preview is a visual guide and may not exactly match your finished wheel. Colors, materials, and details may vary. Custom color requests are saved even when they aren’t shown.</p>
+          <p style={{margin:0,padding:'8px 12px',fontSize:12,lineHeight:1.5,color:'var(--t)',flexShrink:0}}>Preview may not exactly match your finished wheel.</p>
           <div style={{position:'relative',display:'flex',flexDirection:'column',flex:1,minHeight:0}}>
-          <div className="bf-preview-tag"><WheelDiscountTag/></div>
           {!isAudi && cfg.wheelStyleType === 'G-Series' ? (
             <div style={{
               position: 'relative',
@@ -871,25 +865,6 @@ export default function Configure() {
           {/* Vehicle */}
           <div ref={vehicleRef} data-step="vehicle" style={{ scrollMarginTop: stepScrollMargin }}>
           <Sect label="Vehicle" value={cfg.vehicleYear && cfg.vehicleModel ? `${cfg.vehicleYear} ${VEHICLE_MAKES.find(make => make.value === cfg.brand)?.label || cfg.brand} ${cfg.vehicleModel}` : '—'}>
-            <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',gap:12,marginBottom:14,padding:'10px 12px',background:'#141414',border:'1px solid #353535'}}>
-              <span style={{color:'var(--y)',fontWeight:800,letterSpacing:1,textTransform:'uppercase'}}>{VEHICLE_MAKES.find(make => make.value === cfg.brand)?.label || cfg.brand}</span>
-              <button type="button" className="ob" onClick={changeWheel}>CHANGE VEHICLE OR WHEEL →</button>
-            </div>
-            {isAudi && (
-              <div style={{ padding: '8px 12px', background: 'rgba(232,184,0,.05)', border: '1px solid rgba(232,184,0,.2)', marginBottom: 12, fontSize: 14, color: 'var(--t)', letterSpacing: 1 }}>
-                {isAudiRS2020(cfg) ? 'Audi B9.5 wheel family' : 'Audi wheel family'} · final fitment checked from your current wheel photo
-              </div>
-            )}
-            {cfg.brand === 'BMW' && (
-              <div style={{ padding: '8px 12px', background: 'rgba(232,184,0,.05)', border: '1px solid rgba(232,184,0,.2)', marginBottom: 12, fontSize: 14, color: 'var(--t)', letterSpacing: 1 }}>
-                {isBmw2010(cfg) ? 'BMW 3 · 4 · 5 · 6 · 7 · X3 · X4 · X5 · X6 (2010–2019)' : cfg.wheelStyleType === 'F-Series' ? 'BMW F chassis and E90 wheel family' : 'BMW F and G chassis wheel family'} · final fitment checked from your current wheel photo
-              </div>
-            )}
-            {sourceWheelStyle(cfg) && cfg.brand !== 'BMW' && (
-              <div style={{ padding: '8px 12px', background: 'rgba(232,184,0,.05)', border: '1px solid rgba(232,184,0,.2)', marginBottom: 12, fontSize: 14, color: 'var(--t)', letterSpacing: 1 }}>
-                {cfg.wheelStyleType} wheel family · final fitment checked from your current wheel photo
-              </div>
-            )}
             <VehicleYearModelFields key={compatibilityMake} make={compatibilityMake} year={cfg.vehicleYear} model={cfg.vehicleModel}
               idPrefix="configure-vehicle" onYearChange={setVehicleYear} onModelChange={setVehicleModel}
               errors={errors} required />
@@ -909,14 +884,6 @@ export default function Configure() {
 
           {/* Style */}
           <div ref={styleRef} data-step="style" style={{ scrollMarginTop: stepScrollMargin }}>
-          {/* The wheel was chosen with the vehicle details on the build page. */}
-          <Sect label="Selected Wheel">
-            <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',gap:16,flexWrap:'wrap'}}>
-              <strong style={{fontFamily:'Barlow Condensed, sans-serif',fontSize:25,fontStyle:'italic',color:'var(--y)'}}>{bmwStyleLabel(cfg.wheelStyleType)} STYLE</strong>
-              <button type="button" className="ob" onClick={changeWheel}>CHANGE WHEEL →</button>
-            </div>
-          </Sect>
-
           {isAudi && cfg.wheelStyleType === 'R8' && <Sect label="Start / Stop & Drive Select Buttons">
             <Toggle
               label="Add Buttons"
@@ -926,14 +893,14 @@ export default function Configure() {
             />
           </Sect>}
 
-          {isAudiB85(cfg) && <Sect label="Wheel Style" value="Sport"><p style={{color:'var(--t)',margin:0}}>Sport flat-bottom shape with standard steering wheel buttons included.</p></Sect>}
+          {isAudiB85(cfg) && <Sect label="Wheel Style" value="Sport (Flat Bottom)"><p style={{color:'var(--t)',margin:0}}>Sport flat-bottom shape with standard steering wheel buttons included.</p></Sect>}
           {usesSource2D(cfg) && !isAudiB85(cfg) && <Sect label="Wheel Shape" value={cfg.bmwShape || 'Round'}>
             <div className="fseries-shape-grid">
               {sourceWheelShapes(cfg).map(shape => <button key={shape} type="button" className={`fseries-shape${(cfg.bmwShape || 'Round') === shape ? ' on' : ''}`} aria-pressed={(cfg.bmwShape || 'Round') === shape} onClick={() => set('bmwShape', shape)}>
                 <span className="fseries-shape-image">
                   <img src={`/models/${bmwAssetFamily(cfg)}/source/${F_SERIES_SHAPE_IDS[shape]}.webp`} alt=""/>
                   {bmwAssetFamily(cfg) === 'porsche-992' && shape === 'Flat bottom' && <img src="/models/porsche-992/source/cf/flat-round-glossy.webp" alt="" aria-hidden="true" />}
-                </span><span>{shape}</span>
+                </span><span>{shape === 'Sport' ? 'Sport (Flat Bottom)' : shape}</span>
               </button>)}
             </div>
             {cfg.bmwShape === 'Yoke' && <p style={{color:'var(--t)',fontSize:13}}>The open top has no center stripe or RPM display.</p>}

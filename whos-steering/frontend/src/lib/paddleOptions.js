@@ -1,5 +1,5 @@
 export const UNIVERSAL_PADDLES = ['Magnetic', 'Urus Style'];
-export const URUS_PADDLE_COLORS = ['Red', 'Blue', 'Yellow', 'Black'];
+export const URUS_PADDLE_COLORS = ['Red', 'Blue', 'Yellow', 'Black', 'Silver', 'Green'];
 export const paddleLabel = value => value === 'Magnetic' ? 'Carbon Magnetic' : value;
 export const paddleOptions = originals => [...new Set([...originals, ...UNIVERSAL_PADDLES])];
 export const isUniversalPaddle = value => UNIVERSAL_PADDLES.includes(value);
