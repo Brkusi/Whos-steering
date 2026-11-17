@@ -36,3 +36,13 @@ test('retired Drift code is rejected regardless of case or surrounding spaces',(
 test('checkout rejects retired Drift before opening a transaction or payment',async()=>{
  for(const promoCode of ['Drift','DRIFT',' drift ']){const res=response();await checkoutRoutes()['/create-intent']({body:{cartItems:[{config:{brand:'BMW'},quantity:1}],customer:{email:'test@example.com'},promoCode}},res);assert.equal(res.statusCode,400);assert.match(res.body.error,/Promo code is invalid/);}
 });
+
+test('checkout accepts all Audi Urus finishes and rejects Urus on other makes',()=>{
+ const source=fs.readFileSync(require.resolve('../routes/checkout'),'utf8');
+ const start=source.indexOf('function validateRequiredColors'),end=source.indexOf('// POST /api/checkout/validate-promo',start);
+ const validate=vm.runInNewContext('const hasText=v=>typeof v===\'string\'&&v.trim();'+source.slice(start,end)+';validateRequiredColors');
+ const base={brand:'AUDI',wheelStyleType:'B9',paddleShifters:'Urus Style',topBottomMat:'Smooth Leather',topBottomCol:'#111111',sideCol:'#111111',stitchColor:'#111111',plasticTrimCol:'#111111',innerTrimCol:'#111111',airbagCompat:false};
+ for(const urusPaddleColor of ['Red','Blue','Yellow','Black','Silver','Green','Carbon Fiber','Red Carbon Fiber','Forged Carbon Fiber','Red Forged Carbon Fiber','Blue Forged Carbon Fiber'])assert.equal(validate({...base,urusPaddleColor}).length,0);
+ assert.ok(validate({...base,urusPaddleColor:'Invalid'}).includes('Urus Style Color'));
+ for(const brand of ['BMW','TOYOTA','PORSCHE','MERCEDES','DODGE_SRT'])assert.match(validate({...base,brand,urusPaddleColor:'Red'})[0],/Audi-only/);
+});

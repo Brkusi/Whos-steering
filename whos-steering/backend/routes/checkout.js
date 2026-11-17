@@ -38,6 +38,7 @@ function getPromo(value) {
 
 function validateRequiredColors(cfg) {
   if (cfg.productType === 'airbag-cover') return [];
+  if (cfg.paddleShifters === 'Urus Style' && cfg.brand !== 'AUDI') return ['Urus Style paddles are Audi-only'];
   // Presets and legacy product-only cart items do not use the full configurator.
   const isConfiguratorBuild = !cfg.isPreset && (
     cfg.vehicleYear !== undefined ||
@@ -93,7 +94,7 @@ function validateRequiredColors(cfg) {
     }
   }
 
-  if (cfg.paddleShifters === 'Urus Style' && !['Red','Blue','Yellow','Black'].includes(cfg.urusPaddleColor)) missing.push('Urus Style Color');
+  if (cfg.paddleShifters === 'Urus Style' && !['Red','Blue','Yellow','Black','Silver','Green','Carbon Fiber','Red Carbon Fiber','Forged Carbon Fiber','Red Forged Carbon Fiber','Blue Forged Carbon Fiber'].includes(cfg.urusPaddleColor)) missing.push('Urus Style Color');
   if (cfg.paddleShifters === 'Magnetic' && cfg.paddleLength && !['Short','Long'].includes(cfg.paddleLength)) missing.push('Paddle Length');
   return missing;
 }
