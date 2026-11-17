@@ -81,7 +81,10 @@ export function drawUrusBlade(ctx,{x,y,width,height,sign=1,finish='Black',textur
  ctx.restore();
 }
 // The source photograph's wheel/spokes mask the central housing in front view.
-export function drawUrusPair(ctx,size,finish,texture,placement={}){
- const width=size*(placement.width||.1225),height=size*(placement.height||.35),y=size*(placement.y||.49),spread=size*(placement.spread||.245);
- for(const sign of [-1,1])drawUrusBlade(ctx,{x:size*.5+sign*spread,y,width,height,sign,finish,texture});
+export function drawUrusPair(ctx, canvas, finish, texture, {y=.49, spread=.245}={}){
+ const height=Math.min(canvas.width,canvas.height)*.28;
+ const width=height*214/613;
+ for(const sign of [-1,1]){
+  drawUrusBlade(ctx,{x:canvas.width*(.5+sign*spread),y:canvas.height*y,width,height,sign,finish,texture});
+ }
 }

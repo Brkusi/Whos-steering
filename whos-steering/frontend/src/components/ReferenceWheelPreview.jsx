@@ -3,6 +3,39 @@ import {fitPreviewCanvas} from '../lib/previewFraming';
 import PreviewZoom from './PreviewZoom';
 import {useEffect,useRef} from 'react';
 import {createLedArtwork,drawLedDisplay} from '../lib/ledDisplay';
+// Trace the exposed stock paddle tips in the two front photographs.
+const stockPaddleTips = {
+  r8: [
+    [[88,151],[105,128],[127,126],[130,139],[115,158],[105,188],[74,199],[65,190]],
+    [[76,252],[93,252],[106,270],[111,290],[107,301],[93,297],[76,280]],
+  ],
+  lci: [
+    [[112,221],[124,192],[136,176],[145,176],[148,190],[141,218]],
+    [[103,296],[127,300],[139,313],[134,328],[120,328],[110,317]],
+  ],
+};
+
+function clearStockPaddles(ctx, photo) {
+  const {width,height}=ctx.canvas;
+  const referenceHeight=photo==='r8'?415:460;
+  for(const sign of [-1,1]){
+    for(const tip of stockPaddleTips[photo]){
+      ctx.beginPath();
+      tip.forEach(([x,y],i)=>{
+        const px=width*(.5+sign*(x/460-.5));
+        const py=height*y/referenceHeight;
+        if(i===0)ctx.moveTo(px,py);
+        else ctx.lineTo(px,py);
+      });
+      ctx.closePath();
+      ctx.save();
+      ctx.clip();
+      ctx.clearRect(0,0,width,height);
+      ctx.restore();
+    }
+  }
+}
+
 export default function ReferenceWheelPreview({src,alt,style,led,config}) {
   const ref=useRef(null);
   useEffect(()=>{
@@ -16,14 +49,13 @@ export default function ReferenceWheelPreview({src,alt,style,led,config}) {
         placements.forEach(([x,y,width,height,rise])=>drawLedDisplay(ctx,texture,{x:x*w,y:y*h,width:width*w,height:height*h,rise:rise*h}));
       }
       if(['Urus Style','Magnetic'].includes(config?.paddleShifters)){
-        if(src.includes('audi-r8-front')){
-          for(const sign of [-1,1]){ctx.save();ctx.translate(canvas.width/2,0);ctx.scale(sign,1);ctx.beginPath();[[.21,.30],[.285,.30],[.285,.455],[.18,.455]].forEach(([x,y],i)=>i?ctx.lineTo((x-.5)*canvas.width,y*canvas.height):ctx.moveTo((x-.5)*canvas.width,y*canvas.height));ctx.closePath();ctx.clip();ctx.clearRect(-canvas.width,0,canvas.width*2,canvas.height);ctx.restore();}
-        }
+        const photo=src.includes('audi-r8-front')?'r8':'lci';
+        clearStockPaddles(ctx,photo);
         if(config.paddleShifters==='Magnetic'){
           const pair=new Image();pair.src=config.paddleLength==='Long'?'/magnetic-long.svg':'/magnetic-short.svg';
-          await pair.decode();ctx.globalCompositeOperation='destination-over';
-          ctx.drawImage(pair,0,0,canvas.width,canvas.height);
-        }else await addUrusPaddlesToCanvas(canvas,config);
+          await pair.decode().catch(()=>{});ctx.globalCompositeOperation='destination-over';
+          if(pair.naturalWidth)ctx.drawImage(pair,0,0,canvas.width,canvas.height);
+        }else await addUrusPaddlesToCanvas(canvas,config,{y:.52,spread:.25}).catch(()=>{});
       }
       if(active&&ref.current)fitPreviewCanvas(canvas,ref.current);
     };image.src=src;return()=>{active=false;};
