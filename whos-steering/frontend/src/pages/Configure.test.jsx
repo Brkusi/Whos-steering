@@ -10,10 +10,11 @@ jest.mock('../components/AudiB85Preview',()=>()=> <div>Wheel preview</div>);
 jest.mock('../components/WheelPreview',()=>()=> <div>Wheel preview</div>);
 jest.mock('../components/SalesTools',()=>({__esModule:true,default:()=>null,trackSales:jest.fn()}));
 jest.mock('../lib/api',()=>({calcPrice:()=>700,apiFetch:()=>Promise.resolve({})}));
-jest.mock('../hooks/useViewport',()=>()=>1280);
+let mockViewport=1280;
+jest.mock('../hooks/useViewport',()=>()=>mockViewport);
 global.IS_REACT_ACT_ENVIRONMENT=true;
 let host,root;
-beforeEach(()=>{sessionStorage.clear();host=document.createElement('div');document.body.append(host);root=createRoot(host);window.scrollTo=jest.fn();});
+beforeEach(()=>{mockViewport=1280;sessionStorage.clear();host=document.createElement('div');document.body.append(host);root=createRoot(host);window.scrollTo=jest.fn();});
 afterEach(()=>{act(()=>root.unmount());host.remove();jest.restoreAllMocks();});
 async function mount(query='brand=AUDI&style=B9&year=2018&model=A4'){await act(async()=>root.render(<MemoryRouter initialEntries={['/configure?'+query]}><CartProvider><Configure/></CartProvider></MemoryRouter>));}
 function clickLabel(label){act(()=>host.querySelector(`button[aria-label="${label}"]`).click());}
@@ -69,4 +70,20 @@ test('build review itemizes the active sale discount',async()=>{
  expect(dialog.textContent).toContain('Black Friday discount (10%)');
  expect(dialog.textContent).toContain('−$70.00');
  expect(dialog.textContent).toContain('$630.00');
+});
+
+test('mobile keeps progress, preview and navigation in a locked configuration shell',async()=>{
+ mockViewport=390;await mount();
+ expect(document.body.classList.contains('wheel-config-active')).toBe(true);
+ const wizard=host.querySelector('.feature-wizard');
+ expect(wizard.querySelector('.feature-wizard-header')).not.toBeNull();
+ expect(wizard.querySelector('.feature-wizard-preview')).not.toBeNull();
+ expect(wizard.querySelector('.feature-wizard-nav .wheel-config-mobile-total')).not.toBeNull();
+ next();expect(host.querySelector('.feature-wizard-panel h2').textContent).toBe('Current Wheel Photo');
+ jump('review');
+ act(()=>host.querySelector('.feature-wizard-nav .btn-outline').click());
+ expect(host.querySelector('.feature-wizard-panel h2').textContent).not.toBe('Review & notes');
+ mockViewport=1280;await mount();
+ expect(document.body.classList.contains('wheel-config-active')).toBe(false);
+ expect(wizard.querySelector('.feature-wizard-preview')).toBeNull();
 });

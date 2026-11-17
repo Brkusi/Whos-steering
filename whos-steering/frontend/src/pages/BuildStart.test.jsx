@@ -34,8 +34,8 @@ test('compatibility guides make, year, then model and filters wheel styles', asy
 
   choose('build-vehicle-model', 'A4');
   expect(container.querySelector('.vehicle-field.is-next')).toBeNull();
-  expect(container.textContent).toContain('Vehicle details added');
-  expect(container.querySelectorAll('.build-brand-card')).toHaveLength(3);
+  expect(container.textContent).toContain('Compatible');
+  expect(container.querySelectorAll('.build-brand-card')).toHaveLength(4);
 });
 
 test('BMW styles follow model and year without a chassis field', async () => {
@@ -59,7 +59,7 @@ test('BMW styles follow model and year without a chassis field', async () => {
   expect(container.querySelectorAll('.build-brand-card')).toHaveLength(0);
 });
 
-test('Audi B8.5 appears only for the specified series and years', async () => {
+test('Audi A models show all wheel styles from 2010 onward', async () => {
   await act(async () => root.render(<MemoryRouter><BuildStart /></MemoryRouter>));
   choose('compatible-make', 'AUDI');
   choose('build-vehicle-year', '2010');
@@ -69,7 +69,8 @@ test('Audi B8.5 appears only for the specified series and years', async () => {
   choose('build-vehicle-model', 'A6');
   expect(container.textContent).toContain('B8.5 Flat Bottom Style');
   choose('build-vehicle-model', 'A4');
-  expect(container.textContent).not.toContain('B8.5 Flat Bottom Style');
+  expect(container.textContent).toContain('B8.5 Flat Bottom Style');
+  expect(container.querySelector('.build-start__next-step').classList.contains('is-compatible')).toBe(true);
 });
 
 test('Toyota Supra is the only Toyota with an online wheel; other models reach contact', async () => {
@@ -123,4 +124,10 @@ test('shop airbag covers sits above style heading and opens all fitments', async
   expect(container.querySelectorAll('.build-airbag-option')).toHaveLength(3);
   expect(container.querySelectorAll('.build-brand-card')).toHaveLength(0);
   expect(container.querySelector('.build-airbag-option').textContent).not.toContain('Nov 11');
+});
+
+test('new Audi RS families show green compatible confirmation for 2010 and 2026',async()=>{
+ await act(async()=>root.render(<MemoryRouter><BuildStart/></MemoryRouter>));
+ choose('compatible-make','AUDI');
+ for(const year of ['2010','2026']){choose('build-vehicle-year',year);choose('build-vehicle-model','RS 4');expect(container.querySelectorAll('.build-brand-card')).toHaveLength(4);expect(container.querySelector('.is-compatible').textContent).toContain('✓  Compatible');}
 });

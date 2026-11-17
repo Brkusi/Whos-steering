@@ -15,10 +15,10 @@ test('compatibility follows the published style coverage and selected BMW chassi
   expect(wheelMatchesVehicle({brand:'AUDI',vehicleYear:'2011',vehicleModel:'A4'},'RS 2020+')).toBe(true);
   expect(wheelMatchesVehicle({brand:'AUDI',vehicleYear:'2022',vehicleModel:'A4'},'R8')).toBe(true);
   expect(wheelMatchesVehicle({brand:'AUDI',vehicleYear:'2022',vehicleModel:'A4'},'B9')).toBe(true);
-  expect(wheelMatchesVehicle({brand:'AUDI',vehicleYear:'2026',vehicleModel:'A4'},'B9')).toBe(false);
+  expect(wheelMatchesVehicle({brand:'AUDI',vehicleYear:'2009',vehicleModel:'A4'},'B9')).toBe(false);
   for (const [year, model] of [['2010','A3'],['2016','RS 5'],['2012','A6'],['2018','S8']])
     expect(wheelMatchesVehicle({brand:'AUDI',vehicleYear:year,vehicleModel:model},'B8.5')).toBe(true);
-  for (const [year, model] of [['2010','A6'],['2017','A5'],['2019','A8'],['2015','Q5'],['2014','R8']])
+  for (const [year, model] of [['2009','A6'],['2015','Q5'],['2014','R8']])
     expect(wheelMatchesVehicle({brand:'AUDI',vehicleYear:year,vehicleModel:model},'B8.5')).toBe(false);
   expect(wheelMatchesVehicle({brand:'BMW',vehicleYear:'2018',vehicleModel:'320i'},'F-Series')).toBe(true);
   expect(wheelMatchesVehicle({brand:'BMW',vehicleYear:'2018',vehicleModel:'320i'},'G-Series')).toBe(true);
@@ -104,4 +104,8 @@ test('Audi B8.5 price follows its paddle selections', () => {
   expect(calcPrice({...cfg,paddleShifters:'Standard'})).toBe(699.99);
   expect(calcPrice({...cfg,paddleShifters:'Racing Style 1'})).toBe(724.99);
   expect(calcPrice({...cfg,paddleShifters:'Magnetic'})).toBe(724.99);
+});
+
+test('all Audi A/S/RS families show compatible across 2010+ wheel styles',()=>{
+ for(const year of ['2010','2017','2026']) for(const model of ['A1','A2','A3','A4','A5','A6','A7','A8','S1','S2','S3','S4','S5','S6','S7','S8','RS 2','RS 3','RS 4','RS 5','RS 6','RS 7','RS Q3','RS Q8','RS e-tron GT']) for(const style of ['B8.5','B9','RS 2020+','R8']) expect(wheelMatchesVehicle({brand:'AUDI',vehicleYear:year,vehicleModel:model},style)).toBe(true);
 });

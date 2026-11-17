@@ -104,3 +104,7 @@ a { color: inherit; text-decoration: none; }
 .fade-up { animation: fadeUp .8s forwards; }
 
 @keyframes spin { to { transform: translateY(-50%) rotate(360deg); } }
+
+/* Native dropdown menus follow the dark site theme on supported browsers. */
+select.fi,.feature-wizard-edit select{color-scheme:dark;background-color:#18191c;color:var(--w);font-family:Rajdhani,sans-serif}
+select.fi option,.feature-wizard-edit option{background:#18191c;color:var(--w)}

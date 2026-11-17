@@ -65,11 +65,11 @@ export default function BuildStart() {
                 activeField={nextField} yearRef={yearRef} modelRef={modelRef} stepNumbers />}
             </div>
           </div>
-          <div className="build-start__next-step" role="status" aria-live="polite">
+          <div className={`build-start__next-step${nextField === 'wheel' && matchingWheels.length ? ' is-compatible' : ''}`} role="status" aria-live="polite">
             {nextField === 'airbag' ? 'Choose your Infiniti airbag cover fitment below.' : nextField === 'make' ? '01  Select your make to see matching wheel styles.' :
               nextField === 'year' ? '02  Now choose your vehicle year.' :
               nextField === 'model' ? '03  Choose your model to complete the compatibility check.' :
-              matchingWheels.length ? '✓  Vehicle details added. Choose your style below.' : 'No online wheel styles currently match this vehicle.'}
+              matchingWheels.length ? '✓  Compatible. Choose your style below.' : 'No online wheel styles currently match this vehicle.'}
           </div>
           {make === 'BMW' && bmwVehicleFamilies(year, model).length > 1 && <p className="build-start__generation-note">This model year spans BMW generations. We’ll confirm your wheel from its photo before building.</p>}
         </div>
@@ -97,6 +97,7 @@ export default function BuildStart() {
                 <div>
                   <div className="build-brand-card__fitment">{wheel.detail}</div>
                   <h2>{wheel.label} Style</h2>
+                  {nextField === 'wheel' && <p className="build-brand-card__compatible">✓ Compatible</p>}
                   <p>From <WheelPrice regular={wheel.price}/></p>
                   <p className="build-brand-card__timeline">⏱ 3–5 week custom build</p>
                 </div>

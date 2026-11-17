@@ -2,7 +2,7 @@ import '../components/BlackFriday.css';
 import FeatureWizard from '../components/FeatureWizard';
 import StripeSwatch from '../components/StripeSwatch';
 import {customWheelPrice,blackFridayActive} from '../lib/blackFriday';
-import { BuildCheckoutTotal, FloatingBuildTotal, BuildReviewDialog } from '../components/BuildControls';
+import { BuildCheckoutTotal, BuildReviewDialog } from '../components/BuildControls';
 import { paddleOptions, paddleLabel, isUniversalPaddle, URUS_PADDLE_COLORS, normalizePaddleDetails } from '../lib/paddleOptions';
 import LedDisplay from '../components/LedDisplay';
 import ReferenceWheelPreview from '../components/ReferenceWheelPreview';
@@ -370,7 +370,6 @@ export default function Configure() {
   const [photo, setPhoto] = useState(null);
   const [photoUploading, setPhotoUploading] = useState(false);
   const [errors, setErrors] = useState({});
-  const [activeStep, setActiveStep] = useState('vehicle');
 
   const wizardRef = useRef(null);
   const optionsRef = useRef(null);
@@ -448,8 +447,6 @@ export default function Configure() {
   useEffect(() => {
     apiFetch('/api/products/pricing/rules').then(setRules).catch(console.error);
   }, []);
-
-  const scrollToStep = step => wizardRef.current?.goToGroup(step);
 
   const regularPrice = calcPrice(cfg, rules), price = customWheelPrice(regularPrice);
 
@@ -720,39 +717,25 @@ export default function Configure() {
   const mobilePreviewTop = viewportWidth < 780 ? 108 : 120;
   const stepScrollMargin = mobile3D ? mobilePreviewTop + 280 : isMobileViewport ? 205 : 88;
 
-  if (!isConfigurableMake(compatibilityMake)) return (
-    <main style={{minHeight:'70vh',maxWidth:720,margin:'auto',padding:'60px 24px',color:'var(--w)'}}>
-      <label className="fl" htmlFor="configure-make">Vehicle compatibility</label>
-      <select id="configure-make" className="fi" value={compatibilityMake} onChange={event => setBrand(event.target.value)}>
-        {VEHICLE_MAKES.map(make => <option value={make.value} key={make.value}>{make.label}</option>)}
-      </select>
-      <h1 style={{fontFamily:'Barlow Condensed, sans-serif',marginTop:28}}>Wheel fitment for {VEHICLE_MAKES.find(make => make.value === compatibilityMake)?.label}</h1>
-      {hasVehicleCatalog(compatibilityMake) && <VehicleYearModelFields key={compatibilityMake} make={compatibilityMake}
-        year={cfg.vehicleYear} model={cfg.vehicleModel} idPrefix="inquiry-vehicle"
-        onYearChange={setVehicleYear} onModelChange={setVehicleModel} />}
-      <p>We do not have a configurable wheel for this make yet. Contact us with your model, year and a photo of your current wheel so we can check the fit.</p>
-      <button type="button" className="btn" onClick={() => nav(vehicleInquiryPath(compatibilityMake,cfg.vehicleYear,cfg.vehicleModel))}>ASK ABOUT FITMENT</button>
-    </main>
-  );
+  useEffect(()=>{
+    if (!isMobileViewport || !isConfigurableMake(compatibilityMake)) return;
+    const elements=[document.documentElement,document.body];
+    elements.forEach(el=>el.classList.add('wheel-config-active'));
+    const update=()=>{
+      const header=document.querySelector('.site-header');
+      const top=header?.getBoundingClientRect().bottom || (viewportWidth < 780 ? 108 : 120);
+      const height=(window.visualViewport?.height || window.innerHeight)-top;
+      document.documentElement.style.setProperty('--wheel-config-top',`${top}px`);
+      document.documentElement.style.setProperty('--wheel-config-height',`${Math.max(200,height)}px`);
+      document.body.classList.toggle('wheel-config-compact',height<450);
+    };
+    update();window.addEventListener('resize',update);window.visualViewport?.addEventListener('resize',update);
+    const observer=typeof ResizeObserver==='undefined'?null:new ResizeObserver(update);
+    const header=document.querySelector('.site-header');if(header)observer?.observe(header);
+    return ()=>{elements.forEach(el=>el.classList.remove('wheel-config-active'));document.documentElement.style.removeProperty('--wheel-config-top');document.documentElement.style.removeProperty('--wheel-config-height');document.body.classList.remove('wheel-config-compact');observer?.disconnect();window.removeEventListener('resize',update);window.visualViewport?.removeEventListener('resize',update);};
+  },[isMobileViewport,compatibilityMake,viewportWidth]);
 
-  return (
-    <div style={{
-      paddingTop: 0,
-      paddingBottom: isMobileViewport ? 88 : 0,
-      minHeight: isMobileViewport ? '100vh' : 'calc(100dvh - 120px)',
-      background: 'var(--d)',
-    }}>
-      <div style={{
-        display: isMobileViewport ? 'block' : 'grid',
-        gridTemplateColumns: isMobileViewport ? undefined : 'minmax(0, 0.98fr) minmax(500px, 1.02fr)',
-        minHeight: isMobileViewport ? 0 : 'calc(100dvh - 120px)',
-        height: isMobileViewport ? 'auto' : 'calc(100dvh - 120px)',
-        alignItems: isMobileViewport ? undefined : 'stretch',
-        alignContent: 'start',
-      }}>
-
-        {/* LEFT: Preview */}
-        <div style={{
+  const wheelPreview = (<div style={{
           position: mobile3D ? 'sticky' : 'relative',
           top: mobile3D ? mobilePreviewTop : 0,
           zIndex: mobile3D ? 29 : undefined,
@@ -845,10 +828,43 @@ export default function Configure() {
           )}
           </div>
           {!isMobileViewport && <BuildCheckoutTotal originalPrice={blackFridayActive()?regularPrice:undefined} price={price} onReview={() => validate() && setShowReview(true)} />}
-        </div>
+        </div>);
+
+  if (!isConfigurableMake(compatibilityMake)) return (
+    <main style={{minHeight:'70vh',maxWidth:720,margin:'auto',padding:'60px 24px',color:'var(--w)'}}>
+      <label className="fl" htmlFor="configure-make">Vehicle compatibility</label>
+      <select id="configure-make" className="fi" value={compatibilityMake} onChange={event => setBrand(event.target.value)}>
+        {VEHICLE_MAKES.map(make => <option value={make.value} key={make.value}>{make.label}</option>)}
+      </select>
+      <h1 style={{fontFamily:'Barlow Condensed, sans-serif',marginTop:28}}>Wheel fitment for {VEHICLE_MAKES.find(make => make.value === compatibilityMake)?.label}</h1>
+      {hasVehicleCatalog(compatibilityMake) && <VehicleYearModelFields key={compatibilityMake} make={compatibilityMake}
+        year={cfg.vehicleYear} model={cfg.vehicleModel} idPrefix="inquiry-vehicle"
+        onYearChange={setVehicleYear} onModelChange={setVehicleModel} />}
+      <p>We do not have a configurable wheel for this make yet. Contact us with your model, year and a photo of your current wheel so we can check the fit.</p>
+      <button type="button" className="btn" onClick={() => nav(vehicleInquiryPath(compatibilityMake,cfg.vehicleYear,cfg.vehicleModel))}>ASK ABOUT FITMENT</button>
+    </main>
+  );
+
+  return (
+    <div className="wheel-config-page" style={{
+      paddingTop: 0,
+      paddingBottom: isMobileViewport ? 88 : 0,
+      minHeight: isMobileViewport ? '100vh' : 'calc(100dvh - 120px)',
+      background: 'var(--d)',
+    }}>
+      <div className="wheel-config-layout" style={{
+        display: isMobileViewport ? 'block' : 'grid',
+        gridTemplateColumns: isMobileViewport ? undefined : 'minmax(0, 0.98fr) minmax(500px, 1.02fr)',
+        minHeight: isMobileViewport ? 0 : 'calc(100dvh - 120px)',
+        height: isMobileViewport ? 'auto' : 'calc(100dvh - 120px)',
+        alignItems: isMobileViewport ? undefined : 'stretch',
+        alignContent: 'start',
+      }}>
+
+        {!isMobileViewport && wheelPreview}
 
         {/* RIGHT: Options */}
-        <div ref={optionsRef} style={{
+        <div ref={optionsRef} className="wheel-config-options" style={{
           background: 'var(--d)',
           overflowY: isMobileViewport ? 'visible' : 'auto',
           display: isMobileViewport ? 'block' : 'flex',
@@ -861,8 +877,10 @@ export default function Configure() {
         }}>
 
           <FeatureWizard ref={wizardRef} featureErrors={FEATURE_ERRORS} onNext={validateFeature}
+            preview={isMobileViewport ? wheelPreview : null}
+            footerContent={isMobileViewport ? <div className="wheel-config-mobile-total"><span>BUILD TOTAL</span><strong>${price.toFixed(2)}</strong></div> : null}
             onFinish={()=>validate()&&setShowReview(true)}
-            onFeatureChange={feature=>{setActiveStep(feature.group||'details');optionsRef.current?.scrollTo?.({top:0,behavior:'auto'});}}>
+            onFeatureChange={()=>optionsRef.current?.scrollTo?.({top:0,behavior:'auto'})}>
           {/* Vehicle */}
           <div ref={vehicleRef} data-step="vehicle" style={{ scrollMarginTop: stepScrollMargin }}>
           <Sect label="Vehicle" value={cfg.vehicleYear && cfg.vehicleModel ? `${cfg.vehicleYear} ${VEHICLE_MAKES.find(make => make.value === cfg.brand)?.label || cfg.brand} ${cfg.vehicleModel}` : '—'}>
@@ -1096,25 +1114,10 @@ export default function Configure() {
           </div>
 
           <div style={{padding: "0 24px"}}><SalesTools config={cfg} /></div>
-          {/* Mobile checkout CTA stays LAST, after every customization option */}
-          {isMobileViewport && (
-            <div style={{
-              padding: '24px 20px calc(30px + env(safe-area-inset-bottom, 0px))',
-              background: '#0A0A0A',
-              borderTop: '1px solid var(--b)',
-            }}>
-              <BuildCheckoutTotal mobile originalPrice={blackFridayActive()?regularPrice:undefined} price={price} onReview={() => validate() && setShowReview(true)} />
-            </div>
-          )}
           </div>
           </FeatureWizard>
         </div>
       </div>
-
-      {/* Floating mobile build total */}
-      {isMobileViewport && activeStep !== 'review' && !showReview && !cartOpen && (
-        <FloatingBuildTotal price={price} onReview={() => scrollToStep('review')} />
-      )}
 
       {/* Review overlay */}
       {showReview && (
