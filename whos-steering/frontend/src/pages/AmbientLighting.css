@@ -50,3 +50,13 @@
 /* Compact image treatment on the lighting category card. */
 .lighting-category .lighting-card-image{height:220px;aspect-ratio:auto;display:grid;place-items:center}
 .lighting-category .lighting-card-image img{width:240px;max-width:72%;height:190px;object-fit:contain}
+/* Match the catalog's wheel cards without changing the product page. */
+.catalog-grid>.lighting-card{background:var(--p);min-height:480px}
+.catalog-grid .lighting-card-image{aspect-ratio:1;background:#0a0a0a;display:grid;place-items:center}
+.catalog-grid .lighting-card-image img{width:74%;height:74%;object-fit:contain}
+.catalog-grid .lighting-card-image>span{top:12px;bottom:auto;left:12px;background:var(--y);color:#000;font-size:12px;padding:4px 8px}
+.catalog-grid .lighting-card-copy{display:flex;flex-direction:column;gap:12px;padding:18px 20px 24px}
+.catalog-grid .lighting-card-copy h2{font-size:24px;margin:0}
+.catalog-grid .lighting-card-copy p{margin:0}
+.catalog-grid .lighting-card-copy .lighting-card-price{margin-top:auto;padding-top:8px}
+.catalog-grid .lighting-card-copy .btn{margin-top:0;width:100%;min-height:48px}

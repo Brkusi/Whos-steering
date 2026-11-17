@@ -1,3 +1,4 @@
+import FeatureWizard from '../FeatureWizard';
 import { useEffect, useRef, useState } from 'react';
 import { COLORS, STITCH_COLORS } from '../../lib/data';
 import { INFINITI_LOGO_FINISHES, infinitiEmblemExtraCents, airbagMoney, infinitiLogoPalette, normalizeInfinitiAirbag, infinitiAirbagSummary, infinitiAirbagProduct, INFINITI_LED_NOTICE } from '../../lib/infinitiAirbagConfiguration';
@@ -50,20 +51,22 @@ function Swatches({ label, colors, value, onChange }) {
 }
 // Controlled component: the host wheel configurator owns and saves these fields
 // alongside its existing config. Changing an airbag field preserves all wheel fields.
-export function InfinitiAirbagOptions({ config, onChange }) {
+export function InfinitiAirbagOptions({ config, onChange, guided=false, onFinish }) {
   const cfg = normalizeInfinitiAirbag(config);
   const change = patch => onChange({ ...config, ...cfg, ...patch });
-  return <div className="infiniti-controls">
+  const content=<>
     <fieldset className="infiniti-options"><legend>Airbag material</legend><div className="infiniti-segments">
       {[['Smooth Leather', 'Leather'], ['Alcantara', 'Alcantara / Suede']].map(([value, label]) => <button type="button" key={value} className={`ob${cfg.airbagMat === value ? ' on' : ''}`} aria-pressed={cfg.airbagMat === value} onClick={() => change({ airbagMat: value })}>{label}</button>)}
     </div></fieldset>
     <Swatches label="Airbag color" colors={COLORS} value={cfg.airbagCol} onChange={airbagCol => change({ airbagCol })} />
     <Swatches label="Airbag stitch color" colors={STITCH_COLORS} value={cfg.airbagStitchColor} onChange={airbagStitchColor => change({ airbagStitchColor })} />
-    <fieldset className="infiniti-options"><legend>Emblem Finish</legend><div className="infiniti-segments">
+    <div data-feature="Emblem Finish"><fieldset className="infiniti-options"><legend>Emblem Finish</legend><div className="infiniti-segments">
       {INFINITI_LOGO_FINISHES.map(finish => <button type="button" key={finish} className={`ob${cfg.infinitiLogoFinish === finish ? ' on' : ''}`} aria-pressed={cfg.infinitiLogoFinish === finish} onClick={() => change({ infinitiLogoFinish: finish, infinitiLogoCol: infinitiLogoPalette(finish)[0].h })}>{finish}<small>{infinitiEmblemExtraCents(finish) ? `+${airbagMoney(infinitiEmblemExtraCents(finish))}` : 'Included'}</small></button>)}
     </div></fieldset>
     {cfg.infinitiLogoFinish === 'LED' && <div className="infiniti-led-notice" role="note"><strong>Bluetooth RGB LED</strong><p>{INFINITI_LED_NOTICE}</p></div>}
     {cfg.infinitiLogoFinish === 'Classic' && <p className="infiniti-led-notice">Chrome Infiniti emblem</p>}
+    </div>
     {!['LED','Classic'].includes(cfg.infinitiLogoFinish) && <Swatches label="Infiniti logo color" colors={infinitiLogoPalette(cfg.infinitiLogoFinish)} value={cfg.infinitiLogoCol} onChange={infinitiLogoCol => change({ infinitiLogoCol })} />}
-  </div>;
+  </>;
+  return <div className="infiniti-controls">{guided?<FeatureWizard title="Customize your airbag" onFinish={onFinish}>{content}</FeatureWizard>:content}</div>;
 }

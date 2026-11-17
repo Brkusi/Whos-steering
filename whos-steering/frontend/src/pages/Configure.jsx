@@ -1,3 +1,5 @@
+import FeatureWizard from '../components/FeatureWizard';
+import StripeSwatch from '../components/StripeSwatch';
 import {WheelDiscountTag} from '../components/BlackFriday';
 import {customWheelPrice,blackFridayActive} from '../lib/blackFriday';
 import { BuildCheckoutTotal, FloatingBuildTotal, BuildReviewDialog } from '../components/BuildControls';
@@ -113,7 +115,7 @@ function Toggle({ label, sub, value, onChange }) {
 }
 
 function StripeConcept({ concept, selected, onSelect }) {
-  const { id, label, img } = concept;
+  const { id, label } = concept;
   const isSelected = selected === id;
   return (
     <button type="button" aria-label={label} aria-pressed={isSelected} onClick={() => onSelect(id)}
@@ -121,9 +123,9 @@ function StripeConcept({ concept, selected, onSelect }) {
       <div style={{ width: 80, height: 52, border: `2px solid ${isSelected ? 'var(--y)' : '#2A2A2A'}`,
         borderRadius: 4, overflow: 'hidden', position: 'relative',
         boxShadow: isSelected ? '0 0 0 1px var(--y)' : 'none', transition: 'border-color .15s' }}>
-        <img src={img} alt={label} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+        <StripeSwatch concept={concept} />
         {isSelected && (
-          <div style={{ position: 'absolute', inset: 0, background: 'rgba(232,184,0,.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ position: 'absolute', inset: 0, background: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <span style={{ fontSize: 14, color: 'var(--y)' }}>✓</span>
           </div>
         )}
@@ -319,100 +321,13 @@ function Model3DPreview({ src, alt, height }) {
 }
 
 
-const CONFIG_STEPS = [
-  { id: 'vehicle', number: '01', label: 'VEHICLE' },
-  { id: 'style', number: '02', label: 'STYLE' },
-  { id: 'materials', number: '03', label: 'MATERIALS' },
-  { id: 'details', number: '04', label: 'DETAILS' },
-  { id: 'review', number: '05', label: 'REVIEW' },
-];
-
-function ConfigProgress({ activeStep, onStep }) {
-  const activeIndex = CONFIG_STEPS.findIndex(step => step.id === activeStep);
-
-  return (
-    <div
-      aria-label="Configurator progress"
-      style={{
-        display: 'flex',
-        width: '100%',
-        overflowX: 'auto',
-        scrollbarWidth: 'none',
-        background: '#090909',
-        borderTop: '1px solid #181818',
-      }}
-    >
-      {CONFIG_STEPS.map((step, index) => {
-        const active = step.id === activeStep;
-        const complete = index < activeIndex;
-
-        return (
-          <button
-            key={step.id}
-            type="button"
-            onClick={() => onStep(step.id)}
-            aria-current={active ? 'step' : undefined}
-            style={{
-              position: 'relative',
-              flex: '1 0 auto',
-              minWidth: window.innerWidth < 768 ? 102 : 88,
-              padding: window.innerWidth < 768 ? '10px 12px 11px' : '9px 12px 10px',
-              border: 0,
-              borderRight: index < CONFIG_STEPS.length - 1 ? '1px solid #1D1D1D' : 'none',
-              background: active ? 'rgba(232,184,0,.08)' : 'transparent',
-              color: active || complete ? 'var(--y)' : '#666',
-              cursor: 'pointer',
-              textAlign: 'left',
-              transition: 'background .18s, color .18s',
-            }}
-          >
-            <span
-              style={{
-                display: 'block',
-                fontFamily: 'Arial, sans-serif',
-                fontSize: 7,
-                fontWeight: 800,
-                letterSpacing: 1.5,
-                opacity: active ? 1 : .7,
-                marginBottom: 3,
-              }}
-            >
-              {complete ? '✓' : step.number}
-            </span>
-
-            <span
-              style={{
-                display: 'block',
-                fontFamily: 'Rajdhani, sans-serif',
-                fontSize: window.innerWidth < 768 ? 11 : 10,
-                fontWeight: 800,
-                letterSpacing: 1.6,
-                whiteSpace: 'nowrap',
-              }}
-            >
-              {step.label}
-            </span>
-
-            {active && (
-              <span
-                aria-hidden="true"
-                style={{
-                  position: 'absolute',
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  height: 2,
-                  background: 'var(--y)',
-                  boxShadow: '0 0 10px rgba(232,184,0,.35)',
-                }}
-              />
-            )}
-          </button>
-        );
-      })}
-    </div>
-  );
-}
+const FEATURE_ERRORS = {
+  'Vehicle':['year','model'], 'Current Wheel Photo':['photo'], 'Stitch Color':['stitchColor'],
+  'Top & Bottom Grip Material':['topBottomColor'], 'Side Grip Material':['sideColor'],
+  'Plastic Trim Color':['plasticTrimColor'], 'Inner Trim Color':['innerTrimColor'],
+  'Airbag Material':['airbagMaterial','airbagColor'], 'Airbag Stitch Color':['airbagStitchColor'],
+  'Audi Logo Color':['audiLogoColor'], 'Airbag Trim Color':['dodgeAirbagTrimColor'], 'SRT Logo Color':['dodgeLogoColor'],
+};
 
 function currentWheelOptions(config) {
   config = normalizePaddleDetails(normalizeB85Options(config));
@@ -457,6 +372,7 @@ export default function Configure() {
   const [errors, setErrors] = useState({});
   const [activeStep, setActiveStep] = useState('vehicle');
 
+  const wizardRef = useRef(null);
   const optionsRef = useRef(null);
   const vehicleRef = useRef(null);
   const styleRef = useRef(null);
@@ -533,54 +449,7 @@ export default function Configure() {
     apiFetch('/api/products/pricing/rules').then(setRules).catch(console.error);
   }, []);
 
-  useEffect(() => {
-    const tracked = [
-      vehicleRef.current,
-      styleRef.current,
-      materialsRef.current,
-      detailsRef.current,
-      reviewRef.current,
-    ].filter(Boolean);
-
-    if (!tracked.length || typeof IntersectionObserver === 'undefined') return;
-
-    const isMobileViewport = viewportWidth < 980;
-    const hasPinnedPreview = isMobileViewport && !shortViewport && ((cfg.brand === 'AUDI' && cfg.wheelStyleType === 'B9') || usesSource2D(cfg));
-
-    const observer = new IntersectionObserver(
-      () => {
-        const targetY = hasPinnedPreview ? (viewportWidth < 780 ? 108 : 120) + 420 : isMobileViewport ? 210 : (optionsRef.current?.getBoundingClientRect().top || 0) + 120;
-        const current = tracked.filter(node => node.getBoundingClientRect().top <= targetY + 30).pop() || tracked[0];
-        if (current?.dataset?.step) setActiveStep(current.dataset.step);
-      },
-      {
-        root: isMobileViewport ? null : optionsRef.current,
-        rootMargin: hasPinnedPreview ? '-530px 0px -10% 0px' : isMobileViewport
-          ? '-180px 0px -52% 0px'
-          : '-145px 0px -52% 0px',
-        threshold: [0, 0.01, 0.1, 0.25],
-      }
-    );
-
-    tracked.forEach(node => observer.observe(node));
-    return () => observer.disconnect();
-  }, [viewportWidth, shortViewport, cfg.brand, cfg.wheelStyleType]);
-
-  const scrollToStep = (step) => {
-    const targets = {
-      vehicle: vehicleRef,
-      style: styleRef,
-      materials: materialsRef,
-      details: detailsRef,
-      review: reviewRef,
-    };
-
-    setActiveStep(step);
-    targets[step]?.current?.scrollIntoView({
-      behavior: 'smooth',
-      block: 'start',
-    });
-  };
+  const scrollToStep = step => wizardRef.current?.goToGroup(step);
 
   const regularPrice = calcPrice(cfg, rules), price = customWheelPrice(regularPrice);
   const changeWheel = () => {
@@ -670,7 +539,7 @@ export default function Configure() {
     finally { setPhotoUploading(false); }
   };
 
-  const validate = () => {
+  const validationErrors = () => {
     const e = {};
 
     if (!vehicleYears(cfg.brand).includes(String(cfg.vehicleYear))) e.year = true;
@@ -717,26 +586,18 @@ export default function Configure() {
       }
     }
 
-    setErrors(e);
-
-    if (Object.keys(e).length > 0) {
-      const vehicleErrors = e.year || e.model || e.photo;
-      const styleErrors = e.stitchColor;
-      const materialErrors =
-        e.topBottomColor || e.sideColor ||
-        e.plasticTrimColor || e.innerTrimColor;
-      const detailErrors =
-        e.airbagMaterial || e.airbagColor || e.airbagStitchColor || e.audiLogoColor || e.dodgeAirbagTrimColor || e.dodgeLogoColor;
-
-      if (vehicleErrors) scrollToStep('vehicle');
-      else if (styleErrors) scrollToStep('style');
-      else if (materialErrors) scrollToStep('materials');
-      else if (detailErrors) scrollToStep('details');
-
-      showToast('PLEASE COMPLETE ALL REQUIRED OPTIONS');
-      return false;
-    }
-
+    return e;
+  };
+  const validateFeature = feature => {
+    const all=validationErrors(), pending=Object.fromEntries(feature.errorKeys.filter(key=>all[key]).map(key=>[key,true]));
+    setErrors(previous=>({...previous,...Object.fromEntries(feature.errorKeys.map(key=>[key,!!pending[key]]))}));
+    if(Object.keys(pending).length){showToast('PLEASE COMPLETE THIS FEATURE');return false;}
+    return true;
+  };
+  const validate = () => {
+    const pending=validationErrors();setErrors(pending);
+    const first=Object.keys(pending)[0];
+    if(first){wizardRef.current?.goToError(first);showToast('PLEASE COMPLETE ALL REQUIRED OPTIONS');return false;}
     return true;
   };
 
@@ -1004,34 +865,9 @@ export default function Configure() {
           overscrollBehavior: isMobileViewport ? 'auto' : 'contain',
         }}>
 
-          {/* Sticky heading + progress */}
-          <div style={{
-            position: isMobileViewport && shortViewport ? 'relative' : 'sticky',
-
-            /*
-              Desktop options are already inside a scroll column that begins
-              BELOW the 120px site header, so desktop must stick at 0.
-              Mobile scrolls in the page viewport, so it still needs 120px.
-            */
-            top: isMobileViewport && shortViewport ? 0 : mobile3D ? mobilePreviewTop + (usesSource2D(cfg) ? 240 : 300) : isMobileViewport ? mobilePreviewTop : 0,
-
-            zIndex: 30,
-            background: 'var(--d)',
-            borderBottom: '1px solid var(--b)',
-            boxShadow: '0 8px 22px rgba(0,0,0,.24)',
-          }}>
-            <div style={{ padding: '16px 28px 12px', display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
-              <div style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 28, letterSpacing: .6 }}>CUSTOMIZATION</div>
-              {isAudi && (
-                <span style={{ background: 'rgba(232,184,0,.1)', border: '1px solid var(--y)', color: 'var(--y)', fontFamily: 'Arial, sans-serif', fontSize: 14, fontWeight: 700, padding: '4px 10px', letterSpacing: .6 }}>{bmwStyleLabel(cfg.wheelStyleType).toUpperCase()} STYLE</span>
-              )}
-              <div style={{ marginLeft: 'auto', fontFamily: 'Arial, sans-serif', color: 'var(--y)', fontSize: 14, letterSpacing: 1.4 }}>
-                {CONFIG_STEPS.findIndex(s => s.id === activeStep) + 1} / {CONFIG_STEPS.length}
-              </div>
-            </div>
-            <ConfigProgress activeStep={activeStep} onStep={scrollToStep} />
-          </div>
-
+          <FeatureWizard ref={wizardRef} featureErrors={FEATURE_ERRORS} onNext={validateFeature}
+            onFinish={()=>validate()&&setShowReview(true)}
+            onFeatureChange={feature=>{setActiveStep(feature.group||'details');optionsRef.current?.scrollTo?.({top:0,behavior:'auto'});}}>
           {/* Vehicle */}
           <div ref={vehicleRef} data-step="vehicle" style={{ scrollMarginTop: stepScrollMargin }}>
           <Sect label="Vehicle" value={cfg.vehicleYear && cfg.vehicleModel ? `${cfg.vehicleYear} ${VEHICLE_MAKES.find(make => make.value === cfg.brand)?.label || cfg.brand} ${cfg.vehicleModel}` : '—'}>
@@ -1057,6 +893,8 @@ export default function Configure() {
             <VehicleYearModelFields key={compatibilityMake} make={compatibilityMake} year={cfg.vehicleYear} model={cfg.vehicleModel}
               idPrefix="configure-vehicle" onYearChange={setVehicleYear} onModelChange={setVehicleModel}
               errors={errors} required />
+          </Sect>
+          <Sect label="Current Wheel Photo">
             <label className="fl">Current Wheel Photo <span className="req">*</span></label>
             <label style={{ display: 'block', border: `2px dashed ${errors.photo ? '#CC3300' : photo ? '#3DB85A' : 'var(--b)'}`, padding: 16, textAlign: 'center', cursor: 'pointer', transition: 'all .2s', marginTop: 6, background: photo ? 'rgba(61,184,90,.04)' : 'transparent' }}>
               <input type="file" accept="image/*" style={{ display: 'none' }} onChange={handlePhoto} />
@@ -1252,100 +1090,32 @@ export default function Configure() {
 
           {/* Details */}
           <div ref={detailsRef} data-step="details" style={{ scrollMarginTop: stepScrollMargin }}>
-          {/* ── OPTIONS ── */}
-          <div style={{ padding: '20px 28px', borderBottom: '1px solid var(--b)' }}>
-            <div style={{ fontFamily: 'Rajdhani, sans-serif', fontWeight: 700, fontSize: 15, letterSpacing: .6, textTransform: 'uppercase', marginBottom: 8 }}>Options</div>
-            <Toggle
-              label="Airbag Cover"
-              sub={cfg.brand === 'BMW' && cfg.wheelStyleType === 'F-Series'
-                ? <span style={{ display: 'inline-block', background: 'var(--y)', color: '#000', fontWeight: 800, fontSize: 14, letterSpacing: 1, padding: '2px 8px', borderRadius: 3 }}>FREE</span>
-                : '+$25.00'}
-              value={cfg.airbagCompat}
-              onChange={setAirbagCover}
-            />
-
-            {/* The B9.5 full unit can be chosen directly; it includes the cover. */}
-            {!isBmw2010(cfg) && (cfg.airbagCompat || isAudiRS2020(cfg)) && (
-              <Toggle
-                label={isAudiRS2020(cfg) ? 'Full Upgraded Airbag Unit (includes cover)' : 'Will you require a full upgraded airbag unit (full airbag not just cover)?'}
-                sub={isAudiRS2020(cfg) && !cfg.airbagCompat ? '+$100.00 including cover' : '+$75.00'}
-                value={cfg.airbagUpgrade}
-                onChange={v => isAudiRS2020(cfg) && v
-                  ? setCfg(prev => currentWheelOptions({...prev,airbagCompat:true,airbagUpgrade:true}))
-                  : set('airbagUpgrade', v)}
-              />
-            )}
-            <Toggle
-              label="Heated Steering"
-              sub={!isAudi ? '+$75.00' : ''}
-              value={cfg.heated}
-              onChange={v => set('heated', v)}
-            />
-            {!isBmw2010(cfg) && <Toggle
-              label={!isAudi ? 'Does Your Original Steering Wheel Have Driver Assistance Functionality?' : 'Lane Assist Compatible'}
-              sub={!isAudi
-                ? (cfg.laneAssist ? 'Yes (I want to retain Driver Assistance) — +$30.00' : 'No')
-                : ''}
-              value={cfg.laneAssist}
-              onChange={v => set('laneAssist', v)}
-            />}
-
-            {cfg.airbagCompat && (
-              <div style={{ marginTop: 14, paddingTop: 14, borderTop: '1px solid #1A1A1A' }}>
-                <div style={{ fontSize: 14, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 8, color: 'var(--t)' }}>Airbag Material <span className="req">*</span></div>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7, marginBottom: 14 }}>
-                  {AIRBAG_MATS.map(m => (
-                    <button key={m.n} className={`ob${cfg.airbagMat === m.n ? ' on' : ''}`}
-                      onClick={() => { set('airbagMat', m.n); set('airbagCol', null); set('airbagCustomColor', ''); }}>
-                      {materialLabel(m.n)}
-                    </button>
-                  ))}
-                </div>
-                {isAudiB85(cfg) && <p style={{fontSize:14,color:'var(--t)'}}>The preview shows a black cover. Your selected cover and stitching colors are saved for your build.</p>}
-                {errors.airbagMaterial && <div className="err-msg" style={{ margin: '-6px 0 10px' }}>Please choose an airbag material.</div>}
-                {cfg.airbagMat && (
-                  <>
-                    <div style={{ fontSize: 14, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 4, color: 'var(--t)' }}>
-                      Color <span className="req">*</span>: {configuredColor(cfg.airbagCol, cfg.airbagCustomColor)}
-                    </div>
-                    <ColorGrid colors={isAudiB85(cfg) ? B85_MATERIAL_COLORS : COLORS} selected={cfg.airbagCol} onSelect={v => { set('airbagCol', v); set('airbagCustomColor', ''); }} />
-                    <CustomColorInput label="Type Any Color:" value={cfg.airbagCustomColor} onChange={v => { set('airbagCustomColor', v); set('airbagCol', null); }} />
-                    {errors.airbagColor && <div className="err-msg" style={{ marginTop: 8 }}>Please choose an airbag color.</div>}
-                  </>
-                )}
-                {sourceWheelStyle(cfg)?.airbagStitch !== false && <><div style={{ fontSize: 14, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase', margin: '16px 0 4px', color: 'var(--t)' }}>
-                  Airbag Stitch Color <span className="req">*</span>: {configuredColor(cfg.airbagStitchColor, cfg.airbagStitchCustomColor, 'stitch')}
-                </div>
-                <ColorGrid colors={isAudiB85(cfg) ? B85_STITCH_COLORS : STITCH_COLORS} selected={cfg.airbagStitchColor} onSelect={v => { set('airbagStitchColor', v); set('airbagStitchCustomColor', ''); }} />
-                <CustomColorInput label="Type Any Stitch Color:" value={cfg.airbagStitchCustomColor} onChange={v => { set('airbagStitchCustomColor', v); set('airbagStitchColor', null); }} placeholder="e.g. Gold, Magenta, Dual Colors..." />
-                {errors.airbagStitchColor && <div className="err-msg" style={{ marginTop: 8 }}>Please choose an airbag stitch color.</div>}</>}
-              </div>
-            )}
-
-            {isAudi && !isAudiB85(cfg) && cfg.airbagCompat && (
-              <div style={{ marginTop: 14, paddingTop: 14, borderTop: '1px solid #1A1A1A' }}>
-                <div style={{ fontSize: 14, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 4, color: 'var(--t)' }}>
-                  Audi Logo Color <span className="req">*</span>: {configuredColor(cfg.audiLogoCol, cfg.audiLogoCustomColor)}
-                </div>
-                <ColorGrid colors={COLORS} selected={cfg.audiLogoCol} onSelect={v => { set('audiLogoCol', v); set('audiLogoCustomColor', ''); }} />
-                <CustomColorInput label="Type Any Color:" value={cfg.audiLogoCustomColor} onChange={v => { set('audiLogoCustomColor', v); set('audiLogoCol', null); }} />
-                {errors.audiLogoColor && <div className="err-msg" style={{ marginTop: 8 }}>Please choose an Audi logo color.</div>}
-              </div>
-            )}
-            {cfg.brand === 'DODGE_SRT' && cfg.airbagCompat && (
-              <div style={{marginTop:14,paddingTop:14,borderTop:'1px solid #1A1A1A'}}>
-                <div className="fl">Airbag Trim Color <span className="req">*</span>: {configuredColor(cfg.dodgeAirbagTrimCol,cfg.dodgeAirbagTrimCustomColor)}</div>
-                <ColorGrid colors={COLORS} selected={cfg.dodgeAirbagTrimCol} onSelect={v=>{set('dodgeAirbagTrimCol',v);set('dodgeAirbagTrimCustomColor','');}} />
-                <CustomColorInput label="Type Any Color:" value={cfg.dodgeAirbagTrimCustomColor} onChange={v=>{set('dodgeAirbagTrimCustomColor',v);set('dodgeAirbagTrimCol',null);}} />
-                {errors.dodgeAirbagTrimColor && <div className="err-msg">Please choose an airbag trim color.</div>}
-                <div className="fl" style={{marginTop:16}}>SRT Logo Color <span className="req">*</span>: {configuredColor(cfg.dodgeLogoCol,cfg.dodgeLogoCustomColor)}</div>
-                <ColorGrid colors={COLORS} selected={cfg.dodgeLogoCol} onSelect={v=>{set('dodgeLogoCol',v);set('dodgeLogoCustomColor','');}} />
-                <CustomColorInput label="Type Any Color:" value={cfg.dodgeLogoCustomColor} onChange={v=>{set('dodgeLogoCustomColor',v);set('dodgeLogoCol',null);}} />
-                {errors.dodgeLogoColor && <div className="err-msg">Please choose an SRT logo color.</div>}
-              </div>
-            )}
-          </div>
-
+          <Sect label="Airbag Cover" value={cfg.airbagCompat?'Added':'No cover'}>
+            <Toggle label="Airbag Cover" sub={cfg.brand==='BMW'&&cfg.wheelStyleType==='F-Series'?'FREE':'+$25.00'} value={cfg.airbagCompat} onChange={setAirbagCover}/>
+          </Sect>
+          {!isBmw2010(cfg)&&(cfg.airbagCompat||isAudiRS2020(cfg))&&<Sect label="Full Airbag Unit" value={cfg.airbagUpgrade?'Added':'Not added'}>
+            <Toggle label={isAudiRS2020(cfg)?'Full Upgraded Airbag Unit (includes cover)':'Will you require a full upgraded airbag unit (full airbag not just cover)?'}
+              sub={isAudiRS2020(cfg)&&!cfg.airbagCompat?'+$100.00 including cover':'+$75.00'} value={cfg.airbagUpgrade}
+              onChange={v=>isAudiRS2020(cfg)&&v?setCfg(prev=>currentWheelOptions({...prev,airbagCompat:true,airbagUpgrade:true})):set('airbagUpgrade',v)}/>
+          </Sect>}
+          <Sect label="Heated Steering" value={cfg.heated?'Added':'Not added'}><Toggle label="Heated Steering" sub={!isAudi?'+$75.00':''} value={cfg.heated} onChange={v=>set('heated',v)}/></Sect>
+          {!isBmw2010(cfg)&&<Sect label="Driver Assistance" value={cfg.laneAssist?'Retained':'Not added'}><Toggle label={!isAudi?'Does Your Original Steering Wheel Have Driver Assistance Functionality?':'Lane Assist Compatible'} sub={!isAudi?(cfg.laneAssist?'Yes (I want to retain Driver Assistance) — +$30.00':'No'):''} value={cfg.laneAssist} onChange={v=>set('laneAssist',v)}/></Sect>}
+          {cfg.airbagCompat&&<Sect label="Airbag Material" value={materialLabel(cfg.airbagMat)}>
+            <div style={{display:'flex',flexWrap:'wrap',gap:7,marginBottom:14}}>{AIRBAG_MATS.map(m=><button key={m.n} className={`ob${cfg.airbagMat===m.n?' on':''}`} onClick={()=>{set('airbagMat',m.n);set('airbagCol',null);set('airbagCustomColor','');}}>{materialLabel(m.n)}</button>)}</div>
+            {isAudiB85(cfg)&&<p style={{fontSize:14,color:'var(--t)'}}>The preview shows a black cover. Your selected cover and stitching colors are saved for your build.</p>}
+            {errors.airbagMaterial&&<div className="err-msg">Please choose an airbag material.</div>}
+            {cfg.airbagMat&&<><div className="fl">Color *: {configuredColor(cfg.airbagCol,cfg.airbagCustomColor)}</div><ColorGrid colors={isAudiB85(cfg)?B85_MATERIAL_COLORS:COLORS} selected={cfg.airbagCol} onSelect={v=>{set('airbagCol',v);set('airbagCustomColor','');}}/><CustomColorInput label="Type Any Color:" value={cfg.airbagCustomColor} onChange={v=>{set('airbagCustomColor',v);set('airbagCol',null);}}/>{errors.airbagColor&&<div className="err-msg">Please choose an airbag color.</div>}</>}
+          </Sect>}
+          {cfg.airbagCompat&&sourceWheelStyle(cfg)?.airbagStitch!==false&&<Sect label="Airbag Stitch Color *" value={configuredColor(cfg.airbagStitchColor,cfg.airbagStitchCustomColor,'stitch')}>
+            <ColorGrid colors={isAudiB85(cfg)?B85_STITCH_COLORS:STITCH_COLORS} selected={cfg.airbagStitchColor} onSelect={v=>{set('airbagStitchColor',v);set('airbagStitchCustomColor','');}}/><CustomColorInput label="Type Any Stitch Color:" value={cfg.airbagStitchCustomColor} onChange={v=>{set('airbagStitchCustomColor',v);set('airbagStitchColor',null);}} placeholder="e.g. Gold, Magenta, Dual Colors..."/>{errors.airbagStitchColor&&<div className="err-msg">Please choose an airbag stitch color.</div>}
+          </Sect>}
+          {isAudi&&!isAudiB85(cfg)&&cfg.airbagCompat&&<Sect label="Audi Logo Color *" value={configuredColor(cfg.audiLogoCol,cfg.audiLogoCustomColor)}>
+            <ColorGrid colors={COLORS} selected={cfg.audiLogoCol} onSelect={v=>{set('audiLogoCol',v);set('audiLogoCustomColor','');}}/><CustomColorInput label="Type Any Color:" value={cfg.audiLogoCustomColor} onChange={v=>{set('audiLogoCustomColor',v);set('audiLogoCol',null);}}/>{errors.audiLogoColor&&<div className="err-msg">Please choose an Audi logo color.</div>}
+          </Sect>}
+          {cfg.brand==='DODGE_SRT'&&cfg.airbagCompat&&<>
+            <Sect label="Airbag Trim Color *" value={configuredColor(cfg.dodgeAirbagTrimCol,cfg.dodgeAirbagTrimCustomColor)}><ColorGrid colors={COLORS} selected={cfg.dodgeAirbagTrimCol} onSelect={v=>{set('dodgeAirbagTrimCol',v);set('dodgeAirbagTrimCustomColor','');}}/><CustomColorInput label="Type Any Color:" value={cfg.dodgeAirbagTrimCustomColor} onChange={v=>{set('dodgeAirbagTrimCustomColor',v);set('dodgeAirbagTrimCol',null);}}/>{errors.dodgeAirbagTrimColor&&<div className="err-msg">Please choose an airbag trim color.</div>}</Sect>
+            <Sect label="SRT Logo Color *" value={configuredColor(cfg.dodgeLogoCol,cfg.dodgeLogoCustomColor)}><ColorGrid colors={COLORS} selected={cfg.dodgeLogoCol} onSelect={v=>{set('dodgeLogoCol',v);set('dodgeLogoCustomColor','');}}/><CustomColorInput label="Type Any Color:" value={cfg.dodgeLogoCustomColor} onChange={v=>{set('dodgeLogoCustomColor',v);set('dodgeLogoCol',null);}}/>{errors.dodgeLogoColor&&<div className="err-msg">Please choose an SRT logo color.</div>}</Sect>
+          </>}
           </div>
 
           {/* Review / final checkout */}
@@ -1369,7 +1139,7 @@ export default function Configure() {
             </div>
           )}
           </div>
-
+          </FeatureWizard>
         </div>
       </div>
 
